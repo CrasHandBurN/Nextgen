@@ -847,9 +847,9 @@ Tachograph="Тахограф"
 
 'Weather menu mini' in Cockpit="Мини прогноза в кокпита"
 'Weather menu mini' in Quick="Мини прогноза в бързото меню"
+'Weather menu mini' in Quick' Button="Мини прогноза"
 
-'Itinerary Mini' in Cockpit="Мини маневри" ; преглед на маневрите
-'Itinerary Mini' in Quick="Мини маневри" ; преглед на маневрите
+'Itinerary Mini' Button="Мини маневри" ; преглед на маневрите
 
 (%dth)="(%d-ти)"
 (%s days ago)="(преди %s дни)"
@@ -5590,7 +5590,7 @@ QuickDetour~turn left="на левия завой"
 QuickDetour~turn right="на десния завой"
 QuickMenu Button="Бързо меню"
 QuickMenu Buttons="Бутони в бързото меню"
-QuickMenu Settings="Настройки на бързото меню"
+QuickMenu Settings="Бързо меню и кокпит"
 QuickTip Settings="Експес бутон"
 Quit="Изход"
 Qwe="QWE"
