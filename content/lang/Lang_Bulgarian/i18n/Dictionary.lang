@@ -821,10 +821,6 @@ $ui.multiedit.cursor_pos$/$ui.multiedit.text_len$="$ui.multiedit.cursor_pos$/$ui
 'Show SpeedCam' zoom="Камери за скорост - мащаб"
 'Show Speedcam' Settings="Настройка на камерите и предупрежденията" ; Arimi
 'Speedcam alert' Button="Известията за камери"
-TachoGuard Settings="Тахограф - настройки"
-Tacho Guard="Тахограф"
-TachoGuard="Тахограф"
-Tachograph="Тахограф"
 'Tacho Guard' Button="Тахограф"
 'Tacho Guard' Button in Cockpit="Тахограф в кокпита"
 'Tacho Guard' Button in QuickMenu="Тахограф в бързото меню"
@@ -843,14 +839,6 @@ Tachograph="Тахограф"
 'Truck Parking' Button in Cockpit="Паркинг за камиони"
 'Truck Parking' Button in QuickMenu="Паркинг за камиони"
 'VW Trip-Computer' Button="VW борд компютър"
-
-
-;'Weather menu mini' in Cockpit="Мини прогноза в кокпита"
-;'Weather menu mini' in Quick="Мини прогноза в бързото меню"
-;'Weather menu mini' in Quick' Button="Мини прогноза"
-
-'Itinerary Mini' Button="Мини маневри" ; преглед на маневрите
-
 (%dth)="(%d-ти)"
 (%s days ago)="(преди %s дни)"
 (%s hrs ago)="(преди %s часа)"
