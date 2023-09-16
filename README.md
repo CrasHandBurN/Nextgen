@@ -6,7 +6,8 @@ Translate all files in Nextgen to Bulgarian
 Български превод на iGO Nextgen
 
 # BULGARIAN Global translation for iGO Nextgen
-<img src="https://img.shields.io/github/last-commit/{username}/{repo-name}.svg"  alt="Български превод на iGO Nextgen" title="Български превод на iGO Nextgen">
+<img src="https://https://img.shields.io/github/release/{username}/CrasHandBurN/Nextgen.svg">
+<img src="https://img.shields.io/github/last-commit/CrasHandBurN/Nextgen.svg"  alt="Български превод на iGO Nextgen" title="Български превод на iGO Nextgen">
 [![Build Status](https://img.shields.io/github/forks/CrasHandBurN/Nextgen.svg?style=plastic)](https://github.com/CrasHandBurN/Nextgen)
 [![Build Status](https://img.shields.io/github/stars/CrasHandBurN/Nextgen.svg?style=plastic)](https://github.com/CrasHandBurN/Nextgen)
 [![License](https://img.shields.io/github/license/CrasHandBurN/Nextgen.svg?style=plastic)](https://github.com/CrasHandBurN/Nextgen)
