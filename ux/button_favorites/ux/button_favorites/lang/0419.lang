@@ -1,0 +1,9 @@
+﻿[words]
+Show Favorites="Кнопка 'Favorites'"
+Favorites="Фаворити"
+
+Add Favorite on fly="Добавить Избранное на-лету"
+'Add Favorite on fly' Button="Кнопка 'Добавить Избранное на лету'"
+Sample="Пример"
+This field is just an example="Это поле является лишь примером"
+plugin~button_favorites="button_favorites: кнопка работы с фаворитами"

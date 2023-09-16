@@ -1,0 +1,11 @@
+﻿[words]
+plugin~cockpit_buttons_on_speed="cockpit_buttons_on_speed: настройки условий исчезновения кнопок кабины"
+
+The Cockpit buttons is not dependent on the speed.="Кнопки в кабине не зависят от скорости."
+The Cockpit buttons is depending on the speed %s.="Кнопки в кабине зависят от скорости %s."
+Hide the 'Cockpit' buttons depending on the speed settings="Настройки условий исчезновения кнопок кабины"
+Delay before hide after show="Задержка перед исчезновением после показа"
+Speed to hide button="Скорость для исчезновения"
+Never="Никогда"
+Hide the 'Cockpit' buttons depending on the speed="Прятать кнопки кабины в зависимости от скорости"
+"Hide the 'Cockpit' buttons depending on side panel"="Прятать кнопки кабины в зависимости от боковой панели"

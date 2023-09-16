@@ -1,0 +1,34 @@
+﻿[words]
+plugin~TachoGuard="TachoGuard: Тахограф"
+'Tacho Guard' Running="'Tacho Guard' активний?"
+iGO 'Tacho Guard' Running="iGO 'Tacho Guard' активний?"
+Graph or Chart="Граф чи Діаграма"
+'Tacho Guard' Button in Cockpit="'Tacho Guard' кнопка у кабіні"
+'Tacho Guard' Button in Quick="'Tacho Guard' кнопка у швидкому меню"
+Graph="Граф"
+Chart="Діаграма"
+
+Truck timers="Глобальні таймери для трака"
+
+max_driving_time="Максимальний час безперервного водіння"
+max_daily_driving_time="Максимальний денний час водіння"
+min_break_time="Мінімальний час відпочинку"
+max_break_time="Максимальний час відпочинку"
+pre_warn_time="Час до попередження про подію"
+start_stop_limit="Ліміт неактивності руху"
+
+Driving time="Час водіння"
+Resting time="Час відпочинку"
+POA time="Час очікування"
+Working time="Час роботи"
+
+Driving time now="Зараз час водіння"
+Resting time now="Зараз час відпочинку"
+POA time now="Зараз час очікування"
+Working time now="Зараз час роботи"
+
+The power is disconnected and speed is about zero. Please choose the tachograph regime.="Живлення відключено та швидкість дорівнює нулю. Будь-ласка, виберіть режим тахографа."
+Forced offer from the panel="Що у вас зараз?"
+"You have been standing for %s minutes. \nWas it waiting time or rest time?"="Ви стоїте вже %s хвилин. \nЦе був Час очікування, чи Час відпочинку?"
+Make a choice!!!="Зробіть вибір!!!"
+

@@ -1,0 +1,32 @@
+﻿[words]
+plugin~poi_around="poi_around: POI вокруг"
+stopover="Вокруг остановки"
+destination="Вокруг назначения"
+poiaround="POI вокруг"
+
+Around Destination="Вокруг назначения"
+Show List="Показать список"
+Hide List="Спрятать список"
+Nearest distance %s="Ближайшая дистанция %s"
+Detour length="Отклонение от маршрута"
+PLEASE WAIT="Подождите"
+'POI around' Button="Кнопка 'POI around'"
+Tourist Attractions="Туристические места"
+Places Around Stopover="Места вокруг остановки"
+Places Around Destination="Места вокруг назначения"
+are not around in %s="в радиусе %s отсутствуют"
+Show POI around setting="'Show POI around' настройки"
+Button in Cockpit="Кнопка в кабине"
+Button in QuickMenu="Кнопка в быстром меню"
+Show activity time="Время демонстрации"
+Around area size="Радиус"
+Maximum result="Количество POI"
+
+Add category="Дбавить категории"
+Show POI around settings="'POI around' настройки"
+POI icon type="Тип иконки POI"
+
+To select press button: %s="Нажмите кнопку: %s"
+Переглянути карту на бічній панелі="Просмотреть карту на боковой панели"
+
+plugin~poi_around="poi_around: POI вокруг"

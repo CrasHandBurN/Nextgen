@@ -1,0 +1,55 @@
+﻿[words]
+plugin~VWTripComputer="VWTripComputer: розвинений Trip Computer"
+GoogleRoute="Google маршрут"
+'Alternative route' Button="Кнопка 'Альтернативний маршрут'"
+FAST="Швидкий маршрут"
+SHORT="Короткий маршрут"
+SIMPLE="Простий маршрут"
+GREEN="Екологічний маршрут"
+SCENIC="Мальовничий маршрут"
+MOST_FREEWAYS="По автострадах"
+LEAST_FREEWAYS="Без автострад"
+TWISTY="Звивистий маршрут"
+
+GPS status="GPS статус"
+Long address="Довга адреса"
+Short address="Коротка адреса"
+Address to read="Повна адреса"
+Time type="Тип часу"
+Address type="Тип адреси"
+Destination type="Тип цілі"
+Define point now="Приготуйте місця зараз"
+
+'VW Trip-Computer' Button="Кнопка 'VW Trip-Computer'"
+
+Trip computer="Маршрутний комп'ютер"
+GPS info="GPS інформація"
+Save position="Зберегти позицію"
+Back to car=" Назад до машини"
+Trip info="Pезюме подорожі"
+Point on map="Огляд маршруту"
+Settings="Налаштування"
+Help="Допомога"
+Orientation="Орієнтація"
+North Up="Північ зверху"
+Destination Up="Пункт призначення зверху"
+With rotation="З ротацією"
+
+To save="Зберегти"
+
+Current speed is %s.="Поточна швидкість %s."
+Limit is %s.="Обмеження %s."
+Total distance is %s.="Вся пройдена відстань %s."
+
+Current time is %s.="Поточний час %s."
+Arrival time is %s.="Час прибуття %s."
+Total time is %s.="Час в дорозі %s."
+
+SplitScreen POI on map="SplitScreen POI на мапі"
+
+My Car="Автомобіль"
+You did not save the position of your car="Ви не зберегли положення свого автомобіля"
+Remember where you left it="Згадуйте, де ви його залишили"
+
+Google Route="Google маршрут"
+From current position="З поточного місця"

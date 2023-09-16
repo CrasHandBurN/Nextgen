@@ -1,0 +1,5 @@
+﻿[words]
+plugin~button_GPS_2D_3D="button_GPS_2D_3D: кнопка переключения вида карты"
+Button 2D3D="Кнопка 2D3D"
+
+Show Left Side QuickMenuIcon="Кнопка быстрого меню"

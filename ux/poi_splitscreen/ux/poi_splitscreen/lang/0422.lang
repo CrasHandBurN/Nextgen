@@ -1,0 +1,6 @@
+﻿[words]
+Split Screen Close Timer="Таймер закриття split-екрану"
+POI selector="Селектор POI"
+Select Categories="Вибрати катенорії"
+plugin~poi_splitscreen="poi_splitscreen: POI splitscreen"
+POI with Address="POI з адресою"

@@ -1,0 +1,7 @@
+﻿[words]
+plugin~favorites_change="favorites_change: изменить групу POI"
+Change root="Изменить группу"
+Back="Назад"
+All roots="Все группы"
+Search by root="Поиск группы"
+Change root visibility="Изменить видиость группы"

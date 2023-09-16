@@ -1,0 +1,5 @@
+﻿[words]
+plugin~garbage_button="garbage_button: универсальная кнопка(Золотая рыбка)"
+"sc_ShowRouteOverView()"="Обзор маршрута"
+"VW_GoToDestinationByGoogle()"="Google маршрут"
+"sc_OpenNewRoute()"="Новый маршрут"

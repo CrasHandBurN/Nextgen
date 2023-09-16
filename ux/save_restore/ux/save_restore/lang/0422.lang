@@ -1,0 +1,11 @@
+﻿[words]
+NOT SAVED YET="ЩЕ НЕ ЗБЕРЕЖЕНО"
+"'LuaJava' should be loaded"="'LuaJava' має бути завантажений"
+Save or Restore Settings="Збереження чи відновлення налаштувань"
+Restore="Відновити"
+"Restoring will be canceled in %s seconds.\nPlease select \"Restore\" or \"Cancel\""="Відновлення буде скасовано через %s секунд. \nВиберіть \"Відновити\" або \"Скасувати\""
+"Saving will be canceled in %s seconds.\nPlease select \"Save\" or \"Cancel\""="Збереження буде скасовано через %s секунд. \nВиберіть \"Зберегти\" або \"Скасувати\""
+"Save/Restore Settings"="Налаштування збереження\відновлення параметрів"
+plugin~save_restore="save_restore: збереження чи відновлення налаштувать"
+
+If done, the program will restart in two seconds="Якщо виконати, то програма перезавантажиться через дві секунди"
