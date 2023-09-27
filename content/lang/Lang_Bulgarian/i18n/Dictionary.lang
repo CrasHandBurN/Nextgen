@@ -910,8 +910,11 @@ $ui.multiedit.cursor_pos$/$ui.multiedit.text_len$="$ui.multiedit.cursor_pos$/$ui
 'Show SpeedCam' zoom="Камери за скорост - мащаб" ; Arimi
 'Show Speedcam' Settings="Настройка на камерите и предупрежденията" ; Arimi
 'Speedcam alert' Button="Известия за камери"
-'Suspend/Resume' Button="Бутон „Пауза-Продължи“"
-'TC Map' Button="Бутон „Карта на маршрута“"
+'Suspend/Resume' Button="Бутон «Пауза-Продължи»"
+'TC Map' Button="Бутон «Карта на маршрута»"
+
+'Itinerary Mini' Button="Мини маршрут"
+
 'Tacho Guard' Button in Cockpit="Тахограф в кокпита"
 'Tacho Guard' Button in QuickMenu="Тахограф в бързото меню"
 'Tacho Guard' Button="Тахограф"
