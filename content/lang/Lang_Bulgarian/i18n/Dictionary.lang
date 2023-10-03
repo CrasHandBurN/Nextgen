@@ -909,11 +909,9 @@ $ui.multiedit.cursor_pos$/$ui.multiedit.text_len$="$ui.multiedit.cursor_pos$/$ui
 'Speedcam alert' Button="Известия за камери"
 'Suspend/Resume' Button="Бутон «Пауза-Продължи»"
 'TC Map' Button="Бутон «Карта на маршрута»"
-
-'Itinerary Mini' Button="Мини маршрут"
-
 'Tacho Guard' Button in Cockpit="Тахограф в кокпита"
 'Tacho Guard' Button in QuickMenu="Тахограф в бързото меню"
+'Tacho Guard' Button in Quick="Тахограф в бързото меню"
 'Tacho Guard' Button="Тахограф"
 'Tacho Guard' Running="Тахо охрана ли да остане активен?"
 'Take a break' Button in Cockpit="Направи почивка в кокпита"  ; Arimi
@@ -4049,7 +4047,7 @@ Google="Google търсене"
 GoogleRoute="Google маршрут"
 Goto shop and download.="Отидете в магазина и изтеглете."
 Gpspower.net="Gpspower.net"
-Graph or Chart="Графика или Диаграма"
+Graph or Chart="Графика или диаграма"
 Graph="Графика"
 Graphic Indicator Settings="Настройка на графичния индикатор" ; Arimi
 Gray scheme="Сива схема"
