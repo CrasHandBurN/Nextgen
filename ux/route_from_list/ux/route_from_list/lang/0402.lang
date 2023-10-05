@@ -1,0 +1,6 @@
+[words]
+Route from list="Маршрут от списъка"
+plugin~route_from_list="route_from_list: изграждане на маршрут от списък с точки"
+Route step by step="Маршрут стъпка по стъпка"
+Route all at once="Маршрут наведнъж"
+"Please define destinatiom!"="Първо определете дестинацията!"

@@ -1,0 +1,8 @@
+[words]
+Left back="Отзад вляво"
+Left="Отляво"
+Right="Отдясно"
+Right back="Отзад вдясно"
+Back="Отзад"
+Straight="Отпред"
+plugin~SetOfTools="SetOfTools: плъгин инструмент"

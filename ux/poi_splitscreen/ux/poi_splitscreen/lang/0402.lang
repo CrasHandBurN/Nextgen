@@ -1,0 +1,6 @@
+[words]
+Split Screen Close Timer="Таймер за затваряне на разделен екран"
+POI selector="POI селектор"
+Select Categories="Изберете категории"
+plugin~poi_splitscreen="poi_splitscreen: POI разделен екран"
+POI with Address="POI с адрес"

@@ -1,0 +1,13 @@
+[words]
+plugin~smartnavi="smartnavi: доп. информация за обходи, задръствания и паркиране"
+QuickDetour~="обход"
+QuickDetour~left="наляво"
+QuickDetour~right="надясно"
+QuickDetour~sharp left="рязко наляво"
+QuickDetour~sharp right="рязко надясно"
+QuickDetour~slight left="плавно наляво"
+QuickDetour~slight right="плавно направо"
+QuickDetour~straight="направо"
+QuickDetour~turn right="на десния завой"
+QuickDetour~turn left="на левия завой"
+Offer Real Time Alternative Routes if less="Предложи алтернативни маршрути, ако са по-малко"

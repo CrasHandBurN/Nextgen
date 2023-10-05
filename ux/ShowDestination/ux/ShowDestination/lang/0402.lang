@@ -1,0 +1,19 @@
+[words]
+plugin~ShowDestination="Покажи дестинация: покажи дестинацията в страничната лента и автоматизирай пристигането"
+"You have reached the destination."="Стигнахте до целта си."
+
+'Show Destination' Button="Покажи дестинация - бутон"
+"Destination!"="Дестинация!"
+'Show Destination' Settings="Покажи дестинация-настройки."
+Show Destination point on route start="Покажи дестинацията на картата при старт"
+Show Destination point near finish="Покажи дестинацията при приближаването и"
+Near distance to show="Приближавате до вашата дестинация"
+'Show Destination' zoom="Покажи дестинация-мащаб."
+'Show Destination' time="Покажи дестинация-време."
+
+"Your destination: %s. "="Вашата дестинация: %s. "
+"Distance: %s. "="Разстояние: %s. "
+
+"For the successful operation of the utility 'ShowDestination.zip' you need 'Discovery.zip'. The utility 'ShowDestination.zip' will be disabled."="„ShowDestation.zip“ изисква „Discovery.zip“, за да работи успешно. Помощната програма „ShowDestination.zip“ ще бъде изключена."
+
+Google streetview="Google панорама"

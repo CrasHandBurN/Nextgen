@@ -1,0 +1,12 @@
+[words]
+plugin~screen_saver="screen_saver: скрийнсейвър"
+Plain panel="Монохромен панел"
+Screen Saver settings="Настройки на скрийнсейвъра"
+Screen Saver conditions settings="Настройки на условията"
+POI Pictures Viewer="Преглед на POI изображения"
+User Pictures Viewer="Преглед на потребителски снимки"
+Folder Up="Папката нагоре"
+
+Speed dependency="В зависимост от скоростта: по-малко от текущото ограничение"
+City dependency="В зависимост от мястото: само извън населеното място"
+Maneuver dependency="В зависимост от следващата маневра: точно след известието"

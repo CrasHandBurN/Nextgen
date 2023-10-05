@@ -1,0 +1,5 @@
+[words]
+plugin~safe_mode="safe_mode: безопасен режим в случай на висока скорост"
+"Screen in Safe Mode. \nSpeed %s. \nLong click to leave safe mode."="Екрана е в безопасен режим.\nСкороста е %s. \nЗадържете, за да излезете от безопасният режим."
+Safe Mode="Безопасен режим"
+"Screen in Safe Mode. Speed %s. Long click to leave safe mode."="Екрана е в безопасен режим. Скороста е %s. Задържете, за да излезете от безопасният режим."

@@ -1,0 +1,21 @@
+[words]
+plugin~next_maneuver_overview="next_maneuver_overview: преглед на следваща маневра"
+Show grath 'Approach to maneuvering'="Покажи графика „Маневра за приближаване“"
+
+Maneuver 2D-overview Button in Cockpit="2D преглед в кокпита"
+Maneuver 2D-overview Button in QuickMenu="2D-преглед в бързото меню"
+Maneuver 2D-overview Button="Преглед на 2D маневра - бутон"
+Maneuver 2D-overview settings="Настройка за 2D преглед на маневра"
+Audio Signal Setting="Настройка на аудио сигнала"
+Distance(NO-LESS) to Show 2D-preview="Разстояние (НЕ ПО-МАЛКО) за 2D предварителен преглед"
+Maneuver 2D-overview="2D преглед на маневра"
+Time to Maneuver="Време до маневра"
+Distance(NO-LESS) to Maneuver="Разстояние (НЕ ПО-МАЛКО) до маневрата"
+Maneuver 2D-overview zoom="2D мащаб за преглед на маневра"
+
+Maneuver 2D-preview="Преглед на 2D маневра"
+Maneuver 2D-preview time="Време за показване на 2D преглед на маневрата"
+Maneuver 2D-preview zoom="Мащаб за 2D преглед на маневра"
+
+Next maneuver preview="Преглед на следващата маневра"
+Next maneuver="Следваща маневра"

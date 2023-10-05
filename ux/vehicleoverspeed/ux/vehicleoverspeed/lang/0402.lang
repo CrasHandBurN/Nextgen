@@ -1,0 +1,9 @@
+[words]
+plugin~vehicleoverspeed="vehicleoverspeed: контрол на скороста на профила от вида на превозното средство"
+Vehicle profile limit using="Използвай лимита за скорост на профила"
+Permanent signal="Постоянно предупреждавай"
+Choose vehicle overspeed signal="Изберете предупредителен сигнал"
+Vehicle profile overspeed warning="Предупреждение за превишена скорост за профила на превозното средство"
+Vehicle profile overspeed warning. Audio Signal Setting="Предупреждение за превишена скорост на профила на превозното средство. Настройка на аудио сигнала"
+The maximum speed for %s is %s.="Максималната скорост за %s е %s."
+Recommended maximum speed %s="Препоръчителната максимална скорост е %s"
