@@ -1,0 +1,6 @@
+[words]
+plugin~garbage_button="garbage_button: Универсален бутон (Златна рибка)"
+"sc_ShowRouteOverView()"="Преглед на маршрута"
+"W_TripInfoVW_mini(true)"="Резюме на пътуването"
+"VW_GoToDestinationByGoogle()"="Google маршрут"
+"sc_OpenNewRoute()"="Нов маршрут"

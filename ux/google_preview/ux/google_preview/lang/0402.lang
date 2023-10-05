@@ -1,0 +1,20 @@
+[words]
+not exist="не съществува"
+plugin~google_preview="google_preview: преглед на мястото с помощта на Google Maps"
+"'Google preview' Button"="'Google preview' бутон"
+Current point="Текуща позиция"
+VIA point="Междинна точка"
+Destination point="Крайна цел"
+TMC point="TMC позиция"
+View type="Тип преглед"
+
+geo="Карта"
+streetview="Панорама"
+
+Base map="Базова карта"
+roadmap="Карта"
+satellite="Спътник"
+terrain="Пейзаж"
+
+Google map View="Google map преглед"
+Wiki info="Описание на местоположението"

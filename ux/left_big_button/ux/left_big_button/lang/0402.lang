@@ -1,0 +1,14 @@
+[words]
+plugin~left_big_button="left_big_button: голям бутон отляво"
+Show Left Side Tolerance Overspeed="Покажи отляво превишението на максималната скорост, като вземете предвид и толеранса"
+Left Side Buttons="Голям бутон отляво
+"Buttons on screen: "="Бутони на екрана: "
+exceeded="превишено"
+
+Show Left Side TakeABreak="Контрол на времето за шофиране"
+Show Left Side POI_Info="Split POI-Info отляво"
+Show Left Side ToleranceOverspeed="Превишаване на максималната скорост отляво"
+Show Left Side Speedcam="Камера за скорост"
+Show Left Side TCMap="Бутон с карта на маршрута"
+
+"'TC Map' Button"="Карта на маршрута - бутон"

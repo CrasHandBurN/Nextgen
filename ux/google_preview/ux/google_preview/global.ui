@@ -1,3 +1,0 @@
-import "~/common/ui/google_preview.css"
-import "~/common/ui/google_preview.ui"
-import "~/common/ui/google_preview.lua"
