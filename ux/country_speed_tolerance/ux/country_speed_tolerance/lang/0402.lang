@@ -1,0 +1,13 @@
+[words]
+'Country Speed Tolerance' Button="'Толерантност на скорост в страната' бутон"
+Country Speed Tolerance="Толерантност на скоростта в страната"
+Country Speed Tolerance Dependencies="В зависимост на толерантността от страната"
+%s speed tolerance is %s %s.="Допустимо превишаване на скоростта в %s %s %s."
+plugin~country_speed_tolerance="country_speed_tolerance: скорост на толерантност в страната"
+Please define Home position="Моля, посочете \"Вкъщи\""
+"The \"Tolerance\" will be restored to \"Home\". Please select \"Restore\" or \"Cancel\".\n If no action is taken within 15 sec the change will be cancelled."="\"Толеранса\" ще бъде възстановен до \"Вкъщи\". Моля изберете \"Възстанови\" или \"Отмени\".\nАко не се предприеме действие в рамките на 15 секунди, промяната ще бъде отменена."
+Automatic tolerance is working="Вие сте в чужбина.\nАвтоматичният толеранс работи"
+Please define \"Home\"="Първо задайте \"Вкъщи\""
+In a city="Градско"
+Out of city="Извънградско"
+"Restore to \"Home\""="Възстанови \"Вкъщи\""

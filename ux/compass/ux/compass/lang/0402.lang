@@ -1,0 +1,13 @@
+[words]
+plugin~compass="compass: Компас"
+Compass Settings="Настройки на компаса"
+Enable Compass="Компас в кокпита"
+Enable destination arrow="Стрелка към финала"
+Compass Position and Size="Размер и позиция на компаса"
+\fnTransparency: \fb%s="\fnПрозрачност: \fb%s"
+Compass Size="Размер на компаса"
+Vertical correction (landscape)="Вертикална корекция(пейзаж)"
+Vertical correction (portrait)="Вертикална корекция(портрет)"
+Horizontal correction (landscape)="Хоризонтална корекция(пейзаж)"
+Horizontal correction (portrait)="Хоризонтална корекция(портрет)"
+Change Compass Style="Промяна на стила на компаса"

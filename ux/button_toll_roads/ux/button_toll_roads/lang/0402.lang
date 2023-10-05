@@ -1,0 +1,4 @@
+[words]
+'Toll Roads' Button="Платени пътища - бутон"
+Toll Roads="Платени пътища"
+plugin~button_toll_roads="button_toll_roads: бутон за избор на платени пътища"

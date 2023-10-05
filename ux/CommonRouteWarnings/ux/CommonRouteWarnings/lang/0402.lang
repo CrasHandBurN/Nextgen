@@ -1,0 +1,18 @@
+[words]
+plugin~CommonRouteWarnings="CommonRouteWarnings: предупреждения за пътни събития"
+Force refresh="Актуализирай данните"
+Jam duration %s="Дължината на задръстването е %s"
+Common Route Warnings Settings="Група съобщения за маршрута"
+On="Включено"
+Off="Изключено"
+Show Event Place="Покажи местоположението на събитието"
+'Events Place' zoom="'Events Place' мащаб"
+'Events Place' time="'Events Place' време"
+You are inside of event.="Вие сте вътре в събитието."
+inside="вътре"
+
+"Not available because of '[route] guidance_at_highway_entry'"="Невъзможно поради '[route] guidance_at_highway_entry=1'"
+"Not available because of '[debug] manoeuvre_at_tollgate'"="Невъзможно поради '[debug] manoeuvre_at_tollgate=1'"
+"Not available because of '[debug] enter_tunnel' or '[debug] leave_tunnel'"="Невъзможно поради '[debug] enter_tunnel=1' или '[debug] leave_tunnel=1'"
+
+Show Left Side CommonRouteWarning="Предупреждения по маршрута"

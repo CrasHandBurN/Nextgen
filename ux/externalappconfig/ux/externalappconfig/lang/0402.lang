@@ -1,0 +1,9 @@
+[words]
+plugin~externalappconfig="externalappconfig: Настройка за стартиране на външни приложения"
+External app config="Настройка за стартиране на външни приложения"
+Enter an App name="Въведете името на приложението"
+'External app config' Button="Настройка на външни приложения - бутон"
+Start App at start="Приложението да стартира заедно с iGO"
+Select App Icon="Изберете икона за приложението"
+Start App now="Стартирай приложението сега"
+Kill App now="Спри приложението сега"

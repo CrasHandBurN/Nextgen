@@ -1,0 +1,8 @@
+[words]
+'Speedcam alert' Button="Бутон за превключване на известията за камери"
+Speedcam alert="Известия за камери"
+plugin~button_speedcam_alert="button_speedcam_alert: превключвател на известниятс за камери"
+
+no voice="Без звук"
+on approach="При приближаване"
+if overspeed="При превишаване"

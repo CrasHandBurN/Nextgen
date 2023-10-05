@@ -1,0 +1,5 @@
+[words]
+Enough="Достатъчно!!!"
+Clear="Почисти"
+Text To Say="Текст за казване"
+plugin~button_voice_queue_cleaner="button_voice_queue_cleaner: бутон за изчистване на опашката от аудио съобщения"

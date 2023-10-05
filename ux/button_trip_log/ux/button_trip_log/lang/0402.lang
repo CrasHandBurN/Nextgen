@@ -1,0 +1,3 @@
+[words]
+'Trip Log' Button="Дневник за пътуването - бутон"
+plugin~button_trip_log="button_trip_log: превключвател на дневника за пътуването"

@@ -1,0 +1,5 @@
+[words]
+Theme changer="Тема на картата"
+'Theme changer' Button="Тема на картата - бутон"
+Restore primery color="Върни основната"
+plugin~button_theme_changer="button_theme_changer: бутон за промяна на цветовата схема"
