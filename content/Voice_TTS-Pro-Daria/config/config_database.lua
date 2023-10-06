@@ -29,7 +29,6 @@ connections = {
 	12256275, 12321812, 12256277, 12321814, 12387351, 6095896, 8328723, 8394260, 8328725, 8394262, 8459799, 6559256, 
 	}
 
-
 rules = {
 	{32, rangefun.common_then5_range_100, None, nil},
 	{16, rangefun.common_then4_range_100, None, nil},
@@ -65,8 +64,6 @@ rules = {
 	{16777280, rangefun.common_app_range_350, 128, nil},
 }
 
-
-
 conditions = {
 	{condfun.poi},
 	{condfun.nopoi, condfun.tL_e_2},
@@ -97,8 +94,6 @@ conditions = {
 	{condfun.exit_e_0},
 	{condfun.X_g_1},
 }
-
-
 
 id = {
 	continue_left = 1,
@@ -155,8 +150,6 @@ id = {
 	via_left = 52,
 	via_right = 53,
 }
-
-
 
 parameters = {
 	[id.continue_left] = {then_cnt = 1, CID = 7101463, L"в ляво", L"в ляво,", L"в ляво."},
@@ -413,7 +406,7 @@ poi = {
 	{cat="Petrol_Station\1Eco'",after=L"след бензиностанция Еко %destname.",before=L"преди бензиностанция Еко %destname.",by=L"при бензиностанция Еко %destname.",},
 	{cat="Petrol_Station\1Petrol",after=L"след Петрол %destname.",before=L"преди Петрол %destname.",by=L"при Петрол %destname.",},
 	{cat="Petrol_Station\1OMV'",after=L"след О Ем Ви %destname.",before=L"преди О Ем Ви %destname.",by=L"при О Ем Ви %destname.",},
-	{cat="Petrol_Station\1Shell'",after=L"след бензиностанция Шел %destname.",before=L"преди бензиностанция Шел %destname.",by=L"при бензиностанция Шел %destname.",},
+	{cat="Petrol_Station\1Shell'",after=L"след Шел %destname.",before=L"преди Шел %destname.",by=L"при Шел %destname.",},
 	{cat="Petrol_Station\1Lukoil'",after=L"след Лукойл %destname.",before=L"преди Лукойл %destname.",by=L"при Лукойл %destname.",},
 	{cat="Petrol_Station\1Rompetrol",after=L"след Ромпетрол %destname.",before=L"преди Ромпетрол %destname.",by=L"при Ромпетрол %destname.",},
 	{cat="Shopping\1Shop\1Food_and_Drink\1Lidl",after=L"след Лидъл %destname.",before=L"преди Лидъл %destname.",by=L"при Лидъл %destname.",},
@@ -501,4 +494,3 @@ then_types = {
 	["then4"] = 17,
 	["then5"] = 33,
 }
-

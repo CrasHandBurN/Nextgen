@@ -1,5 +1,6 @@
 ﻿module("VOICE")
 
+
 ----------------------------------------------------------------------------------------------------
 ---------------------------|  V O I C E   T R A N S F O R M   U T I L S  |--------------------------
 ----------------------------------------------------------------------------------------------------
@@ -53,8 +54,6 @@ local oh_formatters = {
     {L" 0 ",L" o "},
 }
 
-
-
 local function format_number(str)
     if type(str) ~= "wstring" then
         ASSERT(FALSE, "The input of format_number must be wstring. Type: "..type(str))
@@ -100,8 +99,6 @@ local function is_road_number(str)
     else return false end
 end
 ]]
-
-
 
 local tail_replace_map = {
 	{L"%(E%)",L"Източно"},
@@ -506,4 +503,3 @@ function timeto(timeto)
     end
     return hournew .. minsnew
 end
-
