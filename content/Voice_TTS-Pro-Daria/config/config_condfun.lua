@@ -1,15 +1,16 @@
 module("VOICE")
 
-
-
 distance_definitions = {
 	["0"] = {0,0,0},
 	["100"] = {100,100,100},
 	["1000"] = {1000,1000,1000},
 	["100000"] = {100000,100000,100000},
+	["120"] = {120,120,120},
+	["170"] = {170,170,170},
 	["250"] = {250,250,250},
 	["280"] = {280,280,280},
 	["40"] = {40,40,40},
+	["20"] = {20,20,20},
 	["2000"] = {2000,2000,2000},
 	["30"] = {30,30,30},
 	["300"] = {300,300,300},
@@ -17,16 +18,18 @@ distance_definitions = {
 	["350"] = {350,350,350},
 	["500"] = {500,500,500},
 	["5000"] = {5000,5000,5000},
+	["60"] = {60,60,60},
+	["80"] = {80,80,80},
 	["70"] = {70,70,70},
 	["90"] = {90,90,90},
 	["800"] = {800,800,800},
 }
 
-
-
 rangefun = {
 	common_app_equal_300 = -1,
 	common_app_range_100 = -1,
+	common_app_range_120 = -1,
+	common_app_range_170 = -1,
 	common_app_range_250 = -1,
 	common_app_range_280 = -1,
 	common_app_range_350 = -1,
@@ -34,9 +37,13 @@ rangefun = {
 	common_drive_range_3000 = -1,
 	common_now_equal_30 = -1,
 	common_now_equal_70 = -1,
+	common_now_equal_80 = -1,
 	common_now_range_0 = -1,
+	common_now_range_20 = -1,
+	common_now_range_60 = -1,
 	common_now_range_40 = -1,
 	common_now_range_70 = -1,
+	common_now_range_80 = -1,
 	common_now_range_90 = -1,
 	common_pre_equal_800 = -1,
 	common_pre_range_500 = -1,
@@ -56,8 +63,6 @@ rangefun = {
 	highway_pre_range_2000 = -1,
 	highway_then3_range_300 = -1,
 }
-
-
 
 condfun = {
 	X_e_0 = -1,
