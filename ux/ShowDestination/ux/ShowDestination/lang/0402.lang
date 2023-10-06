@@ -1,7 +1,8 @@
 [words]
 plugin~ShowDestination="Покажи дестинация: покажи дестинацията в страничната лента и автоматизирай пристигането"
 "You have reached the destination."="Стигнахте до целта си."
-
+'Show Destination' Button in Cockpit="Покажи дестинация - бутон в кокпита"
+'Show Destination' Button in QuickMenu="Покажи дестинация - бутон в бързото меню"
 'Show Destination' Button="Покажи дестинация - бутон"
 "Destination!"="Дестинация!"
 'Show Destination' Settings="Покажи дестинация-настройки."

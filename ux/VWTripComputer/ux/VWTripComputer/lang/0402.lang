@@ -21,6 +21,7 @@ Destination type="Вид цел"
 Define point now="Подгответе точките сега"
 
 'VW Trip-Computer' Button="Бутон „VW Бордови компютър“."
+
 Trip computer="Бордови компютър"
 GPS info="GPS информация"
 Save position="Запазване на позицията"
