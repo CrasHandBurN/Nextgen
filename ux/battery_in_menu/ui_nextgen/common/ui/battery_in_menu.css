@@ -1,0 +1,19 @@
+
+SPRITE.battery_menu {
+	align: "RIGHT";
+	valign: (%lua.ShowBatteryPercentInMenu ? "BOTTOM" : "CENTER");
+	visible: ( %lua.ShowBatteryInMenu );
+	z: (%navigation.is_in_simulation ? 30 : 2); img: (%lua.ShowBatteryPercentInMenu ? "spr_battery_h.svg" : "spr_battery_v.svg"); phase: ( %power.battery_phase );
+}
+
+TEXT.battery_cockpit_text {
+	font: defaultbd;
+	color: (%power.real_battery_percent < 16 ? #FF0000 : (%power.real_battery_percent < 51 ? #FF8000 : map_main_color));
+	align:"RIGHT";
+	z: (%navigation.is_in_simulation ? 32 : 4);
+	text:(towstring(%power.real_battery_percent) + "%");
+	visible: (%lua.ShowBatteryInMenu && %lua.ShowBatteryPercentInMenu);	
+}
+
+@import "~/common/ui/battery_in_menu_landscape.css" landscape;
+@import "~/common/ui/battery_in_menu_portrait.css" portrait;

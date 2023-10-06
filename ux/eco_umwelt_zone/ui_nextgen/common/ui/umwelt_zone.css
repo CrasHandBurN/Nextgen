@@ -1,0 +1,18 @@
+DIV.umweltzone {
+	w:umwelt_warning_w;
+	h:umwelt_warning_h;
+}
+
+DISTTEXT.font_umweltdisttext.umweltdist{
+	left:0;
+	top:0;
+	align:"center";
+	valign:"center";
+	font:"defaultbd";
+	color:btn_main_color;
+	z:50;
+	fontsize:fontsize_umweltdisttext !important;
+}
+
+@import "~/common/ui/umwelt_zone_landscape.css" landscape;
+@import "~/common/ui/umwelt_zone_portrait.css" portrait;

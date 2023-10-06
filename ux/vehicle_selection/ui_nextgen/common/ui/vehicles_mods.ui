@@ -1,0 +1,50 @@
+<userlist lm_PopoverOffRoad text="str" onrelease="ui">
+	<row text="On-road"  onrelease='sc_NavModeChange(false)' />
+	<row text="Off-road" onrelease='sc_NavModeChange(true)' />
+</userlist>
+
+<modify lm_RouteWarningTypes>
+	<insert after="default">
+		<row EditCurrent  prio=100 text="Vehicle" onrelease=sc_EditCurrentVehicleProfile   details=(sc_GetVehicleTypeFiel(%mydata.vehicle_profile.selected_profile, "name")) visible=(%mydata.vehicle_profile.list.size == 1) type="" />
+		<row EditVehicles prio=110 text="Vehicle" onrelease='uieffect:GRAB() NEXTSTATE( st_SettingVehicle, "fade", 1, "" )' details=(sc_GetVehicleTypeFiel(%mydata.vehicle_profile.selected_profile, "name")) visible=(%mydata.vehicle_profile.list.size > 1) type="" />
+		<row NavMode      prio=300 text="Navigation Mode" details=(%lua.ptp_navigation ? m_i18n("Off-road") : m_i18n("On-road")) haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_PopoverOffRoad")' type="" />
+	</insert>
+</modify>
+
+<userlist lm_localmenu_empty_settingvehicle text="str" icon="str" onrelease="ui" enable="bool" />
+; ---------------- ari vehicle zoom --------------------
+<!ENABLE OVERRIDE>
+<layer ui_VisualCarModels z=41>
+	<implementation>
+		<property carIndex value=(%map.car_display.models.index) />
+		<property carLastIndex value=(%map.car_display.models.lastindex) />
+	</implementation>
+	
+	<DIV class="navigationmap">
+		<DIV class="main">
+			<BUTTON class="btn_main 21_21"  onrelease=(%lua.CarZoomMode ? sc_CarZoomMode_Off : sc_CarZoomMode_On) onlongclick=sc_CarSize_Reset>
+				<TEXT text="Car size" top=0 bottom=0 left=0 right=0 align="CENTER" valign="CENTER" wordwrap=1 z=45 />
+			</BUTTON>
+			<BUTTON class="btn_main 11_21"  visible=(%lua.CarZoomMode)>
+				 <TEXT class="listitem" z=45 left=7% right=7% top=5% bottom=5% align="CENTER" valign="CENTER" text=((L"" + (%lua.APVehicle_size)) + L"%") />
+			</BUTTON>
+			<BUTTON class="btn_main 31_21"  visible=(%lua.CarZoomMode)>	 
+   		 		<HSMARTSCROLL class=scroll left=3% right=3% top=15%  z=50 dragable=1 valuemodel="lua.APVehicle_size" min=50 max=300 onrelease=sc_CarZoomChanged />
+			</BUTTON>
+		</DIV>
+		<SECTIONMARKER class="mapheader" />
+		<HBOX class="carmodel">
+			<BUTTON class="mapheader btn_prev fill" onrelease={if (carIndex > -1) {%map.car_display.models.index = carIndex - 1} else {%map.car_display.models.index = carLastIndex}} enable=(%map.car_display.models.size > 1) box_align="stretch" flex=1>
+				<SPRITE class="btn_map prev icon svg" />
+			</BUTTON>
+			<BOX>
+				<TEXT class="title header carmmodel name" text=(%map.car_display.models[current].name || m_i18n("Default Car")) box_align="CENTER" flex=3 />
+				<TEXT class="title header carmmodel counter" align="RIGHT" text=(( L"" + (carIndex + 2)) + L"/" + (carLastIndex + 2)) flex=1 />
+			</BOX>														
+			<BUTTON class="mapheader btn_next fill" onrelease={if (carIndex == carLastIndex) {%map.car_display.models.index = - 1} else {%map.car_display.models.index = carIndex + 1}} enable=(%map.car_display.models.size > 1) box_align="stretch" flex=1>
+				<SPRITE class="btn_map next icon svg" />
+			</BUTTON>
+		</HBOX>
+	</DIV>
+</layer>
+<!DISABLE OVERRIDE>

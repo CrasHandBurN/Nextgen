@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Generator: Adobe Illustrator 17.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="120px"
+	 height="120px" viewBox="0 0 120 120" enable-background="new 0 0 120 120" xml:space="preserve">
+<g id="Layer_4" display="none">
+	<circle display="inline" opacity="0.5" fill="#DF1F26" cx="60" cy="60" r="60"/>
+	<rect x="6.5" y="6.5" display="inline" opacity="0.5" fill="#3B4FA1" width="107" height="107"/>
+</g>
+<g id="normal">
+	<g>
+		<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#FFFFFF" points="64.389,36.294 64.389,57.927 91.88,65.231 
+			89.787,72.973 58.5,64.662 55.624,64.662 55.624,63.899 55.624,61.731 55.624,36.294 64.389,36.294 		"/>
+		<path fill="#FFFFFF" d="M60,113.5c-29.5,0-53.5-24-53.5-53.5S30.5,6.5,60,6.5s53.5,24,53.5,53.5S89.5,113.5,60,113.5z M60,15.804
+			c-24.369,0-44.196,19.826-44.196,44.196S35.631,104.196,60,104.196S104.196,84.369,104.196,60S84.369,15.804,60,15.804z"/>
+	</g>
+</g>
+<g id="active">
+	<g>
+		<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#FFFFFF" points="64.389,36.294 64.389,57.927 91.88,65.231 
+			89.787,72.973 58.5,64.662 55.624,64.662 55.624,63.899 55.624,61.731 55.624,36.294 64.389,36.294 		"/>
+		<path fill="#FFFFFF" d="M60,113.5c-29.5,0-53.5-24-53.5-53.5S30.5,6.5,60,6.5s53.5,24,53.5,53.5S89.5,113.5,60,113.5z M60,15.804
+			c-24.369,0-44.196,19.826-44.196,44.196S35.631,104.196,60,104.196S104.196,84.369,104.196,60S84.369,15.804,60,15.804z"/>
+	</g>
+</g>
+<g id="disabled" opacity="0.2">
+	<g>
+		<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#FFFFFF" points="64.389,36.294 64.389,57.927 91.88,65.231 
+			89.787,72.973 58.5,64.662 55.624,64.662 55.624,63.899 55.624,61.731 55.624,36.294 64.389,36.294 		"/>
+		<path fill="#FFFFFF" d="M60,113.5c-29.5,0-53.5-24-53.5-53.5S30.5,6.5,60,6.5s53.5,24,53.5,53.5S89.5,113.5,60,113.5z M60,15.804
+			c-24.369,0-44.196,19.826-44.196,44.196S35.631,104.196,60,104.196S104.196,84.369,104.196,60S84.369,15.804,60,15.804z"/>
+	</g>
+</g>
+</svg>

@@ -1,0 +1,33 @@
+/* ---------------------- WANDEL™ mod -- 20.08.2020 ---------------- */
+DIV.sidepanel.speedcam {
+	w: alertpoint_panel_size;
+}
+
+DIV.speedcam_icons{
+	bottom: 0;
+	w: 40%;
+}
+
+BOX.speedlimit_speedcam{
+	orientation:"horizontal";
+}
+
+BOX.speedlimit{
+	box_align:"stretch"; 
+}
+
+BOX.speedlimit_speedcam>BOX.speedlimit{
+	desired_h:cockpit_warning_h ;
+}
+
+DANGERZONE,BOX.speedcam{
+	box_align:"stretch"; 
+	desired_w:cockpit_warning_w;
+}
+
+.list_control_cam{
+	left: 0; top: 0; right: 0; bottom: 0; z:100;
+	row:4; col:8;
+	showselection:0;
+}
+

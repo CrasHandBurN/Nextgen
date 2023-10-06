@@ -1,0 +1,101 @@
+BUTTON_ICON.btn_map.routecontrol {
+	box_align: "stretch";
+	desired_h: notify_list_h;
+}
+
+SPRITE.VW_logo {
+	left:0;
+	right:0; 
+	top:0;
+	bottom:0;
+	img:(%navigation.car.current_country == "_UKR" ? "Arms_of_Ukraine.svg" : ui_Cockpit.country_flag);
+	align:"center";
+	valign:"center";
+	zoom:900;
+}
+
+SPRITE.substrate {
+	left:0; right:0; top:0; bottom:0; resize_bmp:1;
+	alpha:%lua.aCockpitTransparency;
+/*	img:"spr_driveralert_panel.bmp"; */
+	img:"btn_map.bmp#3";
+	opaque:1;
+}
+
+TABLE.VW_info_details {
+	left:0;	right:0; top:0;	bottom:0;
+	row:2; col:1;
+	COMPACT:1; 
+	box_align:"stretch"; 
+/*	R2L:1; flax:1; */
+	FILL_VERTICAL:0;
+}
+
+BUTTON.VW_info_details {
+	left:0;	right:0; top:0;	bottom:0;
+}
+
+TEXT.VW_info_details {
+	left:15%;
+	right:0; 
+	top:0;
+	bottom:0;
+	font:defaultbd; fontsize:fontsize_sec; color:map_main_color;
+	valign:"center";
+}
+
+SPRITE.VW_info_details {
+	left:0; right:0; top:0; bottom:0;
+	flex:1;
+	align:"left";
+	valign:"CENTER";
+	zoom:800;
+}
+
+BUTTON.VW_info_address {
+	left:0;
+	right:0; 
+	top:0;
+	bottom:0;
+	}
+
+TEXT.VW_info_address {
+	left:0;
+	right:0; 
+	top:0;
+	bottom:0;
+	font: defaultbd; fontsize: fontsize_sec; color: map_main_color;
+	paddingright:2; paddingleft:2; flex:1; 
+	align:"center"; valign:"center";
+}
+
+LIST2.VW_l2vehicle {
+	row:1;
+	col:7;
+	top:0; left:0; right:0;
+	h:notify_list_h;
+}
+
+SPRITE.zoomctrlTC {
+	right: (%lua.IsLandscape ? zoomcontrol_margin : (zoomcontrol_margin + mapcontrol_button_w)); 
+	bottom: zoomcontrol_margin;
+	h: (zoomcontrol_h * 3);
+	w:(sc_getScaleWidth(%map.point_on_mapsidepanel.zoom, %regional.units));
+	bmp:"spr_mapscale.bmp";
+	resize_bmp:1;
+	visible: ( %exists:oasis.travel && lua.MSG_Table.line[1] == "Point on map" );
+}
+
+TEXT.zoomctrlTC {
+	align: "CENTER";
+	valign: "TOP";
+	font: defaultbd;
+	fontsize: fontsize_info;
+	color: #FFFFFF;
+	color2: #000000;
+	glowtype: 4;
+	glowsize: 2;
+}
+
+@import "~/common/ui/TripComputerVW_landscape.css" landscape;
+@import "~/common/ui/TripComputerVW_portrait.css" portrait;

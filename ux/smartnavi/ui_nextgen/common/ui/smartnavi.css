@@ -1,0 +1,111 @@
+LIST2.list_control.detour{
+	box_align:"stretch"; bottom:0;  extra_scroll:0;
+	cellh:listitem_detour_h;
+}
+
+LIST2.list_control.detour > LISTCONTROL{
+	w: btn_scroll_detour_w;
+	right:(0 - btn_scroll_detour_w);
+}
+
+
+HBOX.detour_panel{
+	box_align:"stretch";
+	paddingleft:box_padding;
+	paddingright:box_padding;
+} 
+
+HBOX.detour_panel > VBOX{
+	box_align:"stretch";
+}
+
+HBOX.detour_panel > VBOX.listitem.icon {
+	max_w:66; 
+	can_shrink:0;
+	flex:1;
+}
+
+SPRITE.listitem.detour_panel.background {
+	left:0; top:0; right:0; bottom:0; position: "absolute";
+	img: ( sc_isPoiBranded(%*.poi.icon, 2) ? "poi_brand.svg" : "" );
+}
+
+SPRITE.listitem.icon_list.detour_panel{
+	desired_w: ( sc_isPoiBranded(%*.poi.icon, 2) ? brand_poi_image_w : svg_listitem_image_w );
+	desired_h: ( sc_isPoiBranded(%*.poi.icon, 2) ? brand_poi_image_h : svg_listitem_image_h );
+	ZOOM: ( sc_isPoiBranded(%*.poi.icon, 2) ?  "ZOOMVISIBLE" : 100%);
+	iconindex:2;
+}
+
+SPRITE.listitem.svg.quickdetour {
+	image_w: (2*svg_listitem_image_w);
+	image_h: (2*svg_listitem_image_h);
+}
+
+.font_quickdetour.twoline{
+	wordwrap:2;
+	leading: 0.8;
+	twolinesmall:3;
+	twolinesize:fontsize_map_msgbx;
+	align:"CENTER";
+	valign:"CENTER";
+}
+
+.font_quickdetour{
+    font:"defaultbd";
+	color:btn_main_color; color2:btn_main_color2; color3:btn_main_color3;
+	fontsize:fontsize_map_msgbx;
+	align:"CENTER";
+	valign:"CENTER";
+}
+
+.cockpit > .map_messagebox > TEXT.map_messagebox.detour{
+	top:text_padding_small; 
+	h:detour_text_h;
+	fontsize:fontsize_map_msgbx_sec;
+	leading:0.85;
+	wordwrap:3; 
+}
+
+VBOX.map_messagebox.detour{
+	right:0;
+	top:detour_text_h; bottom:map_messagebox_dialog_button_h;
+	paddingleft:box_padding; paddingright:listpos_w;
+	box_align:"stretch";
+	
+	
+}
+
+BOX.detour>SPRITE.searchprogress.wide{
+	left:0; right:0;
+	box_align:"center";
+}
+
+BOX.detour>VBOX{
+	box_align:"stretch"; align:"center";
+}
+
+BOX.detour>VBOX>*{
+	box_align:"stretch"; align:"center";
+	leading:0.95;
+}
+
+HBOX.detour_panel > VBOX.listitem.value{
+	flex:1;
+	paddingleft: box_padding_small; paddingbottom:box_padding_small;
+}
+
+HBOX.detour_panel > VBOX.listitem.value > DISTTEXT{
+	paddingleft:0;  flex:1;
+	fontsize:fontsize_main;
+}
+
+ROADSHIELDEDTEXT.detour{
+	fontsize:fontsize_map_msgbx_sec;
+	leading:0.85; wordwrap:2;
+	flex:2; 
+	align:"LEFT"; box_align:"stretch";
+}
+
+@import "~/common/ui/smartnavi_landscape.css" landscape;
+@import "~/common/ui/smartnavi_portrait.css" portrait;

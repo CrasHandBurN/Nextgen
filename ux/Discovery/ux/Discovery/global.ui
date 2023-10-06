@@ -1,0 +1,7 @@
+import "~/common/ui/Discovery.css"
+import "~/common/ui/PoiListUpload.lua"
+import "~/common/ui/DiscoverySidePanel.lua"
+import "~/common/ui/Discovery.ui"
+import "~/common/ui/Discovery.lua"
+import "~/common/ui/Discovery_mods.ui"
+

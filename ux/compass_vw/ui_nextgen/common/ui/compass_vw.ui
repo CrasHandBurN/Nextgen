@@ -1,0 +1,103 @@
+; --  Compass WANDEL™  -- 23.07.2020 -- 
+<modify ui_Cockpit>
+	<modify element="BUTTON_ICON[ONRELEASE=sc_ShowTripComputerSidePanel]" ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_Compass_Popover")' />
+</modify>
+
+<modify ui_SideList>
+	<modify element="BUTTON_ICON[ONRELEASE=sc_ShowTripComputerSidePanel]" ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_Compass_Popover")' />
+</modify>
+
+<userlist lm_Compass_Popover text="str" onrelease="ui" enable="bool" type="str" img="str">
+	<view visibility_filter=visible />
+	<default enable=1 type="Icon" />
+	<row text="Central point compass" img=(%lua.Compass_VW_enable ? "ico_On.svg" : "ico_Off.svg") onrelease={invert(%lua.Compass_VW_enable)} />
+</userlist>
+
+<modify lm_MapVisualSettingsExtended>
+	<insert after="default">
+		<row prio=1011 text="Multifunctional compass" icon="compass.svg" onrelease='sc_NextStateAnim(st_Multifunctional_compassSettings, "fade", 1, "" )' 
+			details=((%lua.Compass_VW_enable ? translate("On") : translate("Off")) + L" | " + (%lua.Compass_VW_SideBoxDependencies ? translate("On") : translate("Off"))) />
+	</insert>
+</modify>
+
+<userlist lm_Multifunctional_compassSettingsList text="str" type="str" icon="str" bmp="str" haspopover="bool" isselected="str" visible="bool" enable="bool" onrelease="ui" details="ui" dtooltip="str">
+	<view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 />
+		<row	text="Multifunctional compass" type="ChkOnOff" isselected="lua.Compass_VW_enable" />
+		<row	text="Multifunctional compass(Sideboxes dependencies)" type="ChkOnOff" isselected="lua.Compass_VW_SideBoxDependencies" />
+</userlist>
+
+<layer ui_Compass_VW z=25 visible=( %lua.Compass_VW_enable && !%lua.DragMode && (%lua.Compass_VW_SideBoxDependencies ? (!ui_PropLayer.TunnelOverviewVisible && !ui_PropLayer.JunctionViewVisible && (%lua.IsLandscape ? (!ui_PropLayer.SidePanelVisible && !ui_PropLayer.SplPoiListIsVisible && !ui_PropLayer.HwyPoiListIsVisible && !%screen.msgbox.is_onscreen) : 1)) : 1) ) >
+	<implementation>
+		<property via_pos value=( %route.list.navigated.waypoints.list.size > 2 ? (%lua.VIAOrDestination ? %route.list.navigated.waypoints.list[1].real_position : %route.list.navigated.waypoints.list[%route.list.navigated.waypoints.list.size - 1].real_position) : (%route.list.navigated.waypoints.list.size == 2 ? %route.list.navigated.waypoints.list[1].real_position : 0L) ) />
+		<property via_dir value=(%navigation.has_route ? direction(%navigation.car.position, via_pos, %navigation.car.heading) : 0.0) />
+
+		<property speed	value=( observe(%navigation.car.current_speed); VW_ArrowAngle((%navigation.car.current_speed // 1), "300.0") ) />
+		<property limit	value=( observe(%lua.SpeedLimitValue); VW_ArrowAngle(%lua.SpeedLimitValue, "300.0") ) />
+
+		<property hour	value=( observe(%gps.current_time); VW_ArrowAngle_time("hour", "12.0") ) />
+		<property min	value=( observe(%gps.current_time); VW_ArrowAngle_time("min", "60.0") ) />
+		<property sec	value=( observe(%gps.current_time); VW_ArrowAngle_time("sec", "60.0") ) />
+		<property eta	value=( observe(%navigation.eta_at_waypoint); VW_ArrowAngle_eta() ) />
+						
+		<property address value=( observe(%lua.VIAOrDestination, %lua.AddressLength, %navigation.destination_name_short, %navigation.next_viapoint_name_short); VW_VIAOrDestinationAddress() ) />
+
+		<property CompassTransparency value=14 />
+		<property area_W value=( observe(%screen.current_orientation); (%lua.IsLandscape ? PARENT.W : PARENT.H) ) />
+		<property area_H value=( observe(%screen.current_orientation); (%lua.IsLandscape ? PARENT.H : PARENT.W) ) />
+	</implementation>
+	<DIV class="cockpit">
+		<BUTTON class="compass_vw" onrelease={invert(%lua.SpeedOrClock)} onlongclick='Show_map_free_area("ui_TripInfoVW_mini") VW_SaySpeedOrClockInfo()' > 
+			;------------------------------------------limbo-----------------------------------------
+			<DIV class=VW_compass>
+				<SPRITE class=VW_compass img="compass.svg" phasename="back" z=20 alpha=CompassTransparency image_w=area_W image_h=area_H />
+				<SPRITE class=VW_compass img="compass.svg" phasename="limbo" z=21 rotate=( %map.primary.rotate * 360.0 / 4096.0 ) alpha=(CompassTransparency + 10) image_w=area_W image_h=area_H />
+				<SPRITE class=VW_compass img="compass.svg" phasename="cross" z=22 image_w=area_W image_h=area_H />
+				<SPRITE class=VW_compass img="compass.svg" phasename="arrow" z=23 rotate=( -via_dir * 360.0 / 4096.0 ) image_w=area_W image_h=area_H />
+			</DIV>
+			
+			<DIV class=VW_speedometer visible=(%lua.SpeedOrClock) z=24>
+				<SPRITE class=VW_speedometer img="speedometer.svg" phasename="limbo" z=20 alpha=CompassTransparency image_w=area_W image_h=area_H >
+					<TEXT class="distance_total" text=( VW_distanceND(%{"other.trips.@0"}.distance_total) ) top=(%lua.IsLandscape ? 68% : 61%) visible=( %navigation.has_route ) /> 
+				</SPRITE>
+				<SPRITE class=VW_speedometer img="speedometer.svg" phasename="limit" rotate=(-limit) z=21 visible=(%gps.blink) image_w=area_W image_h=area_H />
+				<SPRITE class=VW_speedometer img="speedometer.svg" phase=(ui_Cockpit.AdvancedSpeedLimitPhase) rotate=(-speed) z=22 image_w=area_W image_h=area_H />
+			</DIV>
+				
+			<DIV class=VW_clock visible=(!%lua.SpeedOrClock) z=24>								
+				<SPRITE class=VW_clock img="clock.svg" phasename="limbo" z=20 alpha=(CompassTransparency + 10) image_w=area_W image_h=area_H />
+				<SPRITE class=VW_clock img="clock.svg" phasename="eta" z=21		rotate=(-eta) visible=(%gps.blink) image_w=area_W image_h=area_H />
+				<SPRITE class=VW_clock img="clock.svg" phasename="hour" z=22	rotate=(-hour) image_w=area_W image_h=area_H />
+				<SPRITE class=VW_clock img="clock.svg" phasename="min" z=23 	rotate=(-min) image_w=area_W image_h=area_H />
+				<SPRITE class=VW_clock img="clock.svg" phasename="sec" z=24		rotate=(-sec) image_w=area_W image_h=area_H />
+			</DIV>				
+		</BUTTON>	
+	</DIV>
+</layer> 
+
+;=======================left buttons inclusion==================
+<!if condition=(Plugin.isLoaded("left_big_button"))>
+	<var ShowLeftSideCompass  = 0 permanent />
+	<!DISABLE COMPAT_UPCASE_ATTR_SELECTOR/>
+	<modify lm_LeftButtonsSettings>
+		<modify element="row[prio=10]" bmp="compass.svg" text="Show Left Side Compass" isselected="ui.ShowLeftSideCompass" visible=1 />
+	</modify>
+
+	<modify lm_N_buttons>
+		<modify element="row[prio=10]" name="ShowLeftSideCompass_VISIBLE" visible=(ShowLeftSideCompass) />
+	</modify>
+
+	<modify ui_LeftSide_Free_Button>
+		<insert last_child into="#table_left_big_buttons"> 
+					<BUTTON CLASS="left_big" 
+						VISIBLE=((%ui.lm_N_buttons.size && %ui.lm_N_buttons.list[0].name == "ShowLeftSideCompass_VISIBLE") ||
+							(%ui.lm_N_buttons.size > 1 && %ui.lm_N_buttons.list[1].name == "ShowLeftSideCompass_VISIBLE" && %lua.current_buttons == 2))
+
+						ONLONGCLICK='sc_NextStateAnim(st_LeftButtonsSettings, "fade", 1, "" )' 
+						ONRELEASE={invert(%lua.SpeedOrClock)}  >
+						<SPRITE CLASS="button map fill" />
+						<COMPASS TOP=2% BOTTOM=2% LEFT=2% RIGHT=2% />
+					</BUTTON>
+		</insert>
+	</modify>
+<!end/>

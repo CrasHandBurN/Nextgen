@@ -1,0 +1,14 @@
+TEXT.vehicle_maxspeed {
+	left: 5%; 
+	top: 5%; 
+	bottom: 5%; 
+	right: 5%; 
+	z: 56;
+	font: defaultbd; 
+	fontsize: (%mydata.vehicle_profile.list[%mydata.vehicle_profile.selected_profile].maxspeed > 99 ? 15 : 20);
+	color: map_main_color; 
+	align:"CENTER"; 
+	valign:"CENTER"; 
+	paddingleft: 0; 
+	paddingright: 0;
+}

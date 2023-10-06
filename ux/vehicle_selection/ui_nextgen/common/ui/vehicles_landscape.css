@@ -1,0 +1,55 @@
+.left2center{
+	align:"LEFT" !important;
+}
+
+.right2center{
+	align:"RIGHT" !important;
+}
+
+TEXT.listitem.icon.withbutton{
+	right:28%;
+	wordwrap:1;
+}
+
+DIV.summary > TABLE > .method .vehicletype>SPRITE{
+	left:70%;
+}
+
+DIV.summary > TABLE > .method  .vehicletype>TEXT{
+	left:0;
+}
+
+#lm_VehicleProfile_full>#hazard{
+	cellh:21%;
+}
+
+HBOX.listitem.freight {	
+	right: 75;
+}
+
+BOX.listitem.freight{
+	orientation:"horizontal";
+}
+
+
+
+
+/* ---------------- ari vehicle zoom -------------------- */
+
+/*.31_21   { w: 35%; h: 25%;}
+.21_21   { w: 35%; h: 25%;}*/
+.31_21   { w: 65%; h: 25%;}
+.21_21   { w: 30%; h: 25%;}
+.11_21   { w: 15%; h: 25%;}
+
+BUTTON.btn_main.21_21{
+	right:0; top:18%;
+}
+
+BUTTON.btn_main.11_21{
+	left:0; top:40%;
+}
+
+BUTTON.btn_main.31_21{
+	left:0; top:18%;
+}

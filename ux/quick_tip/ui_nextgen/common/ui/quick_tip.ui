@@ -1,0 +1,218 @@
+;--------------------------------WANDEL™---09.12.2020---------------------------------
+/*
+	<BUTTON_ICON left=0 right=0 top=0 bottom=0 onrelease=%*.onrelease onlongclick=%*.onlongclick 
+		icon=%*.bmp phasename=%*.phasename 
+		t_text=(wsplit(%*.text), L"%s")[1]) b_text=(wsplit(%*.text), L"%s")[2] // L"") />
+*/
+<element_template et_ListQBt >
+	<BUTTON class="listitem btn_map" onrelease=%*.onrelease onlongclick=%*.onlongclick >
+    	<SPRITE class="button map fill" />
+		<HBOX left=0 right=0 top=0 bottom=0>
+			<SPRITE class="btn_map svg" IMG=%*.bmp phasename=%*.phasename />
+		</HBOX>
+		<TEXT class="BTN_top_text" text=(VW_Return_button_text(%*.text, L"%s", 1)) />
+		<TEXT class="BTN_bottom_text" text=(VW_Return_button_text(%*.text, L"%s", 99)) />
+	</BUTTON>
+</element_template>
+
+<layer ui_BottomSidePanel_QuickPanel visible=(!%lua.DragMode && !%lua.MenuIsOpened && %lua.QuickTipOnOff) z=8888>
+	<DIV class="cockpit">
+		<DIV class="short_panel_box">
+			<LIST2 class="panel_quickbutton" SMOOTHSCROLLING>
+				<LISTMODEL listmodel="ui.lm_QuickBattonList_filtered.filter" element_template="et_ListQBt" />
+				<VSMARTSCROLL>
+				<WHEEL>
+				<LISTCONTROL>
+			</LIST2>
+		</DIV>
+	</DIV>
+</layer>
+
+<views lm_QuickBattonList_filtered listmodel="ui.lm_QuickBattonList.list" >
+	;<view filter filter=(%ui.lm_QuickBattonList.list[index].visible && %ui.lm_QuickBattonList.list[index].enable) />
+	<view filter filter=($1.visible && $1.enable) />
+</views>
+
+<userlist lm_QV_localmenu text="str" onrelease="ui" enable="bool"  visible="bool">
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 />
+      	<row	text="Make Current as Default" onrelease=VW_Copy_Current_to_Default />
+      	<row	text="About" onrelease='VW_Show_xhtmlQuest("QV_About.xhtml", "About")' />   
+</userlist>
+
+<element_template et_ListChkOnOff_IconVW>
+	<CHECKBOX class="listitem chkonoff" iconspr="da_na.svg" text=%*.text checked=%*.visible changevalue=%*.changevalue enable=1 />
+	<SPRITE class="btn_map svg" img=%*.bmp phasename=%*.phasename onrelease=%*.onrelease onlongclick=%*.onlongclick align="left" left=2% right=85% />
+</element_template>
+
+<userlist lm_QuickBattonList bmp="str" text="wstr" onrelease="ui" onlongclick="ui" enable="bool" visible="bool" phasename="str" type="str" checked="bool" changevalue="ui">
+	<default enable=1 visible=1 
+		;onlongclick='VW_QBchangeVisibility(index)' 
+		onlongclick=undef
+		phasename="" 
+		type="ChkOnOff_IconVW" 
+		changevalue={VW_QBchangevalue(index)}
+		;checked='MODEL.ui.lm_QuickBattonList_visibility.list[index].visible()'
+		text=L"" />
+
+	<row  bmp=(ui_Cockpit.weather_icon1) text=(translate("Weather menu mini")) onrelease='ui.WeatherMenu_mini.ONRELEASE()()' 
+		onlongclick='ui.WeatherMenu_mini.ONLONGCLICK()()' enable=(%lua.WeatherIconSVG && %lua.OnlineWeatherEnabled) />
+	<row  bmp="owl.svg" text=(translate("Help")) onrelease=(LuaJava.LuaJavaActive ? 'W_DefaultWebBrowser("http://4pna.com/showpost.php?p=517224&postcount=2")' : 'java:call("android.open_webpage", sc_GetSysEntry("feature", "web_site", L"http://4pna.com/showpost.php?p=517224&postcount=2"))' ) /> 
+	<row  bmp="ico_loadroute.svg" text=(translate("loadroute")) onrelease=sc_ShowSavedRoutesList enable=(%mydata.routes.list.size) /> 
+	<row  bmp="ico_addStopover.svg" text=(translate("addStopover")) onrelease=sc_OpenAddStopover enable=(%navigation.has_route) />
+	<row  bmp="ico_detour.svg" text=(translate("detour")) onrelease=sc_AvoidancesMenu enable=(%navigation.has_route) />
+	<row  bmp="ico_avoidroute_avoided.svg" text=(translate("avoidroute")) onrelease=sc_Traffic_ManualDetour enable=(%navigation.has_route) />	
+	<row  bmp="ico_routeinformation.svg" text=(translate("routeinformation")) onrelease=sc_ShowRouteOverView enable=(%navigation.has_route) />
+	
+	<row  bmp="ico_itinerary_destination_arrive.svg" text=(translate("Itinerary")) onrelease='Show_map_free_area("ui_RouteItiner_mini")' enable=(%navigation.has_route) />
+	
+	<row  bmp="ico_target.svg" text=(translate("target")) onrelease=sc_showRouteWarnings enable=(%navigation.has_route) />
+	<row  bmp="ico_deleteroute.svg" text=(translate("deleteroute")) onrelease=sc_RemoveWaypointPopup enable=(%navigation.has_route) />
+	<row  bmp="ico_myroute.svg" text=(translate("myroute")) onrelease=sc_ShowTravelPlanner enable=(%navigation.has_route) />
+	<row  bmp="ico_usefulinfo.svg" text=(translate("usefulinfo")) onrelease=sc_showUsefulInformation />
+	<row  bmp="ico_settings.svg" text=(translate("settings")) onrelease=sc_ShowSettingsFromMenu />
+	<row  bmp="ico_places.svg" text=(translate("places")) onrelease=sc_TriggerPOISearch /> 
+	<row  bmp="ico_iqs.svg" text=(translate("iqs")) onrelease=sc_IQS_Onrelease />
+	<row  bmp="ico_history.svg" text=(translate("history")) onrelease=sc_FindHistory enable=(%mydata.history.list.size) /> 
+	<row  bmp="ico_whereami.svg" text=(translate("whereami")) onrelease=sc_WhereAmI enable=(%gps.position_valid) />
+	<row  bmp="ico_helpnearby.svg" text=(translate("helpnearby")) onrelease=sc_showHelpNearby />
+	<row  bmp="ico_routesettings.svg" text=(translate("routesettings")) onrelease=sc_RouteSettings />
+	<row  bmp="ico_warnings.svg" text=(translate("warnings")) onrelease=sc_WarningSetting />
+	<row  bmp="ico_VisualGuidance.svg" text=(translate("VisualGuidance")) onrelease=sc_NavigationMap />
+	<row  bmp="ico_Regional.svg" text=(translate("Regional settings")) onrelease=sc_RegionalSettings />
+	<row  bmp="ico_Display.svg" text=(translate("Display")) onrelease=sc_DisplaySettings />
+	<row  bmp="ico_debugger.svg" text=(translate("Debugger")) onrelease='sc_NextStateAnim(st_VW_Debugger, "fade", 1, "")' />
+	<row  bmp="ico_capture.svg" text=(translate("Capture Screen")) onrelease='sc_CaptureScreen(true)' />	
+	<row  bmp="ico_traffic.svg" text=(translate("traffic")) onrelease=sc_TrafficClosestEventOnMap />
+	<row  bmp="ico_street_crossing.svg" phasename=(%lua.hook_next_crossing ? "on" : "off") text=(translate("Next street crossing")) onrelease='MODEL.lua.hook_next_crossing = not MODEL.lua.hook_next_crossing(); if MODEL.lua.hook_next_crossing() then VW_sc_hook_register("hook_next_crossing") else VW_sc_hook_unregister("hook_next_crossing") end' />
+	<row  bmp="ico_picturenavigation.svg" text=(translate("Picture Viewer")) onrelease=sc_Go_PicturePoiList enable=( !%poi.picturepoi.is_empty && %lua.HasPictureViewerLic && Plugin.isLoaded("appsandtools") )/> 
+	<row  bmp=(%traffic.settings.traffic_enabled ? "ico_tmc_onmap.svg" : "ico_tmc_disabled.svg") text=(L"TMC " + translate(%traffic.settings.traffic_enabled ? "On" : "Off")) onrelease='MODEL.traffic.settings.traffic_enabled = not MODEL.traffic.settings.traffic_enabled()' />
+	<row  bmp="ico_delspeedcam.svg" text=(translate("Hide Country SpeedCams")) onrelease=VW_HideCountrySpeedCams
+		enable=(LuaJava.LuaJavaActive && sc_GetSysEntry("speedcam", "speedcam_types", "0,1,2,3,4,5,7,11,17,23,24,26,27,30") != sc_GetSysEntry("speedcam.disabled_countries", %other.get_country_by_position(%navigation.car.position), "")) />
+	<row  bmp="ico_coordinates.svg" text=(translate("Coordinates")) onrelease=sc_ShowCoordinate />
+	<row  bmp="ico_urban.svg" text=(translate("City on way")) onrelease=VW_CityOnWay onlongclick='sc_NextStateAnim(st_CityOnWay, "fade", 1, "")' enable=(%navigation.has_route) />
+	<row  bmp="fuel_gun.svg" text=(translate("Fuel Map")) onrelease=(LuaJava.LuaJavaActive ? 'W_DefaultWebBrowser("https://misto.lun.ua/help?ls=okko,wog,socar")' : 'java:call("android.open_webpage", sc_GetSysEntry("feature", "web_site", L"https://misto.lun.ua/help?ls=okko,wog,socar"))' ) enable=(%regional.current_voice.lcid == 1058) /> 
+</userlist>
+
+<userlist lm_QuickBattonList_visibility bmp="str" text="wstr" enable="bool" visible="bool">
+	;<view visibility_filter=enable /> ;new at 03.05.2023 !!!!!!!!!!!!
+	<default enable=1 visible=1 />
+	<default FILENAME="lm_QuickBattonList_visibility.txt" />
+</userlist>
+
+<userlist lm_QuickBattonSettings_footer text="ui" onrelease="ui" onlongclick="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1 />
+		<row text=(towstring(%ui.lm_QuickBattonList_filtered.filter.size) + L" | " + translate("Click to On or Off. Longclick - to default")) onrelease='VW_QBReset()' onlongclick=VW_QBDefault isactionbutton=1 />
+</userlist>
+;--------------------------------------setting-------------------------------------------
+<element_template et_quick_list_icons>
+	<BUTTON CLASS="listitem btn_map" onrelease=%*.onrelease onlongclick=%*.onlongclick >
+    	<SPRITE CLASS="button map fill"/>
+		<SPRITE CLASS="btn_map svg" IMG=%*.img />
+	</BUTTON>
+</element_template>
+
+<layer ui_QuickPanelPosition z=999999 >
+	<DIV class="full">
+		<LIST2 class="quicksettings_panel" row=5 col=5>
+			<LISTMODEL element_template="et_quick_list_icons" listmodel="ui.lm_quicksettings" />
+		</LIST2>
+	</DIV>
+</layer>
+
+<userlist lm_quicksettings img="str" onrelease="ui" onlongclick="ui" enable="bool" visible="bool">
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 onrelease=undef onlongclick='ui_QuickPanelPosition:HIDE()'/>
+	
+	<row    img="ico_configwizard.svg" onrelease='sc_NextStateAnim(st_QuickTipSettings, "fade", 1, "" )' /> 
+	<row    img="da_na.svg" />
+	<row    img="ico_up.svg" onrelease='MODEL.lua.PositionBySide = "top"'/>
+	<row    img="da_na.svg" />
+	<row    img="ico_configwizard.svg" onrelease='sc_NextStateAnim(st_QuickTipSettings, "fade", 1, "" )' /> 
+	
+	<row    img="da_na.svg" />
+	<row    img="1.svg" onrelease='MODEL.lua.QuickMenu_col = 1'/>	
+	<row    img="2.svg" onrelease='MODEL.lua.QuickMenu_col = 2'/>
+	<row    img="3.svg" onrelease='MODEL.lua.QuickMenu_col = 3'/>
+	<row    img="da_na.svg" />
+	
+	<row    img="ico_left.svg" onrelease='MODEL.lua.PositionBySide = "left"'/>
+	<row    img="4.svg" onrelease='MODEL.lua.QuickMenu_col = 4'/>
+	<row    img="5.svg" onrelease='MODEL.lua.QuickMenu_col = 5'/>
+	<row    img="6.svg" onrelease='MODEL.lua.QuickMenu_col = 6'/>
+	<row    img="ico_right.svg" onrelease='MODEL.lua.PositionBySide = "right"'/>
+
+	<row    img="da_na.svg" />
+	<row    img="7.svg" onrelease='MODEL.lua.QuickMenu_col = 7'/>
+	<row    img="8.svg" onrelease='MODEL.lua.QuickMenu_col = 8'/>
+	<row    img="9.svg" onrelease='MODEL.lua.QuickMenu_col = 9'/>
+	<row    img="da_na.svg" />
+	
+	<row    img="ico_close.svg" onrelease='ui_QuickPanelPosition:HIDE()' />
+	<row    img="da_na.svg" />
+	<row    img="ico_down.svg" onrelease='MODEL.lua.PositionBySide = "bottom"'/>
+	<row    img="da_na.svg" />
+	<row    img="ico_close.svg" onrelease='ui_QuickPanelPosition:HIDE()' />
+	
+</userlist>
+;-----------------main icon----------------------------------------
+<modify ui_Cockpit> 
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON QuickTipBtn
+			ONRELEASE='VW_QB_Onrelease() ui_QuickPanelPosition:HIDE()' 
+			ONLONGCLICK='ui_QuickPanelPosition:SHOW() MODEL.lua.QuickTipOnOff = true' 
+			VISIBLE=(%lua.QuickMenuListVisible) 
+			ICON="Quick-Tip-Icon.svg"
+			B_TEXT=(%ui.lm_QuickBattonList_filtered.filter.size) ZOOM=90%
+			T_L_ICON=(%ui.lm_QuickBattonList_filtered.filter[VW_QT_kaleidoscope(%gps.blink)].bmp // "") 
+			T_R_ICON=(%ui.lm_QuickBattonList_filtered.filter[VW_QT_kaleidoscope(%gps.blink)].bmp // "")
+			B_L_ICON=(%ui.lm_QuickBattonList_filtered.filter[VW_QT_kaleidoscope(%gps.blink)].bmp // "") 
+			B_R_ICON=(%ui.lm_QuickBattonList_filtered.filter[VW_QT_kaleidoscope(%gps.blink)].bmp // "") 
+			/>
+	</insert>
+</modify>
+
+<modify ui_SideList>
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON 
+			ONRELEASE='ui.QuickTipBtn.ONRELEASE()()' 
+			ONLONGCLICK='ui.QuickTipBtn.ONLONGCLICK()()' 
+			VISIBLE=(%lua.QuickMenuListVisibleQuick)
+			ICON=(QuickTipBtn.ICON)
+			B_TEXT=(QuickTipBtn.B_TEXT) ZOOM=90%
+			T_L_ICON=(QuickTipBtn.T_L_ICON) 
+			T_R_ICON=(QuickTipBtn.T_R_ICON)
+			B_L_ICON=(QuickTipBtn.B_L_ICON) 
+			B_R_ICON=(QuickTipBtn.B_R_ICON) 
+			/>
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="Quick Tip Button" bmp=(QuickTipBtn.ICON) isselected="lua.QuickMenuListVisible" />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="Quick Tip Button" bmp=(QuickTipBtn.ICON) isselected="lua.QuickMenuListVisibleQuick" />
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row visible=(%lua.QuickMenuListVisible) />
+	</insert>
+</modify>
+<modify lm_QuickSideList>
+	<insert>
+		<row visible=(%lua.QuickMenuListVisibleQuick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuSettings>
+	<insert>
+		<row text="QuickTip Settings" haspopover=1 onrelease='sc_NextStateAnim(st_QuickTipSettings, "fade", 1, "" )' />
+	</insert>
+</modify>

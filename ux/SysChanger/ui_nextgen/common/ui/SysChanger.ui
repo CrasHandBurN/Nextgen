@@ -1,0 +1,242 @@
+/*
+<modify lm_MainMenu>
+	<insert after=Settings>
+		<row SysChanger text="Sys Changer" icon="ico_syschange.svg" onrelease='sc_NextStateAnim(st_SysDataSettingsList, "fade", 1, "" )' visible=(LuaJava.LuaJavaActive) /> 
+	</insert>
+</modify>
+*/
+
+<modify lm_Settings>
+	<insert after="default">
+		<row SysChanger prio=0 text="Sys Changer" icon="ico_syschange.svg" onrelease='sc_NextStateAnim(st_SysDataSettingsList, "fade", 1, "" )' visible=(LuaJava.LuaJavaActive) /> 
+	</insert>
+</modify>
+
+<userlist lm_SysParameters section="str" item="str" value="wstr" value_orig="wstr" visible="bool" enable="bool" details="str" >
+	<view sort_by="section" /> 
+	<default FILENAME="SysParameters.txt" />
+	<default enable=1 visible=1 />
+</userlist>
+
+<views lm_SysParametersFiltered listmodel="ui.lm_SysParameters" >
+	<view section filter=(inp_Input.VALUE ? VW_View_Section($1.section) : VW_View_Section($1.section)) /> 
+	<view item filter=(VW_View_Item($1.section)) /> 
+	<view edited filter=($1.value_orig != L"") /> 
+</views>
+
+<element_template et_SysParametersItem>
+	<implementation>
+		<property enable value=( %*.enable // 1 ) />
+
+		<property dtooltip value=( %*.dtooltip // "" ) />
+		
+		<property text value=( VW_Field_View("item~", %*.item) ) />
+		<property details value=( %*.value // "" ) />
+		
+	</implementation>
+	
+	<BUTTON class="listitem" onrelease='MODEL.lua.SystemValueIndex = index VW_ItemEdit()' onlongclick=undef enable=enable  dtooltip=dtooltip nostress=( %*.nostress // 0 )>
+		<HBOX class="listitem">
+			<VBOX class="listitem" >
+				<TEXT class="listitem top" text=text visible=text />
+				<TEXT class="listitem bottom" text=details visible=1 color=(%*.value_orig ? #FF0000 : #008000) />
+			</VBOX>
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_SysParametersItem z=35>
+	<DIV class=list>
+		<SPRITE class=list_panel />
+		<LIST2 class=list_control listmodel="ui.lm_SysParametersFiltered.item" element_template="et_SysParametersItem" SMOOTHSCROLLING>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+;--------------------------------------------------------------------------
+<element_template et_SysParametersSection>
+	<implementation>
+		<property enable value=( %*.enable // 1 ) />
+		<property details value=( towstring(%*.details // "") ) />
+		<property text value=( VW_Field_View("section~", %*.section) ) />
+	</implementation>
+	
+	<BUTTON class="listitem" onrelease=VW_SysParametersItem enable=enable nostress=( %*.nostress // 0 )>
+		<HBOX class="listitem">
+			<VBOX class="listitem" >
+				<TEXT class="listitem top" text=text visible=text />
+				<TEXT class="listitem bottom" text=details visible=details />
+			</VBOX>
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_SysParametersSection z=35>
+	<DIV class=list>
+		<SPRITE class=list_panel />
+		<LIST2 class=list_control listmodel="ui.lm_SysParametersFiltered.section" element_template="et_SysParametersSection" SMOOTHSCROLLING>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+;--------------------------------------------------------------------------
+<layer ui_CharsValue z=30>
+	<DIV class="half_vertical"> 
+		<RADIO  class="btn_main" left=0 right=2% top=5.5% h=45% onrelease={inp_Input.VALUE = %ui.lm_SysParameters.list[current].value_orig} >
+			<VBOX class="listitem">
+				<TEXT class="listitem top" paddingleft=(CSS.Param.list_padding) paddingright=(CSS.Param.list_padding) text="Return Original" />
+				<TEXT class="listitem bottom" paddingleft=(CSS.Param.list_padding) paddingright=(CSS.Param.list_padding) text=%ui.lm_SysParameters.list[current].value_orig />
+			</VBOX>
+		</RADIO>
+	</DIV>
+</layer>
+
+<layer ui_DigitsValue z=30>
+	<DIV class="half" left=50%> 
+		<RADIO  class="btn_main" left=0 right=2% top=5.5% h=25% onrelease={inp_SysItemValue.VALUE = %ui.lm_SysParameters.list[current].value_orig} >
+			<VBOX class="listitem">
+				<TEXT class="listitem top" paddingleft=(CSS.Param.list_padding) paddingright=(CSS.Param.list_padding) text="Return Original" />
+				<TEXT class="listitem bottom" paddingleft=(CSS.Param.list_padding) paddingright=(CSS.Param.list_padding) text=%ui.lm_SysParameters.list[current].value_orig />
+			</VBOX>
+		</RADIO>
+		
+		<RADIO  class="btn_main" left=0 right=2% top=32% h=25% 
+			onrelease='inp_SysItemValue.value = ({["0"] = L"1", ["1"] = L"0"})[tostring(MODEL.ui.lm_SysParameters.list[current].value())]'
+			enable=(%ui.lm_SysParameters.list[current].value == L"0" || %ui.lm_SysParameters.list[current].value == L"1") >
+			<VBOX class="listitem">
+				<TEXT class="listitem top" paddingleft=(CSS.Param.list_padding) paddingright=(CSS.Param.list_padding) text="Logical inverse" />
+				;<TEXT class="listitem bottom" paddingleft=(CSS.Param.list_padding) paddingright=(CSS.Param.list_padding) text=%ui.lm_SysParameters.list[current].value_orig />
+			</VBOX>
+		</RADIO>
+	</DIV>
+</layer>
+
+<layer ui_InputDigisValue z=30>
+	<DIV class="half">
+		<BUTTON class="button_input">
+			<HBOX class="inputfield">
+				<INPUTTEXT inp_SysItemValue class="input_text" onchange=sc_Item_SetValue />
+			</HBOX>
+		</BUTTON>
+	</DIV>
+</layer>
+
+;---------------------------------------------DATA SETTINGS-------------------------------------------
+<data DataSettings>
+	<property leave_tunnel_indx value=(observe(st_SysDataSettingsList.isActive); VW_getDataIndex("debug", "leave_tunnel")) />
+	<property enter_tunnel_indx value=(observe(st_SysDataSettingsList.isActive); VW_getDataIndex("debug", "enter_tunnel")) />
+	<property manoeuvre_at_tollgate_indx value=(observe(st_SysDataSettingsList.isActive); VW_getDataIndex("debug", "manoeuvre_at_tollgate")) />
+	<property guidance_at_highway_entry_indx value=(observe(st_SysDataSettingsList.isActive); VW_getDataIndex("route", "guidance_at_highway_entry")) />
+	
+	<property show_menu_icon_indx value=(observe(st_SysDataSettingsList.isActive); VW_getDataIndex("myholidays", "show_menu_icon")) />
+	<property dpi_indx value=(observe(st_SysDataSettingsList.isActive); VW_getDataIndex("rawdisplay", "dpi")) />
+	<property profile_name_indx value=(observe(st_SysDataSettingsList.isActive); VW_getDataIndex("tmc-http", "profile_name")) />
+	<property navigation_audio_stream_indx value=(observe(st_SysDataSettingsList.isActive); VW_getDataIndex("android", "navigation_audio_stream")) />
+	
+	<property enable_offroad_maneuver_icon_indx value=(observe(st_SysDataSettingsList.isActive); VW_getDataIndex("navigation", "enable_offroad_maneuver_icon")) />
+</data>
+
+<userlist lm_SysDataSettingsList text="ui" type="str" haspopover="bool" isselected="str" checked="ui" changevalue="ui" visible="bool" enable="bool" onrelease="ui" details="ui" dtooltip="str">
+  <view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 type="" />
+		<row    text="Low Level Sys Changer" haspopover=1 onrelease=VW_ChangeSysParameters />
+		<row 	text=(VW_Field_View("item~", "leave_tunnel")) type="ChkOnOff" checked=(tonumber(%ui.lm_SysParameters.list[DataSettings.leave_tunnel_indx].value)) 
+			changevalue={VW_putBinaryValueToSys(DataSettings.leave_tunnel_indx)}
+			visible=(DataSettings.leave_tunnel_indx != -1) />	
+		<row 	text=(VW_Field_View("item~", "enter_tunnel")) type="ChkOnOff" checked=(tonumber(%ui.lm_SysParameters.list[DataSettings.enter_tunnel_indx].value)) 
+			changevalue={VW_putBinaryValueToSys(DataSettings.enter_tunnel_indx)}
+			visible=(DataSettings.enter_tunnel_indx != -1) />	
+		<row 	text=(VW_Field_View("item~", "manoeuvre_at_tollgate")) type="ChkOnOff" checked=(tonumber(%ui.lm_SysParameters.list[DataSettings.manoeuvre_at_tollgate_indx].value)) 
+			changevalue={VW_putBinaryValueToSys(DataSettings.manoeuvre_at_tollgate_indx)}
+			visible=(DataSettings.manoeuvre_at_tollgate_indx != -1) />	
+		<row 	text=(VW_Field_View("item~", "guidance_at_highway_entry")) type="ChkOnOff" checked=(tonumber(%ui.lm_SysParameters.list[DataSettings.guidance_at_highway_entry_indx].value)) 
+			changevalue={VW_putBinaryValueToSys(DataSettings.guidance_at_highway_entry_indx)}
+			visible=(DataSettings.guidance_at_highway_entry_indx != -1) />	
+			
+		<row 	text=(VW_Field_View("item~", "show_menu_icon")) type="ChkOnOff" checked=(tonumber(%ui.lm_SysParameters.list[DataSettings.show_menu_icon_indx].value)) 
+			changevalue={VW_putBinaryValueToSys(DataSettings.show_menu_icon_indx)}
+			visible=(DataSettings.show_menu_icon_indx != -1) />	
+		<row 	text=(VW_Field_View("item~", "dpi")) haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_SetDPI_Popover", MODEL.ui.lm_SysParameters.list[ui.DataSettings.dpi_indx()].value())'
+			details=(%ui.lm_SysParameters.list[DataSettings.dpi_indx].value) visible=(DataSettings.dpi_indx != -1) />
+		<row 	text=(VW_Field_View("item~", "profile_name")) haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_Setprofile_name_Popover", MODEL.ui.lm_SysParameters.list[ui.DataSettings.profile_name_indx()].value())'
+			details=(%ui.lm_SysParameters.list[DataSettings.profile_name_indx].value) visible=(DataSettings.profile_name_indx != -1) />
+		<row 	text=(VW_Field_View("item~", "navigation_audio_stream")) haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_Setnavigation_audio_stream_Popover", MODEL.ui.lm_SysParameters.list[ui.DataSettings.navigation_audio_stream_indx()].value(), "stream")'
+			details=(%ui.lm_Setnavigation_audio_stream_Popover.list[tonumber(%ui.lm_SysParameters.list[DataSettings.navigation_audio_stream_indx].value)].text) 
+			visible=(DataSettings.navigation_audio_stream_indx != -1) />
+			
+		<row 	text=(VW_Field_View("item~", "enable_offroad_maneuver_icon")) type="ChkOnOff" checked=(tonumber(%ui.lm_SysParameters.list[DataSettings.enable_offroad_maneuver_icon_indx].value)) 
+			changevalue={VW_putBinaryValueToSys(DataSettings.enable_offroad_maneuver_icon_indx)}
+			visible=(DataSettings.enable_offroad_maneuver_icon_indx != -1) />	
+</userlist>
+
+<userlist lm_SetDPI_Popover text="wstr" onrelease="ui" enable="bool">
+	<default enable=1 onrelease='
+		MODEL.ui.lm_SysParameters.list[ui.DataSettings.dpi_indx()].value_orig = MODEL.ui.lm_SysParameters.list[ui.DataSettings.dpi_indx()].value()
+		MODEL.ui.lm_SysParameters.list[ui.DataSettings.dpi_indx()].value = MODEL["*"].text()
+		sc_ClosePopover()' />
+	<row text="auto" />
+	<row text="120" />
+	<row text="160" />
+	<row text="240" />
+	<row text="320" />
+	<row text="480" />
+	<row text="640" />
+</userlist>
+
+<userlist lm_Setprofile_name_Popover text="wstr" onrelease="ui" enable="bool">
+	<default enable=1 onrelease='
+		MODEL.ui.lm_SysParameters.list[ui.DataSettings.profile_name_indx()].value_orig = MODEL.ui.lm_SysParameters.list[ui.DataSettings.profile_name_indx()].value()
+		MODEL.ui.lm_SysParameters.list[ui.DataSettings.profile_name_indx()].value = MODEL["*"].text()
+		sc_ClosePopover()' />
+	<row text="nng-igo-tmc-jci" />
+	<row text="nng-igo-tmc-igoworld" />
+	<row text="nng-igo-tmc-iphone" />
+	<row text="nng-igo-tmc-russia" />
+	<row text="nng-igo-tmc-beckerfull" />
+	<row text="nng-igo-tmc-primo8" />
+	<row text="nng-igo-hd-decell" />
+</userlist>
+
+<userlist lm_Setnavigation_audio_stream_Popover text="wstr" stream="wstr" onrelease="ui" enable="bool">
+	<default enable=1 onrelease='
+		MODEL.ui.lm_SysParameters.list[ui.DataSettings.navigation_audio_stream_indx()].value_orig = MODEL.ui.lm_SysParameters.list[ui.DataSettings.navigation_audio_stream_indx()].value()
+		MODEL.ui.lm_SysParameters.list[ui.DataSettings.navigation_audio_stream_indx()].value = MODEL["*"].stream()
+		sc_ClosePopover()' />
+	<row text="VOICE_CALL" stream="0" />
+	<row text="SYSTEM" stream="1" />
+	<row text="RING" stream="2" />
+	<row text="MUSIC" stream="3" />
+	<row text="ALARM" stream="4" />
+	<row text="NOTIFICATION" stream="5" />
+	<row text="BLUETOOTH" stream="6" />
+	<row text="UNKNOWN" stream="7" />
+	<row text="DTMF" stream="8" />
+	<row text="TTS" stream="9" />
+</userlist>
+
+;---------------------------------------------LABEL SETTINGS----------------------------------------
+<modify ui_Cockpit>
+	<insert last_child into="DIV.notify_list_ext TABLE.ari_ext">
+		<BUTTON CLASS="btn_map" 
+			ONRELEASE='MODEL.lua.SkinVersionShowTime = sc_GetSysEntry("interface", "skin_version_show_time", 200); ui_aVersionInformation:tween("Y", -ui.ui_aVersionInformation.H, 0, 300); ui_aVersionInformation:SHOW()' 
+			ONLONGCLICK='MODEL.lua.label_in_cockpit = false'
+			VISIBLE=( (%lua.label_in_cockpit ? %lua.label_in_cockpit : %lua.aCockpitTransparency == 32) && LuaJava.LuaJavaActive ) >
+			<SPRITE CLASS="button map fill" />
+			<SPRITE CLASS="searchprogress wide" LEFT=0 RIGHT=0 TOP=0 BOTTOM=0 VISIBLE=( %lua.ApplicationLabel == "WAIT" ) />
+			<SPRITE	CLASS="svg" TOP=0 BOTTOM=0 LEFT=0 W=(PARENT.H/2) IMAGE_W=(PARENT.H/2) IMAGE_H=(PARENT.H/2) VALIGN="CENTER" IMG="Lua_Logo.svg" VISIBLE=(%lua.ApplicationLabel == "") />
+			<TEXT CLASS="listitem" TEXT=(%lua.ApplicationLabel == "" ? "ERROR" : %lua.ApplicationLabel) LEFT=(%lua.ApplicationLabel == "" ? PARENT.H/2 : 2) RIGHT=2 TOP=0 BOTTOM=0 
+				COLOR=(%lua.ApplicationLabel == "" ? #FF0000 : CSS.Param.map_main_color) FONT="defaultbd" FONTSIZE=30 Z=60 ALIGN="CENTER" VALIGN="CENTER" WORDWRAP=1 CAN_SHRINK=1 
+				VISIBLE=( %lua.ApplicationLabel != "WAIT" ) />
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify lm_MapVisualSettingsExtended>
+	<insert>
+		<row  prio=2011 bmp="Lua_Logo.svg" text=(translate("Show Label in Cockpit") + L" : " + towstring(%lua.ApplicationLabel)) type="ChkOnOff_Icon" isselected="lua.label_in_cockpit" />
+	</insert>	
+</modify>

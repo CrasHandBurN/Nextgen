@@ -1,0 +1,60 @@
+<modify ui_Cockpit>           
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON ClipboardRead ONRELEASE=W_ReadClipboard
+			ONLONGCLICK='W_DefaultWebBrowser("http://4pna.com/showpost.php?p=535663&postcount=1036")'
+			;ONLONGCLICK='java:call("android.open_webpage", L"http://4pna.com/showpost.php?p=535663&postcount=1036")'
+			VISIBLE=(%lua.ClipboardReadCockpit)
+			ICON="ico_voiceout.svg" 
+			ZOOM=80%
+			C_R_ICON="Lua_Logo.svg"
+			T_TEXT=(VW_Return_button_text(translate("Clipboard Read"), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate("Clipboard Read"), L"%s", 99)) >
+		</BUTTON_ICON>
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=(%lua.ClipboardReadCockpit) />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="Clipboard Read" bmp=(ClipboardRead.ICON) isselected="lua.ClipboardReadCockpit" />
+	</insert>
+</modify>
+;---- Quick Menu -----
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE='ui.ClipboardRead.ONRELEASE()()' ONLONGCLICK='ui.ClipboardRead.ONLONGCLICK()()' 
+			VISIBLE=(%lua.ClipboardReadQuick)
+			ICON=(ClipboardRead.ICON) 
+			ZOOM=80%
+			C_R_ICON=(ClipboardRead.C_R_ICON) 
+			T_TEXT=(ClipboardRead.T_TEXT)
+			B_TEXT=(ClipboardRead.B_TEXT) >
+		</BUTTON_ICON>
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=(%lua.ClipboardReadQuick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="Clipboard Read" bmp=(ClipboardRead.ICON) isselected="lua.ClipboardReadQuick" />
+	</insert>
+</modify>
+
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=(ClipboardRead.ICON) text=(translate("Clipboard Read")) onrelease='ui.ClipboardRead.ONRELEASE()()' onlongclick='ui.ClipboardRead.ONLONGCLICK()()' />
+		</insert>
+	</modify>
+<!end/>

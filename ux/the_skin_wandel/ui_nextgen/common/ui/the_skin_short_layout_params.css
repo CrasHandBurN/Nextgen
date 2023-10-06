@@ -1,0 +1,37 @@
+@params{
+	footer_h:66;
+	tmcprovider_image_h:48;
+	footer_h:66;
+	box_padding_small:4;
+	mapcontrol_button_w:66;
+	mapcontrol_button_h:mapcontrol_button_w;
+	mapheader_tmc_separator:36;
+	list_padding:12;
+	messagebox_margin:24;
+	route_summary_icons_h:42;
+	svg_keybutton_image_w:42;
+	svg_keybutton_image_h:42;
+	fontsize_main:28;
+	fontsize_sec:20;
+	fontsize_traffic_delay:32;
+	fontsize_button:24;
+	fontsize_value:30;
+	fontsize_tripcomputer:18;
+	fontsize_tripcomputer_speed:62;
+	fontsize_tripcomputer_nextmaneuver:38;
+	fontsize_traffic_summary_btn:24;
+	tripcomputer_speed_w:372;
+	tripcomputer_speed_h:324;
+	svg_speedlimit_image_w:90;
+	svg_speedlimit_image_h:90;	
+	svg_driveralert_image_w: 45;
+	svg_driveralert_image_h: 60;
+	svg_driveralert_image_h_small: 49;
+}
+
+@import "~/common/ui/the_skin_short_layout_params_landscape.css" landscape;
+@import "~/common/ui/the_skin_short_layout_params_portrait.css" portrait;
+
+/* ------------------------------------------------------------------------------------*/
+/* -----------------  Mod by arimi  -- updated -  05.03.2017 ------------*/
+/* ------------------------------------------------------------------------------------*/

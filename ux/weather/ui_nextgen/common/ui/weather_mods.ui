@@ -1,0 +1,191 @@
+;------------- WANDEL™ 21.04.2023 ------------
+<modify lm_UsefulInformation>
+	<insert>
+		<row prio=300 text="Weather" icon="ico_weather.svg" onrelease=sc_showWeatherMenu enable=( sc_checkConnectedServiceEnability( "weather", %services.activate_status // 0, %services.has_activated // 0 ) ) animate=( !Plugin.isLoaded( "grp_shop" ) && ( %services.activate_status == lua.EActivationStatus.SERVICE_OPERATION_PENDING // 0 ) )/>
+	</insert>
+</modify>
+
+<modify lm_Settings>
+	<insert after="default">
+		<row prio=900 text="Weather" icon="ico_weather.svg" onrelease=sc_showWeatherSettings enable=( sc_checkConnectedServiceEnability( "weather", %services.activate_status // 0, %services.has_activated // 0 ) ) animate=( !Plugin.isLoaded( "grp_shop" ) && ( %services.activate_status == lua.EActivationStatus.SERVICE_OPERATION_PENDING // 0 ) )/>
+	</insert>
+</modify>
+
+<modify lm_RegionalSettings_units>
+	<insert after=Weight>
+		<row text="Temperature" details=(lua.ERegionalTemperatureFormat[%regional.temperature_units]) haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_RegionalSettings_temperature_popover")'>
+	</insert>
+</modify>
+
+<modify ui_MapHeader>
+	<insert first_child>
+		<IMPLEMENTATION>
+			<PROPERTY weather_icon VALUE=(%services.weather.weather_at_location.list[0].hourly_forecast[0].IconID // -1 ) >
+			<PROPERTY weather_icon1 VALUE=( VW_WeatherIconSVG(%services.weather.weather_at_location.list[0].hourly_forecast[0].IconID // -1 )) >
+			<PROPERTY weather_temp VALUE=( %services.weather.weather_at_location.list[0].hourly_forecast[0].temperature // 0 ) >
+			<PROPERTY weather_temp_valid VALUE=( %services.weather.weather_at_location.list[0].hourly_forecast[0].temperature.valid // 0 ) >
+		</IMPLEMENTATION>
+	</insert>
+	
+	<insert first_child into="DIV.notify_list_ext TABLE.ari_ext">
+		<BUTTON CLASS="background weather" ONRELEASE='sc_showWeatherMenu() if MODEL.lua.TTSVoiceWeatherButton() then VW_WeatherAtDependsPosition() end' 
+			VISIBLE=(%lua.OnlineWeatherEnabled)>
+	      	<SPRITE CLASS="button map fill" />
+			<BOX BOX_ALIGN="CENTER" VISIBLE=(!%services.weather.weather_at_location.request_in_progress) >
+				<TEMPERATURETEXT CLASS="listitem map" VALIGN="CENTER" CAN_SHRINK=0 TEMPERATURE=weather_temp VALID=weather_temp_valid />
+				<SPRITE CLASS="weather map" ICONID=weather_icon VISIBLE=( !%lua.WeatherIconSVG ) />
+				<SPRITE CLASS="weather map" IMG=weather_icon1 VISIBLE=( %lua.WeatherIconSVG && weather_icon != -1 ) />
+			</BOX>
+			<SPRITE CLASS="searchprogress wide" LEFT=0 RIGHT=0 TOP=0 BOTTOM=0 VISIBLE=( %services.weather.weather_at_location.request_in_progress ) />
+		</BUTTON>
+	</insert>
+</modify>
+
+;---------------------
+<modify ui_Cockpit>
+	<insert into="IMPLEMENTATION">
+		<PROPERTY weather_place VALUE=( %route.list.navigated.has_navigable_path && %services.weather.maintain_waypoint_overview ? "waypoint_forecasts" : "weather_at_location" ) />
+		<PROPERTY weather_index VALUE=( %route.list.navigated.has_navigable_path && %services.weather.maintain_waypoint_overview ? (%lua.switch_Destination_Waypoint ? 0 : %services.weather.waypoint_forecasts.list.lastindex) : 0 )  />
+		<PROPERTY icon_place VALUE=(weather_place == "waypoint_forecasts" ? (%lua.switch_Destination_Waypoint && %route.list.navigated.waypoints.list.size > 2 ? "ico_stopover.svg" : "ico_destination.svg") : "ico_places.svg") />
+		<PROPERTY weather_icon VALUE=( %services.weather[weather_place].list[weather_index].hourly_forecast[0].IconID // -1 ) >
+		<PROPERTY weather_icon1 VALUE=( VW_WeatherIconSVG(%services.weather[weather_place].list[weather_index].hourly_forecast[0].IconID // -1 ) ) >
+		<PROPERTY weather_temp VALUE=( %services.weather[weather_place].list[weather_index].hourly_forecast[0].temperature // 0 ) >
+		<PROPERTY weather_temp_valid VALUE=( %services.weather[weather_place].list[weather_index].hourly_forecast[0].temperature.valid // 0 ) >
+		<PROPERTY weather_via_pos VALUE=( %route.list.navigated.waypoints.list.size > 2 ? (%lua.switch_Destination_Waypoint ? %route.list.navigated.waypoints.list[1].real_position : %route.list.navigated.waypoints.list[%route.list.navigated.waypoints.list.size - 1].real_position) : (%route.list.navigated.waypoints.list.size == 2 ? %route.list.navigated.waypoints.list[1].real_position : (%navigation.car.position // 0L)) ) />
+	</insert>
+	
+	<insert>
+		<OBSERVER VALUE=(ui_Cockpit.weather_icon) ONCHANGE='if ui.ui_Cockpit.weather_icon() ~= -1 then hook_StartWeather_at_location:trigger() end' START="NO_TRIGGER" />
+	</insert>
+
+	<insert first_child into="DIV.cockpit DIV.notify_list_ext TABLE.ari_ext">
+		<BUTTON CLASS="background weather cockpit" 
+				ONRELEASE='if MODEL.navigation.has_route() then sc_showWeatherMenu() else sc_showWeatherCurrentForecast() end
+					if MODEL.lua.TTSVoiceWeatherButton() then VW_WeatherAtDependsPosition() end' 
+				ONLONGCLICK=(%navigation.has_route ? sc_showWeatherCurrentForecast : sc_showWeatherMenu) 
+				VISIBLE=( %lua.OnlineWeatherEnabled && %lua.WeatherVisibleCockpit ) >
+			<SPRITE class="button map fill" /> 
+			<BOX BOX_ALIGN="CENTER" VISIBLE=(!%services.weather[weather_place].request_in_progress) >
+				<SPRITE CLASS="weather map" IMG=icon_place ZOOM=50% VISIBLE=(weather_place == "waypoint_forecasts") />
+				<TEMPERATURETEXT CLASS="listitem map" VALIGN="CENTER" CAN_SHRINK=0 TEMPERATURE=weather_temp VALID=weather_temp_valid />
+				<SPRITE CLASS="weather map" ICONID=weather_icon VISIBLE=( !%lua.WeatherIconSVG ) />
+				<SPRITE CLASS="weather map" IMG=weather_icon1 VISIBLE=( %lua.WeatherIconSVG  && weather_icon != -1 ) />
+			</BOX>
+			<SPRITE CLASS="searchprogress wide" LEFT=0 RIGHT=0 TOP=0 BOTTOM=0 VISIBLE=( %services.weather[weather_place].request_in_progress ) />
+		</BUTTON>
+	</insert>
+</modify>
+;---------------------
+
+<modify et_detailsinfo_address>	
+	<insert>
+		<IMPLEMENTATION>
+			<PROPERTY weather_icon VALUE=(%services.weather.weather_at_location.list[0].hourly_forecast[0].IconID // -1 )>
+			<PROPERTY weather_icon1 VALUE=( VW_WeatherIconSVG(%services.weather.weather_at_location.list[0].hourly_forecast[0].IconID // -1 ) )>
+			<PROPERTY weather_temp VALUE=( %services.weather.weather_at_location.list[0].hourly_forecast[0].temperature // 0 )>
+			<PROPERTY weather_temp_valid VALUE=( %services.weather.weather_at_location.list[0].hourly_forecast[0].temperature.valid // 0 )>
+			
+			<PROPERTY weather_visible VALUE=( %lua.OnlineWeatherEnabled && !%services.weather.weather_at_location.request_in_progress && weather_icon != -1 )>
+		</IMPLEMENTATION>
+	</insert>
+	
+	<modify element="HBOX.listitem.detailsinfo.address>SPRITE.detailsinfo.address" VISIBLE=(weather_icon == -1 || !%lua.QueryWeather)/>
+	<insert before=details>
+		<VBOX class="weather icon svg" BOX_ALIGN="stretch" VISIBLE=weather_visible >
+			<SPRITE CLASS="detailsinfo" ICONID=( weather_icon ) VISIBLE=(!%lua.WeatherIconSVG) />
+			<SPRITE CLASS="detailsinfo" IMG=( weather_icon1 ) VISIBLE=(%lua.WeatherIconSVG) />
+			<TEMPERATURETEXT CLASS="details_weather" TEMPERATURE=( weather_temp ) VISIBLE=( weather_temp_valid )>
+		</VBOX> 
+	</insert>
+</modify>
+
+<!if condition=( Plugin.isLoaded("tmc") )>
+	<modify et_detailsinfo_roadinfo>	
+		<insert>
+			<IMPLEMENTATION>
+				<PROPERTY weather_icon VALUE=(%services.weather.weather_at_location.list[0].hourly_forecast[0].IconID // -1 ) >
+				<PROPERTY weather_icon1 VALUE=( VW_WeatherIconSVG(%services.weather.weather_at_location.list[0].hourly_forecast[0].IconID // -1 ) ) >
+				<PROPERTY weather_temp VALUE=( %services.weather.weather_at_location.list[0].hourly_forecast[0].temperature // 0 ) >
+				<PROPERTY weather_temp_valid VALUE=( %services.weather.weather_at_location.list[0].hourly_forecast[0].temperature.valid // 0 ) >
+				
+				<PROPERTY weather_visible VALUE=( %lua.OnlineWeatherEnabled && !%services.weather.weather_at_location.request_in_progress && weather_icon != -1 ) >
+			</IMPLEMENTATION>
+		</insert>
+		
+		<insert before=tmcicon>
+			<VBOX class="weather icon svg" BOX_ALIGN="stretch" VISIBLE=weather_visible >
+				<SPRITE CLASS="detailsinfo" ICONID=( weather_icon ) VISIBLE=(!%lua.WeatherIconSVG) />	
+				<SPRITE CLASS="detailsinfo" IMG=( weather_icon1 ) VISIBLE=(%lua.WeatherIconSVG && weather_icon != -1) /> 
+				<TEMPERATURETEXT CLASS="details_weather" TEMPERATURE=( weather_temp ) VISIBLE=( weather_temp_valid ) />
+			</VBOX> 		
+		</insert>
+	</modify>
+<!end/>
+
+;------weather menu mini------
+<var WeatherMenu_miniCockpit = 0 permanent />
+<var WeatherMenu_miniQuick = 0 permanent />
+<modify ui_Cockpit>           
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON WeatherMenu_mini 
+			ONRELEASE='Show_map_free_area("ui_WeatherMenu_mini")'
+			ONLONGCLICK=sc_showWeatherSettings
+			VISIBLE=(%lua.OnlineWeatherEnabled && WeatherMenu_miniCockpit)
+			ICON=(weather_icon1)
+			ICONID=(weather_icon)
+			B_R_ICON=(icon_place)
+			;ZOOM=(!%lua.WeatherIconSVG && weather_icon != -1 ? 120% : 100%) ; не годиться
+			T_TEXT=(VW_Return_button_text(translate("Weather menu mini"), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate("Weather menu mini"), L"%s", 99)) >
+			<SPRITE CLASS="searchprogress wide" LEFT=0 RIGHT=0 TOP=0 BOTTOM=0 VISIBLE=( %services.weather[weather_place].request_in_progress ) />
+		</BUTTON_ICON>
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=(%lua.OnlineWeatherEnabled && WeatherMenu_miniCockpit) />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'Weather menu mini' in Cockpit" bmp=(WeatherMenu_mini.ICON) isselected="ui.WeatherMenu_miniCockpit" />
+	</insert>
+</modify>
+;---- Quick Menu -----
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON 
+			ONRELEASE='ui.WeatherMenu_mini.ONRELEASE()()' 
+			ONLONGCLICK='ui.WeatherMenu_mini.ONLONGCLICK()()' 
+			VISIBLE=(%lua.OnlineWeatherEnabled && WeatherMenu_miniQuick)
+			ICON=(WeatherMenu_mini.ICON) 
+			ICONID=(WeatherMenu_mini.ICONID)
+			ZOOM=(WeatherMenu_mini.ZOOM)
+			T_TEXT=(WeatherMenu_mini.T_TEXT)
+			B_TEXT=(WeatherMenu_mini.B_TEXT) />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=(%lua.OnlineWeatherEnabled && WeatherMenu_miniQuick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'Weather menu mini' in Quick' Button" bmp=(WeatherMenu_mini.ICON) isselected="ui.WeatherMenu_miniQuick" />
+	</insert>
+</modify>
+/*
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=(WeatherMenu_mini.ICON) text=(translate("Weather menu mini")) onrelease='ui.WeatherMenu_mini.ONRELEASE()()' />
+		</insert>
+	</modify>
+<!end/>
+*/

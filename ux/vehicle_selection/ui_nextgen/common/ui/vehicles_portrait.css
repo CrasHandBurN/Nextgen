@@ -1,0 +1,59 @@
+.left2center,
+.right2center{
+	align:"CENTER";
+}
+
+TEXT.listitem.icon.withbutton{
+	right:35%;
+	wordwrap:3;
+}
+
+DIV.summary > TABLE > .method .vehicletype>SPRITE{
+	left:0;
+}
+
+DIV.summary > TABLE > .method  .vehicletype>TEXT{
+	left:30%;
+}
+
+
+HBOX.listitem.freight {	
+	right: 54;
+}
+
+BOX.listitem.freight{
+	orientation:"vertical";
+}
+
+#lm_VehicleProfile_full>#hazard{
+	cellh:(listitem_h/3*4);
+}
+
+
+HBOX.listitem.freight>TEXT{
+	line_break_method:"auto";
+}
+
+
+
+
+
+
+
+
+
+.31_21   { w: 99%; h: 13%;}
+.21_21   { w: 45%; h: 11%;}
+.11_21   { w: 25%; h: 11%;}
+
+BUTTON.btn_main.21_21{
+	right:0; top:88%;
+}
+
+BUTTON.btn_main.11_21{
+	left:0; top:88%;
+}
+
+BUTTON.btn_main.31_21{
+	left:0; top:76%;
+}

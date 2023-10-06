@@ -1,0 +1,4 @@
+BUTTON.Overmap_Snapshot_Btn {
+	left: %lua.Overmap_Snapshot_Btn_HorizontalLand ;
+	top: %lua.Overmap_Snapshot_Btn_VerticalLand ;
+}

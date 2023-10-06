@@ -1,0 +1,35 @@
+/* ---------------------- WANDEL™ -- 20.08.2020 ---------------- */
+DIV.sidepanel.speedcam {
+	w: 100%;
+}
+
+DIV.speedcam_icons{
+    left: 0;
+    bottom: 20%;    
+	/*h: 40%;*/
+    w: 100%;
+}
+
+BOX.speedlimit_speedcam{
+	orientation:"horizontal";
+}
+
+BOX.speedlimit{
+	box_align:"stretch"; 
+}
+
+BOX.speedlimit_speedcam>BOX.speedlimit{
+	desired_h:cockpit_warning_h ;
+}
+
+DANGERZONE,BOX.speedcam{
+	box_align:"stretch"; 
+	desired_w:cockpit_warning_w;
+}
+
+.list_control_cam{
+	left: 0; top: 8; right: 0; bottom: 0; z:100;
+	row:8; col:4;
+	showselection:0;
+}
+

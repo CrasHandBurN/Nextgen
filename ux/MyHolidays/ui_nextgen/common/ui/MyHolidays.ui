@@ -1,0 +1,369 @@
+;----------------------WANDEL™-- 03.07.2020 ----------------
+<data Holiday_iconProp>
+	<property svg_Only value="Ukraine Independence Day", "Telecom Day", "Happy BirthDay to You", "Genocide", "Resurrection of a Pious Ortodox", "Resurrection of a Pious", "Ascension Ortodox", "Ascension", "Trinity Ortodox", "Trinity", "Easter Ortodox", "Easter" />
+	<property Holyday_type value=(observe(%gps.current_date, %lua.selebrations_type, %lua.birthday, %lua.IMGTrigger); !in_set(sc_MySelebration(), svg_Only)) />
+	;<property value=( observe(%gps.current_date); VW_ifFileExist(L"%app%/ui_nextgen/res/common/nodpi", sc_MySelebration(%gps.current_date, %lua.birthday) + ".spr", "FileExistence", L"diricon_000.svg") ) />
+	<property Holyday_visibility value=(%lua.selebrations_type == "Holidays" && (sc_MySelebration(%gps.current_date, %lua.birthday) == "Happy New Year" || sc_MySelebration(%gps.current_date, %lua.birthday) == "Marry Christmas" || sc_MySelebration(%gps.current_date, %lua.birthday) == "St. Nicholas Day" || sc_MySelebration(%gps.current_date, %lua.birthday) == "Schedryk")) />
+	<property img value=( observe(%gps.current_date, %lua.selebrations_type, %lua.birthday, %lua.IMGTrigger); (sc_MySelebration() ? (sc_MySelebration() + (%lua.selebrations_type == "Holidays" && Holyday_type ? ".spr" : ".svg")) : "MyLogo.svg") ) />
+</data>
+<!DISABLE COMPAT_UPCASE_ATTR_SELECTOR/>
+<modify ui_DiscoverySidePanel > ;ui_TripComputerVW, ui_GPSStatusVW, ui_MapControlPointOnMapVW
+	<insert after="#my_logo">
+		<BUTTON RIGHT=2% W=50 LEFT=undef TOP=1% H=50 BOTTOM=undef VISIBLE=(%lua.IsLandscape) ;!!!03.07.20
+			ONRELEASE='VW_LongTextToSay(sc_translate_VoiceOrLang(sc_MySelebration())) sc_PlaySoundTool("alarmeffect", melody)'
+			ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_Selebrations_Popover", MODEL.lua.selebrations_type())' >
+		
+			<SPRITE RIGHT=0 LEFT=0 TOP=0 BOTTOM=0 VISIBLE=(VW_isSVGorBMP(Holiday_iconProp.img))
+				ZOOM=80% ALIGN="CENTER" VALIGN="CENTER"
+				IMG=(VW_isSVGorBMP(Holiday_iconProp.img) ? Holiday_iconProp.img : "MyLogo.svg") ;to avoid crash
+				PHASE=(%lua.selebrations_type == "Holidays" && Holiday_iconProp.Holyday_type ? undef : %lua.aColorCockpitInterface_Set) />
+
+			<SPRITE RIGHT=0 LEFT=0 TOP=0 BOTTOM=0 VISIBLE=(!VW_isSVGorBMP(Holiday_iconProp.img))
+				ZOOM="ZOOMVISIBLE" ALIGN="CENTER" VALIGN="CENTER"
+				IMG=(VW_isSVGorBMP(Holiday_iconProp.img) ? "MyLogoBMP.spr" : Holiday_iconProp.img) ;to avoid crash
+				ANIMATE=(%lua.selebrations_type == "Holidays" && Holiday_iconProp.Holyday_type ? "anime" : undef) />
+			
+			<SPRITE class="button map fill" />
+		</BUTTON>
+	</insert>
+	<remove element="#my_logo" />
+</modify>
+<modify ui_TripComputerVW> ;ui_GPSStatusVW, ui_MapControlPointOnMapVW 
+	<insert after="#my_logo">
+		<BUTTON RIGHT=2% W=50 LEFT=undef TOP=1% H=50 BOTTOM=undef VISIBLE=(%lua.IsLandscape) Z=30
+			ONRELEASE='VW_LongTextToSay(sc_translate_VoiceOrLang(sc_MySelebration())) sc_PlaySoundTool("alarmeffect", melody)'
+			ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_Selebrations_Popover", MODEL.lua.selebrations_type())' >
+			
+			<SPRITE RIGHT=0 LEFT=0 TOP=0 BOTTOM=0 VISIBLE=(VW_isSVGorBMP(Holiday_iconProp.img))
+				ZOOM=80% ALIGN="CENTER" VALIGN="CENTER"
+				IMG=(VW_isSVGorBMP(Holiday_iconProp.img) ? Holiday_iconProp.img : "MyLogo.svg") ;to avoid crash
+				PHASE=(%lua.selebrations_type == "Holidays" && Holiday_iconProp.Holyday_type ? undef : %lua.aColorCockpitInterface_Set) />
+
+			<SPRITE RIGHT=0 LEFT=0 TOP=0 BOTTOM=0 VISIBLE=(!VW_isSVGorBMP(Holiday_iconProp.img))
+				ZOOM="ZOOMVISIBLE" ALIGN="CENTER" VALIGN="CENTER"
+				IMG=(VW_isSVGorBMP(Holiday_iconProp.img) ? "MyLogoBMP.spr" : Holiday_iconProp.img) ;to avoid crash
+				ANIMATE=(%lua.selebrations_type == "Holidays" && Holiday_iconProp.Holyday_type ? "anime" : undef) />
+				
+			<SPRITE class="button map fill" />
+		</BUTTON>
+	</insert>
+	<remove element="#my_logo" />
+</modify>
+<modify ui_GPSStatusVW > ; ui_MapControlPointOnMapVW
+	<insert after="#my_logo">
+		<BUTTON RIGHT=2% W=50 LEFT=undef TOP=1% H=50 BOTTOM=undef
+			ONRELEASE='VW_LongTextToSay(sc_translate_VoiceOrLang(sc_MySelebration())) sc_PlaySoundTool("alarmeffect", melody)'
+			ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_Selebrations_Popover", MODEL.lua.selebrations_type())' >
+			
+			<SPRITE RIGHT=0 LEFT=0 TOP=0 BOTTOM=0 VISIBLE=(VW_isSVGorBMP(Holiday_iconProp.img))
+				ZOOM=80% ALIGN="CENTER" VALIGN="CENTER"
+				IMG=(VW_isSVGorBMP(Holiday_iconProp.img) ? Holiday_iconProp.img : "MyLogo.svg") ;to avoid crash
+				PHASE=(%lua.selebrations_type == "Holidays" && Holiday_iconProp.Holyday_type ? undef : %lua.aColorCockpitInterface_Set) />
+
+			<SPRITE RIGHT=0 LEFT=0 TOP=0 BOTTOM=0 VISIBLE=(!VW_isSVGorBMP(Holiday_iconProp.img))
+				ZOOM="ZOOMVISIBLE" ALIGN="CENTER" VALIGN="CENTER"
+				IMG=(VW_isSVGorBMP(Holiday_iconProp.img) ? "MyLogoBMP.spr" : Holiday_iconProp.img) ;to avoid crash
+				ANIMATE=(%lua.selebrations_type == "Holidays" && Holiday_iconProp.Holyday_type ? "anime" : undef) />
+				
+				<SPRITE class="button map fill" />
+		</BUTTON>
+	</insert>
+	<remove element="#my_logo" />
+</modify>
+<modify ui_MapControlPointOnMapVW >
+	<insert after="#my_logo">
+		<BUTTON RIGHT=2% W=50 LEFT=undef TOP=1% H=50 BOTTOM=undef VISIBLE=(lua.MSG_Table.line[1] == "Point on map")
+			ONRELEASE='VW_LongTextToSay(sc_translate_VoiceOrLang(sc_MySelebration())) sc_PlaySoundTool("alarmeffect", melody)'
+			ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_Selebrations_Popover", MODEL.lua.selebrations_type())' >
+			
+			<SPRITE RIGHT=0 LEFT=0 TOP=0 BOTTOM=0 VISIBLE=(VW_isSVGorBMP(Holiday_iconProp.img))
+				ZOOM=80% ALIGN="CENTER" VALIGN="CENTER"
+				IMG=(VW_isSVGorBMP(Holiday_iconProp.img) ? Holiday_iconProp.img : "MyLogo.svg") ;to avoid crash
+				PHASE=(%lua.selebrations_type == "Holidays" && Holiday_iconProp.Holyday_type ? undef : %lua.aColorCockpitInterface_Set) />
+
+			<SPRITE RIGHT=0 LEFT=0 TOP=0 BOTTOM=0 VISIBLE=(!VW_isSVGorBMP(Holiday_iconProp.img))
+				ZOOM="ZOOMVISIBLE" ALIGN="CENTER" VALIGN="CENTER"
+				IMG=(VW_isSVGorBMP(Holiday_iconProp.img) ? "MyLogoBMP.spr" : Holiday_iconProp.img) ;to avoid crash
+				ANIMATE=(%lua.selebrations_type == "Holidays" && Holiday_iconProp.Holyday_type ? "anime" : undef) />
+				
+				<SPRITE class="button map fill" />
+		</BUTTON>
+	</insert>
+	<remove element="#my_logo" />
+</modify>
+
+<modify ui_Menu>
+   	<insert into="IMPLEMENTATION"> 
+		<PROPERTY Show_MySelebration_permanently value = (sc_GetSysEntry("myholidays", "show_menu_icon", 0)) />
+	</insert>	
+	<remove element="LAYER DIV.menu_button BUTTON.mainmenu.fill SPRITE" />
+	<insert into="LAYER DIV.menu_button BUTTON.mainmenu.fill">
+		<SPRITE CLASS="menu icon svg" Z=2 VISIBLE=(!((sc_MySelebration(%gps.current_date, %lua.birthday) || Show_MySelebration_permanently) && %lua.selebrations_type == "Holidays")) /> ;;standart main icon
+		<SPRITE CLASS="menu icon svg" VISIBLE=((sc_MySelebration(%gps.current_date, %lua.birthday) || Show_MySelebration_permanently) && %lua.selebrations_type == "Holidays" && VW_isSVGorBMP(Holiday_iconProp.img)) Z=2
+			IMG=(VW_isSVGorBMP(Holiday_iconProp.img) ? Holiday_iconProp.img : "MyLogo.svg") ;to avoid crash
+			PHASE=(%lua.selebrations_type == "Holidays" && Holiday_iconProp.Holyday_type ? undef : %lua.aColorCockpitInterface_Set) />
+		<SPRITE CLASS="menu icon svg" VISIBLE=((sc_MySelebration(%gps.current_date, %lua.birthday) || Show_MySelebration_permanently) && %lua.selebrations_type == "Holidays" && !VW_isSVGorBMP(Holiday_iconProp.img)) Z=2
+			ZOOM="ZOOMVISIBLE" 
+			IMG=(VW_isSVGorBMP(Holiday_iconProp.img) ? "MyLogoBMP.spr" : Holiday_iconProp.img) ;to avoid crash
+			ANIMATE=(%lua.selebrations_type == "Holidays" && Holiday_iconProp.Holyday_type ? "anime" : undef) />
+	</insert>
+</modify>
+
+;---------------------------------------------------------------------
+<!if condition=(Plugin.isLoaded("labs"))>
+	<modify lm_ExtraSettingsList>
+		<insert>
+			<row text="'My Selebrations' Settings" icon="MyLogo.svg" haspopover=1 details=%lua.selebrations_type
+				onrelease='sc_SetPopoverListAndOpen("ui.lm_Selebrations_Popover", MODEL.lua.selebrations_type())' />
+		</insert>
+		<insert>
+			<row text="'My Biorhythm' Settings" icon="ico_biorhythm.svg" haspopover=1 details=(translate(%lua.tolerance_type) + L" | " + builtin.format("%{date:*}", %lua.birthday, %regional.dateformat))
+				onrelease='sc_SetPopoverListAndOpen("ui.lm_Biorhythm_Popover", MODEL.lua.tolerance_type())' />
+		</insert>
+	</modify>
+<!end>
+<userlist lm_Selebrations_Popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 onrelease='MODEL.lua.selebrations_type = MODEL["*"].text() sc_ClosePopover()'/>
+	<row text="Holidays" />
+	<row text="Zodiac" />
+	<row text="Events List" onrelease='WNDL_ListHolidays(); sc_ClosePopover()' />
+</userlist>
+<userlist lm_Biorhythm_Popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 onrelease='MODEL.lua.tolerance_type = MODEL["*"].text() sc_ClosePopover()'/>
+	<row text="Forthrightly" />
+	<row text="Tolerantly" />
+	<row text="Birthday Data" onrelease='WNDL_DataSetting(); sc_ClosePopover()' />
+	<row text="Events List" onrelease='WNDL_ListHolidays(); sc_ClosePopover()' />
+</userlist>
+
+<userlist lm_HolidaysSettings_footer text="str" onrelease="ui" onlongclick="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+		<row text="Reset Holidays" onrelease='MODEL.lua.LastDATE = DATETYPE.new(0); sc_back(); obs_DateValid:trigger(); WNDL_ListHolidays()' onlongclick=undef isactionbutton=1 />
+</userlist>
+;----------------------------------------------------------------------------------
+<modify ui_Cockpit> 
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON CLASS="btn_map" 
+			ONRELEASE='obs_DateValid:TRIGGER(); doDelayed(8, function() sc_PlaySoundTool("alarmeffect", "no sound") end)'
+			ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_Selebrations_Popover", MODEL.lua.selebrations_type())'
+			VISIBLE=(sc_MySelebration(%gps.current_date, %lua.birthday) && %lua.selebrations_type == "Holidays") >
+			
+       		<SPRITE CLASS="button map fill" />
+			<SPRITE CLASS="btn_map svg" VISIBLE=(VW_isSVGorBMP(Holiday_iconProp.img))
+				IMG=(VW_isSVGorBMP(Holiday_iconProp.img) ? Holiday_iconProp.img : "MyLogo.svg") />
+			<SPRITE LEFT=25% RIGHT=25% TOP=25% BOTTOM=25% VISIBLE=(!VW_isSVGorBMP(Holiday_iconProp.img))
+				ZOOM="ZOOMVISIBLE" ALIGN="CENTER" VALIGN="CENTER"
+				IMG=(VW_isSVGorBMP(Holiday_iconProp.img) ? "MyLogoBMP.spr" : Holiday_iconProp.img) ;to avoid crash
+				ANIMATE=(%lua.selebrations_type == "Holidays" && Holiday_iconProp.Holyday_type ? "anime" : undef) />
+				
+			<TEXT CLASS="BTN_top_text" TEXT=(VW_Return_button_text(translate(sc_MySelebration(%gps.current_date, %lua.birthday) // ""), L"%s", 1))
+				VISIBLE=( %lua.text_on_buttons ) />
+			<TEXT CLASS="BTN_bottom_text" TEXT=(VW_Return_button_text(translate(sc_MySelebration(%gps.current_date, %lua.birthday) // ""), L"%s", 99))
+				VISIBLE=( %lua.text_on_buttons ) />
+		</BUTTON>
+	</insert>
+</modify>
+<modify lm_CockpitSideList>
+	<insert>
+		<row	visible=(sc_MySelebration(%gps.current_date, %lua.birthday) && %lua.selebrations_type == "Holidays") />
+	</insert>
+</modify>
+;-------------------------------------icon-------------------------------------------
+<modify ui_Cockpit> 
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON ShowBiorhythmBtnCockpit
+			ICON="ico_biorhythm.svg"
+			ONRELEASE='if MODEL.gps.current_date.valid() then
+				if MODEL.lua.birthday() == DATETYPE.new({day=0, month=0, year=0}) then
+					VW_LongTextToSay(sc_translate_VoiceOrLang("Please define Birthday"))
+				else
+					VW_biorhythmInit() 
+					sc_NextStateAnim(st_BiorhythmGraph, "fade", 1, "")
+				end
+			end'
+			ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_Biorhythm_Popover", MODEL.lua.tolerance_type())' 
+			VISIBLE=(%lua.ShowBiorhythmBtnCockpit)
+			T_TEXT="Birthday" >
+			<TEXT CLASS="BTN_bottom_text" TEXTMODEL_DATE="lua.birthday" FORMATMODEL="regional.dateformat"
+				VISIBLE=( %lua.text_on_buttons ) />
+		</BUTTON_ICON>
+	</insert>
+</modify>
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'Biorhythm' Button" bmp=(ShowBiorhythmBtnCockpit.ICON) isselected="lua.ShowBiorhythmBtnCockpit" />
+	</insert>
+</modify>
+<modify lm_CockpitSideList>
+	<insert>
+		<row  visible=(%lua.ShowBiorhythmBtnCockpit) />
+	</insert>
+</modify>
+;---------------- in QuickMenu ----------------------
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON 
+			ONRELEASE='ui.ShowBiorhythmBtnCockpit.ONRELEASE()()'
+			ONLONGCLICK='ui.ShowBiorhythmBtnCockpit.ONLONGCLICK()()'
+			VISIBLE=(%lua.ShowBiorhythmQuick)
+			ICON=(ShowBiorhythmBtnCockpit.ICON)
+			T_TEXT=(ShowBiorhythmBtnCockpit.T_TEXT) >
+			<TEXT CLASS="BTN_bottom_text" TEXTMODEL_DATE="lua.birthday" FORMATMODEL="regional.dateformat"
+				VISIBLE=( %lua.text_on_buttons ) />
+		</BUTTON_ICON>
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row  visible=(%lua.ShowBiorhythmQuick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'Biorhythm' Button" bmp=(ShowBiorhythmBtnCockpit.ICON) isselected="lua.ShowBiorhythmQuick" />
+	</insert>
+</modify>
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp="ico_biorhythm.svg" text=(translate("Biorhythm")) onrelease='ui.ShowBiorhythmBtnCockpit.ONRELEASE()()' />
+		</insert>
+	</modify>
+<!end/>	
+;----------------------------------------------------------------------------------
+
+<modify ui_Discovery_Zoom>
+	<insert into="DIV.cockpit DIV.map_messagebox"> 
+		<SPRITE Z=20 LEFT=0 RIGHT=0 TOP=10 IMG="wreath.svg" PHASE=(%lua.wreath_phase) ;ALPHA=(%lua.aCockpitTransparency)
+			ZOOM="ZOOMVISIBLE" ALIGN="CENTER" VALIGN="TOP" DESIRED_H=10%
+			ONCLICK=undef 
+			VISIBLE=(%lua.selebrations_type == "Holidays" && (sc_MySelebration(%gps.current_date, %lua.birthday) == "Happy New Year" || sc_MySelebration(%gps.current_date, %lua.birthday) == "Marry Christmas" || sc_MySelebration(%gps.current_date, %lua.birthday) == "St. Nicholas Day" || sc_MySelebration(%gps.current_date, %lua.birthday) == "Schedryk")) /> 
+	</insert>
+</modify>
+
+<modify ui_Cockpit>
+	<modify element="#next_street_with_shield" VISIBLE=(!Holiday_iconProp.Holyday_visibility) />
+	<insert after="#next_street_with_shield" >
+		<SPRITE Z=10 CLASS="MyHolyday"
+			ZOOM="ZOOMVISIBLE" ALIGN="LEFT" VALIGN="CENTER"
+			VISIBLE=(Holiday_iconProp.Holyday_visibility)
+			IMG=(sc_MySelebration(%gps.current_date, %lua.birthday) ? (sc_MySelebration(%gps.current_date, %lua.birthday) + (%lua.selebrations_type == "Holidays" && Holiday_iconProp.Holyday_type ? ".spr" : ".svg")) : (%lua.selebrations_type == "Holidays" && Holiday_iconProp.Holyday_type ? "MyLogoBMP.spr" : "MyLogo.svg")) 
+			ANIMATE=(%lua.selebrations_type == "Holidays" && Holiday_iconProp.Holyday_type ? "anime" : undef) 
+			PHASE=(%lua.selebrations_type == "Holidays" && Holiday_iconProp.Holyday_type ? undef : %lua.aColorCockpitInterface_Set)
+			ONCLICK='VW_LongTextToSay(sc_translate_VoiceOrLang(sc_MySelebration())) sc_PlaySoundTool("alarmeffect", melody)'
+			ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_Selebrations_Popover", MODEL.lua.selebrations_type())' />
+		<SPRITE Z=10 CLASS="MyHolyday"
+			IMG="wreath.svg" PHASE=(%lua.wreath_phase)
+			ZOOM="ZOOMVISIBLE" ALIGN="CENTER" VALIGN="CENTER" 
+			ONCLICK=undef 
+			VISIBLE=(Holiday_iconProp.Holyday_visibility) /> 
+		<SPRITE Z=10 CLASS="MyHolyday"
+			ZOOM="ZOOMVISIBLE" ALIGN="RIGHT" VALIGN="CENTER"
+			VISIBLE=(Holiday_iconProp.Holyday_visibility)
+			IMG=(sc_MySelebration(%gps.current_date, %lua.birthday) ? (sc_MySelebration(%gps.current_date, %lua.birthday) + (%lua.selebrations_type == "Holidays" && Holiday_iconProp.Holyday_type ? ".spr" : ".svg")) : (%lua.selebrations_type == "Holidays" && Holiday_iconProp.Holyday_type ? "MyLogoBMP.spr" : "MyLogo.svg")) 
+			ANIMATE=(%lua.selebrations_type == "Holidays" && Holiday_iconProp.Holyday_type ? "anime" : undef) 
+			PHASE=(%lua.selebrations_type == "Holidays" && Holiday_iconProp.Holyday_type ? undef : %lua.aColorCockpitInterface_Set)
+			ONCLICK='VW_LongTextToSay(sc_translate_VoiceOrLang(sc_MySelebration())) sc_PlaySoundTool("alarmeffect", melody)'
+			ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_Selebrations_Popover", MODEL.lua.selebrations_type())' />
+	</insert>
+</modify>
+
+<observer value=(Holiday_iconProp.Holyday_visibility) 
+	onselect='VW_animaterSVG(4)' ondeselect='killDelayed(VW_animaterSVGID)' START="NO_TRIGGER" />
+
+<observer boolmodel='regional.current_voice.is_tts' onselect='doDelayed(500, VW_TTS_is_active)' START="NO_TRIGGER" /> ;, 'lua.CockpitMapMode'
+
+;--------------------------------------
+;        Date List
+;--------------------------------------
+
+<userlist lm_BioDatelist date="str" >
+	;<default FILENAME="lm_BioDatelist.txt" />
+</userlist>
+
+<element_template et_GraphList>
+	<SPRITE class="listitem icon_list svg" img="ico_dot.svg" phasename="Physical" bottom=(VW_Bottom_conv("Physical")) />
+	<SPRITE class="listitem icon_list svg" img="ico_dot.svg" phasename="Emotional" bottom=(VW_Bottom_conv("Emotional")) />
+	<SPRITE class="listitem icon_list svg" img="ico_dot.svg" phasename="Intellectual" bottom=(VW_Bottom_conv("Intellectual")) />
+	<TEXT class="listitem" text=(loadstring("return " + %*.date)().day) 
+		color=(VW_dayOfWeek(%*.date) == 6 || VW_dayOfWeek(%*.date) == 0 ? #FF0000 : CSS.Param.map_main_color) />
+	;<SPRITE class="listitem icon_list svg" img="-.svg" bottom=(VW_Composite()) />
+	;<SPRITE left=0 right=0 h=(VW_Composite()) bottom=(-220%) resize_bmp=1 img="spr_speedlimit_panel.bmp#3" phase=2 opaque=1 />
+</element_template>
+
+<layer ui_BiorhythmGraph z=30 >
+	<implementation>
+		<property dayOfWeek value=( observe(%gps.current_date); VW_BirthDayOfWeek() ) />
+	</implementation>
+	<DIV class="list">
+		<LIST2 BiorhythmGraph class=list_control SMOOTHSCROLLING row=1 col=33>
+			<LISTMODEL listmodel="ui.lm_BioDatelist" element_template="et_GraphList">
+			<VSMARTSCROLL>
+			<WHEEL>
+		</LIST2>
+		
+		<SPRITE left=0 right=0 h=5 bottom=60% resize_bmp=1 img="spr_speedlimit_panel.bmp#3" phase=4 opaque=1 />
+
+		<HBOX left=0 right=0 h=4% top=80% >
+			<TEXT class="listitem" text="Birthday Data" />
+			<SPACER flex=1>
+			;;<TEXT class="listitem" text=(loadstring("return eDaysOfWeekFull[MODEL.lua.birthday().dayOfWeek + 1]")()) />
+			<TEXT class="listitem" text=(dayOfWeek) />
+			<SPACER flex=1>
+			<TEXT class="listitem"  textmodel_date="lua.birthday" formatmodel="regional.dateformat" />
+			<SPACER flex=1>
+			<SPRITE class="btn_map svg" img=(VW_MyZodiac() + ".svg") onrelease='VW_LongTextToSay(sc_translate_VoiceOrLang(VW_MyZodiac())); MODEL.sound.playchanneltest("ding", L"!button")' />
+		</HBOX>
+
+		<HBOX left=0 right=0 h=4% top=90% >
+			<SPRITE class="btn_map svg" img="ico_dot.svg" phasename="Physical" />
+			<TEXT class="listitem" text="Physical" />
+			<SPACER flex=1>
+			<SPRITE class="btn_map svg" img="ico_dot.svg" phasename="Emotional" />
+			<TEXT class="listitem" text="Emotional" />
+			<SPACER flex=1>
+			<SPRITE class="btn_map svg" img="ico_dot.svg" phasename="Intellectual" />
+			<TEXT class="listitem" text="Intellectual" />
+		</HBOX>
+		
+	</DIV>
+</layer>
+
+<userlist lm_Biorhythm_footer text="str" onrelease="ui"  onlongclick="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+	<row    text="Today" onrelease='obs_DateValid:TRIGGER()' />
+</userlist>
+
+<userlist lm_Biorhythm_localmenu text="str" onrelease="ui" enable="bool"  visible="bool">
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 />
+      	<row	text="Birthday Data" onrelease=WNDL_DataSetting />	
+		<row	text="Zodiac signs" onrelease='ui_Zodiac_signs:SHOW()' />	
+</userlist>
+
+<layer ui_Zodiac_signs z=9999>
+	<DIV class="full" >
+		<SPRITE class="background" img="Zodiac circle with horoscope signs.svg" onrelease='ui_Zodiac_signs:HIDE()' >
+	</DIV>
+</layer>
+
+<element_template et_ListChkOnOff_IconHD>
+	<CHECKBOX CHECKBOX_param class="listitem chkonoff" iconspr="da_na.svg" text=%*.text checked=%*.checked changevalue=%*.changevalue />
+	;<SPRITE class="btn_map svg" img=%*.bmp phasename=%*.phasename onrelease=%*.onrelease onlongclick=%*.onlongclick align="left" left=2% right=85% />
+	<BUTTON_ICON icon=%*.bmp t_text=%*.from b_text=%*.to zoom=70% align="center" left=0 right=91% top=0 bottom=0 valign="center" />
+</element_template>
+
+<userlist lm_HolidaysList bmp="str" text="wstr" from="str" to="str" onrelease="ui" onlongclick="ui" enable="bool" visible="bool" type="str" checked="bool" changevalue="ui" >
+	<default enable=1 visible=1 
+		onlongclick=undef
+		onrelease=undef
+		type="ChkOnOff_IconHD" 
+		changevalue='MODEL["*"].checked = not MODEL["*"].checked()'
+		/>
+	<view sort_by="from" />
+</userlist>

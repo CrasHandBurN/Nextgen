@@ -1,0 +1,51 @@
+;------------------------------------------------------------------------------------
+<modify ui_Cockpit>   
+	<insert first_child after="BUTTON" into="#CockpitBTNTable"> 
+		<BUTTON_ICON ONRELEASE=(%mydata.tracks.tracking_index !=-1 ? sc_StopTripLog : sc_StartTripLog) ONLONGCLICK='sc_NextStateAnim(st_TripLogList, "fade", 1, "")'
+			VISIBLE=(%lua.TripLogButtonInCockpit)
+			ICON=(%mydata.tracks.tracking_index !=-1 && !(%gps.valid && %gps.fast_blink) ? "ico_rec.svg" : "ico_triplog.svg") 
+			T_TEXT=(%mydata.tracks.tracking_index !=-1 && !(%gps.valid && %gps.fast_blink) ? (%gps.valid ? "Recording" : "NO GPS") : "") 
+			B_TEXT="Trip Log" />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'Trip Log' Button" bmp=(%mydata.tracks.tracking_index !=-1 && !(%gps.valid && %gps.fast_blink) ? "ico_rec.svg" : "ico_triplog.svg") isselected="lua.TripLogButtonInCockpit" onrelease=rm_ReadRouteTracking />
+	</insert>
+</modify>
+<modify lm_CockpitSideList>
+	<insert>
+		<row  visible=(%lua.TripLogButtonInCockpit) />
+	</insert>
+</modify>
+;-------------------------------In Quick Menu------------------------------------------------------
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE=(%mydata.tracks.tracking_index !=-1 ? sc_StopTripLog : sc_StartTripLog) ONLONGCLICK='sc_NextStateAnim(st_TripLogList, "fade", 1, "")'
+			VISIBLE=(%lua.TripLogButtonInQuickMenu)
+			ICON=(%mydata.tracks.tracking_index !=-1 && !(%gps.valid && %gps.fast_blink) ? "ico_rec.svg" : "ico_triplog.svg") 
+			T_TEXT=(%mydata.tracks.tracking_index !=-1 && !(%gps.valid && %gps.fast_blink) ? (%gps.valid ? "Recording" : "NO GPS") : "") 
+			B_TEXT="Trip Log" />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row  visible=(%lua.TripLogButtonInQuickMenu) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'Trip Log' Button" bmp=(%mydata.tracks.tracking_index !=-1 && !(%gps.valid && %gps.fast_blink) ? "ico_rec.svg" : "ico_triplog.svg") isselected="lua.TripLogButtonInQuickMenu" onrelease=rm_ReadRouteTracking />
+	</insert>
+</modify>
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=(%mydata.tracks.tracking_index !=-1 && !(%gps.valid && %gps.fast_blink) ? "ico_rec.svg" : "ico_triplog.svg") text=(translate("Trip Log")) onrelease=(%mydata.tracks.tracking_index !=-1 ? sc_StopTripLog : sc_StartTripLog) />
+		</insert>
+	</modify>
+<!end/>

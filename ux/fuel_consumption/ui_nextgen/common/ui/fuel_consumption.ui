@@ -1,0 +1,242 @@
+;--------------------------------------
+;        Fuel Consumption List
+;--------------------------------------
+
+<userlist lm_fuellist date="date" last_mileometer="double" current_mileometer="double" gas_amount="double" gas_price="double">
+	<default FILENAME="fuel.txt" />
+</userlist>
+
+<element_template et_FuelList_start>
+	<BUTTON class="listitem"  onrelease='sc_NextStateAnim( st_FuelConsumptionSetStart, "fade", 1, "")' enable=(%ui.lm_fuellist.list.isempty)>
+		<HBOX class="listitem">
+			<TEXT   class="listitem" text="Initial Odometer Value" />
+			<SPACER flex=1 />
+			<UNITTEXT class="listitem" value=(sprintf( "%.2f", sc_ConvertDistance(%lua.savedInitialMileometer) )) unit=(sc_FormatMileometerUnit()) />
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<element_template et_FuelList>
+	<implementation>
+		<property currentMileometer value=(sc_ConvertDistance(%*.current_mileometer)) />
+		<property lastMileometer value=(sc_ConvertDistance(%*.last_mileometer)) />
+		<property gas value=(sc_ConvertVolume(%*.gas_amount)) />
+	</implementation>
+	<BUTTON class="listitem" onrelease='sc_SelectFuelConsumptionItem(index)'>
+		<HBOX class="listitem">
+			<TEXT class="listitem"  textmodel_date="*.date" formatmodel="regional.dateformat" />
+			<SPACER flex=1 />
+			<UNITTEXT class="listitem" value=(sc_format_fueleconomy(currentMileometer, lastMileometer, gas)) unit=(sc_FormatConsumptionUnit()) />
+		</HBOX>
+	</BUTTON>
+	
+</element_template>
+
+<layer ui_FuelList z=30>
+	<DIV class="list">
+		<LIST2 class="list_control" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.lm_OneItemList" element_template="et_FuelList_start" />
+			<LISTMODEL listmodel="ui.lm_fuellist.list" element_template="et_FuelList" />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<userlist lm_FooterFuelConsumption text="str" onrelease="ui" visible="bool">
+	<view visibility_filter=visible />
+	<row text="Add" onrelease='sc_NextStateAnim( st_Fuel_Units, "fade", 1, "" )' visible=(!%lua.EditMode) />
+</userlist>
+
+<userlist lm_localmenu_FuelConsumption text="str" onrelease="ui" visible="bool">
+	<view visibility_filter=visible />
+	<default visible=1 />
+	<row edit text="Delete" onrelease=sc_EditFuelConsumption visible=( !(%ui.lm_fuellist.isempty || %lua.EditMode) ) />
+	<row text="Delete All" onrelease=sc_FuelListDeleteAllMSGbox visible=(!%ui.lm_fuellist.isempty) />
+	<row text="Maintenance Schedule" onrelease='sc_NextStateAnim( st_Maintenance,  "fade", 1, "" )' />
+</userlist>
+
+<userlist lm_FuelConsumptionListPopover text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+	<row text="Delete" onrelease=sc_DeleteFuelConsumptionListEntry />
+</userlist>
+
+;---------------------------------------------
+;           Add Fuel Consumption Entry
+;---------------------------------------------
+
+<layer ui_FuelUnits z=30>
+	<DIV class="half" left=50%> 
+		<RADIO  class="btn_main fuelunits" left=0 right=2% top=5.5% h=23.5% var=0 groupmodel="lua.FuelGroup" onrelease=sc_FuelChange_OnRelease >
+			<VBOX class="listitem">
+				<TEXT     class="listitem" paddingleft=(CSS.Param.list_padding) paddingright=(CSS.Param.list_padding) text="Last Odometer Value" />
+				<UNITTEXT class="listitem bd" paddingleft=(CSS.Param.list_padding) paddingright=(CSS.Param.list_padding) value=(builtin.sprintf("%.2f", %lua.last_mileometer)) unit=(sc_FormatMileometerUnit()) valid=(%lua.last_mileometer >= 0) />
+			</VBOX>
+		</RADIO>
+		
+		<RADIO  class="btn_main fuelunits" left=0 right=2% top=29% h=23.5% var=1 groupmodel="lua.FuelGroup" onrelease=sc_FuelChange_OnRelease >
+			<VBOX class="listitem">
+				<TEXT      class="listitem"    left=0  w=100% top=5% h=50%   paddingleft=(CSS.Param.list_padding) paddingright=(CSS.Param.list_padding)    valign="CENTER"  align="LEFT" text="Current Odometer Value" />
+				<UNITTEXT  class="listitem bd odometer" h=undef left=0 w=92% bottom=20% top=50% paddingleft=(CSS.Param.list_padding) paddingright=(CSS.Param.list_padding) valign="CENTER" align="LEFT" value=(builtin.sprintf("%.2f", %lua.current_mileometer)) unit=(sc_FormatMileometerUnit()) valid=(%lua.current_mileometer >= 0) />
+			</VBOX>
+		</RADIO>
+
+		<RADIO  class="btn_main fuelunits" left=0 right=2% top=52.5% h=23.5% var=2 groupmodel="lua.FuelGroup" onrelease=sc_FuelChange_OnRelease >
+			<VBOX class="listitem">
+				<TEXT      class="listitem"    left=0  w=100% top=5% h=50%  paddingleft=(CSS.Param.list_padding)  paddingright=(CSS.Param.list_padding)    valign="CENTER"  align="LEFT" text="Gas Amount" />
+				<UNITTEXT  class="listitem bd" h=undef left=0 w=92% bottom=20% top=50% paddingleft=(CSS.Param.list_padding) paddingright=(CSS.Param.list_padding) align="LEFT" value=(sprintf("%.2f", %lua.gas_amount)) unit=(%lua.volume_unit == lua.EVolumeUnit.lpkm || %lua.volume_unit == lua.EVolumeUnit.kmpl ? translate(m_i18n("GASAMOUNT~l")) : translate(m_i18n("GASAMOUNT~gal"))) valid=%lua.gas_amount />
+			</VBOX>
+		</RADIO>
+
+		<RADIO  class="btn_main fuelunits" left=0 right=2% top=76% h=23.5% var=3 groupmodel="lua.FuelGroup" onrelease=sc_FuelChange_OnRelease >
+			<VBOX class="listitem">
+				<TEXT      class="listitem"    left=0  w=100% top=5% h=50%    paddingleft=(CSS.Param.list_padding) paddingright=(CSS.Param.list_padding)   valign="CENTER"  align="LEFT" text="Gas Price / Unit" />
+				<UNITTEXT  class="listitem bd" h=undef left=0 w=92% bottom=20% top=50% paddingleft=(CSS.Param.list_padding) paddingright=(CSS.Param.list_padding) align="LEFT" value=(sprintf("%.3f", %lua.gas_price)) unit=%lua.Currency valid=%lua.gas_price />
+			</VBOX>
+		</RADIO>
+	</DIV>
+</layer>
+
+<layer ui_InputText_FuelUnits z=30>
+	<DIV class="half">
+		
+		<BUTTON class="button_input">
+			<HBOX class="inputfield">
+				<INPUTTEXT inp_FuelUnits class="input_text" onchange=sc_Fuel_SetValue />
+			</HBOX>
+		</BUTTON>
+	</DIV>
+</layer>
+
+<userlist lm_FooterFuelUnits text="str" onrelease="ui" enable="bool">
+	<row text="Add" onrelease=sc_FuelListSave enable=(%lua.keyb_done) />
+</userlist>
+
+;-------------------------------------------
+;          View Fuel Consumption Entry
+;-------------------------------------------
+
+<userlist lm_FooterFuelConsumptionStats text="str" onrelease="ui" visible="bool" isactionbutton="bool">
+	<implementation>
+		<property newItem value=false />
+	</implementation>
+	<view visibility_filter=visible />
+	<default visible=true />
+	<row text="Done" isactionbutton=1 onrelease=sc_FuelListSaveFinished visible=(newItem) />
+</userlist>
+ 
+<userlist lm_fuelConsumptionStats text="str" value="ui" unit="ui" type="str" onrelease="ui">
+	<default type="" onrelease=undef />
+</userlist>
+
+<element_template et_FuelConsumptionStats>
+	<HBOX class="listitem">
+		<TEXT class="listitem" text=%*.text />
+		<SPACER flex=1 />
+		<UNITTEXT class="listitem"  value=%*.value unit=%*.unit visible=(%*.type != "ValueOnly") />
+		<TEXT class="listitem"  text=%*.value visible=(%*.type == "ValueOnly") />
+	</HBOX>
+</element_template>
+
+<layer ui_FuelConsumptionStats z=30>
+	<DIV class="list">
+		<SPRITE class=list_panel />
+		<LIST2 class="list_control" listmodel="ui.lm_fuelConsumptionStats" element_template="et_FuelConsumptionStats" SMOOTHSCROLLING >
+			<VSMARTSCROLL> 
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+;-----------------------------------
+;        Maintenance
+;-----------------------------------
+
+<userlist lm_maintenance id="int" date="date" mileage="double" name="wstr" active="bool" later="bool">
+	<default FILENAME="maintenance.txt" />
+</userlist>
+
+<element_template et_MaintenanceList>
+	<BUTTON class="listitem" onrelease='sc_selectMaintenanceItem(index)'> 
+		<HBOX class="listitem">
+			<VBOX class="listitem">
+				<TEXT class="listitem top" text=%*.name wordwrap=1 />
+				<TEXT class="listitem bottom" textmodel_date="*.date" formatmodel="regional.dateformat" visible=(%*.date > 0) />
+			</VBOX>
+			<SPACER flex=1 />
+			<UNITTEXT class="listitem" value=(sprintf("%.2f", sc_ConvertDistance(%*.mileage))) unit=(sc_FormatMileometerUnit()) visible=(%*.mileage >= 0) />
+		</HBOX>		
+	</BUTTON>
+	
+</element_template>
+
+<layer ui_MaintenanceList z=30>
+	<DIV class="list">
+		<TEXT   class=noitems text="<No items>" visible=(%ui.lm_maintenance.list.isempty) />
+		<LIST2  lstMaintenanceList class="list_control" element_template="et_MaintenanceList" listmodel="ui.lm_maintenance.list" SMOOTHSCROLLING>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>	
+</layer>
+
+<userlist lm_localmenu_MaintenanceList text="str" onrelease="ui" visible="bool" enable="bool">
+	<view visibility_filter=visible />
+	<default visible=1 enable=1 />
+	<row edit text="Delete" onrelease=sc_EditFuelConsumption visible=( !(%ui.lm_maintenance.list.isempty || %lua.EditMode) ) />
+	<row text="Delete All" onrelease=sc_MaintenanceListDeleteAllMSGbox visible=( !%lua.EditMode ) enable=(!%ui.lm_maintenance.list.isempty) />
+</userlist>
+
+<userlist lm_MaintenanceListPopover text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+	<row text="Delete" onrelease=sc_DeleteMaintenanceItem />
+</userlist>
+
+<userlist lm_FooterMaintenanceList text="str" onrelease="ui" visible="bool">
+	<view visibility_filter=visible />
+	<row text="Add" onrelease='MODEL.ui.lm_maintenance.list.index = -1; sc_AddEditMaintenance()' visible=(!%lua.EditMode) />
+</userlist>
+
+<userlist lm_FooterAddMaintenance text="str" onrelease="ui" enable="bool" isactionbutton="bool">
+	<row text="Done" isactionbutton=1 onrelease=sc_AddMaintenanceSchedule enable=(%lua.maintenance_name && (%lua.maintenance_mileage > 0 || %lua.maintenance_date > 0)) />
+</userlist>
+
+<userlist lm_addMaintenance text="wstr" details="wstr" onrelease="ui" enable="bool" visible="bool" dtooltip="str" type="str" value="ui" unit="ui">
+	<view visibility_filter=visible />
+	<default visible=1 enable=1 type="FakeInp" />
+	<row text=(%lua.maintenance_name) onrelease='sc_NextStateAnim( st_AddMaintenanceName, "fade", 1, "")' />
+	<row text=( %lua.maintenance_date > 0 ? (format_date(%lua.maintenance_date,  L"%T", %regional.dateformat)) : L"" ) onrelease='sc_NextStateAnim( st_AddReminderDate, "fade", 1, "")' />
+	<row value=( %lua.maintenance_mileage>=0 ? (builtin.sprintf("%.2f", %lua.maintenance_mileage)) : "") unit=(%lua.maintenance_mileage>=0 ?(sc_FormatMileometerUnit()) : "") onrelease='sc_NextStateAnim( st_AddMaintenanceMileAge, "fade", 1, "")' type="FakeInpUnitText" />
+</userlist>
+
+<layer ui_AddMaintenance z=30>
+	<DIV class="list">
+		<SECTIONMARKER/>
+		<LIST2 lst_addMaintenance class="list_control auto address" SMOOTHSCROLLING>
+			<LISTMODEL element_template="et_List" listmodel="ui.lm_addMaintenance" template_type_model="*.type" >
+				<SEPARATOR class="address" insert_at=( sc_insertListSeparators() ) element_template=et_Separator_FindAddress TEXT=( sc_getListSeparatorText() ) visible=( sc_setListSeparatorVisibility() ) />
+			</LISTMODEL>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<element_template et_ListFakeInpUnitText>
+	<implementation>
+		<property value value=( %*.value // "" ) />
+		<property unit value=( %*.unit // "" ) />
+		<property selected value=( %*.selected // 1 ) />
+	</implementation>
+	
+	<BUTTON class="button_input fake" onrelease=%*.onrelease enable=( %*.enable // 1 )>
+		<HBOX class="inputfield">
+			<UNITTEXT class="input_text_fake" align="left" value=value unit=unit />
+			<SPACER flex = 1/>
+		</HBOX>
+	</BUTTON>
+</element_template>

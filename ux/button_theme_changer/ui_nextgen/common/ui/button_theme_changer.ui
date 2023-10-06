@@ -1,0 +1,72 @@
+;---------------WANDEL™--------------
+<var VWLastDayColorProfile="">
+<var VWLastNightColorProfile="">
+
+<userlist lm_Theme_colorprofile_Popover text="str" onrelease="ui" visible="bool" enable="bool" type="str" img="str">
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 type="Icon" onrelease='VW_SelectLastMapProfile(MODEL["*"].text()) sc_ClosePopover()' />
+	;;<row img="ico_theme.svg" text="Restore color theme" onrelease='VW_SelectOriginalMapProfile() sc_ClosePopover()' />
+</userlist>
+
+<data theme_name>
+	<property name value=(observe(%screen.nightmode); %screen.nightmode ? %interface.current_night_color_original_name : %interface.current_day_color_original_name) />
+</data>
+<modify ui_Cockpit>   
+	<insert first_child after="BUTTON" into="#CockpitBTNTable"> 
+		<BUTTON_ICON Theme_changer_btn_cockpit
+			ONRELEASE=VW_Theme_changer 
+			ONLONGCLICK='
+				if VWLastDayColorProfile() == "" then
+					ui.VWLastDayColorProfile = MODEL.interface.current_day_color_original_name()
+					ui.VWLastNightColorProfile = MODEL.interface.current_night_color_original_name()
+				end
+				sc_SetPopoverListAndOpen(VW_Current_Theme_List(), VW_Current_Theme_Name())
+			' 
+			ICON="ico_themeRGB.svg" ZOOM=90%
+			T_TEXT=(VW_Return_button_text(translate(theme_name.name), L"[_,%s]", 1))
+			B_TEXT=(VW_Return_button_text(translate(theme_name.name), L"[_,%s]", 99))
+			VISIBLE=(%lua.Theme_changer_btn_cockpit) />
+	</insert>
+</modify>
+<modify lm_CockpitSideList>
+	<insert>
+		<row  visible=(%lua.Theme_changer_btn_cockpit) />
+	</insert>
+</modify>
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'Theme changer' Button" bmp=(Theme_changer_btn_cockpit.ICON) isselected="lua.Theme_changer_btn_cockpit" />
+	</insert>
+</modify>
+;-------------------------------In Quick Menu------------------------------------------------------
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON 
+			ONRELEASE='ui.Theme_changer_btn_cockpit.ONRELEASE()()'
+			ONLONGCLICK='ui.Theme_changer_btn_cockpit.ONLONGCLICK()()'
+			ICON=(Theme_changer_btn_cockpit.ICON) ZOOM=90%
+			T_TEXT=(Theme_changer_btn_cockpit.T_TEXT)
+			B_TEXT=(Theme_changer_btn_cockpit.B_TEXT)
+			VISIBLE=(%lua.Theme_changer_btn_quick) />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row  visible=(%lua.Theme_changer_btn_quick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'Theme changer' Button" bmp=(Theme_changer_btn_cockpit.ICON) isselected="lua.Theme_changer_btn_quick" />
+	</insert>
+</modify>
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=(Theme_changer_btn_cockpit.ICON) text=(translate("Theme changer")) onrelease='ui.Theme_changer_btn_cockpit.ONRELEASE()()' onlongclick='ui.Theme_changer_btn_cockpit.ONLONGCLICK()()' />
+		</insert>
+	</modify>
+<!end/>

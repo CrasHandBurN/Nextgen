@@ -1,0 +1,58 @@
+;---------------WANDEL™---11.05.2020------------------
+<observer value=((%navigation.car.current_speed // 1) > %mydata.vehicle_profile.list[%mydata.vehicle_profile.selected_profile].maxspeed && %gps.blink && %lua.VehicleOverspeed) onselect=VW_VehicleOverspeedSignaling start />
+<observer value=((%navigation.car.current_speed // 1) > %mydata.vehicle_profile.list[%mydata.vehicle_profile.selected_profile].maxspeed && %lua.VehicleOverspeed) onselect='MODEL.lua.have_beenOverspeedAnauncement = false' start />
+<data VehicleOverSpeedVW>
+	<property Overspeed value=((%navigation.car.current_speed // 1) > %mydata.vehicle_profile.list[%mydata.vehicle_profile.selected_profile].maxspeed && %gps.blink) />
+</data>
+
+<modify ui_Cockpit>
+	<insert into="BOX.speedlimit_container>BOX.speedlimit" >
+		<BOX CLASS="speedlimit_table" VISIBLE=( %lua.VehicleOverspeed && !( ui_PropLayer.ShowSpeedCamera && !ui_PropLayer.show_hva ) ) >
+			<SPRITE CLASS="speedlimit" OVERMAPLAYER IMG=(VehicleOverSpeedVW.Overspeed ? ( %lua.speedlimit_USACAN ? "spr_speedlimit_usa.svg" : "spr_speedlimit_eu.svg") : lua.EVehicleIcon[sc_GetVehicleTypeFiel(%mydata.vehicle_profile.selected_profile, "vehicle_type")])
+				ONLONGCLICK='MODEL.sound.playchanneltest("ding", L"!button") sc_NextStateAnim(st_VehicleOverspeedSettings, "fade", 1, "" )' 
+				ONRELEASE='
+					sc_Voice_TTS(sc_translate_VoiceOrLang("Recommended maximum speed %s", sc_ShowSpeedTool(MODEL.mydata.vehicle_profile.list[MODEL.mydata.vehicle_profile.selected_profile()].maxspeed())))
+					MODEL.sound.playchanneltest("ding", L"!button") 
+					builtin.invert(MODEL.lua.VehicleOverspeedPermanentSignal)
+					'>
+				<TEXT CLASS="speedlimit" TEXT=(format(L"%{speed[%D]:*}", %mydata.vehicle_profile.list[%mydata.vehicle_profile.selected_profile].maxspeed, 1)) VISIBLE=(VehicleOverSpeedVW.Overspeed) />
+			</SPRITE>
+		</BOX>		
+	</insert>	
+</modify>
+
+<modify lm_SpeedWarnings>
+	<insert last_child>
+		<row text="Vehicle profile overspeed warning" haspopover=1 onrelease='sc_NextStateAnim(st_VehicleOverspeedSettings, "fade", 1, "" )' details=(sc_ShowSpeedTool(%mydata.vehicle_profile.list[%mydata.vehicle_profile.selected_profile].maxspeed)) />
+	</insert>
+</modify>
+
+<modify lm_CommonAudioSignalSettings>
+	<insert>
+		<row text=(lua.st_VehicleOverspeedSettings.title + ". Audio Signal Setting") onrelease=st_SpeedWarningSettings_onrelease 
+			details=(%lua.VehicleOverspeedOwnWarning == L"" ? %lua.VehicleOverspeedSound : %lua.VehicleOverspeedOwnWarning)
+			icon=(lua.EVehicleIcon[%mydata.vehicle_profile.list[%mydata.vehicle_profile.selected_profile].vehicle_type]) />
+	</insert>
+</modify>
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=(lua.EVehicleIcon[sc_GetVehicleTypeFiel(%mydata.vehicle_profile.selected_profile, "vehicle_type")]) text=(translate("Vehicle Type")) onrelease='sc_NextStateAnim(st_SettingVehicle, "fade", 1, "")' />
+		</insert>
+	</modify>
+<!end/>
+
+<userlist lm_VehicleOverspeedSoundsettings haspopover="bool" text="str" isselected="str" visible="bool" enable="bool" onrelease="ui" details="ui" type="str" dtooltip="str" icon="str">
+	<view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 />
+		<row text="Vehicle profile limit using" isselected="lua.VehicleOverspeed" type="ChkOnOff" />
+		<row text="Select Vehicle" haspopover=1 onrelease='sc_NextStateAnim(st_SettingVehicle, "fade", 1, "" )' icon=(lua.EVehicleIcon[sc_GetVehicleTypeFiel(%mydata.vehicle_profile.selected_profile, "vehicle_type")]) 
+			details=(sc_ShowSpeedTool(%mydata.vehicle_profile.list[%mydata.vehicle_profile.selected_profile].maxspeed)) />
+		<row text="Permanent signal" isselected="lua.VehicleOverspeedPermanentSignal" type="ChkOnOff" />
+		<row text="Choose vehicle overspeed signal" haspopover=1 
+			details=(%lua.VehicleOverspeedOwnWarning == L"" ? %lua.VehicleOverspeedSound : %lua.VehicleOverspeedOwnWarning) 
+			onrelease={%lua.SelectedAudioFile = %lua.VehicleOverspeedSound; %lua.SelectedOwnWarning = %lua.VehicleOverspeedOwnWarning; sc_ScanAudioFiles()} 
+			enable=(!(%lua.MuteSoundWithTTS && %regional.current_voice.is_tts)) dtooltip="You have to Turn ON Vehicle Overspeed Sound." />
+</userlist>
+

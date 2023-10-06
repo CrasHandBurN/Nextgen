@@ -1,0 +1,27 @@
+@params{
+	hwy_panel_bottom:48;
+	hwy_container_bottom:0;
+	hwy_container_top:6;
+	coord_keyboard_left:66;
+	coord_keyboard_right:coord_keyboard_left;
+	coord_keyboard_top:84;
+	coord_keyboard_bottom:16;
+	header_h:42;
+	header_bg_h:54;
+	listitem_h:66;
+	legend_h:24;
+	legend_image_w:12;
+	legend_image_h:12;
+	mapheader_h:72;
+	map_info_h:48;
+	traffic_summary_next_event_h:180;
+	cockpit_warning_w:(datafield_w/2);
+	cockpit_da_warning_w:(datafield_w/2);
+	current_speed_w:(datafield_w/2);
+	next_street_h:57;
+	sec_diricon_overlap_w:67;
+}
+
+/* ------------------------------------------------------------------------------------*/
+/* -----------------  Mod by arimi  -- updated -  18.02.2017 ------------*/
+/* ------------------------------------------------------------------------------------*/

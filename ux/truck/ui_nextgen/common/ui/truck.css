@@ -1,0 +1,125 @@
+DIV.cockpit>TABLE.truck_alert{
+	top:32%;
+	
+	right:undef; bottom:undef;
+	h:30%;
+	col:1;
+	cellh:(72%);
+}
+
+TABLE.truck_alert *{
+	align:"CENTER";
+	valign:"CENTER";
+	color:btn_sec_color; color2:btn_sec_color2; color3:btn_sec_color3;
+}
+
+.unit_value.restriction{
+	color:btn_sec_color; color2:btn_sec_color2; color3:btn_sec_color3;
+}
+
+
+
+
+#txt_SetDrivingTimes_Time{
+	left:25%;
+	right:25%;
+}
+
+#tab_SetDrivingTimes{
+	left:0;
+	right:0;
+	bottom:0;
+	col:2;
+	cellh:(20%);
+}
+
+
+
+#ui_RestrictionList LIST2 SEPARATOR{
+	cellh:(50%);
+}
+
+DIV.list.restrictions {
+	h: (!%lua.ShowBackButton && !ui_Footer.localmenu_enabled && !vRestrictionsFromFindPathError ? list_h + footer_h : list_h);
+}
+
+SPRITE.truckalert.svg {
+	top:0;bottom:0;left:0;right:0;
+	max_h:svg_driveralert_image_h;
+	box_align:"center"; align:"CENTER"; valign:"CENTER";
+}
+
+SPRITE.truckalert.arrow.svg {
+	img: "ico_truck_travel_arrow.svg";
+}
+
+DISTTEXT.truckalert{
+	box_align:"stretch"; valign:"center";
+	paddingleft:0; paddingright: 0;
+	fontsize:fontsize_main;
+	flex:0; 
+	orientation:"vertical";
+	
+}
+
+SPACER.truckalert{
+	desired_w:24;
+	visible:(%navigation.restrictions_turn_distance.valid);
+}
+
+TEXT.restriction_header {
+	font:"defaultbd";
+	color:btn_main_color; color2:btn_main_color2; color3:btn_main_color3;
+	fontsize:fontsize_sec !important;
+	align:"CENTER";
+	valign:"CENTER";
+	wordwrap: 2;
+	left: 0; right: 0; top: 0; bottom: 0;
+	padding: text_padding_small;
+}
+
+#txt_RestrictionList {
+	paddingleft:text_padding_small; paddingright:text_padding_small; 
+	line_break_method:"auto";
+	leading:0.9;
+	fontsize:fontsize_truck_warning;
+	flex:1;
+}
+
+SPRITE.map_messagebox.svg.truck {
+	image_w: svg_map_messagebox_image_w; image_h: svg_map_messagebox_image_h;
+	box_align:"center";
+}
+
+#txt_RestrictionIcons{
+	wordwrap:3; fontsize:fontsize_truck_warning;
+	leading:0.85;
+	padding:text_padding_small;
+	box_align:"stretch"; flex:1;
+
+}
+
+#ui_RestrictedMsg TEXT.messagebox_first_line{
+	leading:0.85; fontsize:fontsize_truck_warning;
+}
+
+#ui_RestrictedMsg TEXT.messagebox_second_line{
+	top:(screen_h - messagebox_panel_margin*4 -msgboxicons_bottom) ;
+	bottom:dialog_button_h;
+	leading:0.85;
+	fontsize:fontsize_truck_warning;
+}
+
+
+DISTTEXT.listitem.detour.restriction {
+	align:"right";
+}
+
+HBOX.restriction{
+	paddingleft:box_padding;
+	paddingright:box_padding;
+	box_align:"center"; flex:1;
+}
+
+@import "~/common/ui/truck_landscape.css" landscape;
+@import "~/common/ui/truck_portrait.css" portrait;1

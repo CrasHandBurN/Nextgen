@@ -1,0 +1,8 @@
+@params{
+	fontsize_map_msgbx:22;
+	fontsize_map_msgbx_sec:20;
+	btn_scroll_detour_w:54;
+}
+
+@import "~/common/ui/smartnavi_params_landscape.css" landscape;
+@import "~/common/ui/smartnavi_params_portrait.css" portrait;

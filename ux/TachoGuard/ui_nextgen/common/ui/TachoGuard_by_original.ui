@@ -1,0 +1,31 @@
+;---------------main settion-----------------
+<observer obs_Tacho_Start_Stop_original value=(%navigation.has_route && !%lua.TachoGuardOn && %screen.msgbox.is_onscreen) onselect=sc_tacho_by_original />
+
+<modify ui_PropLayer>
+	<insert>	
+		<IMPLEMENTATION>
+			<PROPERTY current_vehicle_type_Truck VALUE=(%mydata.vehicle_profile.list[%mydata.vehicle_profile.selected_profile].vehicle_type == lua.EVehicleType.Truck) />
+		</IMPLEMENTATION>
+	</insert>
+</modify>
+
+<modify ui_Cockpit>
+	<insert last_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON ONRELEASE=''
+			ONLONGCLICK=VW_TachoGuardManager
+			VISIBLE=(%navigation.has_route && !%lua.TachoGuardOn && ui_PropLayer.current_vehicle_type_Truck)
+			ICON="Logo_iGO.svg"
+			ZOOM=80%
+			T_TEXT=(VW_Return_button_text(translate("Tacho Guard"), L"%s", 1))
+			B_TEXT=(%lua.TachoGuardOn ? "" : VW_Return_button_text(translate("Tacho Guard"), L"%s", 99)) >
+			<SPRITE CLASS="button map fill" IMG=(ui_TachoGuard.white) LEFT=30% RIGHT=30% TOP=35% BOTTOM=35% VISIBLE=( !%lua.TachoGuardOn ) Z=100 ALPHA=32 /> ; to remove central transparency
+			;<SPRITE CLASS="searchprogress wide" LEFT=0 RIGHT=0 TOP=85% BOTTOM=5% VISIBLE=( %lua.TachoGuardOn ) />
+		</BUTTON_ICON>
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=(%navigation.has_route && !%lua.TachoGuardOn && ui_PropLayer.current_vehicle_type_Truck) />
+	</insert>
+</modify>

@@ -1,0 +1,15 @@
+#ui_Take_a_break .2_1_1 {
+	left:0;
+	right:50%;
+	h:notify_list_h;
+	focusindex:1;
+	bottom:0;
+}
+
+#ui_Take_a_break .2_1_2 {
+	left:50%;
+	right:0;
+  	h:notify_list_h;
+	bottom:0;
+}
+

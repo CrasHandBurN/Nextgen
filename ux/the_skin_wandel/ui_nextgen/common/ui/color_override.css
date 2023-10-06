@@ -1,0 +1,3 @@
+
+@import "~/common/the_bright/ui/color.css" if (%interface.theme == L"the_bright");
+@import "~/common/the_dark/ui/color.css" if (%interface.theme == L"the_dark");

@@ -1,0 +1,223 @@
+<userlist lm_DriveCarefully_footer text="str" onrelease="ui">
+	<row text="Accept" onrelease=sc_AcceptDriveCarefully/>
+</userlist>
+
+<layer uieffect type="pixel" z=100000 x=0 y=0/>
+
+<layer ui_HeaderCockpit z=105>
+	<implementation>
+		<property header_text value="Main Menu"/>
+		<property is_back_in_the_header value=(!%lua.ShowBackButton && %other.device.platform!=lua.EDevicePlatform.ANDROID) />
+	</implementation>
+	
+	<DIV class="cockpit">
+		<DIV div_header_cockpit class="header headercockpit">
+			<SECTIONMARKER class="header"/>
+			
+			<HBOX class="header">
+				<BUTTON class="header left" onrelease=sc_longBack>
+					<SPRITE class="header icon svg" img=(is_back_in_the_header ? "ico_header_back.svg" : "ico_header_map.svg")/>
+				</BUTTON>
+				
+				<TEXT txtTitleCockpit class="header title" text=(header_text) />
+				
+				<DIV class="header_status" visible=( %lua.ShowGpsInTitle )>
+					<SPRITE class="header_status gps" img="spr_gpsstatus.svg" phasename=( %gps.valid ? "on" : "off" )>
+				</DIV>
+				
+				<DIV class="header_status" visible=( %lua.ShowBatteryInTitle )>
+					<SPRITE class="header_status battery" img="spr_battery.svg" phase=( %power.battery_phase // 0 )>
+				</DIV>
+				
+				<DIV txtTimeCockpit class="header_time">
+					<TIMETEXT class="header_time" time=(%gps.current_time) formatmodel="regional.timeformat" />
+				</DIV>
+			</HBOX>
+			
+			<LAYER z=200000 >
+				<DIV class="cockpit">
+					<DIV class="header headercockpit">
+						<HBOX class="header">
+							<BUTTON class="header" img="btn.bmp#3" visible=(%lua.captureScreen) onrelease='sc_CaptureScreen(true)' onlongclick='MODEL.lua.captureScreen = not MODEL.lua.captureScreen()' >
+								<SPRITE class="header icon svg" img="ico_capture.bmp"/>
+							</BUTTON>
+						</HBOX>
+					</DIV>
+				</DIV>
+			</LAYER>
+			
+			<LAYER>
+				<DIV class="cockpit">
+					<DIV div_header_cockpit_background class="header background headercockpit">
+						<SPRITE class="background header">
+					</DIV>
+				</DIV>
+			</LAYER>
+			
+			<LAYER z=200>
+				<DIV class="cockpit">
+					<DIV div_header_cockpit_overlay class="header overlay headercockpit">
+						<SPRITE class="overlay header">
+					</DIV>
+				</DIV>
+			</LAYER>
+		</DIV>
+	</DIV>
+</layer>
+
+<layer ui_Header z=105 visible=( !st_Cockpit.isActive )>
+	<implementation>
+		<property title value=""/>
+		<property is_back_in_the_header value=(!%lua.ShowBackButton && %other.device.platform!=lua.EDevicePlatform.ANDROID) />
+	</implementation>
+	<DIV class="header">
+		<SECTIONMARKER class="header"/>
+		
+		<HBOX class="header">
+			<BUTTON class="header left" onrelease=(is_back_in_the_header ? sc_back : sc_longBack) onlongclick=(is_back_in_the_header ? sc_longBack : undef) enable=(!(%lua.WizardModeActive || %lua.IsStartlang || (%lua.EulaIsVisible && st_Start.isEntered))) rawkey=(is_back_in_the_header && !%lua.LocalMenuOpen ? 27 : undef)>
+				<SPRITE class="header icon svg" img=(is_back_in_the_header ? "ico_header_back.svg" : "ico_header_map.svg")/>
+			</BUTTON>
+			
+			<TEXT txtTitle class="header title" text=(value(title)) />
+			
+			<DIV class="header_status" visible=( %lua.ShowGpsInTitle )>
+				<SPRITE class="header_status gps" img="spr_gpsstatus.svg" phasename=( %gps.valid ? "on" : "off" )>
+			</DIV>
+			
+			<DIV class="header_status" visible=( %lua.ShowBatteryInTitle )>
+				<SPRITE class="header_status battery" img="spr_battery.svg" phase=( %power.battery_phase // 0 )>
+			</DIV>
+			
+			<DIV txtTime class="header_time">
+				<TIMETEXT class="header_time" time=(%gps.current_time) formatmodel="regional.timeformat" />
+			</DIV>
+		</HBOX>
+		
+		<LAYER z=200000 >
+			<DIV class="header">
+				<HBOX class="header">
+					<BUTTON class="header" img="btn.bmp#3" visible=(%lua.captureScreen) onrelease='sc_CaptureScreen(true)' onlongclick='MODEL.lua.captureScreen = not MODEL.lua.captureScreen()' >
+						<SPRITE class="header icon svg" img="ico_capture.bmp"/>
+					</BUTTON>
+				</HBOX>
+			</DIV>
+		</LAYER>
+		
+		<LAYER>
+			<DIV class="header background">
+				<SPRITE class="background header">
+			</DIV>
+		</LAYER>
+		
+		<LAYER z=200>
+			<DIV class="header overlay">
+				<SPRITE class="overlay header">
+			</DIV>
+		</LAYER>
+	</DIV>
+</layer>
+
+<layer ui_Title z=110>
+	
+	
+	
+</layer>
+
+
+<layer ui_Footer z=80 visible=(!(%lua.WizardModeActive  || (st_Cockpit.isActive && !(%lua.DragMode && (lua.gDragModeFlow == "normal" || %map.primary.show_cursor))) || ( st_EULA.isActive && !st_AboutList.isEntered )))>
+	<implementation>
+		<property localmenu_enabled value=( exists(States.CurrentState.localmenu) && %(%{States.CurrentState.localmenu}.size) && !(%lua.IsStartlang) ) />
+	</implementation>
+	<DIV class="full">
+		<DIV class="footer">
+			<SECTIONMARKER class="footer"/>
+			<SPRITE class="background footer">
+			
+			<FOOTERBUTTON class="btn_footer left back icon svg" onrelease=sc_back  onlongclick=sc_longBack enable=(!(%lua.EulaIsVisible && %lua.WizardModeActive) && !(%lua.IsStartlang) && !(%lua.LocalMenuOpen)) visible=(%lua.ShowBackButton || %other.device.platform==lua.EDevicePlatform.ANDROID || !ui_Header.ISVISIBLE) rawkey=(%lua.LocalMenuOpen ? undef : 27)>
+			<SPRITE class="btn_footer_fake_back" onrelease=sc_OpenCloseLocalMenu visible=( %lua.LocalMenuOpen )>
+			<FOOTERBUTTON btn_localmenu class="btn_footer localmenu icon svg" onrelease=sc_OpenCloseLocalMenu enable=(localmenu_enabled) visible=( %lua.ShowBackButton || localmenu_enabled ) rawkey=(%lua.LocalMenuOpen ? 27 : undef)>
+		</DIV>
+	</DIV>
+</layer>
+
+<layer ui_MessageBox class="messagebox">
+	<implementation>
+		<property default_showIcons value = ( SysConfig.get("interface", "show_icons", false) )>
+		<property showIcons value = ( %screen.msgbox.on_screen.param->showIcons // default_showIcons )>
+	</implementation>
+	<DIV class="full">
+		<SPRITE class="messagebox_cover">
+		<DIV class="messagebox">
+			<SPRITE class="messagebox">
+			<DIV class="messagebox_panel">
+			<VBOX class="messagebox_text">
+				<TEXT   class="messagebox_first_line color_inf_main"  text=%screen.msgbox.on_screen.first_line>
+				<SPACER class="messagebox_text">
+				<TEXT   class="messagebox_second_line color_inf_main" text=%screen.msgbox.on_screen.second_line>
+			</VBOX>
+				<DIALOGBUTTON class="dialog 1_1" iconspr=( showIcons ? %screen.msgbox.on_screen.button_icon_filename(1) : "" ) text=(%screen.msgbox.on_screen.button_caption(1)) visible=(%screen.msgbox.on_screen.number_of_buttons == 1) onrelease='MODEL.screen.msgbox.on_screen.button_released(1)' >
+
+				<DIALOGBUTTON class="dialog 2_1" iconspr=( showIcons ? %screen.msgbox.on_screen.button_icon_filename(1) : "" ) text=(%screen.msgbox.on_screen.button_caption(1)) visible=(%screen.msgbox.on_screen.number_of_buttons == 2) onrelease='MODEL.screen.msgbox.on_screen.button_released(1)' >
+				<DIALOGBUTTON class="dialog 2_2" iconspr=( showIcons ? %screen.msgbox.on_screen.button_icon_filename(2) : "" ) text=(%screen.msgbox.on_screen.button_caption(2)) visible=(%screen.msgbox.on_screen.number_of_buttons == 2) onrelease='MODEL.screen.msgbox.on_screen.button_released(2)' >
+
+				<DIALOGBUTTON class="dialog 3_1" iconspr=( showIcons ? %screen.msgbox.on_screen.button_icon_filename(1) : "" ) text=(%screen.msgbox.on_screen.button_caption(1)) visible=(%screen.msgbox.on_screen.number_of_buttons == 3) onrelease='MODEL.screen.msgbox.on_screen.button_released(1)' >
+				<DIALOGBUTTON class="dialog 3_2" iconspr=( showIcons ? %screen.msgbox.on_screen.button_icon_filename(2) : "" ) text=(%screen.msgbox.on_screen.button_caption(2)) visible=(%screen.msgbox.on_screen.number_of_buttons == 3) onrelease='MODEL.screen.msgbox.on_screen.button_released(2)' >
+				<DIALOGBUTTON class="dialog 3_3" iconspr=( showIcons ? %screen.msgbox.on_screen.button_icon_filename(3) : "" ) text=(%screen.msgbox.on_screen.button_caption(3)) visible=(%screen.msgbox.on_screen.number_of_buttons == 3) onrelease='MODEL.screen.msgbox.on_screen.button_released(3)' >
+			</DIV>
+		</DIV>
+	</DIV>
+</layer>
+
+<layer ui_Exiting z=35>
+	<DIV class="full">
+		<SPRITE class="background exiting">
+		<TEXT   class="exiting" text=(States.CurrentState.textIsExit ? m_i18n("EXITING, PLEASE WAIT...") : m_i18n("RESTARTING, PLEASE WAIT..."))>
+	</DIV>
+</layer>
+
+<layer ui_Suspend z=101000>
+	<DIV class="full">
+		<SPRITE class="background fill">
+	</DIV>
+</layer>
+
+<layer ui_pleasewait class="messagebox">
+	<DIV class="full">
+		<SPRITE class="messagebox_cover" opaque=1>
+		<DIV class="messagebox">
+			<SPRITE class="messagebox">
+			<DIV class="messagebox_panel">
+				<TEXT class="messagebox_first_line"  top=0 h=100% text="Please wait...">
+			</DIV>
+		</DIV>
+	</DIV>
+</layer>
+
+<userlist lm_Eula_footer text="str" onrelease="ui" nostress="bool" rawkey="int">
+	<row text="Decline" onrelease=sc_DeclineEula nostress=1 rawkey=27/>
+	<row text="Accept" onrelease=sc_AcceptEula nostress=0/>
+</userlist>
+
+<userlist lm_LogCollection_footer text="str" onrelease="ui" rawkey="int">
+	<row text="No" onrelease=sc_CollectLogsNo rawkey=27/>
+	<row text="Yes" onrelease=sc_CollectLogsYes/>
+</userlist>
+
+<userlist lm_WizardNext_footer text="str" onrelease="ui" rawkey="int" enable="bool">
+	<default enable=true />
+	<row text="Back" onrelease=sc_Wizard_prev enable=( !(st_WizardInit.IsFirstStart && (lua.gWizardStepCount == 0)) ) rawkey=27/>
+	<row text=(%ui.lm_WizardSteps.index == %ui.lm_WizardSteps.size-1 ? m_i18n("Finish") : m_i18n("Next")) onrelease=sc_Wizard_next/>
+</userlist>
+
+<userlist lm_WizardSteps onrelease="ui" visible="bool">
+	<view visibility_filter=visible />
+	<default visible=true/>
+
+	<row Eula onrelease=sc_ShowEula visible=(!(sc_GetSysEntry("debug","skip_eula",0) || vEULAAccepted))/>
+	<row LogCollection onrelease=sc_ShowWizard_LogCollection visible=(st_WizardInit.IsFirstStart && %lua.WizardModeActive && sc_GetSysEntry( "interface", "show_log_collection", false))/>
+	<row Init  onrelease=sc_ShowWizard_init visible=(st_WizardInit.IsFirstStart && %lua.WizardModeActive)/>
+	<row Voice onrelease=sc_SR_Voice_OnRelease/>
+	<row onrelease='sc_NextStateAnim(st_RegionalSettings_Units, "fade", 1, "")'/>
+	<row RouteSettings onrelease=sc_RouteSettings/>
+	<row FinishedWizz onrelease='sc_NextStateAnim(st_ConfigWizard_Finished, "fade", 1, "")'/>
+</userlist>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
+	<g transform="translate(2 -1018.362)">
+		<g transform="translate(61.383 -31.524)">
+			<path fill="#3477e0" d="m -55.383412,1061.7375 24,0 -5,6.149 5,6.149 -24,0 z"/>
+			<path fill="#342ce0" d="m -55.383412,1061.7375 2,0 0,6.149 0,6.149 -2,0 z"/>
+			<rect width="5" height="16" x="-59.383" y="1059.887" fill="#fc0"/>
+		</g>
+		<path fill="#fc0" style="line-height:125%;-inkscape-font-specification:'Bebas Neue Bold'" d="m 10.34375,12.703125 0,6.59375 0.933594,0 0,-4.775391 1.289062,4.775391 1.064453,0 0,-6.59375 -0.921875,0 0,3.947266 -1.064453,-3.947266 -1.300781,0 z m 4.039062,0 0,6.59375 2.826172,0 0,-0.941406 -1.789062,0 0,-1.931641 1.421875,0 0,-0.941406 -1.421875,0 0,-1.837891 1.789062,0 0,-0.941406 -2.826172,0 z m 3.22461,0 0.734375,6.59375 1.421875,0 0.376953,-3.513672 0.376953,3.513672 1.376953,0 0.734375,-6.59375 -0.904297,0 -0.537109,5.238281 -0.519531,-5.238281 -0.998047,0 -0.5,5.199219 -0.554688,-5.199219 -1.007812,0 z" font-family="Bebas Neue" font-size="9.421" font-weight="700" letter-spacing="0" transform="translate(0 1020.362)" word-spacing="0"/>
+		<path fill="#e9eded" style="line-height:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000;text-transform:none;block-progression:tb;isolation:auto;mix-blend-mode:normal" d="m 2,11 a 1.0001,1.0001 0 0 0 -1,1 l 0,16 a 1.0001,1.0001 0 0 0 1,1 l 5,0 a 1.0001,1.0001 0 0 0 1,-1 l 0,-0.851562 22,0 a 1.0001,1.0001 0 0 0 0.775391,-1.63086 L 26.289062,20 30.775391,14.482422 A 1.0001,1.0001 0 0 0 30,12.851562 l -22,0 L 8,12 A 1.0001,1.0001 0 0 0 7,11 l -5,0 z m 0,1 5,0 0,1.851562 1,0 22,0 L 25,20 l 5,6.148438 -22,0 -1,0 L 7,28 2,28 2,12 Z" color="#000" font-family="sans-serif" font-weight="400" overflow="visible" transform="translate(0 1016.362)" white-space="normal"/>
+	</g>
+</svg>

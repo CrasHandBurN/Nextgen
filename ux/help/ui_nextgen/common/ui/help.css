@@ -1,0 +1,18 @@
+SPRITE.logo.svg{
+	top:0;left:0;right:0;image_h:svg_logo_image_h;
+	align:"CENTER"; valign:"CENTER";
+	img:"spr_logo.svg";
+}
+
+VBOX.about_vesion{
+	paddingtop:box_padding;
+	paddingbottom:box_padding;
+}
+
+SPRITE.logo.svg{
+	box_align:"stretch";
+}
+
+TEXT.about_vesion{
+	flex:1; box_align:"stretch";
+}

@@ -1,0 +1,5 @@
+import "~/common/ui/poi_search.css"
+import "~/common/ui/poi_search.ui"
+import "~/common/ui/poi_search.lua"
+
+import "~/common/ui/poi_search_mods.ui"

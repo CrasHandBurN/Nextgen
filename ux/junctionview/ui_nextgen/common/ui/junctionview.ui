@@ -1,0 +1,27 @@
+<layer ui_JunctionView z=20>
+	<observer value=( ui_PropLayer.JunctionViewVisible || (ui_PropLayer.MiniJunctionViewVisible && %lua.IsPortrait) || ui_PropLayer.TunnelOverviewVisible || (%navigation.tunnel_view.overview.available && %navigation.tunnel_view.enabled) ) onselect=sc_JunctionViewOnshow ondeselect=sc_JunctionViewOnhide START />
+	<DIV class="cockpit" visible=( ui_PropLayer.JunctionViewVisible || ui_PropLayer.MiniJunctionViewVisible )>
+		<SPRITE class="junctionview_patch" OVERMAPLAYER />
+		<SPRITE sprJunctionView class="junctionview" OVERMAPLAYER onclick=sc_HideJunctionView />
+		<SPRITE sprEJVPatch class="ejv_patch" OVERMAPLAYER />
+		
+		<SPRITE spr_tunnel_panel class="panel_map_tunnel" visible=(%navigation.tunnel_view.overview.available && %navigation.tunnel_view.enabled)>
+			<SPRITE sprTunnelOverview left=5 top=5 bottom=5 right=5 z=20 />
+		</SPRITE>
+		
+		<SPRITE spr_tunneltext_panel class="panel_map_tunnel_length" visible=(%navigation.tunnel_view.overview.available && %navigation.tunnel_view.enabled && %navigation.remaining_tunnel_length.valid)>
+			<DISTTEXT class="font_main color_btn_main" left=0 w=100% bottom=0 z=20 align="CENTER" distance=(%navigation.remaining_tunnel_length) />
+		</SPRITE>
+	</DIV>
+	
+</layer>
+
+<layer ui_TunnelOverview z=20 visible=( ui_PropLayer.TunnelOverviewVisible )>
+	<DIV class="cockpit">
+		<SPRITE sprTunnelOverview2 left=0% top=0% h=100% w=100% z=5 />
+		
+		<SPRITE class="panel_map_tunnel_length" visible=(%navigation.remaining_tunnel_length.valid)>
+			<DISTTEXT class="font_main color_btn_main" left=0 w=100% bottom=0 z=20 align="CENTER" distance=(%navigation.remaining_tunnel_length) />
+		</SPRITE>
+	</DIV>
+</layer>

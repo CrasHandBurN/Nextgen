@@ -1,0 +1,1796 @@
+TEXT {
+	glowsize:0;
+}
+
+TEXT.title{
+	font: "default";	fontsize: fontsize_title;
+}
+
+TEXT.listitem {
+	font: default;
+}
+
+TEXT.listitem.routemethod {
+	wordwrap: 1;
+}
+
+BUTTON.listitem.travelplanner {
+	box_align:"stretch"; flex:1;
+	img: ((%lua.LastWaypointIndex == index || (%lua.PopoverOpened && index == %route.list.navigated.waypoints.list.index)) ? "btn_listitem_travelplanner.svg" : "btn_listitem.svg");
+}
+
+HBOX.listitem.travelplanner {
+	paddingleft: list_padding; paddingright:insertwaypoint_icon_w;
+}
+
+DIV.listitem.travelplanner, DIV.separator.travelplanner, DIV.listitem.itinerarywarnings, DIV.listitem.traffic_summary {
+	desired_w: listitem_route_container_w; box_align: "stretch";
+	align: "CENTER";
+}
+
+HBOX.listitem.route {
+	left:0; top:0; right:0; bottom:0; align: "CENTER";
+	paddingleft:0; paddingright:0;
+}
+
+DIV.listitem.itinerarywarnings.destination  HBOX.listitem.route {
+	paddingtop: ( listitem_route_container_w / 2 ) ;
+}
+
+DIV.listitem.itinerarywarnings.destination  HBOX.listitem.route > SPRITE.route {
+	box_align: "STRETCH";
+}
+
+SPRITE.listitem.route, SPRITE.separator.route {
+	box_align:"STRETCH"; desired_w: listitem_route_w; z:110;
+	img: listitem_route; can_shrink: 0;
+}
+
+SPRITE.listitem.icon, SPRITE.separator.icon {
+	left:0; top:0; right:0; bottom:0; z:115; align: "CENTER";
+}
+
+DIV.listitem.destination SPRITE.listitem.route {
+	img: listitem_route_dest;
+}
+
+DIV.listitem.travelplanner.destination SPRITE.listitem.route {
+	img: ( States.CurrentState.showAddButton ? listitem_route_dest_travelplanner : listitem_route_dest);
+}
+
+DIV.listitem.destination SPRITE.listitem.icon {
+	img: "spr_itinerary_arrow_dest.svg";
+}
+
+DIV.listitem.via SPRITE.listitem.icon {
+	img: "spr_itinerary_arrow_stop.svg";
+}
+
+DIV.listitem.start SPRITE.listitem.route {
+	img: listitem_route_start;
+}
+
+DIV.listitem.start SPRITE.listitem.icon {
+	img: "spr_itinerary_arrow_start.svg";
+}
+
+DIV.listitem.traffic_summary.start SPRITE.listitem.route {
+	img: listitem_route;
+}
+
+DIV.listitem.traffic_summary.start SPRITE.listitem.icon {
+	img: "spr_itinerary_arrow_start.svg";
+	valign: "BOTTOM";
+}
+
+BOX.next_event.traffic_summary{
+	paddingleft:next_event_padding;
+}
+
+ 
+TEXT.listitem.travelplanner {
+	fontsize: fontsize_travelplanner; flex:1;
+	paddingleft:text_padding_small;
+	paddingright:text_padding_small;
+}
+
+DISTTEXT.listitem.value.itinerarywarnings{
+	fontsize:fontsize_travelplanner;
+}
+
+BOX.routeinfo.value>TEXT.listitem.value.routeinfo{
+	visible:0 !important;
+}
+
+BOX.routeinfo.value>TIMESPANTEXT{
+	color:tmcdelay_color;
+}
+
+SPRITE.svg.routeinfo{
+	image_w:svg_listitem_routeinfo_image_w;
+	image_h:svg_listitem_routeinfo_image_h;
+	box_align:"stretch";
+	align:"RIGHT";
+	z:10;
+}
+
+SPRITE.svg.routeinfo.distance{
+	img:"ico_avoid_length.svg";
+}
+
+SPRITE.svg.routeinfo.time{
+	img:"ico_avoid_timeto.svg";
+}
+
+SPRITE.svg.routeinfo.delay{
+	img:"ico_route_timedomain.svg";
+}
+
+SPRITE.listitem.icon.popover {
+	desired_w: -1; image_w:svg_listitem_popover_image_w; image_h:svg_listitem_popover_image_h;
+	box_align: "stretch"; resize_bmp:1; z:110;
+	img: "ico_popover.svg"; can_shrink:0;
+}
+
+HBOX.separator.travelplanner {
+	top: 0; bottom: 0; z: 100;
+	paddingleft: list_padding; paddingright:0;
+}
+
+SPRITE.separator.route {
+	img: ( INSERT_AT == 0 ? listitem_separator_route_dest : listitem_separator_route );
+	bottom: 0;
+}
+
+LIST2.list_control.travelplanner {
+	content_top: travelplanner_list_top; 
+}
+
+DIV.separator.travelplanner SPRITE.separator.icon {
+	img: ( INSERT_AT == 0 ? "spr_itinerary_arrow_separator_dest.svg" : "" );
+}
+
+BUTTON.separator.travelplanner {
+	left:0; top:( 0 - ((separator_h_travelplanner - separator_h) / 2 )); right:0; h:separator_h_travelplanner; z:100;
+	img:( %regional.current_language.is_r2l ? "btn_listitem_insertwaypoint_r2l.bmp#3" : "btn_listitem_insertwaypoint.bmp#3" ); resize_bmp:1;
+	CHECKHIT: 1;
+}
+
+TEXT.separator.travelplanner {
+	flex:1; align:"CENTER"; z: 105;
+	font: defaultbd; fontsize: fontsize_info; align: "RIGHT";
+}
+
+TEXT.separator.connected_error{
+	color:error_separator_color;
+}
+
+SPRITE.calculate_progress {
+	w: (int(calculate_progress_min_w + double(%route.list.navigated.progress / 1000.0 * (main_w - panel_margin - panel_margin - calculate_progress_min_w))));
+}
+
+SPRITE.listitem.icon.add {
+	desired_w: insertwaypoint_icon_w;
+	image_w: svg_insertwaypoint_image_w;
+	img: "ico_add.svg";
+	align:"CENTER"; z:120; 
+}
+
+TEXT.listitem.top{
+	minaspect: 90;
+	leading: 0.8;
+}
+
+TEXT.listitem.bottom{
+	minaspect: 90;
+	color: btn_sec_color; color2: btn_sec_color2;
+}
+
+TEXT.listitem.localmenu{
+	paddingleft:text_padding_localmenu;
+}
+
+TEXT.listitem.top.address {
+	font: ( selected ? "default" : "default" );
+}
+
+TEXT.mapheader.bottom, ROADSHIELDEDTEXT.mapheader.bottom {
+	color: btn_sec_color; color2: btn_sec_color2;
+}
+
+LIST2.list_control, LIST2.list_submenu {
+	bottom: (0 - footer_h);
+	extra_scroll:footer_h;
+}
+
+DIV.cockpit>DIV.map_messagebox>LIST2.list_control {
+	extra_scroll:0;
+}
+
+DIV.cockpit>DIV.map_messagebox>LIST2.list_control>VSMARTSCROLL {
+	bottom:0;
+}
+
+LIST2.list_localmenu{
+	extra_scroll:menuitem_h;
+	
+}
+
+LIST2.list_localmenu >VSMARTSCROLL{
+	bottom:menuitem_h;
+}
+
+LIST2.list_control > VSMARTSCROLL, LIST2.list_control > LISTCONTROL, LIST2.list_submenu > VSMARTSCROLL, LIST2.list_submenu > LISTCONTROL {
+	bottom: footer_h;
+}
+
+LIST2.list_control.detour > VSMARTSCROLL, LIST2.list_control.detour > LISTCONTROL{
+	bottom:0;
+}
+
+#ui_Footer {
+	z:10100 !important;
+}
+
+FOOTERBUTTON.btn_footer.back, FOOTERBUTTON.btn_footer.localmenu, SPRITE.btn_footer_fake_back {
+	w: footerbutton_w;
+}
+
+BUTTON.footerbutton {
+	checkhit:1;
+}
+
+FOOTERBUTTON.btn_footer.back{
+	img: (%lua.ShowBackButton ? "btn_footer_left.svg" : "");
+	paddingright:42;
+}
+
+FOOTERBUTTON.btn_footer.localmenu{
+	img: ( %lua.ShowBackButton ? "btn_footer_right.svg" : "btn_menu_noback.bmp#3"); 
+	paddingleft:42;
+}
+
+FOOTERBUTTON.btn_footer.middle {
+	img: ( %lua.ShowBackButton ? ( ISACTIONBUTTON ? "btn_action.svg" : "btn_function.svg" ) : ( ISACTIONBUTTON ? "btn_action_noback.svg" : "btn_function_noback.svg" )  );
+	font: default;
+	color: footer_color;
+	paddingleft:actionbutton_padding_left; 
+	paddingright:( !%lua.ShowBackButton && ui_Footer.localmenu_enabled ? actionbutton_margin + actionbutton_padding_right : actionbutton_padding_right);
+}
+
+FOOTERBUTTON_COUNT.btn_footer {
+	padding: text_padding;
+	img: "btn_footer.bmp#3"; 
+	resize_bmp: 1;
+	left:0; top:0;
+	w: footer_w; h: footer_h; z:15;
+	font: "default";
+	color: footer_color; color2: footer_color2;
+	fontsize: fontsize_main;
+	iconalign: "CENTER";
+	iconvalign: "CENTER";
+	twolinesize: fontsize_sec_twoline;
+}
+
+
+FOOTERBUTTON_COUNT.btn_footer.middle{
+	w:100%;
+	img: ( %lua.ShowBackButton ? ( ISACTIONBUTTON ? "btn_action.svg" : "btn_function.svg" ) : ( ISACTIONBUTTON ? "btn_action_noback.svg" : "btn_function_noback.svg" )  );
+	font: default;
+	color: footer_color; color2: forth_color2;
+	preserve_aspect_ratio: 0;
+	paddingleft:actionbutton_padding_left; 
+	paddingright:( !%lua.ShowBackButton && ui_Footer.localmenu_enabled ? actionbutton_margin + actionbutton_padding_right : actionbutton_padding_right);
+}
+
+
+HBOX.countdown_container {
+	top:undef; h:countdown_container_h; bottom:countdown_container_margin;
+	visible:(ui_RouteOverview.DoCountDown);
+	paddingleft:actionbutton_padding_left; 
+	paddingright:( !%lua.ShowBackButton && ui_Footer.localmenu_enabled ? actionbutton_margin + actionbutton_padding_right : actionbutton_padding_right);
+}
+	
+SPRITE.background.countdown {
+	desired_w:countdown_container_w; 
+	img:#33000000; overmaplayer:1; resize_bmp:1; z:100; 
+	align:"CENTER"; box_align:"STRETCH"; flex:0;
+}
+
+SPRITE.background.countdown.inside {
+	left:(%ui._idle_time * (50% / lua.gGoNavigationTimeout)); right:(%ui._idle_time * (50% / lua.gGoNavigationTimeout));
+	top:0; bottom:0;
+	img:#FFFFFFFF;
+	z:101;
+}
+
+FOOTERBUTTON.btn_footer.wizard {
+	w:100%;
+	img: (index ? "btn_footer_firststart_right.bmp#3" : "btn_footer_firststart_left.bmp#3");
+	font:"defaultbd";
+	color: footer_color; 
+}
+
+SPRITE.panel.list, SPRITE.panel.submenu {
+	visible: 0;
+}
+
+
+BOX.listitem.menu, BOX.listitem.submenu {
+	paddingleft: list_padding;
+}
+
+BUTTON.listitem, RADIO.listitem, CHECKBOX.listitem, RADIO.routemethod, SPRITE.listitem.info, SPRITE.whereami.nextcrossing, SPRITE.whereami.currentstreet, SPRITE.whereami.prevcrossing {
+	phasename: "normal";
+	img:"btn_listitem.svg";
+	preserve_aspect_ratio:0;
+}
+
+BUTTON.listitem:active, RADIO.listitem:active, CHECKBOX.listitem:active, RADIO.routemethod:active, SPRITE.listitem.info:active, SPRITE.whereami.nextcrossing:active, SPRITE.whereami.currentstreet:active, SPRITE.whereami.prevcrossing:active {
+	phasename:"active";
+}
+
+BUTTON.listitem:disabled, RADIO.listitem:disabled, CHECKBOX.listitem:disabled, RADIO.routemethod:disabled, SPRITE.listitem.info:disabled, SPRITE.whereami.nextcrossing:disabled, SPRITE.whereami.currentstreet:disabled, SPRITE.whereami.prevcrossing:disabled {
+	phasename:"disabled";
+}
+
+BUTTON.listitem:selected, RADIO.listitem:checked {
+	phasename: "normal";
+	img: "btn_listitem_selected.svg";
+}
+
+BUTTON.listitem.menu{
+	img: ( (%*.route // 0) == 1 ? "btn_listitem_mainmenu_route.svg" : "btn_listitem.svg" );
+}
+
+SPRITE.listitem.menu.svg, SPRITE.listitem.submenu.svg  {
+	image_w: menu_icon_w; image_h: menu_icon_h;
+}
+
+
+BUTTON.header{
+	iconspr:"";
+}
+
+BUTTON.header.left{
+	img:"btn_header_left.bmp#3";
+}
+
+SPRITE.header{
+	left:0; top:0; right:0; bottom:0;
+	img:"ico_header_home.svg"; image_w: 30; image_h: 30; align:"CENTER"; valign:"CENTER";
+}
+
+SPRITE.background.header{
+	img: "bg_head.svg";
+	image_w: screen_w; image_h: header_bg_h;
+}
+
+SPRITE.overlay.header{
+	img: "bg_head_overlay.svg";
+	image_w: screen_w; image_h: header_bg_h;
+}
+
+SPRITE.background.footer{
+	img: ( %lua.ShowBackButton ? "bg_footer.svg" : "");
+	image_w: screen_w; image_h: footer_h;
+}
+
+SPRITE.background.footer.wizard{
+	img: background_footer_grad; opaque:1;
+}
+/* moded */
+DIV.diricon > SPRITE.panel.map, DIV.roundabout > SPRITE.panel.map {
+	img:"spr_diriconbg.svg" ;
+	phasename: (%warning.notification.notification_area.size > 0 && !detect_gps ? (sc_IsNotificationHighlighted(%warning.notification.notification_area) ?  "notification_red" : "notification_feedback") : "normal");
+	alpha: (%lua.aCockpitTransparency);
+	onlongclick: 'sc_NextStateAnim( st_GpsStatus, "fade", 1, "" )'; 
+	valign:"TOP"; z:30; 
+	preserve_aspect_ratio: 0;
+}
+/* moded */
+DIV.diricon.p2p > SPRITE.panel.map {
+	img:"spr_diriconbg.svg";
+	phasename: ( %warning.notification.notification_area.size > 0 ? (sc_IsNotificationHighlighted(%warning.notification.notification_area) ?  "notification_red" : "notification_feedback") : "normal");
+	valign:"TOP"; z:30;
+	alpha: (%lua.aCockpitTransparency);
+}
+/* moded */
+#p2p_direxion{
+	align:"LEFT"; valign:"TOP";
+	image_w:100; image_h:100;
+	left:25;
+}
+/* moded */
+DIV.secondary_diricon > SPRITE.panel.map {
+	img: "secdiricon.svg" ; z:10;
+	alpha: (%lua.aCockpitTransparency);
+	preserve_aspect_ratio: 0;
+}
+
+SPRITE.diricon {
+	left:20; top:4; w:110; h: 100;
+	image_w:100; image_h: 100; align:"CENTER"; valign:"CENTER";
+}
+/* moded */
+SPRITE.secondary_diricon {
+	left:20; top:-30; 
+	image_w:svg_sec_diricon_image_w; image_h:svg_sec_diricon_image_h; align:"CENTER"; valign:"CENTER";
+}
+
+DISTTEXT.next_maneuver_dist {
+	left:0; bottom:16; w:70%; h:40%;
+	fontsize: 36; color: map_main_color; align:"CENTER"; valign:"CENTER";
+	orientation: "horizontal"; paddingleft: next_maneuver_dist_padding; paddingright: next_maneuver_dist_padding;
+}
+/* moded */
+DIV.next_street {
+	right:0;	top:0;
+	h: next_street_h;
+}
+
+HBOX.next_street{
+/*	left: p2p_compass_w;*/
+	left:0;
+	right: (%lua.ShowTimeInTitle ? headerclock_w : 0);
+}
+
+HBOX.next_street SPRITE.icon_list{
+	image_h: 36;
+	image_w: 36;
+}
+
+HBOX.next_street TEXT{
+	padding:mapheader_text_padding;
+}
+/* moded end */
+ROADSHIELDEDTEXT.next_street, TEXT.next_street {
+	font: defaultbd;  fontsize: fontsize_next_street;
+}
+
+TEXT.next_street {
+	can_shrink:1;
+}
+
+HBOX.detect_gps{
+	paddingleft:box_padding; paddingright: box_padding;
+	right:(%lua.ShowTimeInTitle ? headerclock_w : 0);
+}
+/* moded */
+DIV.next_street > SPRITE.panel.map {
+	img: "spr_headerCockpit.svg";	
+	preserve_aspect_ratio:0;
+	alpha: (%lua.aCockpitTransparency);
+	onrelease: ( !( navigation_suspended && %navigation.has_route ) && !%screen.msgbox.is_onscreen && ui_Cockpit.detect_gps ? 'sc_NextStateAnim( st_GpsStatus, "fade", 1, "" )' : undef) ;
+	onlongclick: 'sc_CockpitInterface()';	
+}
+
+HBOX.current_street {
+	paddingleft:0; paddingright:0;
+	box_align:"CENTER";
+}
+/* moded */
+HBOX.current_street_container {
+	paddingtop:6; paddingbottom:6; paddingleft:0; paddingright:0;
+	box_align:"CENTER";
+}
+
+HBOX.current_street_container > SPRITE.panel.map {
+	img: "spr_currentstreet.bmp";
+	alpha: (%lua.aCockpitTransparency) ; resize_bmp: 1;
+	phasename: ( %screen.nightmode ? "night" : "day" );
+
+}
+
+ROADSHIELDEDTEXT.current_street{
+	color: ( %screen.nightmode ? current_street_color_night : current_street_color );
+	font: "defaultbd"; 
+         valign: "CENTER";
+ 
+	fontsize: 28;
+
+	combined_textmodel:"\fb$navigation.car.lefthousenumber$   \fb$navigation.car.current_street_with_shield$   \fb$navigation.car.righthousenumber$";
+	visible: (%navigation.car.current_street_with_shield);
+}
+
+VBOX.diricon>DISTTEXT{
+	align:"LEFT"; fontsize: 34;can_shrink:0;
+}
+
+VBOX.diricon>TEXT{
+	color:map_main_color; fontsize: 18; can_shrink:0;
+}
+
+HBOX.housenumber_container {
+	box_align:"CENTER";
+}
+
+HBOX.housenumber SPRITE.panel.map {
+	img: ( %screen.nightmode ? "spr_currentstreet_night.bmp" : "spr_currentstreet.bmp" ); resize_bmp: 1;
+}
+
+TEXT.housenumber {
+	color: ( %screen.nightmode ? housenumber_color_night : housenumber_color );
+}
+
+SPRITE.housenumber.svg{
+	phasename: ( %screen.nightmode ? "night" : "day" );
+}
+
+TIMETEXT.current_time {
+	color: btn_sec_color;
+	font: default;
+	fontsize: fontsize_clock;
+	align:"CENTER";
+	valign:"CENTER";
+}
+
+SPRITE.current_time {
+	img: "btn_map.bmp#3";
+	alpha: (%lua.aCockpitTransparency) ;
+	resize_bmp:1;
+	align:"CENTER";
+	valign:"CENTER";
+	visible: ( !%navigation.has_route && !ui_Cockpit.detect_gps && %lua.ShowTimeInTitle ); 
+}
+
+DIV.datafields {
+	bottom:0; 
+}
+
+LIST2.list_control.datafieldsHW,
+
+LIST2.list_control.datafields {
+ 
+    top:0;   bottom:0; right: 0 ;  left: 0;
+
+} 
+
+VBOX.datafields {
+	paddingtop:12;
+}
+
+HBOX.datafields > .valuetext{
+	fontsize:fontsize_main;
+}
+
+DIV.datafields > BUTTON.datafields {
+	visible: (!( %lua.aHomeWork && !%route.list.navigated.has_navigable_path)) ;
+
+
+
+	right: 0;
+	resize_bmp:1;
+}
+
+SPRITE.panel.popover_bg{
+	img:"spr_popover_bg.bmp"; resize_bmp:1;
+}
+
+BUTTON.popover, BUTTON.qbp_button{
+	font:"defaultbd";
+	img:"btn.bmp#3";
+}
+
+LIST2.list_popover {
+	cellh:(ui_Popover.ListSize == 1 ? 100% : popover_listitem_h);
+}
+
+BOX.listitem.detour {
+	min_w:detour_txt_w;
+}
+
+BOX.listitem.detour>SPRITE.listitem.svg{
+	image_w:42;
+}
+
+
+SPRITE.listitem.svg.quickmenu{
+	image_w: svg_quickmenu_image_w; image_h: svg_quickmenu_image_h;
+}
+
+DISTTEXT.listitem.value{
+	font: default; box_align:"stretch"; paddingleft:0; paddingright:0;
+}
+
+SPRITE.inputfield {
+	img: inputfield_bg_grad;
+}
+
+.input_text {
+	font: "defaultbd";
+	h:100%;
+	paddingleft:inputtext_padding;
+	paddingright:inputtext_padding;
+}
+
+.empty_text {
+	font: "defaultit";
+	color: empty_color;
+	padding:inputtext_padding;
+}
+
+SPRITE.emptylist_text {
+	img: "spr_inforibbon.bmp";
+}
+
+BUTTON.button_input {
+	h: inputfield_h;
+}
+
+TEXT.input_text_fake {
+	font: ( (%*.selected // 1) ? "defaultbd" : "defaultit" );
+	color: ( (%*.selected // 1) ? e_input_color : empty_color );
+	color2: ( (%*.selected // 1) ? e_input_color2 : empty_color );
+	padding:inputtext_padding;
+}
+
+TEXT.input_text_fake.login.username {
+	font: ( st_LoginUsername.username == L"" ? "defaultit" : "defaultbd" );
+	color: ( st_LoginUsername.username == L"" ? empty_color : e_input_color );
+	color2: ( st_LoginUsername.username == L"" ? empty_color : e_input_color2 );
+}
+
+TEXT.input_text_fake.login.password {
+	font: ( st_LoginPassword.password == L"" ? "defaultit" : "defaultbd" );
+	color: ( st_LoginPassword.password == L"" ? empty_color : e_input_color );
+	color2: ( st_LoginPassword.password == L"" ? empty_color : e_input_color2 );
+}
+
+TEXT.input_text_fake.userreg {
+	font: ( text == "" ? "defaultit" : "defaultbd" );
+	color: ( text == "" ? empty_color : e_input_color );
+	color2: ( text == "" ? empty_color : e_input_color2 );
+}
+
+KEYBUTTON.keyboard {
+	color: keyboard_color;
+	color2: keyboard_color2;
+}
+
+KEYBUTTON.keyboard.delete, KEYBUTTON.keyboard.alt, BUTTON.keyboard.lang, KEYBUTTON.keyboard.decimal, KEYBUTTON.keyboard.minute, KEYBUTTON.keyboard.degree, BUTTON.keyboard.latlong, BUTTON.keyboard.language {
+	img:"btn_key_spec.bmp#3";
+}
+BUTTON.keyboard.back{
+	img:"btn_key_back.bmp#3";
+}
+
+TEXT.latlong{
+	left:0; right:0; top:0; bottom:0; z:20;
+	align:"center";
+	font:"defaultbd";
+	color: keyboard_alt_color;
+}
+
+BUTTON.keyboard.utm_zone{
+	img:"btn.bmp#3";
+}
+
+KEYBUTTON.keyboard.alt, KEYBUTTON.keyboard.decimal, KEYBUTTON.keyboard.minute, KEYBUTTON.keyboard.degree, BUTTON.keyboard.latlong {
+	color: keyboard_alt_color;
+}
+
+KEYBUTTON.keyboard.space {
+	text:(m_i18n("Space"));
+}
+
+KEYBUTTON.space SPRITE.svg.space.icon{
+	img:"";
+}
+
+SPRITE.keyboardshift.svg, SPRITE.language.icon.svg {
+	image_w: svg_keybutton_spec_image_w; image_h: svg_keybutton_spec_image_h;
+}
+
+SPRITE.keyboard.done.icon.svg{
+	top: (%lua.filteredList && %lua.filteredList != "ui.lst_LocalSearch" && %lua.filteredList != "ui.lst_FuelPrices" && %lua.filteredList != "ui.lst_Parking" ? -5 : 0 );
+	image_w: (%lua.filteredList && %lua.filteredList != "ui.lst_LocalSearch" && %lua.filteredList != "ui.lst_FuelPrices" && %lua.filteredList != "ui.lst_Parking" ? svg_keybutton_done_image_w : -1 );
+	image_h: (%lua.filteredList && %lua.filteredList != "ui.lst_LocalSearch" && %lua.filteredList != "ui.lst_FuelPrices" && %lua.filteredList != "ui.lst_Parking" ? -1 : svg_keybutton_done_image_h ); 
+}
+
+SPRITE.keyboard.back.svg{
+	img: "ico_footer_back.svg";	
+}
+
+SPRITE.keyboard.shift {
+	img:"btn_key_spec.bmp#3";
+}
+
+SPRITE.panel.keyboard {
+	img: keyboard_panel_grad;
+}
+
+
+TABLE.coord{
+	 left:coord_keyboard_left; right:coord_keyboard_right; top:coord_keyboard_top; bottom:coord_keyboard_bottom;
+	 col:1;
+}
+
+SPRITE.panel.keyboard.coord, SPRITE.keyboard.panel.utm{
+	bottom:(0-footer_h);
+}
+
+
+BUTTON.listitem.itinerarywarnings SPRITE.icon_list.svg{
+	image_w:42;
+	image_h:42;
+}
+
+ROADSHIELDEDTEXT.listitem.routeinfo, TEXT.listitem.bottom.routeinfo {
+	paddingright: text_padding_small;
+	paddingleft: text_padding_small;
+}
+
+SPRITE.panel.localmenu_bg{
+	img:"spr_localmenu_bg.bmp"; resize_bmp:1;
+}
+
+SPRITE.separator_listitem.connected_error{
+	img: ( primary.VISIBLE ? "spr_connected_error.bmp" : connected_error_color); resize_bmp:1;
+}
+
+TEXT.separator {
+	font: default;
+	fontsize: fontsize_separator_small;
+}
+
+CHECKBOX.listitem{
+	font: default;
+}
+
+TEXT.action{
+	color: action_color; color2: action_color2;
+	font: "default"; fontsize: fontsize_main;
+}
+
+#et_itiner_warninglist SPRITE.listitem.svg{
+	image_w: svg_listitem_routeinfo_image_w;
+	image_h: svg_listitem_routeinfo_image_w;
+}
+
+#et_itiner_warninglist ROADSHIELDEDTEXT{
+	color: route_info_color;
+	font: default;
+}
+
+#et_itiner_warninglist DISTTEXT{
+	font: default;
+	color: route_info_color;
+	fontsize:fontsize_disttext;
+}
+
+#et_itiner_warninglist DISTTEXT.itinerarywarnings{
+	font: default;
+	color: btn_main_color;
+	fontsize:fontsize_disttext;
+	box_align: "RIGHT";
+}
+
+BUTTON.itinerarywarnings{
+	img: "btn.bmp#3";
+}
+
+TEXT.itinerarywarnings.info{
+	color:route_info_sec_color;
+	font:"defaultbd";
+	fontsize: fontsize_itinerarywarnings_sec;
+	leading:0.85;
+	box_align:"stretch";
+}
+
+TEXT.fill.itinerarywarnings{
+	color:btn_main_color;
+	fontsize: 25;
+}
+
+SPRITE.scaleline{
+	img:"";
+}
+
+#spr_tunneltext_panel DISTTEXT{
+	color: tunnelview_textcolor;
+}
+
+#txtTimeCockpit TIMETEXT{
+	color: headertime_textcolor;
+}
+
+#txtTime TIMETEXT{
+	color: headertime_textcolor;
+}
+
+#txtAvoidDist{
+	color: avoiddist_textcolor;
+}
+
+SPRITE.speedlimit_bg, SPRITE.speedcam_bg {
+	img:"spr_speedlimit_panel.bmp#3"; resize_bmp:1;
+	phase: (%lua.aCockpitTransparency > 8 ? ui_Cockpit.AdvancedSpeedLimitPhase : 0);
+	alpha: (%lua.aCockpitTransparency);
+	onlongclick: 'sc_SpeedWarningSettings() sc_PlaySoundTool("ding", L"!button", false)';	
+}
+
+BOX.speedlimit {
+	orientation:"horizontal";  
+	align: "CENTER"; 
+	paddingleft:speedlimit_box_padding_left; 
+	paddingright:speedlimit_box_padding_right; 
+	paddingtop:speedlimit_box_padding; 
+	paddingbottom:speedlimit_box_padding; 
+}
+
+BOX.speedlimit > BOX.fill {
+	orientation:"horizontal";  
+	align: "CENTER";  box_align:"stretch";
+}
+
+
+BOX.speed{
+	desired_w:current_speed_w;
+	visible: (%lua.show_speed_in_cockpit );
+}
+
+BOX.speedlimit_table {
+	orientation:"horizontal";
+	desired_w: cockpit_warning_w;
+}
+
+TEXT.speedlimit {
+	top:(%lua.speedlimit_USACAN ? 50% : 0); 
+	bottom:(%lua.speedlimit_USACAN ? 23% : 0);
+	fixedwidthnumbers:0;
+	font:valuefontbd;
+}
+
+
+SPRITE.speedlimit_bg.speedlimit_shortlayout,
+SPRITE.speedlimit_bg_panel,
+SPRITE.speedcam_bg.speedlimit_shortlayout {
+	visible:0;
+}
+
+HBOX.speedcam_edit {
+	FLEX:1.3;
+}
+
+DISTTEXT.speedcam_text, SPEEDTEXT.speedcam_text {
+	box_align:"STRETCH";
+	FLEX:1;
+	align:"CENTER";
+	paddingleft:0;
+	paddingright:0;
+	fontsize:fontsize_speedcam;
+	color: (%lua.aCockpitTransparency > 8 ? (ui_Cockpit.AdvancedSpeedLimitPhase == 2 ? color_overspeed : (ui_Cockpit.AdvancedSpeedLimitPhase == 1 ? color_overspeedtol : speed_color)) : (ui_Cockpit.AdvancedSpeedLimitPhase == 2 ? overspeed_color : (ui_Cockpit.AdvancedSpeedLimitPhase == 1 ? overspeedtol_color : speed_color)));
+	glowtype: 1;
+	glowsize: (%lua.aCockpitTransparency > 8 ? 0 : 3);
+}
+
+SPEEDTEXT.speedcam.edit_speedcam {
+	fontsize:fontsize_editspeedcam;
+}
+
+TEXT.speedcam_edittext {
+	bottom:25%;
+}
+
+SPRITE.editspeedcam_radio {
+	img:"btn_editspeedcam.bmp";
+	resize_bmp:1;
+}
+
+SPRITE.editspeedcam_radio.last {
+	img:"";
+}
+
+SPRITE.listitem.speedcam_edittext {
+	img:"btn_listitem.svg";
+	preserve_aspect_ratio:0;
+	phasename:"normal";
+	resize_bmp:1;
+	box_align:"stretch";
+	flex:0.3;
+}
+
+TEXT.value_unit {
+	fontsize: (OWNER.FONTSIZE * 50 /100);
+	can_shrink:0;
+}
+
+TEXT.value_unit.value {
+	font: valuefont;
+}
+
+HBOX.quickbar {
+	paddingleft:0; paddingright:0;
+}
+
+BUTTON.listitem.quickbar > HBOX.listitem {
+	align:"CENTER";
+	paddingleft:0; paddingright:0;
+}
+
+SPRITE.quickbar_icon {
+	image_w:svg_quickmenu_icon_image_w;
+	image_h:svg_quickmenu_icon_image_h;
+}
+	
+SPRITE.quickbar_selection {
+	img:"spr_quickbar_provider_selector.svg";
+	resize_bmp:1; align:"center";
+	visible:false;
+	z:150;
+}
+
+BUTTON.listitem:selected SPRITE.quickbar_selection{
+	visible:true;
+}
+
+CHECKBOX.listitem.quickbar {
+	img:"btn_quickbar.bmp#3";
+}
+
+SPEEDTEXT.speed {
+	color: (%lua.aCockpitTransparency > 8 ? (ui_PropLayer.ShowSpeedCamera ? (ui_Cockpit.AdvancedSpeedLimitPhase == 2 ? color_overspeed : (ui_Cockpit.AdvancedSpeedLimitPhase == 1 ? color_overspeedtol : speed_color)) : (ui_Cockpit.AdvancedSpeedLimitPhase == 2 && ui_PropLayer.ShowSpeedLimit && !st_TripComputer.isActive ? color_overspeed : (ui_Cockpit.AdvancedSpeedLimitPhase == 1 && ui_PropLayer.ShowSpeedLimit && !st_TripComputer.isActive ? color_overspeedtol : speed_color))) : (ui_PropLayer.ShowSpeedCamera ? (ui_Cockpit.AdvancedSpeedLimitPhase == 2 ? overspeed_color : (ui_Cockpit.AdvancedSpeedLimitPhase == 1 ? overspeedtol_color : speed_color)) : (ui_Cockpit.AdvancedSpeedLimitPhase == 2 && ui_PropLayer.ShowSpeedLimit && !st_TripComputer.isActive ? overspeed_color : (ui_Cockpit.AdvancedSpeedLimitPhase == 1 && ui_PropLayer.ShowSpeedLimit && !st_TripComputer.isActive ? overspeedtol_color : speed_color))));
+	fontsize: ( %lua.SpeedUnitsInCockpit ? (ui_PropLayer.ShowCondSpeedLimit ? fontsize_cond_speed : fontsize_speed ) : (ui_PropLayer.ShowCondSpeedLimit ? fontsize_cond_speed+10 : fontsize_speed+10 ) ) ;
+	glowtype: 1;
+	glowsize: (%lua.aCockpitTransparency > 8 ? 0 : 3);
+	visible:(%lua.show_speed_in_cockpit);
+	box_align: "stretch"; desired_w: current_speed_w;
+	orientation:"vertical";
+}
+
+TEXT.ad_speedlimit {
+	color: (%lua.aCockpitTransparency > 8 ? (ui_Cockpit.AdvancedSpeedLimitPhase == 2 ? color_overspeed : (ui_Cockpit.AdvancedSpeedLimitPhase == 1 ? color_overspeedtol : speed_color)) : (ui_Cockpit.AdvancedSpeedLimitPhase == 2 ? overspeed_color : (ui_Cockpit.AdvancedSpeedLimitPhase == 1 ? overspeedtol_color : speed_color)));
+	glowtype: 1;
+	glowsize: (%lua.aCockpitTransparency > 8 ? 0 : 3);
+}
+
+BUTTON.mapheader.btn_prev, BUTTON.mapheader.btn_next {
+	desired_w:72; 
+	desired_h:64; 
+	resize_bmp:1;
+	box_align:"CENTER";
+	img:"btn_scroll.bmp#3";
+}
+
+HBOX.avoid_distance {
+	box_align:"center";
+	desired_w:340;
+}
+
+DISTTEXT.avoid {
+	color:btn_main_color;
+	desired_w:120;
+	align:"center";
+}
+
+DISTTEXT.mapheader, TIMESPANTEXT.mapheader {
+	color:btn_main_color; 
+	align:"LEFT";
+}
+
+
+SPRITE.avoid.distance.svg {
+	top:0;left:0;bottom:0;right:0;
+	img:"ico_avoid_distance.svg";
+	image_w:30;
+	align:"center";
+	valign:"center";
+	phasename:"normal";
+}
+
+SPRITE.avoid.length.svg {
+	top:0;left:0;bottom:0;right:0;
+	img:"ico_avoid_length.svg";
+	image_w:30;
+	align:"center";
+	valign:"center";
+	phasename:"normal";
+	box_align:"stretch";
+}
+
+SPRITE.avoid.delay.svg{
+	top:0;left:0;bottom:0;right:0;
+	img:"ico_avoid_delay.svg";
+	image_w:26;
+	align:"center";
+	valign:"center";
+	phasename:"normal";
+}
+
+HBOX.avoid.mapheader.value{
+	box_align:"stretch"; flex:1;
+	align:"CENTER";
+}
+
+SPRITE.icon.mapheader{
+	visible:1;
+}
+
+TEXT.avoid.mapheader.value{
+	left:0;
+	fontsize:26;
+	wordwrap:1;
+}
+
+SPRITE.btn_map.avoid.svg{
+	image_w: svg_avoid_button_image_w; image_h: svg_avoid_button_image_h;
+}
+
+TEXT.itemcounter {
+	left: 9%; right: 29%; bottom: 20%;
+}
+
+SPRITE.panel.mapheader{
+	left:0; top:0; right:0; bottom:0;
+	img: panel_mapheader_grad;
+}
+
+SPRITE.itemcounter{
+	img: panel_mapheader_grad;
+	mask: "spr_itemcounter_mask.bmp";
+	resize_bmp:1;
+}
+
+BUTTON.btn_scrollup {
+	img:"btn_scroll.bmp#3";
+}
+
+BUTTON.btn_scrollup > SPRITE.icon {
+	img:"ico_scroll_up.svg";
+	image_w: svg_scroll_image_w; image_h: svg_scroll_image_h;
+}
+
+BUTTON.btn_scrolldown {
+	img:"btn_scroll.bmp#3";
+}
+
+BUTTON.btn_scrolldown > SPRITE.icon {
+	img:"ico_scroll_down.svg";	
+	image_w: svg_scroll_image_w; image_h: svg_scroll_image_h;
+}
+
+SPRITE.next.svg{
+	img: "ico_next.svg"; z:15;
+	image_w: svg_menu_scroll_image_w; image_h: svg_menu_scroll_image_h;
+}
+
+SPRITE.prev.svg{
+	img: "ico_prev.svg"; z:15;
+	image_w: svg_menu_scroll_image_w; image_h: svg_menu_scroll_image_h;
+}
+
+SPRITE.footer.next.svg{
+	img: "ico_menu_next.svg"; z:15;
+}
+
+SPRITE.footer.prev.svg{
+	img: "ico_menu_prev.svg"; z:15;
+}
+
+BUTTON.action{
+	img:"btn.bmp#3";
+}
+
+
+BUTTON.localmenu{
+	img:"btn.bmp#3";
+	desired_w:352; left:24; box_align:"center";
+}
+
+SPRITE.zoomin.svg{
+	img: "ico_zoomin.svg"; 
+}
+
+SPRITE.zoomout.svg{
+	img: "ico_zoomout.svg";
+}
+
+SPRITE.plus.svg{
+	img: "ico_plus.svg"; 
+}
+
+SPRITE.minus.svg{
+	img: "ico_minus.svg";
+}
+
+
+SPRITE.zoomin.graph.svg{
+	img: "ico_zoomin_graph.svg"; 
+}
+
+SPRITE.zoomout.graph.svg{
+	img: "ico_zoomout_graph.svg";
+}
+
+DIV.legend SPRITE.panel.map{
+	img: legend_grad;
+}
+
+TEXT.simspeed {
+	color: simspeed_color; color2: simspeed_color; color3: simspeed_color;
+	font: "defaultbd";
+}
+
+SPRITE.routemethod.radio.svg{
+	image_w:svg_radio_image_w;
+	image_h:svg_radio_image_h;
+	desired_w: routemethod_w;
+	flex:0;
+}
+
+SPRITE.routemethod.routecolor{
+	desired_w: 0;
+}
+
+HBOX.routemethod.container{
+	paddingleft: 0;
+}
+
+BUTTON.routemethod>TEXT{
+	leading:0.85;
+	fontsize:fontsize_routemethod;
+}
+
+BOX.hwy_container>SPRITE>#txtHWInfoTxt{
+	left:0; top:0; bottom:0; right:0;
+	fontsize: 26;
+	align:"center"; valign:"center";
+}
+
+BOX.hwy_container>BUTTON.panel.map.fill{
+	img:"btn_hwy_element_panel.bmp#3";
+	resize_bmp:1;
+}
+
+.cockpit>.map_messagebox>.hwy_panel{
+	bottom:hwy_panel_bottom; 
+}
+
+SPRITE.cockpit_background_svg {
+	onrelease: sc_RestartDayOrNightFilter ;
+}
+
+SPRITE.hwy_msgbox_background.svg{
+	left:0; top:0;  h:100%; w:100%; z:20;
+	img:"spr_hwy_messagebox_bg.svg";
+	align:"CENTER"; valign:"CENTER";
+}
+
+BOX.hwy_container{
+	left: (index == 0 ? hwy_container_indent_cat0 : (index == 1 ? hwy_container_indent_cat1 : hwy_container_indent_cat2 ));
+	top: hwy_container_top;
+	bottom:(index == 0 ? 0 : hwy_container_bottom);
+	right:(index == 0 ? hwy_container_indent_cat0 : (index == 1 ? hwy_container_indent_cat1 : hwy_container_indent_cat2 ));
+	box_align:"STRETCH";
+	paddingleft:hwy_container_padding_left;
+	paddingright:hwy_container_padding_right;
+	paddingbottom:hwy_container_padding_bottom;	
+}
+
+HBOX.hwy_element{
+	paddingleft:box_padding;
+	paddingright:box_padding;
+	paddingtop:box_padding_small;
+	paddingbottom:box_padding_small;
+	flex:0;
+}
+
+SPRITE.msgbox_grad{
+	left:10; right:10; bottom:25; top:25; z:20;
+	img: msgbox_grad;
+}
+
+SPRITE.hwy_element_header{
+	desired_w: undef;
+	desired_h: hwy_header_h;
+	z:100;
+	img: hwy_element_header_grad;
+	box_align:"stretch";
+}
+
+SPRITE.panel.tmc_legend, SPRITE.panel.fuel_legend {
+	img: legend_grad;
+	opaque:1;
+}
+
+TIMESPANTEXT.route_summary_text.delay{
+	color: tmcdelay_color;
+	fontsize: fontsize_tmcdelay;	
+}
+
+TEXT.traffic_summary_station{
+	color:traffic_station_color;
+}
+
+VBOX.mapheader_container_tmc{
+	paddingtop:box_padding_small;
+	paddingbottom:box_padding_small;
+}
+
+TEXT.header.colorscheme{
+	color: map_main_color;
+	flex: 0;
+}
+
+.font_xhtml{
+    font:"default";
+}
+
+VBOX.listitem.progress.providerinfo{
+	top:header_overlap_h;
+	paddingtop:box_padding_small;
+	paddingbottom:box_padding_small;
+}
+
+DIV.navigationmap{
+	y:(header_h + header_overlap_h);
+}
+
+FOOTERBUTTON.btn_footer.vr{
+	w:100%;
+	img: ((index // 0) == (%*._list.lastindex // 0) ? "btn_footer_firststart_right.bmp#3" : "btn_footer_firststart_left.bmp#3";)
+	font:"defaultbd";
+	color: footer_color; 
+}
+
+TEXT.title.header.carmmodel.counter{
+	flex:0 !important;
+}
+
+SPRITE.whereami.nextcrossing, SPRITE.whereami.prevcrossing{
+	img: "";
+}
+
+SPRITE.whereami.currentstreet{
+	img: whereami_currentstreet_grad;
+}
+
+SPRITE.nextcrossing{
+	desired_w: whereami_image_w;
+	img: "spr_whereami_nextcrossing.bmp"; resize_bmp:1;
+}
+
+SPRITE.prevcrossing{
+	desired_w: whereami_image_w;
+	img: "spr_whereami_prevcrossing.bmp"; resize_bmp:1;
+}
+
+SPRITE.currentstreet{
+	desired_w: whereami_image_w;
+	img: "spr_whereami_currentstreet.bmp"; resize_bmp:1;
+}
+
+SPRITE.currentposition.icon{
+	left:0;right:0;top:0;bottom:0;
+	img: "spr_whereami_currentposition.bmp";
+	align:"CENTER";
+	valign:"CENTER";
+}
+
+SPRITE.whereami.nextcrossing VBOX{
+	box_align: "top";
+	paddingtop:6;
+}
+
+SPRITE.whereami.currentstreet TEXT.listitem{
+	paddingright:12;
+	paddingleft:12;
+}
+
+HBOX.prevcrossing VBOX{
+	box_align: "top" !important;
+	paddingtop:6;
+	
+}
+
+TEXT.font_whereami{
+	fontsize:fontsize_whereami;
+	color:btn_sec_color;
+}
+
+TEXT.listitem.font_whereami {
+	align:"LEFT";
+	box_align:"LEFT";
+	padding:text_padding_small;
+	
+}
+
+ROADSHIELDEDTEXT.listitem.whereami{
+	paddingleft:12;
+	wordwrap: 2; 
+	line_break_method: "auto";
+}
+
+
+SPRITE.nearcity {
+	img:"btn.bmp#3";
+}
+
+DIV.tripcomputer.header{
+	desired_h: tripcomputer_header;
+}
+
+SPRITE.tripcomputer_bg.svg{
+	left:0; top:0; h:100%; w:100%; z:10;
+	PRESERVE_ASPECT_RATIO:0;
+	img:"spr_tripcomputer_bg.svg";
+	align:"CENTER"; valign:"TOP";
+}
+
+SPRITE.tripcomputer_speed_bg.svg{
+	left:0; top:0; h:100%; w:100%; z:15;
+	img:"spr_tripcomputer_instr_bg.svg";
+	phasename:(%warning.driveralert.near_speed_limit && %warning.driveralert.over_speed_limit ? "overspeed" : ( %warning.driveralert.near_speed_limit || %warning.driveralert.over_speed_limit ? "speedlimit" : "default" ));
+}
+
+SPRITE.tripcomputer_speed_bg.cover.svg{
+	z:50;
+	img:"spr_tripcomputer_instr_cover.svg";
+}
+
+SPRITE.background.tripcomputer{
+	top:0; bottom:0; left:0; right:0;
+	img: background_tripcomputer_grad;
+}
+
+HBOX.tripcomputerdatas {
+	paddingleft:0;
+	paddingright:0;
+	paddingtop:box_padding_small;
+	paddingbottom:box_padding_small;
+}
+
+.tripcomputer .valuetext{
+	color: btn_main_color;
+}
+
+TEXT.tripcomputer.summary{
+	font:default; 
+}
+
+TEXT.font_info.tripcomputer{
+	font:default;
+	color: btn_main_color;
+	z:50;
+	fontsize:fontsize_tripcomputer !important;
+	wordwrap:1;
+}
+
+VBOX.tripcomputer.heading TEXT.font_info.tripcomputer{
+	desired_h: 36;
+}
+
+DIV.tripcomputer.speed{
+	top:tripcomputer_speed_top;
+	left: (int((PARENT.W - tripcomputer_speed_w) * 0.5));
+	w: tripcomputer_speed_w;
+	h: tripcomputer_speed_h;
+}
+
+SPRITE.tripcomputer.speeddisplay.svg, SPRITE.tripcomputer.altitudedisplay.svg, SPRITE.tripcomputer.speedlimitdisplay.svg, SPRITE.tripcomputer.headingdisplay.svg{
+	img:"";
+}
+
+VBOX.tripcomputer.speed{
+	paddingtop:50;
+}
+
+HBOX.tripcomputer.speed{
+	paddingleft:15;
+	paddingright:15;
+}
+
+SPEEDTEXT.speed.tripcomputer{
+	fontsize: fontsize_tripcomputer_speed;
+}
+
+VBOX.tripcomputer.altitude, VBOX.tripcomputer.heading{
+	desired_w:120;
+	paddingtop:15;
+	flex:0;
+	paddingleft:6;
+	paddingright:6;		
+}
+
+VBOX.tripcomputer.speedlimit{
+	paddingbottom:90;
+}
+
+VBOX.tripcomputer.altitude{
+	paddingtop:30;
+}
+
+SPRITE.diricon.tripcomputer{
+	image_w: 78;
+	image_h: 78;
+}
+
+VBOX.tripcomputer.heading SPRITE.tripcomputer.heading {
+	attach_sprite_provider: "other.attach_linear_compass(linear_compass_cockpit.bmp,navigation.car.heading)";
+}
+SPRITE.panel.tripinfo{
+	visible:(%*.bg_visible == 1);
+}
+
+BOX.tripinfo{
+	top:header_overlap_h;
+}
+
+SPRITE.listitem.info.sunsetsunrise {
+	img: ( index == 0 ? "" : "btn_listitem.svg");
+}
+
+BUTTON.btn_main, RADIO.btn_main {
+	font: default;
+	r2l_invert:1;
+}
+
+SPRITE.notification_area {
+	bottom: undef; h: header_bg_h; image_h: header_bg_h; preserve_aspect_ratio: 0; image_w:(screen_w - headerbutton_w - headerbutton_w);
+	img: ( sc_IsNotificationHighlighted(%warning.notification.notification_area) ? "spr_notification_area_bg.svg" : "spr_notification_area_feedback_bg.svg");
+}
+
+SPRITE.notification_area.cockpit {
+	h: 100%; image_h:(%lua.DragMode ? mapheader_h : next_street_h);
+	image_w:screen_w;
+	img:(sc_IsNotificationHighlighted(%warning.notification.notification_area) ?  "notification_red.bmp" : "notification_feedback.bmp");
+	resize_bmp: 1;
+	alpha: (%lua.DragMode ? 32 : %lua.aCockpitTransparency);
+}
+
+TEXT.notification_area{
+	fontsize:(%lua.MenuIsOpened || !st_Cockpit.isActive? 20 : 24);
+}
+
+DIV.notification_area_cockpit TEXT.notification_area{
+	right: 0; 
+}
+
+BUTTON.btn_map.capture{
+	left: 0; top:0; 
+	bottom:0; right: 0;
+	resize_bmp:1;
+}
+
+#ui_Header DIV.header LAYER DIV.header HBOX.header {
+	left: 85%;
+	right: 0;
+	align: "RIGHT";
+	visible: ( %lua.captureScreen && !%lua.UnreadCount > 0 );
+}
+
+ROADSHIELDEDTEXT.listitem {
+	font: "defaultbd"; 
+}
+
+TEXT.detailsinfo, ROADSHIELDEDTEXT.detailsinfo{
+	font: "defaultbd"; 
+}
+
+TEXT.listitem.trafficlaw {	
+	font:"defaultbd";
+}
+TEXT.GPSStatus_bar{
+ 	font:"defaultbd";
+}
+
+HBOX.gps_status>TEXT.color_inf_sec, HBOX.gps_status>TEXT.color_inf_main, HBOX.GPSStatus_satnum>TEXT.color_inf_main, HBOX.GPSStatus_satnum.glonass>TEXT.color_inf_main {
+	font:"defaultbd";
+}
+
+DIV.cockpit.dragmode SPRITE.zoomctrl {
+	bottom: ( drag_button+zoomcontrol_margin ) ;
+}
+
+BUTTON.btn_prev, 
+BUTTON.btn_next{
+	resize_bmp:1;
+}
+
+
+EMPTYLISTTEXT{
+	top:0; left:0;  h:100%;
+	wordwrap:0;
+	bottom: undef ;
+}
+
+EMPTYLISTTEXT.routewarnings{
+	h:undef; 
+	bottom:0;
+}
+
+SPRITE.messagebox{
+	left:0; top:0; right:0; bottom:0;
+	img:"spr_msgbox_background.bmp"; resize_bmp:1;
+	opaque:1;
+}
+
+DIV.current_city {
+	h:current_city_h;
+	visible:(!ui_PropLayer.JunctionViewVisible && !ui_PropLayer.LaneinfoVisible && %lua.CityShow && %navigation.car.address.city);
+}
+
+DIV.current_street {
+	h:current_street_h;
+	visible:(!ui_PropLayer.JunctionViewVisible && !ui_PropLayer.LaneinfoVisible && %navigation.car.current_street_with_shield);
+}
+
+DIV.laneinfo {
+	visible:(!ui_PropLayer.JunctionViewVisible && ui_PropLayer.LaneinfoVisible);
+}
+
+
+HBOX.current_city_container > SPRITE.panel.map {
+	img: "spr_currentstreet.bmp";
+	alpha: (%lua.aCockpitTransparency) ; resize_bmp: 1;
+	box_align:"STRETCH";
+	resize_bmp: 1;
+	visible: (%navigation.car.address.city && %lua.CityShow);
+}
+
+ROADSHIELDEDTEXT.current_city {
+	left:0; right:0; bottom:0;
+	h:current_city_h;
+	font: "defaultbd";
+	fontsize:fontsize_current_city;
+	color: ( %screen.nightmode ? current_street_color_night : current_street_color );
+	align:"CENTER"; valign:"CENTER";
+	padding:text_padding_small;
+	wordwrap:1;
+	textmodel_wstr: ("navigation.car.address.city");
+	visible: (%lua.CityShow == 1);
+}
+
+ROADSHIELDEDTEXT.current_city.zip {
+	left:0; right:0; bottom:0;
+	h:current_city_h;
+	font: "defaultbd";
+	fontsize:fontsize_current_city;
+	color: ( %screen.nightmode ? current_street_color_night : current_street_color );
+	align:"CENTER"; valign:"CENTER";
+	padding:text_padding_small;
+	wordwrap:1;
+	combined_textmodel: ("\fb$navigation.car.address.zip$ \fn$navigation.car.address.city$"); 
+	visible: (%lua.CityShow == 2);
+}
+
+/*-------------Recalculate--------------*/
+
+TEXT.notification_recalculate_cockpit_left,
+
+TEXT.notification_recalculate_cockpit_right {
+	top:0; bottom:0; z:23;
+	font: defaultbd; fontsize:fontsize_warning; color: notification_area_textcolor; align:"CENTER"; valign:"CENTER";
+	paddingleft:0; paddingright:0;
+}
+
+SPRITE.menu.icon.svg{
+	image_h:svg_footer_menu_image_h;
+	image_w:svg_footer_menu_image_w;
+}
+
+
+DIV.mapmain.mapcontrol BUTTON.btn_map.zoomin,
+DIV.mapmain.mapcontrol BUTTON.btn_map.zoomout,
+DIV.mapmain.mapcontrol BUTTON.btn_map.fit {
+	img: "btn_map.bmp#3"; resize_bmp:1;
+}
+
+SPRITE.diricon_mini{
+	image_w: svg_diricon_hwy_junctionview_w;
+	image_h: svg_diricon_hwy_junctionview_h;
+	align:"center";
+	valign:"center";
+}
+
+BUTTON SPRITE.icon_list {
+phasename: (%lua.direction_icon_phasename);
+}
+
+DISTTEXT.dist_to_next_maneuver {
+	top: 24%; left: 0;
+	fontsize: 26; font:"defaultbd";
+}
+
+BUTTON.quick_menu.ari {
+	img: "";  
+	top:0; bottom:0; left:0; right:0; z: 1;
+	resize_bmp: 1; 
+}
+
+SPRITE.compasslinear.mask{
+	z:50;
+	img:"linear_compass_background.bmp"; resize_bmp:1;
+	box_align:"stretch"; flex:1;
+}
+
+BOX.compasslinear{
+	align:"center";
+	valign:"center";
+}
+
+SPRITE.compass.marker{
+	img:"linear_compass_marker.bmp";
+	box_align:"center";
+	z:100;
+}
+
+SPRITE.compass.linear{
+	attach_sprite_provider:"other.attach_linear_compass(linear_compass_cockpit.bmp,navigation.car.heading)";
+	zoom: 990;
+	box_align:"stretch";
+	flex:1;
+}
+
+SPRITE.rotatedestarrow.svg{
+	image_w: svg_mapcompass_image_w; image_h: svg_mapcompass_image_h;
+	img: "destarrow.svg";
+	zoom: (%traffic.settings.traffic_enabled ? 800 : undef ) ;
+}
+
+
+BUTTON.listitem.submenu{
+	img: "btn_listitem.svg";
+}
+
+BOX.diricon_hwy{
+	orientation:"vertical";
+	box_align:"stretch";
+	paddingleft:5; paddingright:5;
+	paddingtop:6; paddingbottom:6;		
+}
+
+BOX.diricon_hwy>DISTTEXT{
+	valign:"top"; align:"left"; 
+}
+
+BOX.diricon_hwy>TEXT{
+	valign:"CENTER"; align:"left"; 
+}
+
+SPRITE.diricon_hwy_arrow{
+	desired_w:50;
+	align:"center";
+	valign:"center";
+}
+
+
+
+DIV.cockpit DIV.notify_list_ext {
+	h: notify_list_ext_h;
+	w: notify_list_ext_w;
+}
+
+DIV.cockpit DIV.notify_list_ext>TABLE.ari_ext {
+	left: 0; top: 0; right: 0; bottom: 0;
+	R2L: 1;
+	COMPACT: 1;
+	row: 7; col: 1;
+	FILL_VERTICAL: 1;
+}
+
+#ui_MapHeader DIV.notify_list_ext {
+	right: ( (%lua.DragMode && st_Cockpit.isActive) ? 0 : (%lua.QuickBarOpened ? quickbar_w : 0) );
+	y: ( (%lua.DragMode && st_Cockpit.isActive) ? (screen_y + mapheader_h) :(screen_y + header_h + mapheader_h) );
+	h: notify_list_ext_h;
+	w: notify_list_ext_w;
+}
+
+#ui_MapHeader DIV.notify_list_ext>TABLE.ari_ext {
+	left: 0; top: 0; right: 0; bottom: 0;
+	R2L: 1;
+	COMPACT: 1;
+	row: 5; col: 1;
+	FILL_VERTICAL: 1;
+}
+
+SPRITE.background.routeprogress,
+SPRITE.background.routeprogress.inside {
+	alpha: (%lua.aCockpitTransparency) ;
+}
+
+/* mod */
+TEXT.zoomctrl { glowcolor: #000000; }
+
+BOX.low_buttons {
+	orientation:"horizontal";
+	paddingleft:0; 
+	paddingright:0;
+	left:0; 
+	top:undef; 
+	right:0; 
+	bottom:0; 
+	h:drag_button;
+	r2l_invert:0;
+}
+
+BOX.left_buttons {
+	orientation:"horizontal";
+	paddingleft:0; 
+	paddingright:0;
+	top:undef; 
+	bottom:0; 
+	h:drag_button;
+	r2l_invert:0;
+	align:"left"; 
+}
+
+BOX.center_buttons {
+	orientation:"horizontal";
+	paddingleft:0; 
+	paddingright:0;
+	top:undef; 
+	bottom:0; 
+	h:drag_button;
+	r2l_invert:0;
+	align:"center"; 
+}
+
+BOX.right_buttons {
+	orientation:"horizontal";
+	paddingleft:0; 
+	paddingright:0;
+	top:undef; 
+	bottom:0;
+	h:drag_button;
+	r2l_invert:0;
+	align:"right"; 
+}
+
+BUTTON.btn_map.inbox {
+	box_align:"stretch"; 
+	desired_w:drag_button; 
+	desired_h:drag_button;
+}
+
+DISTTEXT.next_maneuver_dist.hwy, TEXT.time_to_maneuver, TIMETEXT.time_to_maneuver {
+	fontsize:30;
+}
+
+DIV.provider{
+	top:header_overlap_h;
+	h: (2*provider_button_h);
+	w: provider_button_w;
+	right:list_padding;
+	box_align: "stretch";
+	z:200;
+	r2l_invert:1;
+}
+TABLE.provider{
+	top:0;
+	bottom:0;
+	left:0;
+	right:0;
+	col:1;
+}
+
+/* -------------------------------------new---------------------------------------*/
+
+.mapheader.text {
+	paddingbottom:10;
+}
+
+BUTTON.btn_map, BOX.hwy_container BUTTON.panel.map.fill {
+	img: "";
+}
+
+SPRITE.panel.map.fill, SPRITE.button.map.fill {
+	img:"btn_map.bmp#3"; 
+	resize_bmp:1; z:1;
+	left:0; top:0; right:0; bottom:0; 
+	alpha: (%lua.aCockpitTransparency) ;
+}
+
+BUTTON:active SPRITE.button.map.fill {
+	phase:1;
+	alpha: ( %lua.aCockpitTransparency ) ;
+}
+
+@import "~/common/ui/the_skin_short_layout.css" if (%lua.IsShortLayout); 
+@import "~/common/ui/the_skin_landscape.css" landscape;
+@import "~/common/ui/the_skin_portrait.css" portrait;
+
+/* -------------------------------------------------------------------------------------*/
+/* -------------- Mod by VW -- 19.08.2020  ---------*/
+/* ------------------------------------------------------------------------------------*/

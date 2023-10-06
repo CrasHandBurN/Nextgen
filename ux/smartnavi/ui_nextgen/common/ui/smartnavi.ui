@@ -1,0 +1,366 @@
+<var vParkingMessageVisible=0 />
+
+<userlist lm_ParkingAroundDest_localmenu text="str" onrelease="ui" enable="bool">
+	<row text="List View" onrelease=sc_showParkingAroundDestListView enable=(%navigation.parking_ad.list.size) />
+</userlist>
+
+<userlist lm_FooterShowParkingAroundDestOnMap text="str" onrelease="ui" enable="bool" isactionbutton="bool">
+	<default enable=1 />
+	<row text="Select" isactionbutton=1 onrelease=sc_ShowParkingAroundDestOnMap_OnSelect />
+</userlist>
+
+<userlist lm_FooterSelectParking text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+	<row text="Park Here" onrelease=sc_SelectParkingAroundDest />
+</userlist>
+
+<layer ui_MapSidePanel_Congestion z=99980 visible=( !%lua.DragMode && !%lua.MenuIsOpened && !%navigation.is_in_simulation ) >
+	<DIV class="cockpit">
+		<DIV class="map_messagebox">
+			;;;<TEXT txt_MapSidePanel_Congestion_header class="color_inf_main map_messagebox detour" z=20 align="CENTER" wordwrap=2 padding=0 twolinesmall=0 text="Potential congestion detour:" />
+			<TEXT txt_MapSidePanel_Congestion_header class="color_inf_main map_messagebox detour" z=20 align="CENTER" wordwrap=2 padding=0 twolinesmall=0 text=%screen.msgbox.on_screen.first_line />
+			<VBOX class="map_messagebox detour">
+		
+				<BOX class="sidepanel detour">
+					<SPRITE class="listitem svg"  z=101  iconid=%navigation.congestion_ad_icon /> 
+					<VBOX>	
+						<ROADSHIELDEDTEXT class="font_sec color_inf_main"  z=20 align="CENTER" shieldtextmod=_0.9 text=(%{"navigation.congestion_ad_street_name"})>
+						<TEXT class="font_sec color_inf_main"  z=20 align="CENTER" twolinesmall=0 text=(sc_FormatSpareDistance(%{"route.list.cong_ad_detour.spare_distance"}, 1) + L"\n" + sc_FormatSpareTime(%{"route.list.cong_ad_detour.spare_time"}, 1))>
+					</VBOX>
+				</BOX>
+			
+			</VBOX>
+			<DIV class="dialog_buttons">
+				<DIALOGBUTTON class="dialog 2_1 mapmsgbox" z=101 text="Preview" onrelease='sc_CongestionOff() btn_AvoidRouteAhead_Onrelease(true)'> 
+	       			<SPRITE CLASS="button map fill" />
+				</DIALOGBUTTON>
+				<DIALOGBUTTON class="dialog 2_2 mapmsgbox" z=101 text="Dismiss" onrelease=sc_CongestionOff>
+			       	<SPRITE CLASS="button map fill" />
+				</DIALOGBUTTON>
+			</DIV>
+				
+			<SPRITE class="panel map background" />
+		</DIV>
+	</DIV>
+</layer>
+
+;------------------------------------------------------------------------------------
+<modify ui_Cockpit>   
+	<insert last_child into="#CockpitBTNTable">
+		<BUTTON CLASS="btn_map" ONRELEASE=sc_CongestionOn ONLONGCLICK=sc_NavigationMap VISIBLE=(%navigation.congestion_ad_enabled && %{"navigation.congestion_ad_icon.valid"}) >
+			<SPRITE CLASS="button map fill" />
+			<TEXT CLASS="BTN_top_text" TEXT=(%exists:route.list.cong_ad_detour.spare_distance ? builtin.format("%{distance:3}", %{"route.list.cong_ad_detour.spare_distance"}) : L"") />
+			;;<TEXT CLASS="BTN_top_text" TEXT=(VW_cong_ad_detour_spare_distance(%gps.blink)) />
+			<SPRITE CLASS="btn_map svg" ICONID=%navigation.congestion_ad_icon VISIBLE=(%gps.blink) />
+			<TEXT CLASS="BTN_bottom_text" TEXT=(%exists:route.list.cong_ad_detour.spare_time ? builtin.format("%{timespan:5}", %{"route.list.cong_ad_detour.spare_time"}) : L"") />
+			;;<TEXT CLASS="BTN_bottom_text" TEXT=(VW_cong_ad_detour_spare_time(%gps.blink)) />
+		</BUTTON>
+	</insert>
+</modify>
+<modify lm_CockpitSideList>
+	<insert>
+		<row  visible=(%navigation.congestion_ad_enabled && %{"navigation.congestion_ad_icon.valid"}) />
+	</insert>
+</modify>
+;-------------------------------------------------------------------------------------
+
+<layer ui_MapSidePanel_Parking  z=99980 onshow='ui.vParkingMessageVisible = true' onhide='ui.vParkingMessageVisible = false' visible=( !%lua.DragMode && !%lua.MenuIsOpened && !%navigation.is_in_simulation )>
+	<DIV class="cockpit">
+		<DIV class="map_messagebox">
+			
+			<TEXT class="color_inf_main map_messagebox detour" z=20 align="CENTER" wordwrap=9 leading=0.95 padding=0 twolinesmall=0  text=%screen.msgbox.on_screen.first_line />
+			
+			<DIV class="dialog_buttons">
+				<DIALOGBUTTON class="dialog 2_1 mapmsgbox" z=101 text=(%screen.msgbox.on_screen.button_caption(1)) leading=0.7 onrelease='MODEL.screen.msgbox.on_screen.button_released(1)'> 
+			       	<SPRITE CLASS="button map fill" />
+				</DIALOGBUTTON>
+				<DIALOGBUTTON class="dialog 2_2 mapmsgbox" z=101 text=(%screen.msgbox.on_screen.button_caption(2)) leading=0.7 onrelease='MODEL.screen.msgbox.on_screen.button_released(2)'>
+			       	<SPRITE CLASS="button map fill" />
+				</DIALOGBUTTON>
+			</DIV>
+			
+			<SPRITE class="panel map background" />
+		</DIV>
+	</DIV>
+</layer>
+
+<layer ui_ShowParkingAroundDestOnMap z=40>
+	<OBSERVER value=( %{ "route.list.parking_ad_route.calculation_finished" } ) onselect=sc_FitParkingRoute START="NO_TRIGGER" />
+</layer>
+
+<element_template et_ParkingItemList>
+	<implementation>
+		<property show_dist_on_route value=(%*.distance_on_route.valid && %navigation.has_route) />
+		<property is_on_move         value=(%navigation.car.current_speed > 6) />
+		<property poi_direction      value=(direction(%navigation.car.position, %*.position, is_on_move ? %navigation.car.heading : 0) * 360.0 / 4096 ) />
+		
+		<property icon_branded value=(VW_isPoiBranded(%*.icon, 2)) />
+	</implementation>
+	
+	<BUTTON class="listitem" onrelease=sc_selectParkingFromList>
+		<HBOX class="listitem">
+		
+			<SPRITE class="listitem btn_map svg" iconid=%*.icon iconindex=2 visible=(!icon_branded)>
+				<SPRITE class="listitem poi_provider_overlay" iconmodel="*.provider_icon" visible=%*.has_provider_icon />
+			</SPRITE>
+			
+			<SPRITE class="listitem poi_branded" iconid=%*.icon iconindex=2 visible=(icon_branded)>
+				<SPRITE class="listitem poi_provider_overlay" iconmodel="*.provider_icon" iconindex=2 visible=%*.has_provider_icon />
+			</SPRITE>
+
+			<VBOX class="listitem">
+				<TEXT class="listitem icon top" text=%*.highlighted_name />
+				<TEXT class="listitem icon bottom" text=%*.address.long_format />
+			</VBOX>
+			
+			<SPACER flex=1 />
+			
+			<BOX class="listitem detour" >
+				<SPRITE class="listitem detour" rotate=(poi_direction) />
+				<DISTTEXT class="listitem detour" text=(!show_dist_on_route && %*.detour_length.valid && %navigation.has_route ? "+" : "") distance=(show_dist_on_route ? %*.distance_on_route : %*.distance) />
+			</BOX>
+			
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_ParkingAroundDestListView z=30>
+	<DIV class="list">
+		<SECTIONMARKER />
+		
+		<LIST2 class="list_control" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="navigation.parking_ad.list" element_template="et_ParkingItemList" />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<layer ui_MapSidePanel_QuickDetour z=99980 visible=( !%lua.DragMode && !%navigation.is_in_simulation && !%lua.MenuIsOpened )
+		onshow='
+			VW_LongTextToSay(ui.ui_MapSidePanel_QuickDetour.QuickDetour_MSG1() .. ui.ui_MapSidePanel_QuickDetour.QuickDetour_MSG2() .. L" " .. ui.ui_MapSidePanel_QuickDetour.QuickDetour_MSG3() .. L". ")
+		'>
+	<implementation>
+		<property QuickDetour_MSG1 value=(%navigation.quickdetour_distance_on_route.valid && %navigation.quickdetour_distance_on_route > 50 ? format(m_i18n("Possible alternative route in %{distance:3}:"), %navigation.quickdetour_distance_on_route) : translate("Possible alternative route:")) />
+		<property QuickDetour_MSG2 value=(%navigation.quickdetour_streetname) />
+		<property QuickDetour_MSG3 value=(%navigation.quickdetour_calculated ? sc_FormatSpareDistance(%navigation.quickdetour_dist, 1) + L". " + sc_FormatSpareTime(%navigation.quickdetour_time, 1) : translate("Recalculating...")) />
+	</implementation>
+	<DIV class="cockpit">
+		<DIV class="map_messagebox">
+			<TEXT class="color_inf_main map_messagebox detour" text=(%navigation.quickdetour_distance_on_route.valid && %navigation.quickdetour_distance_on_route > 50 ? format(m_i18n("Possible alternative route in %{distance:3}:"), %navigation.quickdetour_distance_on_route) : "Possible alternative route:") />
+
+			<VBOX class="map_messagebox detour">
+				
+				<BOX class="sidepanel detour">			
+					<SPRITE class="listitem svg quickdetour" z=101 iconid=%navigation.quickdetour_icon visible=(%navigation.quickdetour_calculated) />
+					<SPRITE class="searchprogress wide" visible=(!%navigation.quickdetour_calculated) />
+					<VBOX>
+						<ROADSHIELDEDTEXT class="font_quickdetour color_inf_main" z=20 r2l_invert=1 shieldtextmod=0.9 textmodel_wstr="navigation.quickdetour_streetname" visible=%navigation.quickdetour_calculated />
+						<TEXT class="font_quickdetour color_inf_main"  z=20 r2l_invert=1 twolinesmall=0 text=(%navigation.quickdetour_calculated ? sc_FormatSpareDistance(%navigation.quickdetour_dist, 1) + L"\n" + sc_FormatSpareTime(%navigation.quickdetour_time, 1) : "Recalculating...") />
+					</VBOX>				
+				</BOX>
+			</VBOX>
+			<DIV class="dialog_buttons">
+				<DIALOGBUTTON class="dialog 2_1 mapmsgbox" z=101 text="Preview" onrelease='sc_RemoveQuickDetourPopup() sc_ShowQuickDetourPreview()' enable=%navigation.quickdetour_calculated> 
+			       	<SPRITE CLASS="button map fill" />
+				</DIALOGBUTTON>
+				<DIALOGBUTTON class="dialog 2_2 mapmsgbox" z=101 text="Dismiss" onrelease=sc_RemoveQuickDetourPopup>
+			       	<SPRITE CLASS="button map fill" />
+				</DIALOGBUTTON>
+			</DIV>
+				
+			<SPRITE class="panel map background" />
+		</DIV>
+	</DIV>
+</layer>
+;------------------------------------------------------------------------------------
+<modify ui_Cockpit>   
+	<insert last_child into="#CockpitBTNTable">    
+		<BUTTON BTN_QuickDetour CLASS="btn_map" ONRELEASE=sc_ShowQuickDetourPopup ONLONGCLICK=sc_NavigationMap
+			VISIBLE=((%navigation.quickdetour_calculated || %navigation.quickdetour_continuous_calculation) && %navigation.quickdetour_enabled) >
+			<SPRITE CLASS="button map fill" />
+			<TEXT CLASS="BTN_top_text" TEXT=(%navigation.quickdetour_calculated ? builtin.format("%{distance:3}", %navigation.quickdetour_dist) : "Recalculating...") />
+			<SPRITE CLASS="btn_map svg" ICONID=%navigation.quickdetour_icon VISIBLE=(%gps.blink) />
+			<TEXT CLASS="BTN_bottom_text" TEXT=(%navigation.quickdetour_calculated ? builtin.format("%{timespan:5}", %navigation.quickdetour_time) : "Recalculating...") />
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row  visible=((%navigation.quickdetour_calculated || %navigation.quickdetour_continuous_calculation) && %navigation.quickdetour_enabled) />
+	</insert>
+</modify>
+
+<layer ui_MapSidePanel_QuickDetourVW z=99980 visible=( ui_PropLayer.SidePanelVisible )
+	onshow='
+		local function VW_getFitboxSN()
+			return 	ui.DiscoverySidePanel_propertybox.X + 10, ui.DiscoverySidePanel_propertybox.Y + 10, ui.DiscoverySidePanel_propertybox.W - 20, ui.DiscoverySidePanel_propertybox.H - 20
+		end
+		local mapLayer = MODEL.map.discoverysidepanel
+		
+		mapLayer.highlight_color = "planned_road_alt3"
+		sc_SelectMapProfile(gMinimalColor_Name, gMinimalColorNight_Name)
+		mapLayer.route_model = "nonexistent,quickdetour:2,navigated:1"
+
+		local TL, BR = MODEL.route.list.navigated.get_different_segments_bounding_box("quickdetour")
+		sc_Fit_To_Screen(TL, BR, "discoverysidepanel", VW_getFitboxSN)
+
+		local g = MODEL.navigation.car.position() --GCOOR.new({lat=(TL.lat - (TL.lat - BR.lat)/2), lon=(TL.lon  - (TL.lon - BR.lon)/2)})
+		--mapLayer.center_follow = true
+		
+		mapLayer.center_posy = 50
+		mapLayer.car_posy = 50
+		mapLayer.center_posx = 50
+		mapLayer.car_posx = 50
+		
+		local angle = MODEL.map.primary.rotate()
+		mapLayer.set_rotate(angle, false)
+		
+		doDelayed(3, function() mapLayer.center = g end)
+		--VW_LongTextToSay(ui.ui_MapSidePanel_QuickDetourVW.QuickDetour_MSG1() .. ui.ui_MapSidePanel_QuickDetourVW.QuickDetour_MSG2() .. L" " .. ui.ui_MapSidePanel_QuickDetourVW.QuickDetour_MSG3() .. L". ")
+	'
+	onhide='
+	    local mapLayer = MODEL.map.discoverysidepanel
+		
+        mapLayer.route_model = ""
+        mapLayer.highlight_color = ""
+        sc_SelectOriginalMapProfile()
+        --MODEL.lua.MapHeaderMode = "normal"
+	' >
+	<observer value=(%screen.current_orientation) onchange='ui.BTN_QuickDetour.ONRELEASE()' START="NO_TRIGGER" />
+	<implementation>
+		<property QuickDetour_MSG1 value=(%navigation.quickdetour_distance_on_route.valid && %navigation.quickdetour_distance_on_route > 50 ? format(m_i18n("Possible alternative route in %{distance:3}:"), %navigation.quickdetour_distance_on_route) : translate("Possible alternative route:")) />
+		<property QuickDetour_MSG2 value=(%navigation.quickdetour_streetname) />
+		<property QuickDetour_MSG3 value=(%navigation.quickdetour_calculated ? sc_FormatSpareDistance(%navigation.quickdetour_dist, 1) + L". " + sc_FormatSpareTime(%navigation.quickdetour_time, 1) : translate("Recalculating...")) />
+	</implementation>
+
+	<DIV class="cockpit">
+		<DIV class="map_messagebox">
+			<TEXT class="color_inf_main map_messagebox detour" text=(%navigation.quickdetour_distance_on_route.valid && %navigation.quickdetour_distance_on_route > 50 ? format(m_i18n("Possible alternative route in %{distance:3}:"), %navigation.quickdetour_distance_on_route) : "Possible alternative route:") />
+
+			<VBOX class="map_messagebox detour">
+				<BOX class="sidepanel detour">			
+					<SPRITE class="listitem svg quickdetour" z=101 iconid=%navigation.quickdetour_icon visible=(%navigation.quickdetour_calculated && %gps.blink) />
+					<SPRITE class="searchprogress wide" visible=(!%navigation.quickdetour_calculated) />
+					<VBOX visible=(!%gps.blink)>
+						<ROADSHIELDEDTEXT class="font_quickdetour color_inf_main" z=20 r2l_invert=1 shieldtextmod=0.9 textmodel_wstr="navigation.quickdetour_streetname" visible=%navigation.quickdetour_calculated />
+						<TEXT class="font_quickdetour color_inf_main"  z=20 r2l_invert=1 twolinesmall=0 text=(%navigation.quickdetour_calculated ? sc_FormatSpareDistance(%navigation.quickdetour_dist, 1) + L"\n" + sc_FormatSpareTime(%navigation.quickdetour_time, 1) : "Recalculating...") />
+					</VBOX>				
+				</BOX>
+			</VBOX>
+			
+			<DIV class="dialog_buttons">
+				<DIALOGBUTTON class="dialog 2_1 mapmsgbox" z=101 text="Accept" img=#ffff8800 onrelease='sc_HideDiscoverySidePopup() sc_AcceptQuickDetour()' enable=%navigation.quickdetour_calculated> 
+					<SPRITE left=0 right=0 top=0 bottom=0 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 z=102 />
+				</DIALOGBUTTON>
+				<DIALOGBUTTON class="dialog 2_2 mapmsgbox" z=101 text="Preview" onrelease='sc_HideDiscoverySidePopup() sc_ShowQuickDetourPreview()' enable=%navigation.quickdetour_calculated> 
+			       	<SPRITE CLASS="button map fill" />
+				</DIALOGBUTTON>
+			</DIV>
+				
+			;;<SPRITE class="panel map background" />
+		</DIV>
+	</DIV>
+</layer>
+;-------------------------------------------------------------------------------------
+
+<layer ui_RecalcMsgBoxQuickDetour z=999 visible=(!%navigation.quickdetour_calculated)>
+	<DIV class="full">
+		<SPRITE class="searchprogress wide" left=(st_AvoidRouteAhead.isActive ? 13% : 18%) top=4% w=47% h=12% z=1>
+			<TEXT class="font_sec color_recalc textpadding_small"     left=3%   top=0 w=66% h=80% z=5 align="LEFT"  text="Recalculating..." />
+		</SPRITE>
+	</DIV>
+</layer>
+
+<userlist lm_quickdetour_footer text="str" onrelease="ui" enable="bool">
+	<default enable=0 />
+	<row text="Accept" enable=(%route.list.quickdetour.valid) onrelease=sc_AcceptQuickDetour />
+</userlist>
+
+<layer ui_QuickDetourPreview z=41 visible=( !%lua.DragMode && !%navigation.is_in_simulation && !%lua.MenuIsOpened)>
+	<observer value=(%navigation.quickdetour_calculated && %route.list.navigated.calculation_finished && %{"route.list.quickdetour.valid"}) onselect=sc_FitQuickDetour start="NO_TRIGGER" />
+	
+	<DIV class="mapheader">
+		<SPRITE class="panel map" />
+		<BOX class="mapheader avoid">
+			<SPRITE class="mapheader searchprogress wide" visible=(!%route.list.temporary.calculation_finished) />
+			<BOX class="mapheader value" visible=(%route.list.temporary.calculation_finished)>
+				<TEXT class="mapheader" text=(sc_FormatSpareDistance(%navigation.quickdetour_dist, 1)) visible=%navigation.quickdetour_calculated />
+				<TEXT class="mapheader" text=(sc_FormatSpareTime(%navigation.quickdetour_time, 1)) visible=%navigation.quickdetour_calculated />
+			</BOX>
+		</BOX>
+	</DIV>
+	
+	<DIV class="legend">
+		<SPRITE class="panel map" />
+		<SPRITE class="separator_legend" />
+		<HBOX class="mapheader legend">
+			<HBOX class="mapheader">
+				<SPRITE class="legend original_route" box_align="center" z=20 />
+				<TEXT class="mapheader legend" text="original route" z=20 />
+			</HBOX>
+
+			<HBOX class="mapheader">
+				<SPRITE class="legend new_route" box_align="center" z=20 />
+				<TEXT class="mapheader legend" text="new route" z=20 />
+			</HBOX>				
+		</HBOX>
+	</DIV>
+
+	<DIV class="mapmain">
+		<SPRITE fitbox_quickdetour class="fitbox avoid ahead" />
+	</DIV>
+	
+</layer>
+
+<element_template et_MapSidePanel_Detour>
+	<BUTTON class="listitem value" onrelease=sc_selectSuddenDetour>
+		<HBOX class="detour_panel">
+			<HBOX class="listitem poi_container">
+				<SPRITE class="listitem detour_panel background" />
+				<SPRITE class="listitem icon_list detour_panel" iconid=%*.poi.icon visible=(%*.type == 1) />
+				<SPRITE class="listitem icon_list detour_panel" img=(sc_GetIcon(lua.ESuddenDetourIcons[%*.type])) visible=(%*.type != 1) />
+			</HBOX>
+		
+			<VBOX class="listitem value">
+				<ROADSHIELDEDTEXT  class="color_btn_main r2l detour "  textmodel_wstr="*.name" visible=(%*.type == 1) />
+				<ROADSHIELDEDTEXT  class="color_btn_main r2l detour "  textmodel_wstr="*.name" visible=(%*.type != 1) />
+				<DISTTEXT class="color_btn_main r2l" bottom=0 align="LEFT" distance=%*.distance visible=(%*.type == 1) /> 
+			</VBOX>
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_MapSidePanel_Detour  z=99990 visible=( !%lua.DragMode && !%navigation.is_in_simulation && !%lua.MenuIsOpened)>
+	<observer model="navigation.sudden_detour.reasons" onchange=sc_SuddenDetourDelayed START />
+	
+	<DIV class="cockpit">
+		<DIV class="map_messagebox">
+			<TEXT class="color_inf_main map_messagebox detour" text=%screen.msgbox.on_screen.first_line /> ;text="Reason for detour:"
+			<VBOX class="map_messagebox detour">
+				<LIST2 suddenDetour class="list_control detour" element_template="et_MapSidePanel_Detour" listmodel="navigation.sudden_detour.reasons" SMOOTHSCROLLING>
+					<VSMARTSCROLL>
+					<WHEEL>
+					<LISTCONTROL>
+				</LIST2>
+			</VBOX>
+			<DIV class="dialog_buttons">
+				<DIALOGBUTTON class="dialog 1_1 mapmsgbox" z=101 text=(%screen.msgbox.on_screen.button_caption(1)) onrelease='MODEL.screen.msgbox.on_screen.button_released(1)'>
+			       	<SPRITE CLASS="button map fill" />
+				</DIALOGBUTTON>
+			</DIV>
+		</DIV>
+	</DIV>
+	
+	<observer value=(%ui.suddenDetour.scroll_pos) onchange='MODEL.navigation.sudden_detour.clear_timeout()' START="NO_TRIGGER" />
+	
+	<layer>
+		<DIV class="cockpit">
+			<DIV class="map_messagebox">
+				<SPRITE class="panel map background" />
+			</DIV>
+		</DIV>
+	</layer>
+</layer>

@@ -1,0 +1,38 @@
+<modify ui_PropLayer>
+	<modify TruckTurnRestrictionIsVisible VALUE=(%navigation.restrictions_turn_icon_id.valid)/>
+</modify>
+
+<modify lm_myroutemenu>
+	<insert>
+		<row text="Restrictions"  onrelease=sc_showRestrictionList enable=(%route.list.navigated.calculation_finished && %ui.truckrestrictions.filter.size && %mydata.vehicle_profile.licensed && (%route.list.navigated.settings.vehicle_type == lua.EVehicleType.Truck || %mydata.vehicle_profile.list[%mydata.vehicle_profile.selected_profile].use_extended)) />
+	</insert>
+</modify>
+
+<modify lm_WarningsSettings>
+	<insert>
+		<row prio=400 text="Truck turn restriction alarm" icon="ico_turnrestrictions.svg" onrelease='sc_NextStateAnim(st_Restrictions_turn_alarm, "fade", 1, "" )' 
+			enable=(%route.list.navigated.settings.vehicle_type == lua.EVehicleType.Truck || %mydata.vehicle_profile.list[%mydata.vehicle_profile.selected_profile].use_extended) />
+	</insert>
+</modify>
+
+<modify lm_RouteItinerMap_footer>
+	<modify element=Avoid enable=( %route.list.navigated.itiner.list[current].avoidable) visible=(observe(vActiveState); !st_RestrictionList.isEntered && !in_set(%route.list.navigated.itiner.list[current].filter_type, lua.ERouteinfoFilterTypes.VIA) && !in_set(%route.list.navigated.itiner.list[current].filter_type, lua.ERouteinfoFilterTypes.TRUCK) && !vTMCShown && ( %route.list.navigated.itiner.list.index != %route.list.navigated.itiner.list.size - 1 || %route.list.navigated.itiner.detailmode == "road" ) ) />
+</modify>
+
+<!if condition=( Plugin.isLoaded( "driveralerts" ) )/>
+	<modify ui_Cockpit>
+		;<modify element="DIV.driver_alert>BOX.driver_alert" VISIBLE=(%ui.lm_alert_views.driver_alerts.size && !ui_PropLayer.TruckTurnRestrictionIsVisible) />
+		<modify element=box_driver_alert VISIBLE=(%ui.lm_alert_views.driver_alerts.size && !ui_PropLayer.TruckTurnRestrictionIsVisible) />
+		<insert last_child into=div_driver_alert>
+			<BOX CLASS="driver_alert truck" VISIBLE=(ui_PropLayer.TruckTurnRestrictionIsVisible)>
+				<SPRITE CLASS="truckalert svg" Z=11 ICONID=(%navigation.restrictions_turn_icon_id)>
+					<SPRITE R2L_INVERT=0 CLASS="truckalert arrow svg" Z=100 ROTATE=(%navigation.restrictions_turn_icon_angle * 360.0 / 4096) VISIBLE=(!%navigation.restrictions_turn_icon_index) />
+				</SPRITE>
+				<SPACER CLASS="truckalert" />	
+				<DISTTEXT CLASS="truckalert" Z=101 DISTANCE=(%navigation.restrictions_turn_distance) MODE=5 VISIBLE=(%navigation.restrictions_turn_distance.valid)>
+			</BOX>
+		</insert>
+	</modify>
+<!end/>
+
+<modify ui_Footer VISIBLE=(!(%lua.WizardModeActive  || (st_Cockpit.isActive && !(%lua.DragMode && (lua.gDragModeFlow == "normal" || %map.primary.show_cursor))) || ( st_EULA.isActive && !st_AboutList.isEntered )) && !(st_RestrictionList.isActive && vRestrictionsFromFindPathError )) />

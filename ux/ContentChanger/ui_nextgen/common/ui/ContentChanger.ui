@@ -1,0 +1,16 @@
+<modify lm_MainMenu>
+	<insert after=Settings>
+		<row ContentChanger text="Content Changer" icon="ico_contentchange.svg" onrelease=sc_SelectMapContent /> 
+	</insert>
+</modify>
+
+<userlist list_MapProvider enable="bool" visible="bool" group="str" value="int" img="str" type="str" text="str" frootpath="str" >
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 value=0 group="lua.SelectedMapContent_radio" type="RadioCustomIcon" /> 
+</userlist>
+
+<!if condition=(Plugin.isLoaded("current_content_provider"))>
+	<modify ui_Cockpit>
+		<modify element="#current_map_provider" ONLONGCLICK=sc_SelectMapContent />
+	</modify>
+<!end/>	

@@ -1,0 +1,710 @@
+<userlist lm_test text="str" onrelease="ui" enable="bool">
+	<default text="" onrelease=undef enable=1>
+		<row text="egy">
+		<row text="ketto">
+</userlist>
+
+<layer ui_Background z=0>
+	<DIV class="full">
+		<SPRITE class="background">
+	</DIV>
+</layer>
+
+<layer ui_List_Background z=21>
+	<DIV class="full">
+		<SPRITE class="background list">
+	</DIV>
+</layer>
+
+<layer ui_Submenu_Background z=21>
+	<DIV class="full">
+		<SPRITE class="background submenu">
+	</DIV>
+</layer>
+
+<layer ui_List_Panel z=25>
+	<DIV class="list">
+		<SPRITE class="panel list" />
+	</DIV>
+</layer>
+
+<layer ui_Submenu_Panel z=25>
+	<DIV class="list">
+		<SPRITE class="panel submenu" />
+	</DIV>
+</layer>
+
+<element_template et_Separator text="">
+	<SPRITE class="separator_listitem">
+		<TEXT class="separator" text=TEXT />
+	</SPRITE>
+</element_template>
+
+<element_template et_Quickbar_Separator text="">
+	<SPRITE class="separator_listitem quickbar">
+		
+	</SPRITE>
+</element_template>
+
+<element_template et_Separator_FindAddress text="">
+	<TEXT class="separator address" text=TEXT />
+</element_template>
+
+<element_template et_ActionButton icon="" text="" enable=1>
+	<DIV class="action">
+		<BUTTON class="action" onrelease=ONRELEASE enable=ENABLE>
+			<HBOX class="listitem">
+				<SPACER flex=1/>
+				<SPRITE class="btn icon svg" img=ICON/>
+				<TEXT class="action" text=TEXT paddingleft=( ICON ? CSS.Param.list_padding : 0 )/>
+				<SPACER flex=1/>
+			</HBOX>
+		</BUTTON>
+	</DIV>
+</element_template>
+
+
+
+
+
+<element_template et_Submenu>
+	<BUTTON class="listitem submenu" onrelease=%*.onrelease onlongclick=(%*.onlongclick // undef) enable=( %*.enable // 1 ) dtooltip=( %*.dtooltip // "" ) nostress=(%*.nostress // 0)> 
+		<BOX class="listitem submenu">
+			<SPRITE class="listitem submenu icon_menu searchprogress wide" visible=( %*.animate // 0 )/>
+			<SPRITE class="listitem submenu icon_menu svg" img=( %*.icon // "" ) visible=( !%*.animate // 1 )/>
+			<VBOX class="listitem">
+				<TEXT class="listitem submenu" text=( %*.text // "" ) />
+			</VBOX>
+		</BOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_Submenu z=30>
+	<DIV class="list submenu">
+		<SECTIONMARKER/>
+		<LIST2 lst_SubMenu class="list_submenu" SMOOTHSCROLLING>
+			<LISTMODEL element_template="et_Submenu">
+				<SEPARATOR insert_at=( sc_insertListSeparators() ) element_template=et_Separator TEXT=( sc_getListSeparatorText() ) visible=( sc_setListSeparatorVisibility() && ( States.CurrentState.separatorvisibility ) )>
+			</LISTMODEL>
+			<VSMARTSCROLL>
+			<WHEEL>
+		</LIST2>
+	</DIV>
+</layer>
+
+
+
+
+
+<element_template et_TemplateList icon="" iconid=-1 text=(%*.text // %*.name // "") details="" value="" enable=1 selectable=0 dtooltip="" haspopover=false >
+	<BUTTON class="listitem" onrelease=ONRELEASE enable=ENABLE  dtooltip=DTOOLTIP>
+		<HBOX class="listitem">
+			<SPRITE class="listitem icon_list svg" img=ICON visible=( ICONID == -1 )  />
+			<SPRITE class="listitem svg" iconid=ICONID visible=( ICONID != -1 )  />
+			<VBOX class="listitem">
+				<TEXT class="listitem top" text=TEXT wordwrap=( DETAILS ? 1 : 2 ) />
+				<TEXT class="listitem bottom" text=DETAILS visible=( DETAILS ) />
+			</VBOX>
+			<SPACER flex=1>
+			<TEXT class="listitem value" text=VALUE visible=( VALUE )/>
+			<SPRITE class="listitem icon popover" visible=(HASPOPOVER) >
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<element_template et_List>
+	<implementation>
+		<property enable value=( %*.enable // 1 )>
+		<property selectable value=( %*.selectable // 0 )>
+		<property dtooltip value=( %*.dtooltip // "" )>
+		
+		<property icon value=( %*.icon // "" ) />
+		<property iconid value=( %*.iconid // -1 )>
+		
+		<property text value=( %*.text // "" )>
+		<property details value=( %*.details // "" )>
+		<property value value=( %*.value // "" )>
+		
+		<property haspopover value=( %*.haspopover // 0 )>
+	</implementation>
+	
+	<BUTTON class="listitem" onrelease=%*.onrelease onlongclick=%*.onlongclick enable=enable  dtooltip=dtooltip nostress=( %*.nostress // 0 )>
+		<HBOX class="listitem">
+			<SPRITE class="listitem icon_list svg" img=icon iconid=iconid />
+			<VBOX class="listitem">
+				<TEXT class="listitem top" text=text visible=text/>
+				<TEXT class="listitem bottom" text=details visible=details />
+			</VBOX>
+			<SPACER flex=1>
+			<TEXT class="listitem value" text=value visible=value/>
+			
+			<SPACER class="listitem popover" visible=haspopover>
+			<SPRITE class="listitem icon popover" visible=haspopover/>
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<element_template et_ListSubtitle>
+	<implementation>
+		<property icon value=( %*.icon // "" )/>
+		<property iconid value=( %*.phase // 0 )>
+		<property details value=( %*.details // "" )>
+	</implementation>
+	
+	<SPRITE class="fill separator_listitem">
+		<HBOX class="listitem">
+			<SPRITE  class="listitem svg" bmp=icon phase=iconid>
+			<VBOX class="listitem">
+				<TEXT class="listitem icon" paddingleft=( icon ? CSS.Param.list_padding : 0 ) text=( %*.text // "" )/>
+				<TEXT class="listitem bottom" text=details paddingleft=( icon || iconid ? CSS.Param.list_padding : 0 ) visible=details />
+			</VBOX>
+		</HBOX>
+	</SPRITE>
+</element_template>
+
+<element_template et_ListRadio>
+	<RADIO class="listitem" groupmodel=%*.group var=%*.value onrelease=%*.onrelease enable=( %*.enable // 1 )>
+		<HBOX class="listitem">
+			<SPRITE class="listitem icon_list radio svg" visible=(%{%*.group} == %*.value)>
+			<TEXT class="listitem" text=( %*.text // "" )/>
+			<SPACER flex=1>
+		</HBOX>
+	</RADIO>
+</element_template>
+
+<element_template et_ListRadioNoSelect>
+	<RADIO class="listitem noselect" groupmodel=%*.group var=%*.value onrelease=%*.onrelease enable=( %*.enable // 1 )>
+		<HBOX class="listitem">
+			<SPRITE class="listitem icon_list radio svg" visible=(%{%*.group} == %*.value)>
+			<TEXT class="listitem" text=( %*.text // "" )/>
+			<SPACER flex=1>
+		</HBOX>
+	</RADIO>
+</element_template>
+
+<element_template et_ListRadioCustomIcon>
+	<RADIO class="listitem no_check_icon" groupmodel=%*.group var=%*.value onrelease=%*.onrelease enable=( %*.enable // 1 )>
+		<HBOX class="listitem">
+			<SPRITE class="listitem svg icon" z=1001 img=( %*.img // "" )>
+			<TEXT class="listitem" text=( %*.text // "" )/>
+			<SPACER flex=1>
+		</HBOX>
+	</RADIO>
+</element_template>
+
+<element_template et_ListChk>
+	<CHECKBOX class="listitem" text=%*.text onrelease=%*.onrelease boolmodel=%*.isselected enable=( %*.enable // 1 ) />
+</element_template>
+
+<element_template et_ListChkOnOff>
+	<CHECKBOX class="listitem chkonoff" text=%*.text onrelease=%*.onrelease boolmodel=(%*.isselected // undef) checked=(%*.checked // 0) changevalue=(%*.changevalue // undef ) enable=( %*.enable // 1 ) animate=( %*.animate // 0 ) dtooltip=( %*.dtooltip // "" )/>
+</element_template>
+
+<element_template et_ListChkOnOff_Icon>
+	<CHECKBOX class="listitem chkonoff" iconspr=(%*.bmp // "") text=( %*.text // "" ) onrelease=%*.onrelease boolmodel=(%*.isselected // undef) checked=(%*.checked // 0) changevalue=(%*.changevalue // undef ) dtooltip=(%*.dtooltip // "") enable=( %*.enable // 1 )>
+</element_template>
+
+<element_template et_ListFakeInp>
+	<implementation>
+		<property enable value=( %*.enable // 1 )>
+		<property dtooltip value=( %*.dtooltip // "" )>
+		<property icon value=( %*.icon // "" )/>
+		<property text value=( %*.text // "" )>
+	</implementation>
+	
+	<BUTTON class="button_input fake" onrelease=%*.onrelease enable=( %*.enable // 1 ) dtooltip=dtooltip>
+		<HBOX class="inputfield">
+			<SPRITE class="inputfield svg" img=icon />
+			<TEXT class="input_text_fake" text=text  wordwrap=1 />
+			
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_List z=30>
+	<DIV class="list">
+		<SECTIONMARKER/>
+		<LIST2 lst_List class="list_control auto" SMOOTHSCROLLING>
+			<LISTMODEL element_template="et_List" template_type_model="*.type">
+				<SEPARATOR insert_at=( sc_insertListSeparators() ) element_template=et_Separator TEXT=( sc_getListSeparatorText() ) visible=( sc_setListSeparatorVisibility() )>
+			</LISTMODEL>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<data Counter>
+	<property Text />
+	<property Listmodel />
+	<property Paging value=(ui_MapHeader.paging_current)/>
+	<field Listsize=(%{SELF.Listmodel}.size // %{SELF.Listmodel}.count // 0) />
+	<field TextAndCount=(SELF.Listsize ? format(m_i18n("%s (%d)"), SELF.Text, SELF.Listsize) : SELF.Text) />
+	<field TextAndCountOfMax=(SELF.Listsize && SELF.Paging ? format(m_i18n("%s (%d/%d)"), SELF.Text, SELF.Paging, SELF.Listsize) : SELF.Text) />
+</data>
+
+
+
+
+
+<layer ui_Xhtml z=30>
+	<DIV class="list layerscroll">
+		<SECTIONMARKER class="layerscroll"/>
+		
+		<layer ui_xhtml_sublayer type="xhtml" class="layer_control xhtml font_xhtml" filename="i18n/eula.xhtml" orientation="L2R"/>
+
+		<VSMARTSCROLL class=layer_scroll>
+		<WHEEL class="xhtml">
+		<LAYERCONTROL>
+	</DIV>
+</layer>
+
+<layer ui_LogCollectionXhtml type="xhtml" class="logcollection_xhtml font_xhtml" filename="i18n/log_collection.xhtml" orientation="L2R"/>
+
+
+
+
+<layer ui_Input_helper z=30>
+	<observer value=(States.CurrentState.filterType == "" && %lua.input_TypingDone) onselect=sc_CheckResultListPageCount start="NO_TRIGGER">
+	<observer value=(States.CurrentState.filterType == "IQSC" && %lua.input_TypingDone && %address.multi.location_result_ready) onselect=sc_CheckResultListPageCount start="NO_TRIGGER">
+	<observer value=(States.CurrentState.filterType == "POI" && %lua.input_TypingDone && %{"poi." + sc_GetPoiListByProviderType(false, %lua.SelectedProviderType)}.ready) onselect=sc_CheckResultListPageCount start="NO_TRIGGER">
+	<observer obs_HNI_helper value=(States.CurrentState.filterType == "HNI" && %lua.input_TypingDone && !%address.search.possible_chars ) onselect=sc_CheckResultListPageCount start="NO_TRIGGER">
+</layer>
+
+<layer ui_Input z=30 onshow={SELF.isVisible = true} onhide={SELF.isVisible = false}>
+	<implementation>
+		<property isVisible value = false />
+	</implementation>
+
+	<DIV class="list inputfield">
+		<SPRITE class="inputfield" z=5>
+			<SECTIONMARKER class="input"/>
+			<SPRITE class="separator_inputfield" />
+		</SPRITE>
+		<BUTTON btn_inp class="button_input" onrelease='sc_openKeyboard()'>
+			<HBOX class="inputfield">
+				<SPRITE class="inputfield svg search" align="left" visible=(!States.CurrentState.doneKeyButton)/>
+				<INPUTTEXT inp_Input class="input_text" cursor_visible=%lua.inputCursor_Isvisible>
+					<EMPTY text=(States.CurrentState.emptytext) class="empty_text"/>
+				</INPUTTEXT>
+				<SPRITE class="inputfield delete svg" align="right" onrelease='sc_openKeyboard() States.CurrentState.InputControl.value = L""' visible=(%lua.inputDeleteAll)/>
+			</HBOX>
+		</BUTTON>
+	</DIV>
+</layer>
+
+<layer ui_ListInput z=29>
+	<DIV class="list inputfield_layer">
+		<SECTIONMARKER/>
+		<SPRITE class="inputfield">		
+			<SPRITE class="separator_inputfield" />
+		</SPRITE>
+		<BUTTON class="button_input" onrelease=sc_openKeyboard>
+			<HBOX class="inputfield">
+				<SPRITE class="inputfield svg search" align="left" />
+				<INPUTTEXT inp_ListInput class="input_text" cursor_visible=%lua.inputCursor_Isvisible>
+					<EMPTY text=(States.CurrentState.emptytext) class="empty_text"/>
+				</INPUTTEXT>
+				<SPRITE class="inputfield delete svg" align="right" onrelease=' sc_openKeyboard() States.CurrentState.InputControl.value = L""' visible=(%lua.inputDeleteAll)/>	
+			</HBOX>
+		</BUTTON>
+	</DIV>
+</layer>
+
+
+
+
+
+
+<element_template et_FooterMenu text="" enable=1 isactionbutton=0>
+	<FOOTERBUTTON class="btn_footer middle" text=TEXT  onrelease=ONRELEASE enable=ENABLE onlongclick=ONLONGCLICK>
+</element_template>
+
+<layer ui_FooterMenu z=9999 visible=( st_Cockpit.isActive ? (%lua.DragMode && (lua.gDragModeFlow == "normal" || %map.primary.show_cursor) && !%navigation.is_in_simulation) : !(%lua.WizardModeActive && sc_StateisExtend(States.CurrentState, st_Wizard )))>
+	<DIV class="full">
+		<DIV class="footer">
+			<LIST2 lst_FooterMenu class="list_footermenu">
+				<LISTMODEL element_template="et_FooterMenu" text=%*.text  onrelease=%*.onrelease onlongclick=%*.onlongclick enable=(%*.enable // 1) isactionbutton=(%*.isactionbutton // 0) />
+			</LIST2>
+		</DIV>
+	</DIV>
+</layer>
+
+
+
+
+
+
+<element_template et_wizard text="" enable=1 rawkey>
+	<FOOTERBUTTON class="btn_footer wizard" text=TEXT onrelease=ONRELEASE enable=ENABLE nostress=(%*.nostress // 0) rawkey=( %*.rawkey // undef )>
+		
+
+</element_template>
+
+<layer ui_wizard z=85 visible=(%lua.WizardModeActive || ( st_EULA.isActive && !st_AboutList.isEntered ))>
+	<DIV class="full">
+		<DIV class="footer">
+			<SECTIONMARKER class="footer"/>
+			<LIST2 lst_WizardFooterMenu class="list_footermenu wizard">
+				<LISTMODEL element_template="et_wizard" text=%*.text onrelease=%*.onrelease enable=(%*.enable // 1) rawkey=%*.rawkey>
+			</LIST2>
+		</DIV>
+	</DIV>
+</layer>
+
+
+
+
+
+<element_template et_QuickBar>
+	
+	<DIV class="fill"> 
+		<BUTTON class="listitem quickbar" onrelease='hook_QuickBarOnrelease:trigger( function() MODEL["*"].onrelease()() end )' enable=(%*.enable // 1)>
+			<HBOX class="listitem">
+				<VBOX class="listitem">
+					<SPRITE class="icon quickbar_icon" img=( %*.bmp // "" )>
+				</VBOX>
+			</HBOX>
+			<SPRITE class="quickbar_selection fill">
+		</BUTTON>
+	</DIV>		
+</element_template>
+
+<element_template et_QuickBar_qbp>
+	<BUTTON class="listitem qbp" onrelease='hook_QuickBarOnrelease:trigger( function() MODEL["*"].onrelease()() end )' enable=(%*.enable // 1)>
+		<HBOX class="listitem qbp">
+			<SPRITE class="listitem qbp" img=( %*.img // "" )>
+			<TEXT class="listitem qbp" text=%*.text>
+		</HBOX>
+	</BUTTON>	
+</element_template>
+
+<layer ui_QuickBar z=70 visible=( %lua.QuickBarOpened ) onshow={SELF.isVisible = true} onhide={SELF.isVisible = false}>
+	<implementation>
+		<property isVisible value = false />
+	</implementation>
+	
+	<DIV class="main">
+		<DIV div_QuickBar class="quickbar_container">
+			<BOX class="quickbar">
+				<LIST2 lst_QuickBar class="list_quickbar" >
+					<SECTIONMARKER class="quickbar"/>
+					
+					<LISTMODEL listmodel=( States.CurrentState.quickbar_name ) element_template=( States.CurrentState.quickbar_template )>
+						<SEPARATOR class="quickbar" insert_at=0 element_template=et_Quickbar_Separator visible=( States.CurrentState.quickbar_show_separator )>
+					</LISTMODEL>
+					<LISTMODEL listmodel=( States.CurrentState.quickbar_2_name ) element_template=( States.CurrentState.quickbar_2_template )>
+						<SEPARATOR class="quickbar" insert_at=0 element_template=et_Quickbar_Separator visible=( States.CurrentState.quickbar_2_show_separator )>
+					</LISTMODEL>
+					<LISTMODEL listmodel=( States.CurrentState.quickbar_3_name ) element_template=( States.CurrentState.quickbar_3_template )>
+						<SEPARATOR class="quickbar" insert_at=0 element_template=et_Quickbar_Separator visible=( States.CurrentState.quickbar_3_show_separator )>
+					</LISTMODEL>
+					<LISTMODEL listmodel=( States.CurrentState.quickbar_4_name ) element_template=( States.CurrentState.quickbar_4_template )>
+						<SEPARATOR class="quickbar" insert_at=0 element_template=et_Quickbar_Separator visible=( States.CurrentState.quickbar_4_show_separator )>
+					</LISTMODEL>
+					<WHEEL>
+				</LIST2>
+			</BOX>
+		</DIV>
+	</DIV>
+	
+	<LAYER>
+		<DIV class="main">
+			<DIV div_QuickBarBg class="quickbar_container">
+				<BOX class="quickbar background">
+					<SPRITE class="background quickbar"  >
+				</BOX>
+			</DIV>
+		</DIV>
+	</LAYER>
+</layer>
+
+
+
+
+
+<element_template et_LocalMenu>
+	<BUTTON class="listitem" onrelease=sc_LocalMenuOnrelease onlongclick=(%*.onlongclick // undef) enable=( %*.enable // 1 )>
+		<BOX class="localmenu_element">
+			<TEXT class="listitem localmenu" text=%*.text/>
+		</BOX>
+	</BUTTON>
+</element_template>
+
+<element_template et_LocalMenuSelection>
+	<BUTTON class="listitem" onrelease=sc_LocalMenuOnrelease enable=( %*.enable // 1 )>
+		
+		<HBOX class="listitem localmenu">
+			<SPRITE class="radio svg" visible=%*.selected/>
+			<TEXT class="listitem selection" text=%*.text/>
+			<SPACER flex=1 />
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_LocalMenu z=10005 visible=( %lua.LocalMenuOpen )>
+	<implementation>
+		<property ItemPerPage value=(observe( vActiveState ); min((exists(States.CurrentState.localmenu) ? %(%{States.CurrentState.localmenu}.size) : 0) , %{"ui.lst_LocalMenu.item_per_page"})) />
+	</implementation>
+	<DIV class="full">
+		<BOX class="localmenu_container">
+			<SPACER flex=1 />
+			<BOX class="localmenu">
+				<LIST2 lst_LocalMenu class="list_localmenu" template_type_model="*.type" SMOOTHSCROLLING>
+					<LISTMODEL element_template="et_LocalMenu">
+					<VSMARTSCROLL class="localmenu">
+					<WHEEL>
+				</LIST2>
+				
+			</BOX>
+		</BOX>
+					
+		<layer>
+			<DIV class="full">
+				<BOX class="localmenu_container">
+					<SPACER flex=1 />
+					<BOX class="localmenu background">
+						<SPRITE class="panel localmenu_bg" opaque=1 />
+					</BOX>
+				</BOX>
+			
+				<SPRITE class="fill" opaque=1 z=2 onrelease=sc_OpenCloseLocalMenu>
+			</DIV>
+		</layer>
+	</DIV>
+</layer>
+
+<layer ui_LocalMenuFade type="fade" alpha=0 color=#000000 z=10000 visible=( %lua.LocalMenuOpen )/>
+<layer ui_LocalMenuDisabled type="disable" z=10010/>
+
+
+
+
+
+<layer ui_MapControl z=24>
+	<implementation>
+		<property fitEnabled value=( %map.primary.center != %lua.DefaultFitPos || %map.primary.zoom != %lua.DefaultFitZoom || (  %map.primary.show_cursor ? %map.cursor.position != %lua.DefaultFitCursorPos : 0 ) )/>
+	</implementation>
+	
+	<DIV class="mapmain mapcontrol">
+		<HBOX box_mapcontrol class="fill" paddingleft=0 paddingright=0 align="left">
+			<BOX class="mapcontrol zoom">
+				<SPACER flex=1>
+				<BUTTON class="btn_map zoomin" img="" onclick='MODEL.map.primary.zoom_start(1)' onrelease='MODEL.map.primary.zoom_stop()' onmouseleave='MODEL.map.primary.zoom_stop()' enable=%lua.map.ZoomInEnabled >
+					<SPRITE CLASS="button map fill" />
+					<SPRITE class="btn_map zoomin icon svg" />
+				</BUTTON>
+			
+				<BUTTON class="btn_map fit" img="" onrelease=sc_FitDefault enable=fitEnabled >
+					<SPRITE CLASS="button map fill" />
+					<SPRITE class="btn_map fit icon svg" />
+				</BUTTON>
+		
+				<BUTTON class="btn_map zoomout" img="" onclick='MODEL.map.primary.zoom_start(-1)' onrelease='MODEL.map.primary.zoom_stop()' onmouseleave='MODEL.map.primary.zoom_stop()' enable=%lua.map.ZoomOutEnabled >
+					<SPRITE CLASS="button map fill"/>
+					<SPRITE class="btn_map zoomout icon svg" />
+				</BUTTON>
+				<SPACER flex=1>
+			</BOX>
+		</HBOX>
+		<SPRITE fitbox_common class="fitbox">
+		
+		<SPRITE class="zoomctrl">
+			<TEXT class="fill zoomctrl" text=( %lua.ZoomControlText )>
+		</SPRITE>
+	</DIV>
+
+</layer>
+
+
+<layer ui_MapHeader_prop onshow={SELF.isVisible = true} onhide={SELF.isVisible = false}>
+	<implementation>
+		<property isVisible value = false />
+		<property paging_visible value = false/>
+		
+		<property mapheader_icon value = undef/>
+		<property mapheader_icon_phase value = undef/>
+		
+		<property mapheader_iconid value = undef setter='if SELF() != nil then LAYER.mapheader_icon, LAYER.mapheader_icon_phase = MODEL.screen.get_icon_file_and_phase(SELF()) end'/>
+		
+		<property mapheader_text_top value = "" />
+		<property mapheader_text_bottom value = "" />
+		<property mapheader_text_distance value = undef />
+		<property mapheader_text_timespan value = undef />
+		<property mapheader_paging_prev value = undef />
+		<property mapheader_paging_next value = undef />
+	</implementation>
+</layer>
+
+<layer ui_MapHeader z=25 class="mapheader" visible=( (!st_Cockpit.isActive || (%lua.DragMode && (lua.gDragModeFlow == "normal" || %map.primary.show_cursor) && !%navigation.is_in_simulation)) && %lua.MapHeaderMode == "normal")>
+	<implementation>
+		<property isVisible value = false />
+		<property paging_visibility_modifier value = false />
+		
+		<property paging_current value=0/>
+		<property paging_max value=0/>
+	</implementation>
+
+	<DIV class="mapheader">
+
+		<DIV class="fill">
+			<DIV class="notify_list_ext" >
+				<TABLE class="ari_ext" />
+			</DIV>
+		</DIV>
+
+		<SECTIONMARKER class="mapheader"/>
+		<SPRITE class="panel mapheader fill" onrelease='hook_OpenDetailedInfo:trigger()'>
+		<HBOX class="mapheader_container">
+			<BUTTON btn_header_prev_landscape class="mapheader btn_prev" onrelease=(ui_MapHeader_prop.mapheader_paging_prev // undef )  enable=(paging_current != 1) visible=(%lua.IsLandscape && ui_MapHeader_prop.paging_visible && ui_MapHeader.paging_visibility_modifier) z=99>
+				<SPRITE class="btn_map prev icon svg" z=100>
+			</BUTTON>
+			<BOX class="mapheader">
+				<HBOX class="mapheader name">
+					<SPRITE class="mapheader icon" img=( ui_MapHeader_prop.mapheader_icon // "" ) iconid=( ui_MapHeader_prop.mapheader_iconid // undef ) phase=( ui_MapHeader_prop.mapheader_icon_phase // undef ) />
+					<VBOX box_mapheader class="mapheader text">
+						<BOX class="mapheader txt_top">
+							<ROADSHIELDEDTEXT txt_mapheader_top class="mapheader top" text=( ui_MapHeader_prop.mapheader_text_top ) />
+						</BOX>
+						<TEXT txt_mapheader_bottom class="mapheader bottom" text=( ui_MapHeader_prop.mapheader_text_bottom // "" ) />
+					</VBOX>
+				</HBOX>
+				<BOX class="mapheader value" visible=( ui_MapHeader_prop.mapheader_text_distance || ui_MapHeader_prop.mapheader_text_timespan )>
+					<DISTTEXT class="mapheader" distance=( ui_MapHeader_prop.mapheader_text_distance // undef ) visible=( ui_MapHeader_prop.mapheader_text_distance // 0 ) />
+					<TIMESPANTEXT class="mapheader" timespan=( ui_MapHeader_prop.mapheader_text_timespan // undef ) visible=( ui_MapHeader_prop.mapheader_text_timespan // 0 ) />
+				</BOX>	
+			</BOX>
+			
+			<VBOX>
+			<BUTTON btn_header_prev_portrait class="mapheader btn_prev"  z=99
+				onrelease=( ui_MapHeader_prop.mapheader_paging_prev // undef )  enable=(paging_current != 1) 
+				visible=(%lua.IsPortrait && ui_MapHeader_prop.paging_visible && ui_MapHeader.paging_visibility_modifier)>
+				<SPRITE class="btn_map prev icon svg" z=100>
+			</BUTTON>
+			<BUTTON btn_header_next class="mapheader btn_next" 
+				onrelease=( ui_MapHeader_prop.mapheader_paging_next // undef )  enable=(paging_current != paging_max) 				visible=(ui_MapHeader_prop.paging_visible && ui_MapHeader.paging_visibility_modifier) z=99>
+				<SPRITE class="btn_map next icon svg" z=100>
+			</BUTTON>
+			</VBOX>
+		</HBOX>
+	</DIV>
+	
+	
+	
+	
+	
+</layer>
+
+
+<layer ui_MapHeader_TMCDetour/>
+
+
+
+
+
+<element_template et_detailsinfo_name>
+	
+	<HBOX class="listitem detailsinfo name">
+		 <SPRITE class="detailsinfo" iconmodel=%*.icon iconindex=2/>
+		 <VBOX class="listitem" box_align="STRETCH" flex=1>
+			<TEXT class="listitem top detailsinfo_name bd icon" text=( %*.name )/>
+		</VBOX>
+	</HBOX>
+</element_template>
+
+<element_template et_detailsinfo_address> 
+	
+	<HBOX class="listitem detailsinfo address">
+		<SPRITE class="detailsinfo address">
+		<VBOX details class="detailsinfo" box_align="stretch">
+			
+			<VBOX class="detailsinfo address">
+				<TEXT class="detailsinfo country bd" text=( (%{%*.state} != "" ? translate(%{%*.state}) + L", " : L"") + translate(%{%*.country}))/>
+				<TEXT class="detailsinfo address bd" textmodel_wstr=%*.address/>
+			</VBOX>
+			
+			<BOX class="detailsinfo coord">
+				<TEXT class="detailsinfo coord0" textmodel_gcoor=%*.coord formatmodel="regional.geocoord_format" mode=0>
+				<TEXT class="detailsinfo coord1" textmodel_gcoor=%*.coord formatmodel="regional.geocoord_format" mode=1>
+			</BOX>
+		</VBOX>
+	</HBOX>
+</element_template>
+
+<element_template et_detailsinfo_web>
+	
+	<HBOX class="listitem">
+		<SPRITE class="detailsinfo web">
+		
+		<VBOX class="detailsinfo">
+			
+				
+				<TEXT class="detailsinfo bd" text="Website">
+				<TEXT class="detailsinfo value" text=(%my.poi.current.ext_WEBSITE ? %my.poi.current.ext_WEBSITE : m_i18n("<No website>"))/>
+				
+				
+				<TEXT class="detailsinfo bd" text="Email">
+				<TEXT class="detailsinfo value" text=(%my.poi.current.ext_EMAIL ? %my.poi.current.ext_EMAIL : m_i18n("<No email address>"))/>
+			
+		</VBOX>
+	</HBOX>
+</element_template>
+
+<element_template et_detailsinfo_phone>
+	
+	<HBOX class="listitem">
+		<SPRITE class="detailsinfo phone">
+		
+		<VBOX class="detailsinfo">
+			
+				
+				<TEXT class="detailsinfo bd" text="Phone">
+				<TEXT class="detailsinfo value" paddingright=10 text=(%my.poi.current.phone ? %my.poi.current.phone : m_i18n("<No phone number>"))/>
+					
+				
+				<TEXT class="detailsinfo bd" text="Fax">
+				<TEXT class="detailsinfo value" text=(%my.poi.current.ext_PHN_FAX ? %my.poi.current.ext_PHN_FAX : m_i18n("<No Fax number>"))/>
+			
+		</VBOX>
+		<BUTTON class="detailsinfo btn_main" z=15 onrelease=sc_PhoneCall visible=( !%my.poi.current.phone == L"" && lua.gPhoneCallIsVisible ) nostress=1>
+			<SPRITE class="detailsinfo svg call" z=100 img="ico_call.svg"/>
+		</BUTTON>
+	</HBOX>
+</element_template>
+
+
+<element_template et_detailsinfo_path>
+	
+	<SPRITE class="listitem info">
+		<HBOX class="listitem r2l">
+			<SPACER class="listitem info noicon">
+			<TEXT class="listitem info fill" flex=1 text=(sc_GetPoiPath(%my.poi.current.group_id))/>
+		</HBOX>
+	</SPRITE>
+</element_template>
+
+<element_template et_detailsinfo_rich>
+	
+	<BUTTON class="listitem buttonlike" z=15 onrelease=sc_showRichPoiInfo visible=%my.poi.current.xhtml.valid>
+		<HBOX class="listitem r2l">
+			<SPRITE class="listitem icon svg" z=16 img="ico_info.svg">
+			<TEXT class="listitem icon onbtn" z=16 text="Show Detailed Info">
+		</HBOX>
+	</BUTTON>
+	<BUTTON class="listitem buttonlike" z=15 onrelease=sc_ShowPOIInfo_to_xhtml visible=%my.poi.current.address.ext>
+		<HBOX class="listitem r2l">
+			<SPRITE class="listitem icon svg" img="ico_info.svg">
+			<TEXT class="listitem icon onbtn" z=16 text="Show Place Info">
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<element_template et_detailsinfo_richlogo>
+	<SPRITE class="listitem info"  z=15 >
+		<SPRITE spr_providerlogo class="poi_provider" top=5% bottom=5% left=1% right=1% z=20 align="CENTER" valign="CENTER" iconmodel="my.poi.current.provider_icon" iconindex=3  visible=%my.poi.current.has_provider_icon>
+	</SPRITE>
+</element_template>
+
+
+;------- ari mod --- updated   01.04.2017  -------

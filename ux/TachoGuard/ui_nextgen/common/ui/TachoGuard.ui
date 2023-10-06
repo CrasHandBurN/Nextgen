@@ -1,0 +1,284 @@
+;---------------main settion-----------------
+<observer obs_Tacho_Start_Stop value=(%navigation.has_route && %lua.TachoGuardOn) 
+	onselect='obs_TachoPOA_time_reset:START(); obs_TachoPOA_time:START(); obs_TachoPOA_time_calculate:START(); obs_Tacho_max_driving_time:START(); obs_Tacho_max_daily_driving_time:START(); obs_Tacho_resting_time:START(); obs_expiration_day_period:START()'
+	ondeselect='obs_TachoPOA_time_reset:STOP(); obs_TachoPOA_time:STOP(); obs_TachoPOA_time_calculate:STOP(); obs_Tacho_max_driving_time:STOP(); obs_Tacho_max_daily_driving_time:STOP(); obs_Tacho_resting_time:STOP(); obs_expiration_day_period:STOP()' 
+	/>
+
+<observer obs_TachoPOA_time_reset value=(%other.trips[1].time_total) ondeselect=VW_TachoPOA_time_reset />
+
+<observer obs_TachoPOA_time value=(%navigation.car.current_speed.valid && %navigation.car.current_speed < lua.gMinSpeedToShow) onselect=VW_TachoPOA_time_Init ondeselect=VW_TachoPOA_time_End />
+
+<observer obs_TachoPOA_time_calculate value=(%other.trips[1].time_stopped) onchange='VW_TachoPOA_time_calculate(); VW_TachoPOA_Stop_reminder()' />
+
+<observer obs_Tacho_max_driving_time value=((%lua.max_driving_time - %lua.pre_warn_time) < %other.trips[1].time_driving < (%lua.max_driving_time + %lua.pre_warn_time)) onselect={VW_max_driving_time_Action(ui_Cockpit.driving_time, ui_Cockpit.resting_time)} />
+<observer obs_Tacho_max_daily_driving_time value=((%lua.max_daily_driving_time - %lua.pre_warn_time) < %other.trips[1].time_driving < (%lua.max_daily_driving_time + %lua.pre_warn_time)) onselect={VW_max_daily_driving_time_Action(ui_Cockpit.driving_time, ui_Cockpit.resting_time)} />
+
+<observer obs_Tacho_resting_time value=(!%lua.POAorResting && (%lua.max_driving_time_Action || %lua.max_daily_driving_time_Action) && (((%lua.max_break_time - ui_Cockpit.resting_time) - %lua.pre_warn_time) < (%lua.max_break_time - ui_Cockpit.resting_time) < ((%lua.max_break_time - ui_Cockpit.resting_time) + %lua.pre_warn_time)) ) onselect=VW_Take_message />
+;-------------------mods---------------------
+<var buttons_TachoGuardCockpit = 0 permanent />
+<var buttons_TachoGuardQuick = 0 permanent />
+<modify ui_Cockpit>
+	<insert>	
+		<IMPLEMENTATION>
+			<PROPERTY BaseTimePeriod VALUE=(%lua.max_driving_time) /> ; (%{"other.trips.@1"}.time_total + %navigation.time_to_destination + 1)
+			
+			<PROPERTY driving_time VALUE=(%{"other.trips.@1"}.time_driving) />
+			<PROPERTY POA_time VALUE=(%lua.POA_time) />
+			<PROPERTY resting_time VALUE=(%{"other.trips.@1"}.time_stopped - POA_time) />
+			<PROPERTY working_time VALUE=(%{"other.trips.@1"}.time_total) />
+			
+			<PROPERTY NO_running VALUE=(%navigation.car.current_speed.valid && %navigation.car.current_speed < lua.gMinSpeedToShow) />
+		</IMPLEMENTATION>
+	</insert>
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON buttons_TachoGuard 
+			ONRELEASE='Show_map_free_area("ui_TachoGuard")'
+			ONLONGCLICK=VW_TachoGuardManager
+			VISIBLE=(buttons_TachoGuardCockpit && %navigation.has_route && %lua.TachoGuardOn)
+			ICON="Standby.svg"
+			PHASENAME=(%lua.TachoGuardOn ? (%gps.blink && ui_Cockpit.NO_running ? (%lua.POAorResting ? "active_POA" : "active_Rest" ) : "active") : "disabled")
+			ZOOM=80%
+			T_TEXT=(VW_Return_button_text(translate("Tacho Guard"), L"%s", 1))
+			B_TEXT=(%lua.TachoGuardOn ? "" : VW_Return_button_text(translate("Tacho Guard"), L"%s", 99)) >
+			<SPRITE CLASS="button map fill" IMG=(ui_TachoGuard.white) LEFT=30% RIGHT=30% TOP=35% BOTTOM=35% VISIBLE=( !%lua.TachoGuardOn ) Z=100 ALPHA=32 /> ; to remove central transparency
+			;<SPRITE CLASS="searchprogress wide" LEFT=0 RIGHT=0 TOP=85% BOTTOM=5% VISIBLE=( %lua.TachoGuardOn ) />
+		</BUTTON_ICON>
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=(buttons_TachoGuardCockpit && %navigation.has_route && %lua.TachoGuardOn) />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'Tacho Guard' Button" bmp="Standby.svg" isselected="ui.buttons_TachoGuardCockpit" />
+	</insert>
+</modify>
+;---- Quick Menu -----
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE='ui.buttons_TachoGuard.ONRELEASE()()' ONLONGCLICK='ui.buttons_TachoGuard.ONLONGCLICK()()' 
+			VISIBLE=(buttons_TachoGuardQuick && %navigation.has_route && %lua.TachoGuardOn)
+			ICON=(buttons_TachoGuard.ICON) PHASENAME=(buttons_TachoGuard.PHASENAME) ZOOM=80%
+			T_TEXT=(buttons_TachoGuard.T_TEXT)
+			B_TEXT=(buttons_TachoGuard.B_TEXT) />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=(buttons_TachoGuardQuick && %navigation.has_route && %lua.TachoGuardOn) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'Tacho Guard' Button" bmp="Standby.svg" isselected="ui.buttons_TachoGuardQuick" />
+	</insert>
+</modify>
+
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp="Standby.svg" text=(translate("Tacho Guard")) onrelease='ui.buttons_TachoGuard.ONRELEASE()()' 
+				onlongclick='ui.buttons_TachoGuard.ONLONGCLICK()()' visible=(%navigation.has_route && %lua.TachoGuardOn) />
+		</insert>
+	</modify>
+<!end/>
+
+;---------------------settings---------------------
+<!if condition=(Plugin.isLoaded("labs"))>
+	<modify lm_ExtraSettingsList>
+		<insert>
+			<row text="Tacho Guard" icon="Standby.svg" haspopover=1 onrelease='sc_NextStateAnim(st_TachoGuard_settings, "fade", 1, "" )' />
+		</insert>
+	</modify>
+<!end>
+
+<userlist lm_TachoGuardManager_Popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+	<row text="Settings" onrelease='sc_NextStateAnim(st_TachoGuard_settings, "fade", 1, "" ); sc_ClosePopover()' />
+	<row text="Places to rest" onrelease='sc_ClosePopover(); VW_Take_a_Break()' />
+	<row text="Statistics" onrelease='sc_statistics_onrelease() ; sc_ClosePopover()' />
+	<row text="Reset" onrelease='MODEL.other.trips[1].reset(); sc_ClosePopover()' />
+	<row text="Help" onrelease='VW_Show_xhtmlQuest("i18n/Help/TachoGuard/Tacho_Help.xhtml"); sc_ClosePopover()' />
+</userlist>
+
+<layer ui_POAorResting z=100001 >
+	<DIV class=full> 
+		<SPRITE class="messagebox_cover" />
+		<DIV class=messagebox> 
+			<SPRITE class="messagebox" />
+			<DIV class="messagebox_panel">
+				<TABLE col=1 row=4 top=0 bottom=0 left=0 right=0>
+					<VBOX class="listitem">
+						<SPRITE  class="listitem icon_list svg top" img=(%lua.POAorResting ? "Tachograph POA.svg" : "Tachograph Rest.svg") />
+						<TEXT class="listitem bottom" align="center" text=(%lua.POAorResting ? "POA time" : "Resting time") />
+					</VBOX>
+					<TEXT class="listitem" align="center" text=%screen.msgbox.on_screen.first_line />
+					<DIALOGBUTTON class="dialog" text="Change" onrelease=(%lua.POAorResting ? VW_TachoPOA_time_End : VW_TachoPOA_time_Init) />
+					<DIALOGBUTTON class="dialog" text="Close" onrelease=VW_RemovePopupBox />
+				</TABLE>
+			</DIV>
+		</DIV>
+	</DIV>
+</layer>
+
+<layer ui_MessageBoxPOA class="messagebox">
+	<implementation>
+		<property default_showIcons value = ( SysConfig.get("interface", "show_icons", false) )>
+		<property showIcons value = ( %screen.msgbox.on_screen.param->showIcons // default_showIcons )>
+		<property box_timer value=( observe(%gps.blink); (sc_TimerTool("box_timer", 60) // 0) ) />
+	</implementation>
+	<DIV class="full">
+		<SPRITE class="messagebox_cover">
+		<DIV class="messagebox">
+			<SPRITE class="messagebox">
+			<DIV class="messagebox_panel">
+				<GRAPH left=0 right=0 top=0 bottom=85% full=60000 current=(box_timer) invert=1 invert_r=0 orientation="horizontal" />
+				<VBOX class="messagebox_text">
+					<TEXT   class="messagebox_first_line color_inf_main"  text=%screen.msgbox.on_screen.first_line>
+					<SPACER class="messagebox_text">
+					<TEXT   class="messagebox_second_line color_inf_main" text=%screen.msgbox.on_screen.second_line>
+				</VBOX>
+				<DIALOGBUTTON class="dialog 1_1" iconspr=( showIcons ? %screen.msgbox.on_screen.button_icon_filename(1) : "" ) text=(%screen.msgbox.on_screen.button_caption(1)) visible=(%screen.msgbox.on_screen.number_of_buttons == 1) onrelease='MODEL.screen.msgbox.on_screen.button_released(1)' >
+
+				<DIALOGBUTTON class="dialog 2_1" iconspr=( showIcons ? %screen.msgbox.on_screen.button_icon_filename(1) : "" ) text=(%screen.msgbox.on_screen.button_caption(1)) visible=(%screen.msgbox.on_screen.number_of_buttons == 2) onrelease='MODEL.screen.msgbox.on_screen.button_released(1)' >
+				<DIALOGBUTTON class="dialog 2_2" iconspr=( showIcons ? %screen.msgbox.on_screen.button_icon_filename(2) : "" ) text=(%screen.msgbox.on_screen.button_caption(2)) visible=(%screen.msgbox.on_screen.number_of_buttons == 2) onrelease='MODEL.screen.msgbox.on_screen.button_released(2)' >
+
+				<DIALOGBUTTON class="dialog 3_1" iconspr=( showIcons ? %screen.msgbox.on_screen.button_icon_filename(1) : "" ) text=(%screen.msgbox.on_screen.button_caption(1)) visible=(%screen.msgbox.on_screen.number_of_buttons == 3) onrelease='MODEL.screen.msgbox.on_screen.button_released(1)' >
+				<DIALOGBUTTON class="dialog 3_2" iconspr=( showIcons ? %screen.msgbox.on_screen.button_icon_filename(2) : "" ) text=(%screen.msgbox.on_screen.button_caption(2)) visible=(%screen.msgbox.on_screen.number_of_buttons == 3) onrelease='MODEL.screen.msgbox.on_screen.button_released(2)' >
+				<DIALOGBUTTON class="dialog 3_3" iconspr=( showIcons ? %screen.msgbox.on_screen.button_icon_filename(3) : "" ) text=(%screen.msgbox.on_screen.button_caption(3)) visible=(%screen.msgbox.on_screen.number_of_buttons == 3) onrelease='MODEL.screen.msgbox.on_screen.button_released(3)' >
+			</DIV>
+		</DIV>
+	</DIV>
+</layer>
+
+<userlist lm_TachoGuard_settings text="str" type="str" haspopover="bool" isselected="str" visible="bool" enable="bool" onrelease="ui" details="ui" dtooltip="str">
+  <view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 />
+		<row	text="Tacho Guard" onrelease={%lua.TachoGuardOn = !%lua.TachoGuardOn} details=(%lua.TachoGuardOn ? "'Tacho Guard' Running" : (ui_PropLayer.current_vehicle_type_Truck ? "iGO 'Tacho Guard' Running" : "Off")) />
+		<row	text="Places to rest" haspopover=1 onrelease=VW_Take_a_Break />
+		<row	text="Graph or Chart" haspopover=1 onrelease={GRAPHorCHART = !GRAPHorCHART} details=(GRAPHorCHART ? "Graph" : "Chart") />
+		<row	text="'Tacho Guard' Button in Cockpit" type="ChkOnOff" isselected="ui.buttons_TachoGuardCockpit" />
+		<row	text="'Tacho Guard' Button in Quick" type="ChkOnOff" isselected="ui.buttons_TachoGuardQuick" />
+		<row	text="Truck timers"  haspopover=1 onrelease='sc_NextStateAnim(st_TachoGuard_timers, "fade", 1, "" )' />
+</userlist>
+
+<userlist lm_TachoGuard_timers text="str" type="str" haspopover="bool" isselected="str" visible="bool" enable="bool" onrelease="ui" details="ui" dtooltip="str" >
+  <view visibility_filter=visible />
+	<default visible=1 enable=1 onrelease='MODEL["*"]._list.setcurrent(index); ui.current_timer = timespan.toInt(MODEL.lua[MODEL["*"].text()]()) / 1000; sc_SetPopoverListAndOpen( "ui.lm_TachoGuard_timers_change" )' />
+		<row	text="max_driving_time" haspopover=1 details=(%other.format_time_dayperiod(%lua.max_driving_time, 0,0)) /> 
+			;(Format_Timespan(%lua.max_driving_time, lua.ETimespanFormat.HrMinRounded))
+		<row	text="max_daily_driving_time" haspopover=1 details=(%other.format_time_dayperiod(%lua.max_daily_driving_time, 0,0)) /> 
+			;(Format_Timespan(%lua.max_daily_driving_time, lua.ETimespanFormat.HrMinRounded))
+		<row	text="max_break_time" haspopover=1 details=(%other.format_time_dayperiod(%lua.max_break_time, 0,0)) /> 
+			;(Format_Timespan(%lua.max_break_time, lua.ETimespanFormat.HrMinRounded))
+		<row	text="min_break_time" haspopover=1 details=(%other.format_time_dayperiod(%lua.min_break_time, 0,0)) /> 
+			;(Format_Timespan(%lua.min_break_time, lua.ETimespanFormat.HrMinRounded))
+		<row	text="pre_warn_time" haspopover=1 details=(%other.format_time_dayperiod(%lua.pre_warn_time, 0,0)) /> 
+			;(Format_Timespan(%lua.pre_warn_time, lua.ETimespanFormat.HrMinRounded))
+		<row	text="start_stop_limit" haspopover=1 details=(%other.format_time_dayperiod(%lua.start_stop_limit, 0,0)) /> 
+			;(Format_Timespan(%lua.start_stop_limit, lua.ETimespanFormat.HrMinRounded))
+</userlist>
+
+<var current_timer = 0 />
+<observer obs_expiration_day_period model="gps.date" onchange=VW_expiration_day_period />
+<observer obs_Tacho_current_timer model="ui.current_timer" onchange='MODEL.lua[MODEL.ui.lm_TachoGuard_timers.list[current].text()] = timespan.new(current_timer() * 1000)' />
+<userlist lm_TachoGuard_timers_change name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="wstr" max_text="wstr">
+	<default enable=1 type="Scroll" />
+		<row name=(%ui.lm_TachoGuard_timers.list[current].text) 
+			text=(%other.format_time_dayperiod(%lua[%ui.lm_TachoGuard_timers.list[current].text], 0, 0)) 
+			min_text=(%other.format_time_dayperiod(lua.timespan_0, 0, 0)) max_text=(%other.format_time_dayperiod(%lua[%ui.lm_TachoGuard_timers.list[current].text + "_GLOBAL"], 0, 0))
+			min=0 max=(VW_current_timer(%ui.lm_TachoGuard_timers.list[current].text + "_GLOBAL")/1000) step=60
+			valuemodel="ui.current_timer" />
+</userlist>
+;-----------------------free area panel-----------------------
+<var GRAPHorCHART = 1 permanent />
+<layer ui_TachoGuard z=30 onshow=map_free_area_onshow onhide=map_free_area_onhide visible=(%navigation.has_route)>	
+	<implementation>
+		<property red value=#ffff0000 />
+		<property orange value=#ffFFA500 />
+		<property green value=#ff008000 />
+		<property gold value=#ffFFD700 />
+		<property blue value=#ff0000FF />
+		<property white value=#ffffffff />
+	</implementation>
+	<DIV class=cockpit>
+		<DIV class="map_free_area">
+			<SPRITE class="button map fill" />
+			<VBOX top=1% bottom=1% left=1% right=1%>
+				<BUTTON box_align="stretch" desired_h=10000
+					onrelease=Hide_map_free_area onlongclick={GRAPHorCHART = !GRAPHorCHART} >
+					<VBOX left=0 right=0 top=0 bottom=0  box_align="center">
+						<HBOX left=0 right=0 top=0 bottom=0 box_align="center">
+							<SPRITE box_align="center" zoom="zoomvisible" img="Happy New Year.spr" animate="anime" visible=( %lua.TachoGuardOn ) >
+							<SPRITE class="btn_map svg" box_align="center" zoom=90% img="Standby.svg" />
+							<TEXT class="font_main_large bd color_inf_sec tacho" text="Tachograph" />
+						</HBOX>
+						;<SPRITE CLASS="searchprogress wide" align="center" box_align="center" visible=( %lua.TachoGuardOn ) />
+					</VBOX>
+				</BUTTON>
+				;=========================================================================================
+				
+				<BUTTON box_align="stretch" desired_h=10000
+					onrelease='VW_Show_xhtmlQuest("i18n/Help/TachoGuard/Tacho_DrivingResting_Help.xhtml", "Driving time")' >
+					<SPRITE CLASS="button map fill" img="signpost_template_border.bmp" />
+					<HBOX class="tacho" >
+						<SPRITE class="btn_map svg" zoom=90% box_align="center" IMG="Tachograph Drive.svg" />
+						<SPRITE class="driving" visible=(!GRAPHorCHART) />
+						<GRAPH class="driving" visible=(GRAPHorCHART) />
+					</HBOX>
+					<TEXT class="font_main_large bd color_inf_sec tacho" top=2% bottom=2% left=10% right=0 
+						text=(translate("Driving time") + L"\n" + Format_Timespan(ui_Cockpit.driving_time, lua.ETimespanFormat.HrMinRounded)) />
+				</BUTTON>
+				
+				<BUTTON box_align="stretch" desired_h=10000
+					onrelease='VW_Show_xhtmlQuest("i18n/Help/TachoGuard/Tacho_POA_Help.xhtml", "POA time")'
+					onlongclick='VW_POAorResting("Forced offer from the panel")' >
+					<SPRITE class="button map fill" img="signpost_template_border.bmp" />
+					<HBOX class="tacho" >
+						<SPRITE class="btn_map svg" zoom=90% box_align="center" 
+							img=(%lua.POAorResting && ui_Cockpit.NO_running ? (%gps.blink ? "Tachograph POA.svg" : "warning-icon.svg") : "Tachograph POA.svg") />
+						<SPRITE class="poa" visible=(!GRAPHorCHART) />
+						<GRAPH class="poa" visible=(GRAPHorCHART) />
+					</HBOX>
+					<TEXT class="font_main_large bd color_inf_sec tacho" top=2% bottom=2% left=10% right=0 
+						text=(translate("POA time") + L"\n" + Format_Timespan(ui_Cockpit.POA_time, lua.ETimespanFormat.HrMinRounded)) >
+						<GRAPH class="delay" />
+					</TEXT>
+				</BUTTON>
+				<BUTTON box_align="stretch" desired_h=10000
+					onrelease='VW_Show_xhtmlQuest("i18n/Help/TachoGuard/Tacho_DrivingResting_Help.xhtml", "Resting time")' >
+					<SPRITE class="button map fill" img="signpost_template_border.bmp" />
+					<HBOX class="tacho" >
+						<SPRITE class="btn_map svg" zoom=90% box_align="center" 
+							img=(!%lua.POAorResting && ui_Cockpit.NO_running ? (%gps.blink ? "Tachograph Rest.svg" : "warning-icon.svg") : "Tachograph Rest.svg") />
+						<SPRITE class="resting" visible=(!GRAPHorCHART) />
+						<GRAPH class="resting" visible=(GRAPHorCHART) />
+					</HBOX>
+					<TEXT class="font_main_large bd color_inf_sec tacho" top=2% bottom=2% left=10% right=0
+						text=(translate("Resting time") + L"\n" + Format_Timespan(ui_Cockpit.resting_time, lua.ETimespanFormat.HrMinRounded)) >
+						<GRAPH class="rest" />
+					</TEXT>						
+				</BUTTON>
+				
+				<BUTTON box_align="stretch" desired_h=10000
+					onrelease='VW_Show_xhtmlQuest("i18n/Help/TachoGuard/Tacho_Working_Help.xhtml", "Working time")' >
+					<SPRITE class="button map fill" img="signpost_template_border.bmp" />
+					<HBOX class="tacho" >
+						<SPRITE class="btn_map svg" zoom=90% box_align="center" img="Tachograph Work.svg" />
+						<SPRITE class="working" visible=(!GRAPHorCHART) />
+						<GRAPH class="working" visible=(GRAPHorCHART) />
+					</HBOX>
+					<TEXT class="font_main_large bd color_inf_sec tacho" top=2% bottom=2% left=10% right=0
+						text=(translate("Working time") + L"\n" + Format_Timespan(ui_Cockpit.working_time, lua.ETimespanFormat.HrMinRounded)) />
+				</BUTTON>
+			</VBOX>
+		</DIV>
+	</DIV>
+</layer>

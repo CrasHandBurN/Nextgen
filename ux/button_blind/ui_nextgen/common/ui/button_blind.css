@@ -1,0 +1,36 @@
+@params {
+
+}
+SPRITE.btn_zoom_out, SPRITE.btn_zoom_center, SPRITE.btn_zoom_in, SPRITE.btn_overview{
+	z:50;img:"btn_zoom.bmp#3";resize_bmp:1;alpha:12;
+}
+
+SPRITE.btn_zoom_out:active, SPRITE.btn_zoom_center:active, SPRITE.btn_zoom_in:active, SPRITE.btn_overview:active{
+	phase:1;
+}
+
+SPRITE.btn_zoom_out:active SPRITE.btn_zoom_out_ico{
+	left:0;right:0;top:0;bottom:0;z:51;
+	img:"ico_zoom_minus_invisible.svg";
+}
+
+SPRITE.btn_zoom_in:active SPRITE.btn_zoom_in_ico{
+	left:0;right:0;top:0;bottom:0;z:51;
+	img:"ico_zoom_plus_invisible.svg";
+	align:"right";
+}
+
+SPRITE.btn_zoom_center:active SPRITE.btn_zoom_center_ico{
+	left:0;right:0;top:0;bottom:0;z:51;
+	img:"ico_zoom_switch_invisible.svg";
+	align:"center";
+}
+
+SPRITE.btn_overview:active SPRITE.btn_overview_ico{
+	left:0;right:0;top:0;bottom:0;z:51;
+	img:"ico_via_invisible.svg";
+	align:"center";
+}
+
+@import "~/common/ui/button_blind_landscape.css" landscape;
+@import "~/common/ui/button_blind_portrait.css" portrait;

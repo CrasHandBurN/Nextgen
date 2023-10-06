@@ -1,0 +1,56 @@
+;-------------------------------------------------------------------------------
+; Visual Travel Planner by WANDEL™
+;-------------------------------------------------------------------------------
+
+<layer ui_VisualTravelPlanner z=24 
+		visible=(%lua.DragMode ? (%lua.CockpitDragMode == lua.eCockpitMapMode.Mode_2D || %lua.CockpitDragMode == lua.eCockpitMapMode.Mode_2DN) : !st_Cockpit.isActive) >	
+	<DIV class="mapmain mapcontrol">
+		<HBOX  class="fill" paddingleft=0 paddingright=0 align="right" >
+			<BOX class="mapcontrol zoom">
+				<SPACER flex=1>
+				
+				<BUTTON class="btn_map travel_planner" onrelease=sc_AddDestination onlongclick=sc_NewRoute
+					enable=(%lua.RoutePlanEnable && !%map.cursor.is_waypoint && %map.primary.show_cursor) >
+		 			<SPRITE class="button map fill" />
+					<SPRITE class="btn_map destination icon svg" /> 
+				</BUTTON>
+			
+				<BUTTON class="btn_map travel_planner" onrelease=sc_DeleteStopover 
+					visible=(%map.cursor.is_waypoint)
+					enable=(%map.cursor.is_waypoint && %map.primary.show_cursor && %route.list.navigated.waypoints.list.size > 2)>
+		 			<SPRITE class="button map fill" />
+					<SPRITE class="btn_map deletestopover icon svg" />
+				</BUTTON>
+
+				<BUTTON class="btn_map travel_planner" onrelease=sc_addWaypointFromCockpit
+					visible=(!%map.cursor.is_waypoint && %lua.RoutePlanEnable)
+					enable=(!%map.cursor.is_waypoint && %map.primary.show_cursor && %navigation.has_route)>
+		 			<SPRITE class="button map fill" />
+					<SPRITE class="btn_map addstopover icon svg" />
+				</BUTTON>
+			
+				<BUTTON class="btn_map travel_planner" onrelease='sc_DeleteStartPoint(); sc_SetStartPoint(); sc_InfoNotification("Start Point could be deleted by long press on Start Point Icon")' 
+					onlongclick=sc_DeleteStartPoint 
+					enable=(%lua.RoutePlanEnable && !%map.cursor.is_waypoint && %map.primary.show_cursor) >
+		 			<SPRITE class="button map fill" />
+					<SPRITE class="btn_map start_point icon svg" />
+				</BUTTON>
+	
+				<SPACER flex=1>
+			</BOX>
+		</HBOX>
+	</DIV>
+</layer>
+
+<modify lm_myroutemenu>
+	<insert>
+		<row text="Multipoint Route" onrelease=sc_ShowTravelPlanner />
+		<row text="Delete Route" onrelease=sc_DeleteRoute enable=( %navigation.has_route ) />
+	</insert>
+</modify>
+
+<userlist lm_VisualTravelPlanner_Footer text="str" onrelease="ui" visible="bool" isactionbutton="bool"> 
+	<view visibility_filter=visible>
+	<row text="Calculate Route" isactionbutton=1 onrelease='sc_StartCalculating() sc_back()' visible=( %route.list.navigated.waypoints.list.size > 1 ) /> ;;sc_GetDirections()
+	<row text="Continue Without Route" isactionbutton=1 onrelease=sc_GetDirections_NoRoute visible=( %route.list.navigated.waypoints.list.size < 2 ) />
+</userlist>

@@ -1,0 +1,4 @@
+DIV.umweltzone{
+	left: (%navigation.has_route ? (ui_PropLayer.ShowRouteProgress ? route_progress_bg_w : 0) + (ui_PropLayer.hideDiriconBg ? 0 : diricon_w) + (ui_Cockpit.show_sec_diricon ? sec_diricon_w/2 : 0) : 4); 
+	top: next_street_h;
+}

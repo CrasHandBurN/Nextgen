@@ -1,0 +1,63 @@
+@params{
+	footer_w:120;
+	footerbutton_w: 162;
+	actionbutton_margin:(%lua.ShowBackButton ? 78 : 120);
+	actionbutton_overlap: 35;
+	actionbutton_padding_left: (%lua.ShowBackButton ? 60 : text_padding);
+	actionbutton_padding_right: (%lua.ShowBackButton ? 60 : text_padding);
+	current_speed_w: 100;
+	cockpit_warning_h: 100;
+	cockpit_warning_w:100;
+	header_h:56;
+	header_bg_h:66;
+	header_overlap_h: 10;
+	menu_button_w:108;	
+	menu_button_h:66;
+	listitem_h: 78;
+	listitem_countryinfo_h: 78;
+	listitem_itinerarywarnings_container_w: 120;
+	listitem_route_info_h:90;
+	list_padding: 24;
+	list_margin_top:6;
+	coord_keyboard_left:110;
+	coord_keyboard_right:coord_keyboard_left;
+	coord_keyboard_top:100;
+	coord_keyboard_bottom:16;
+	diricon_w:200;
+	diricon_h:164;
+	sec_diricon_w:140;
+	sec_diricon_h:90;
+	sec_diricon_overlap_w:64;
+	sec_diricon_overlap_h:0;
+	diricon_hwy_w:144;
+	diricon_hwy_h:70;
+	hwy_container_indent_cat0: 12;
+	hwy_container_indent_cat1: 18;
+	hwy_container_indent_cat2: 28;
+	hwy_container_top: 12;
+	hwy_container_bottom: 6;
+	hwy_panel_bottom:60;
+	hwy_header_h: 36;
+	traffic_summary_next_event_h: 160;
+	whereami_panel_size: 480;
+	alertpoint_panel_size: 480;
+	tripcomputer_speed_top: 30;
+	route_progress_w: 24;
+	route_progress_h: 100%;
+	svg_menu_scroll_image_w:36;
+	svg_menu_scroll_image_h:36;
+	avoid_bg_padding_vertical:7;
+	next_event_padding:10;
+	tmc_div_padding:(list_padding / 2);
+	p2p_compass_w:180;
+
+	/*========WANDEL™ research==========*/
+	map_messagebox_h:(screen_h - next_street_h);
+	/*map_messagebox_w:(width > 2*height ? height : (map_messagebox_h*8/13));*/
+	map_messagebox_w:(map_messagebox_h*8/13);
+	/*map_messagebox_w:height;*/
+	map_messagebox_left:(screen_w - map_messagebox_w);
+}
+/* ------------------------------------------------------------------------------------*/
+/* -------------- WANDEL™ -- 18.12.2018 -----------*/
+/* ------------------------------------------------------------------------------------*/

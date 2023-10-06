@@ -1,0 +1,25 @@
+<modify lm_NavigationMap>
+	<insert after="default">
+		<row prio=1000 text="Offer Congestion Detour On Highways"	isselected="navigation.congestion_ad_on"      type="ChkOnOff" visible=(%navigation.congestion_ad_enabled) />
+		<row prio=1100 text="Offer Real Time Alternative Routes"	isselected="navigation.quickdetour_enabled"   type="ChkOnOff" />
+		<row prio=1101 text="Offer Real Time Alternative Routes if less"	isselected="lua.quickdetour_enabled_if_less"   type="ChkOnOff" />
+		<row prio=1200 text="Offer Parking Around Destination"		isselected="navigation.parking_ad.toggle"     type="ChkOnOff" visible=(%navigation.parking_ad_enabled) />
+		<row prio=1300 text="Offer Hints Upon Detour"				isselected="navigation.sudden_detour.enabled" type="ChkOnOff" />
+	</insert>
+</modify>
+
+<modify ui_Cockpit>
+	<insert last_child into="#CockpitBTNTable">
+		<BUTTON CLASS="btn_map" ONRELEASE=sc_ShowParkingAroundDest VISIBLE=(%navigation.parking_ad_enabled && %{"navigation.parking_ad.visible"} && !vParkingMessageVisible)>    
+	       	<SPRITE CLASS="button map fill" />
+			<SPRITE CLASS="btn_map svg" IMG="ico_parkingaround_dest.svg" />
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row	visible=(%navigation.parking_ad_enabled && %{"navigation.parking_ad.visible"} && !vParkingMessageVisible) />
+	</insert>
+</modify>
+

@@ -1,0 +1,6 @@
+BmpFlags = 0
+DefFlags = ALPHA_PIXEL
+DefPhase = 0
+DefYResizeAxis = 95
+DefXResizeAxis = 74
+Stripes = 96

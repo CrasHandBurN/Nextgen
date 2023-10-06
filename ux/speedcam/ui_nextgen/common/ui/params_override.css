@@ -1,0 +1,9 @@
+@params {
+	svg_speedcamalert_image_w: 72;
+	svg_speedcamalert_image_h: 72;	
+	svg_speedcamdirect_image_w: 72;	
+	svg_speedcamdirect_image_h: 72;	
+	speedcam_h:96;
+	fontsize_speedcam: 24;
+	alertpoint_panel_size: sidepanel_size;
+}

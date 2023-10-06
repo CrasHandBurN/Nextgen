@@ -1,0 +1,32 @@
+#ui_CheckDestination .2_1_1, #ui_ShowDestination .2_1_1 {
+	left:0;
+	h:70;
+	w:50%;
+	bottom:70;
+}
+
+#ui_CheckDestination .2_1_2, #ui_ShowDestination .2_1_2 {
+	left:50%;
+	h:70;
+	w:50%;
+	bottom:70;
+}
+
+#ui_CheckDestination .1_1_1, #ui_ShowDestination .1_1_1 {
+	left:0;
+	w:100%;
+	h:70;
+	bottom:0;
+}
+#ui_ShowDestination .2_2_1 {
+	left:0;
+	w:50%;
+	h:70;
+	bottom:0;
+}
+#ui_ShowDestination .2_2_2 {
+	right:0;
+	w:50%;
+	h:70;
+	bottom:0;
+}

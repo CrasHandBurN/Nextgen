@@ -1,0 +1,6 @@
+.compass_vw {
+	w: (ui_Cockpit.MapPopupOnscreen ? 20% : 36%);
+	h: (ui_Cockpit.MapPopupOnscreen ? 20% : 36%);
+	left: (observe(%map.primary.car_posx); ((%map.primary.car_posx - (ui_Cockpit.MapPopupOnscreen ? 10 : 18)) * screen_w / 100));
+	top: (observe(%map.primary.car_posy); ((%map.primary.car_posy - (ui_Cockpit.MapPopupOnscreen ? 10 : 18)) * screen_h / 100));
+}

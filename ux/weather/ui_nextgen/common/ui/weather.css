@@ -1,0 +1,153 @@
+/*------------- arimi mod 2016.03.11 ------------*/
+
+
+
+TEMPERATURETEXT.mintemp {
+	font: ;
+	CAN_SHRINK:0;
+}
+
+HBOX.listitem.weather, VBOX.listitem.weather{
+	paddingleft: 0;
+	paddingright: 0;
+}
+
+BOX.listitem.weather TEXT, HBOX.listitem.weather > TEXT{
+	align:"LEFT";
+	paddingleft: text_padding_small;
+	paddingright: text_padding_small;
+	CAN_SHRINK:0 ;
+	line_break_method:"auto"; 
+	fontsize:28;
+}
+
+TEXT.listitem.weather{
+	fontsize:28;	
+}
+
+TEXT.listitem.wind{
+	fontsize:24 !important;
+}
+
+TEMPERATURETEXT.listitem.weather {
+	color:btn_main_color;
+	fontsize:34;
+	
+}
+
+TEMPERATURETEXT.listitem.weather.maxtemp{
+	fontsize: 42;
+	CAN_SHRINK:0;
+}
+
+TEMPERATURETEXT.listitem.saved_location{
+	min_w:teperaturetext_w;
+}
+SPRITE.listitem.weather{
+	img:"spr_winddirection.svg";
+	align:"CENTER";
+	PRESERVE_ASPECT_RATIO:1;
+	image_w:svg_winddirection_w;
+	image_h:svg_winddirection_h;
+}
+
+SPRITE.listitem.weather.detail{
+	align:"RIGHT";
+}
+
+TEXT.weather{
+	WORDWRAP: 2;
+	LINE_BREAK_METHOD: undef;
+}
+
+LISTMODEL.currentweather{
+	cellh: listitem_current_weather_h;
+}
+
+LIST2.list_control.weather{
+	cellh: listitem_weather_h;
+}
+
+#ui_WeatherForecast #lst_forecast{
+	bottom:0;
+	extra_scroll:0;
+}
+
+SPRITE.listitem.weather>TEXT{
+	left:0; right:0; top:0; bottom:0; align:"CENTER"; valign:"CENTER";
+	fontsize:fontsize_winddirection;
+}
+
+VBOX.current_pos{
+	paddingleft:list_padding; 
+	paddingright:list_padding;
+}
+
+TEMPERATURETEXT.current_pos{
+	box_align:"stretch";
+}
+
+HBOX.fill.weather{
+	box_align:"stretch"; paddingleft:0; paddingright:0;
+}
+
+DIV.weather {	
+	right: ( (%lua.DragMode && st_Cockpit.isActive) ? 0 : (%lua.QuickBarOpened ? quickbar_w : 0));
+	y: ( (%lua.DragMode && st_Cockpit.isActive) ? (screen_y + mapheader_h) :(screen_y + header_h + mapheader_h));
+	w: weather_w2;
+	h: weather_h2;
+}
+
+BUTTON.background.weather.cockpit,
+BUTTON.background.weather {
+	img: "";
+	top:0; bottom:0; left:0; right:0; z: 1;
+	resize_bmp: 1;
+}
+
+LIST2.map_info.weather{
+	y:header_h;
+}
+
+SPRITE.detailsinfo.address{
+	visible:(!%lua.QueryWeather || (Plugin.isLoaded( "tmc" ) && st_TrafficDetails.isActive));
+}
+
+VBOX.weather.icon.svg{
+	desired_w:svg_listitem_image_w;
+	visible:(%lua.QueryWeather && !(Plugin.isLoaded( "tmc" ) && st_TrafficDetails.isActive));
+}
+
+
+SPRITE.weather_list{
+	box_align:"STRETCH";
+	z:150;
+}
+
+TEMPERATURETEXT.listitem.map {
+	color: temperature_map_color;
+	/*fontsize: 60;*/
+}
+
+SPRITE.detailsinfo,
+SPRITE.weather_list,
+SPRITE.listitem.ari.weather,
+SPRITE.listitem.weather.detail {
+	zoom:"ZOOMVISIBLE";
+	desired_w: svg_listitem_image_w;
+	desired_h: svg_listitem_image_h;
+}
+
+SPRITE.weather.map {
+	zoom:"ZOOMVISIBLE";
+	desired_w: svg_map_button_image_w;
+	desired_h: svg_map_button_image_h;
+}
+
+
+
+
+@import "~/common/ui/weather_landscape.css" landscape;
+@import "~/common/ui/weather_portrait.css" portrait;
+
+/*------------- arimi mod 2016.03.11 ------------*/

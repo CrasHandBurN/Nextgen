@@ -1,0 +1,7 @@
+<observer obs_CongAD value=(%navigation.congestion_ad_enabled && %{"navigation.congestion_ad_icon.valid"}) onselect=sc_CongestionOn ondeselect=sc_CongestionOff start="NO_TRIGGER" />
+<observer obs_ArrivedAtParking value=(%{"navigation.parking_ad.arrived"}) onchange=sc_CheckIfArrivedAtParking />
+<observer obs_ResetParking boolmodel="navigation.parking_ad.visible" ondeselect=sc_ResetParkingSearch />
+<observer obs_QuickDetour value=((%navigation.quickdetour_calculated || %navigation.quickdetour_continuous_calculation) && %navigation.quickdetour_enabled) onchange=sc_QuickDetourStatusChanged start="NO_TRIGGER" />
+<observer obs_SuddenDetour value=(%navigation.sudden_detour.reasons.valid && %navigation.sudden_detour.enabled) onselect=sc_ShowSuddenDetourPopup ondeselect=sc_SuddenDetourCleared start="NO_TRIGGER" />
+<observer obs_parking_info value=(%navigation.parking_ad_enabled && %{"navigation.parking_ad.visible"} && !vParkingMessageVisible ) onselect=sc_Send_Parking_Notif ondeselect='hook_Delete_Notification:trigger("parking", "parking_at_destination")' />
+<observer obs_parking_full value=(%navigation.parking_ad_enabled && %{"navigation.parking_ad.selected_facility_full"}) onselect=sc_ParkingFullPopup ondeselect=sc_RemoveParkingFullPopup start />

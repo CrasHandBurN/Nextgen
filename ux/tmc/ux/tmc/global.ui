@@ -1,0 +1,10 @@
+import "~/common/ui/tmc.css"
+
+import "~layout/ui/tmc_scripts.lua"
+;import "~res/ui/tmc_scripts.lua"
+
+import "~/common/ui/tmc.ui"
+import "~/common/ui/tmc.lua"
+
+import "~/common/ui/tmc_mods.ui"
+import "~/common/ui/tmc_mods.lua"

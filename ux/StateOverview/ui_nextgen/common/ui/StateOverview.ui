@@ -1,0 +1,102 @@
+;---------------WANDEL™---03.10.2019------------------%sound.playchanneltest("ding", L"!ding")
+<observer value=(%lua.VisualButtonExtension_State == "st_SettingVehicle"
+		&& (%navigation.car.current_speed // 1) > %mydata.vehicle_profile.list[%mydata.vehicle_profile.selected_profile].maxspeed && %gps.blink) onselect='MODEL.sound.playchanneltest("ding", L"!ding")' start />
+<data VehicleOverSpeed>
+	<property Overspeed value=(%lua.VisualButtonExtension_State == "st_SettingVehicle"
+		&& (%navigation.car.current_speed // 1) > %mydata.vehicle_profile.list[%mydata.vehicle_profile.selected_profile].maxspeed && %gps.blink) />
+</data>
+<modify ui_Cockpit> 
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON StateOverviewButtonCockpit ONRELEASE=VW_CheckCurrentState 
+			ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_SetVisualButtonExtension_Popover", States_Name_Table[MODEL.lua.VisualButtonExtension_State()])' 
+			VISIBLE=(%lua.VW_VisualButtonExtension) ZOOM=85%
+			ICON=(VehicleOverSpeed.Overspeed ? "overspeed.svg" : lua.States_Icon_Table[%lua.VisualButtonExtension_State]) 
+			T_TEXT=(VehicleOverSpeed.Overspeed ? %mydata.vehicle_profile.list[%mydata.vehicle_profile.selected_profile].maxspeed : VW_Return_button_text(translate(lua.States_Name_Table[%lua.VisualButtonExtension_State]), L"%s", 1))
+			B_TEXT=(VehicleOverSpeed.Overspeed ? %mydata.vehicle_profile.list[%mydata.vehicle_profile.selected_profile].maxspeed : VW_Return_button_text(translate(lua.States_Name_Table[%lua.VisualButtonExtension_State]), L"%s", 99)) />
+	</insert>
+</modify>
+
+<modify ui_SideList>
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE='ui.StateOverviewButtonCockpit.ONRELEASE()()' 
+			ONLONGCLICK='ui.StateOverviewButtonCockpit.ONLONGCLICK()()'
+			VISIBLE=(%lua.VW_VisualButtonExtensionQuick)
+			ICON=(StateOverviewButtonCockpit.ICON) ZOOM=85%
+			T_TEXT=(StateOverviewButtonCockpit.T_TEXT)
+			B_TEXT=(StateOverviewButtonCockpit.B_TEXT) />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="Extra Facilities Button" bmp=(StateOverviewButtonCockpit.ICON) isselected="lua.VW_VisualButtonExtension" />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="Extra Facilities Button" bmp=(StateOverviewButtonCockpit.ICON) isselected="lua.VW_VisualButtonExtensionQuick" />
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row visible=( %lua.VW_VisualButtonExtension ) />
+	</insert>
+</modify>
+<modify lm_QuickSideList>
+	<insert>
+		<row	visible=(%lua.VW_VisualButtonExtensionQuick ) />
+	</insert>
+</modify>
+
+<modify lm_LocalMenuCockpit>
+	<insert>
+		<row text=(lua.States_Name_Table.st_SMSSOS) onrelease='sc_NextStateAnim(st_SMSSOS, "fade", 1, "" ) sc_ClosePopover()' />
+		<row text=(lua.States_Name_Table.st_EventSMS) onrelease='sc_NextStateAnim(st_EventSMS, "fade", 1, "" ) sc_ClosePopover()' />
+		<row text=(lua.States_Name_Table.st_EmergencyPhoneCall) onrelease='sc_NextStateAnim(st_EmergencyPhoneCall, "fade", 1, "" ) sc_ClosePopover()' />
+		<row text=(lua.States_Name_Table.st_HelpNearby) onrelease='sc_NextStateAnim(st_HelpNearby, "fade", 1, "" ) sc_ClosePopover()' />
+	</insert>
+</modify>
+
+<userlist lm_Extension_StatePhoneNumber_Popover text="wstr" ctext="str" onrelease="ui" onlongclick="ui" enable="bool" > ;type="str" img="str"
+	<default enable=1 onrelease='MODEL.lua.Extension_StatePhoneNumber = MODEL["*"].ctext() sc_ClosePopover()' /> ;type="Icon" img="Phone.svg" onlongclick='sc_NextStateAnim(st_EmergencyPhoneCallContact, "fade", 1, "" )'
+</userlist>
+;----------------------------------------------------------------------------------
+<userlist lm_SetVisualButtonExtension_Popover text="str" onrelease="ui" onlongclick="ui" visible="bool" enable="bool" type="str" img="str">
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 type="Icon"/>
+	<row img=(lua.States_Icon_Table.st_EventSMS) text=(lua.States_Name_Table.st_EventSMS) onrelease='MODEL.lua.VisualButtonExtension_State = "st_EventSMS"; sc_ClosePopover()' onlongclick='sc_ClosePopover(); sc_NextStateAnim(st_EventContact, "fade", 1, "" )' />
+	<row img=(lua.States_Icon_Table.st_SMSSOS) text=(lua.States_Name_Table.st_SMSSOS) onrelease='MODEL.lua.VisualButtonExtension_State = "st_SMSSOS"; sc_ClosePopover()' onlongclick='sc_ClosePopover(); sc_NextStateAnim(st_SMSSOSContact, "fade", 1, "" )' />
+	<row img=(lua.States_Icon_Table.st_EmergencyPhoneCall) text=(lua.States_Name_Table.st_EmergencyPhoneCall) onrelease='MODEL.lua.VisualButtonExtension_State = "st_EmergencyPhoneCall" sc_ClosePopover()' onlongclick='sc_ClosePopover(); sc_NextStateAnim(st_EmergencyPhoneCallContact, "fade", 1, "" )' />
+	<row img=(lua.States_Icon_Table.st_HelpNearby) text=(lua.States_Name_Table.st_HelpNearby) onrelease='MODEL.lua.VisualButtonExtension_State = "st_HelpNearby" sc_ClosePopover()' />
+	<row img=(lua.States_Icon_Table.st_PointOnMap) text=(lua.States_Name_Table.st_PointOnMap) onrelease='MODEL.lua.VisualButtonExtension_State = "st_PointOnMap" sc_ClosePopover()' />
+	<row img=(lua.States_Icon_Table.st_RouteOverview) text=(lua.States_Name_Table.st_RouteOverview) onrelease='MODEL.lua.VisualButtonExtension_State = "st_RouteOverview" sc_ClosePopover()' />
+	<row img=(lua.States_Icon_Table.st_MapOverviewOnRoute) text=(lua.States_Name_Table.st_MapOverviewOnRoute) onrelease='MODEL.lua.VisualButtonExtension_State = "st_MapOverviewOnRoute" sc_ClosePopover()' />
+	<row img=(lua.States_Icon_Table.st_RouteWarningOnMap) text=(lua.States_Name_Table.st_RouteWarningOnMap) onrelease='MODEL.lua.VisualButtonExtension_State = "st_RouteWarningOnMap" sc_ClosePopover()' /> 
+	<row img=(lua.States_Icon_Table.st_WeatherOverview) text=(lua.States_Name_Table.st_WeatherOverview) onrelease='MODEL.lua.VisualButtonExtension_State = "st_WeatherOverview" sc_ClosePopover()' /> 	
+	<row img=(lua.States_Icon_Table.st_TripLogOverviewMapFull) text=(lua.States_Name_Table.st_TripLogOverviewMapFull) onrelease='MODEL.lua.VisualButtonExtension_State = "st_TripLogOverviewMapFull" sc_ClosePopover()' />
+	<row img=(lua.States_Icon_Table.st_PoiSearch_Main) text=(lua.States_Name_Table.st_PoiSearch_Main) onrelease='MODEL.lua.VisualButtonExtension_State = "st_PoiSearch_Main" sc_ClosePopover()' />	
+	<row img=(lua.States_Icon_Table.st_TripComputer) text=(lua.States_Name_Table.st_TripComputer) onrelease='MODEL.lua.VisualButtonExtension_State = "st_TripComputer" sc_ClosePopover()' />	
+	<row img=(lua.States_Icon_Table.st_TripInfo) text=(lua.States_Name_Table.st_TripInfo) onrelease='MODEL.lua.VisualButtonExtension_State = "st_TripInfo" sc_ClosePopover()' />
+	<row img=(lua.States_Icon_Table.st_WhereAmI) text=(lua.States_Name_Table.st_WhereAmI) onrelease='MODEL.lua.VisualButtonExtension_State = "st_WhereAmI" 	sc_ClosePopover()' />
+	<row img=(lua.States_Icon_Table.st_CountryInfoVoice) text=(lua.States_Name_Table.st_CountryInfoVoice) onrelease='MODEL.lua.VisualButtonExtension_State = "st_CountryInfoVoice" sc_ClosePopover()' />
+</userlist>
+;=====================================================================================================
+<userlist lm_StartEventSMS_Popover text="wstr" onrelease="ui" onlongclick="ui" enable="bool" img="str" type="str">
+	<default enable=1 type="Icon" onrelease=undef onlongclick=undef />
+	<row text=(%lua.EventSMS_Name) img="employee.svg" onrelease='sc_ClosePopover(); sc_NextStateAnim(st_EventContact, "fade", 1, "" )' />
+	<row text=(%lua.EventSMS_Text) img=(%lua.EventSMS_img) onrelease='sc_ClosePopover(); sc_SetPopoverListAndOpen("ui.lm_EventSMS_Popover")' />
+	<row text=(translate("Send")) img="send.svg" onrelease='sc_ClosePopover() VW_EventSMS(MODEL.lua.EventSMS_Phone())' />
+</userlist>
+
+<userlist lm_EventSMS_Popover text="str" onrelease="ui" enable="bool" img="str" type="str">
+	<default enable=1 type="Icon" onrelease='MODEL.lua.EventSMS_img = MODEL["*"].img(); MODEL.lua.EventSMS_Text = translate(MODEL["*"].text()); sc_ClosePopover(); sc_SetPopoverListAndOpen("ui.lm_StartEventSMS_Popover")' />
+	<row text="I`m here!" img="bonfire.svg" />
+	<row text="Picnic" img="picnic.svg" />
+	<row text="Fishing" img="fishing-rod.svg" />
+	<row text="Hunting" img="slingshot.svg" />
+	<row text="Barbecue" img="marshmallow.svg" />
+	<row text="Mountain" img="mountain.svg" />
+	<row text="See" img="raft.svg" />
+</userlist>

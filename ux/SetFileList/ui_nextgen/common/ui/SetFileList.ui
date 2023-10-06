@@ -1,0 +1,9 @@
+;---------------WANDEL™---28.12.2017------------------
+<observer obs_ScanGivenFolder_Finished boolmodel="oasis.files.finished" onselect=sc_ScanGivenFolder_done />
+
+<userlist ScanGivenFolderList fname = "wstr" fpath = "wstr" frootpath = "wstr" />
+
+<views VW_ScanGivenFolderList_filtered listmodel="ui.ScanGivenFolderList" >
+	<field filtered_types=L"" />
+	<view filter filter=($1.fname == views.filtered_types) /> 
+</views>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 19.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="120px"
+	 height="120px" viewBox="-3 -3 120 120" enable-background="new -3 -3 120 120" xml:space="preserve">
+<g id="Layer_2" display="none">
+	<circle display="inline" opacity="0.5" fill="#DF1F26" cx="57" cy="57" r="60"/>
+	<rect x="3.5" y="3.5" display="inline" opacity="0.5" fill="#3B4FA1" width="107" height="107"/>
+</g>
+<g id="normal">
+	<path fill="#3A3A3A" d="M11.162,31.003H1V1h30v9.447v1.084H11.162V31.003z M83,1v10.162h19.47V31h1.084H113V1H83z M102.838,102.47
+		l-19.838,0v3.084V113l30,0l0-30h-10.162V102.47z M11.53,83H8.446L1,83l0,30l30,0v-10.162H11.53V83z"/>
+	<polygon id="XMLID_60_" fill-rule="evenodd" clip-rule="evenodd" fill="#3A3A3A" points="29,79 57,29 85,78.473 57,71.019 	"/>
+</g>
+<g id="active">
+	<path fill="#3A3A3A" d="M11.162,31.003H1V1h30v9.447v1.084H11.162V31.003z M83,1v10.162h19.47V31h1.084H113V1H83z M102.838,102.47
+		l-19.838,0v3.084V113l30,0l0-30h-10.162V102.47z M11.53,83H8.446L1,83l0,30l30,0v-10.162H11.53V83z"/>
+	<polygon id="XMLID_4_" fill="#3A3A3A" points="29,79 57,29 85,78.473 57,71.019 	"/>
+</g>
+<g id="disabled" opacity="0.2">
+	<path fill="#3A3A3A" d="M11.162,31.003H1V1h30v9.447v1.084H11.162V31.003z M83,1v10.162h19.47V31h1.084H113V1H83z M102.838,102.47
+		l-19.838,0v3.084V113l30,0l0-30h-10.162V102.47z M11.53,83H8.446L1,83l0,30l30,0v-10.162H11.53V83z"/>
+	<polygon id="XMLID_2_" fill-rule="evenodd" clip-rule="evenodd" fill="#3A3A3A" points="29,79 57,29 85,78.473 57,71.019 	"/>
+</g>
+</svg>

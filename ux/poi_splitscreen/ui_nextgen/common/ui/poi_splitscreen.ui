@@ -1,0 +1,363 @@
+;-------WANDEL™ 20.02.2021--------- 
+<observer obs_rmsplit_timer value=(%gps.current_time) onchange=sc_SplitScreen_timer START="NO_TRIGGER" /> 
+<observer obs_wSplitScreenPOI_search_done boolmodel="poi.flat_search.ready" onselect=sc_wOnSplitScreenPOI_reset_doneOK />
+
+<var distance_onroute=0 />
+<var selected_group_id=-1 />
+<element_template et_splitscreeninfo>
+	<implementation>
+		<property onroute value=(%lua.wSplitScreenPOIOnRoute && %route.list.navigated.has_navigable_path) />
+		<property splitpoi_icon_id value=( %*.icon_id // -1 ) /> 
+		<property splitpoi_detour_len value=( %*.detour_len // 0 ) /> 
+		<property splitpoi_detour_id value=( %*.detour_id // -1 ) /> 
+		
+		<property splitpoi_distance value=( onroute && distance_onroute ? %*.distance : distance(%navigation.car.position, %*.position) ) /> ;it is possible only at searching start
+		;<property splitpoi_distance value=( distance(%navigation.car.position, %*.position) ) /> ;observe(%navigation.car.position); 
+		<property splitscreeninfo_alpha value=( sc_GetSysEntry("splitscreeninfo", "alpha", %lua.aCockpitTransparency) ) /> 
+	</implementation>
+
+	<BUTTON Small_Left_Button class="btn_map" left=0 top=0 h=100% w=75 z=15 onrelease='VW_StopoverOrNewRoute(); MODEL.my.poi.select_poi(MODEL["*"].provider_id(), MODEL["*"].id()); st_PointOnMap.poiselected = EPoiselected.poi; hook_ShowPointOnMap:trigger()'
+		onlongclick='
+			if selected_group_id() == -1 then
+				ui.selected_group_id = MODEL["*"].group_id()
+			else
+				ui.selected_group_id = -1
+			end
+			' >
+		<SPRITE class="button map fill" alpha=splitscreeninfo_alpha />
+		
+		<SPRITE Small_Left_Button_icon_NB class="btn_map svg" z=2 iconid=splitpoi_icon_id iconindex=2 visible=(!VW_isPoiBranded(splitpoi_icon_id, 2)) />
+		<SPRITE Small_Left_Button_icon_B class="listitem poi_branded" left=2% right=2% TOP=2% bottom=2% z=2 iconid=splitpoi_icon_id iconindex=2 visible=(VW_isPoiBranded(splitpoi_icon_id, 2)) />
+		
+		<SPRITE class="btn_map svg" z=3 img="ico_selected.svg" valign="bottom" visible=(selected_group_id != -1) />
+	</BUTTON>
+
+	<BUTTON Long_Right_Button class="btn_map" left=75 right=(84+15) top=0 h=100% onrelease='VW_StopoverOrNewRoute(); MODEL.my.poi.select_poi(MODEL["*"].provider_id(), MODEL["*"].id()); hook_StartRoutePlanning()' > 
+		<SPRITE CLASS="button map fill" alpha=splitscreeninfo_alpha />
+		<TEXT class="font_sec r2l" left=10 right=0 top=5 bottom=5 align=(%regional.current_language.is_r2l ? "RIGHT" : "LEFT") leading=0.85 wordwrap=4 text=(%*.name + (POIwithAddress ? (L"\n" + W_Town_by_IDs(%*.provider_id, %*.id)) : L"")) />
+	</BUTTON>
+	
+	<BUTTON class="btn_map" w=86 right=11 top=0 h=100% onrelease='ui.distance_onroute = not distance_onroute(); centerPoint = GCOOR.new({lat = parse_gcoor("N90"), lon = parse_gcoor("E0")})' 
+		onlongclick='sc_SetPopoverListAndOpen("ui.lm_WarningPOIdist_popover")' > 
+		<SPRITE CLASS="button map fill" alpha=splitscreeninfo_alpha />
+		
+		<DISTTEXT class="font_sec r2l" right=0 bottom=65% h=30% w=86 align="CENTER" text="+ " distance=splitpoi_detour_len visible=(onroute) />
+		<DISTTEXT class="font_sec r2l" right=0 bottom=5%  h=30% w=86  align="CENTER" distance=splitpoi_distance />
+		<SPRITE class="listitem_svg" iconid=splitpoi_detour_id iconindex=0 visible=(onroute) />
+		<SPRITE class="svg poi_dir_split" visible=(!onroute) />
+		
+		<SPRITE class="btn_map svg" img="road-sign-arrow.svg" visible=(onroute && distance_onroute) image_w=(CSS.Param.svg_map_button_image_w*40/100) align="RIGHT+20" zoom=50% />
+	</BUTTON>
+</element_template>
+
+<layer ui_SplitscreenInfo z=15 visible=(ui_PropLayer.SplPoiListIsVisible && !(ui_PropLayer.SignpostVisible && bLaneInfoSignpostAtManeuver) && !%screen.msgbox.is_onscreen) >
+	<DIV class="cockpit">
+		<DIV class="map_messagebox splitscreeninfo">
+			<LIST2 lst_SplitscreenInfo class="spl_panel" SMOOTHSCROLLING REVERSED=0>
+				<LISTMODEL listmodel="ui.lm_splitpoi.list" element_template="et_splitscreeninfo" />
+				<VSMARTSCROLL>
+				<WHEEL>
+			</LIST2>
+		</DIV>
+		<layer>
+			<DIV class="cockpit">
+				<DIV class="map_messagebox">
+					<SPRITE class="panel map background"  onrelease=sc_CloseSplPanel overmaplayer />
+	           		<EMPTYLISTTEXT  text=( sprintf( translate(m_i18n( "No matching results: %s" )), %lua.PoiSearchCenterName ) ) visible=( %lua.PoiSearchList == "struct_search" ? ( %poi.struct_search.ready && !%poi.struct_search.group_list.size && !%poi.struct_search.poi_list.size ) : ( %poi.flat_search.ready && !%poi.flat_search.list.size && %poi.struct_filter.ready && !%poi.struct_filter.group_list.size ) ) />
+				</DIV>
+			</DIV>
+		</layer>
+	</DIV>
+</layer>
+
+<element_template et_APOIGroupList>
+	<implementation>
+		<property VisibilityMode value=(search_visibility(%*.path)) />
+	</implementation>
+
+	;;<BUTTON class="listitem" onrelease='sc_PoiVisibilityToChild(); ui.inp_Input.value = L""' enable=%*.has_child />
+	<BUTTON class="listitem" z=110 left=0 right=10% onrelease='sc_Structure_ToChildAP(); ui.inp_Input.value = L""' enable=%*.has_child />
+
+	<HBOX class="listitem">
+		<HBOX class="listitem poigroup_container">
+			<SPRITE class="listitem poi_visibility" z=103 align="left" iconindex=((VisibilityMode == 1 || VisibilityMode == 2) ? 2 : 4) iconmodel="*.icon" visible=(%*.has_child && !VW_isPoiBranded( %*.icon, 2 )) />
+			;<SPRITE class="listitem poi_branded" align="left" z=102 iconindex=((VisibilityMode == 1 || VisibilityMode == 2) ? 2 : 4) iconmodel="*.icon" visible=(%*.has_child && VW_isPoiBranded( %*.icon, 2 )) /> 
+
+			<SPRITE class="listitem" z=102 iconindex=(VisibilityMode == 2 ? 2 : 4) iconmodel="*.icon" visible=( !VW_isPoiBranded( %*.icon, 2 ) ) /> 
+			<SPRITE class="listitem poi_branded" z=102 iconindex=(VisibilityMode == 2 ? 2 : 4) iconmodel="*.icon" visible=( VW_isPoiBranded( %*.icon, 2 ) ) /> 
+					
+			<SPRITE class="listitem poi_visibility" z=101 align="right" iconindex=(VisibilityMode == 2 ? 2 : 4) iconmodel="*.icon" visible=(%*.has_child && !VW_isPoiBranded( %*.icon, 2 )) />
+			;<SPRITE class="listitem poi_branded" align="right" z=102 iconindex=(VisibilityMode == 2 ? 2 : 4) iconmodel="*.icon" visible=(%*.has_child && VW_isPoiBranded( %*.icon, 2 )) /> 
+		</HBOX>
+		<TEXT r2l_invert=1 class="listitem icon poicat" z=101 text=%*.name />
+	</HBOX>
+		
+	<BUTTON class="listitem" left=90% right=5% z=120 onrelease='sc_wSplitScreenPOIGroupSelectStart() sc_SetTitleStructurePOICatList()'  >
+		<SPRITE class="btn_map svg" img="ico_radio_with_separator.svg" phasename=(VisibilityMode == 1 || VisibilityMode == 2 ? "ON" : "OFF") /> 
+	</BUTTON>
+</element_template>
+
+<userlist lm_AddPOI_footer text="str" onrelease="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1/>
+	<view visibility_filter=visible />
+		<row text="Done" isactionbutton=1 onrelease=sc_wSplitScreenPOIGroupSelectDone />
+</userlist>
+
+<layer ui_AddPOI z=160>
+	<DIV class="list">
+		<SECTIONMARKER/>
+		<LIST2 lst_AP class="list_control" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.VW_AddPOI_filtered.filter" element_template="et_APOIGroupList" >
+			<VSMARTSCROLL>  
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+		
+		<EMPTYLISTTEXT text=( sprintf( translate(m_i18n( "No matching results: %s" )), inp_Input.VALUE ) ) visible=( !%ui.VW_AddPOI_filtered.filter.size ) />
+		
+		<layer>
+			<DIV class="list">
+				<SPRITE class="panel list input" />
+			</DIV>
+		</layer>
+		
+	</DIV>
+</layer>
+
+<views VW_AddPOI_filtered listmodel="poi.structure.group_list" >
+	<view filter filter=(inp_Input.VALUE ? VW_Filter_AddPOI($1.path) : true) />
+</views>
+
+<element_template et_wSplitScreenPOISettingsGroupList>
+	<implementation>
+		<property iconid value=(VW_POI_AroundGroupGetIconId(%*.name)) />
+	</implementation>
+	<HBOX class="listitem">
+		<SPRITE class="listitem poi_branded" iconid=(iconid) visible=(VW_isPoiBranded(iconid, 2)) iconindex=2 />
+		<SPRITE class="btn_map svg" iconid=(iconid) visible=(!VW_isPoiBranded(iconid, 2)) iconindex=2 />
+		<VBOX class="listitem">
+			<TEXT class="listitem top" text=(sc_wSplitScreenPOIGroupGetName(%*.name)) />
+			<TEXT class="listitem bottom" text=(sc_wSplitScreenPOIGroupGetPath(%*.name)) />
+	  	</VBOX>
+	</HBOX>
+	<BUTTON class="btn_main" right=10 top=0 bottom=0 w=100 z=50 onrelease='MODEL.ui.lm_splitpoi_groups.list.index = index sc_wSplitScreenPOIGroupDel_OnRelease()'>
+		<SPRITE class="btn_map svg" img="ico_del_sml.svg" />
+	</BUTTON>
+</element_template>
+
+<userlist lm_wSplitScreenPOISettingsGroupList_footer text="str" onrelease="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1/>
+	<view visibility_filter=visible />
+		<row text="Change" isactionbutton=1 onrelease='obs_Load_lm_splitpoi_groups:START() sc_wSplitScreenPOIGroupStartSelect()' enable=(%ui.lm_splitpoi_groups.list.size < 16) />
+</userlist>
+          
+<layer ui_wSplitScreenPOISettingsGroupList z=160>
+	<DIV class="list">
+		<LIST2 class="list_control" element_template="et_wSplitScreenPOISettingsGroupList" listmodel="ui.lm_splitpoi_groups.list" SMOOTHSCROLLING>
+			<VSMARTSCROLL>
+			<WHEEL>
+		</LIST2>
+		<TEXT class=noitems text="<No items>" visible=%ui.lm_splitpoi_groups.list.isempty />
+	</DIV>
+</layer>
+
+<element_template et_wSplitScreenPOISettingsProvider>
+	<BUTTON class="listitem" onrelease=sc_wSplitScreenPOISettingsProviderElement_onrelease>
+		<HBOX class="listitem">
+	
+			<SPRITE class="btn_map svg" iconid=%*.icon_id  iconindex=2 visible=(!VW_isPoiBranded(%*.icon_id, 2)) />
+			<SPRITE class=poi_branded iconid=%*.icon_id  iconindex=2 visible=(VW_isPoiBranded(%*.icon_id, 2)) />
+				
+		 	<TEXT class="listitem icon" text=(translate(m_i18n("Logical provider~" + %*.name))) visible=(%*.icon_id != -1) />
+		</HBOX>
+	</BUTTON>
+</element_template>
+       
+<layer ui_wSplitScreenPOISettingsProvider z=35>
+	<DIV class="list">
+		<LIST2 class="list_control" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.lm_wSplitScreenPOISettingsProviderList" element_template="et_wSplitScreenPOISettingsProviderList" onrelease=sc_wSplitScreenPOISettingsProviderElement_onrelease   iconname=%*.iconname />
+			<LISTMODEL listmodel="poi.logical_providers" element_template="et_wSplitScreenPOISettingsProvider" />
+			<VSMARTSCROLL>  
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<userlist lm_wSplitScreenPOISettingsProviderList enable="bool" visible="bool"  text="str" name="str" iconname="str">
+	<default enable=1 visible=1/>
+	<view visibility_filter=visible />
+		<row  text="All" name="all" iconname="poi_all" />
+		<row  text="KML POI" name="kmlpoi" iconname="poi_kml" />
+		<row  text="User POI" name="userpoi" iconname="user_poi" />
+		<row  text="Picture POI" name="picturepoi" iconname="picture_poi" />
+</userlist>
+
+
+<element_template et_wSplitScreenPOISettingsProviderList  iconname="">
+	<BUTTON class="listitem"  onrelease=ONRELEASE>
+		<HBOX class="listitem">
+			<SPRITE class="listitem icon mypoi svg" z=11 iconid=(sc_GetIconID(ICONNAME)) />
+			<TEXT class="listitem icon" text=%*.text />
+		</HBOX>
+	</BUTTON>
+</element_template>
+;------------------------------ END --------------------------------------
+
+<userlist lm_splitpoi name="wstr" icon_id="int" detour_id="int" position="gcoor" distance="int" detour_len="int" provider_id="int" group_id="int" id="qword" >
+	<view visibility_filter=(selected_group_id == -1 ? 1 : ($1.group_id == selected_group_id)) />
+</userlist>
+
+<userlist lm_splitpoi_groups name="str">
+	<default FILENAME="splitpoi_groups.txt" />
+</userlist>
+
+<var POIwithAddress=1 permanent />
+<userlist wSplitScreenPOISettingsList haspopover="bool" text="str" bmp="str" iconphase="int" bitvalue="int" isselected="str"  visible="bool" enable="bool" onrelease="ui" details="ui" type="str">
+    <view visibility_filter=visible />
+    <default text="" details=undef onrelease=undef enable=1 visible=1>
+	<row	text="Always show Split POI in Cockpit" type="ChkOnOff" isselected="lua.ShowSplitpoiInCockpit" />
+	<row    text="Split Screen Close Timer" details=(%lua.SplitScreenCloseTimer ? sc_ShowTimeTool(%lua.SplitScreenCloseTimer) : translate("Never")) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_SplitScreenCloseTimer" )' />
+	<row  	text="POI provider" haspopover=1 details=(sc_wSplitScreenPOISettingsProviderName(%lua.wSplitScreenPOIProvider)) onrelease='sc_NextStateAnim(st_wSplitScreenPOISettingsProvider, "fade", 1, "" )' visible=(%lua.PoiProviderFiltering && %poi.initialized) />
+	<row  	text="POI category list" haspopover=1 details=(%ui.lm_splitpoi_groups.list.isempty ? translate("All Places") : translate("Quantity") + L": " + (%ui.lm_splitpoi_groups.list.size)) onrelease='sc_NextStateAnim(st_wSplitScreenPOISettingsGroupList, "fade", 1, "" )' />
+	<row  	text="POI name filter" haspopover=1 details=(%lua.wSplitScreenPOIFilter==L"" ? translate("Off") : %lua.wSplitScreenPOIFilter) onrelease='sc_NextStateAnim(st_SimpleInputText, "fade", 1, "" )' />      
+	<row	text="Search" haspopover=1 details=(%lua.wSplitScreenPOIOnRoute ? "Along Route" : "Around Here") onrelease={invert(%lua.wSplitScreenPOIOnRoute)} />
+	<row  	text=(%lua.wSplitScreenPOIOnRoute ? "Detour length" : "Around area size") details=(sc_ShowDistanceTool(%lua.wSplitScreenPOIOnRoute ? %lua.wSplitScreenPOIDistance_Detour : %lua.wSplitScreenPOIDistance_Around)) haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_WarningPOIdist_popover")' />
+	<row	text="POI with Address" type="ChkOnOff" isselected="ui.POIwithAddress" />
+</userlist>
+
+<userlist lm_SplitScreenCloseTimer name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text="Never" max_text=(sc_ShowTimeTool(120)) />
+	   <row name="Split Screen Close Timer" text=(%lua.SplitScreenCloseTimer ? sc_ShowTimeTool(%lua.SplitScreenCloseTimer) : translate("Never")) type="Scroll" min=0 max=120 step=10 valuemodel="lua.SplitScreenCloseTimer" />
+</userlist>
+
+<userlist lm_WarningPOIdist_popover name="str" text="wstr" onrelease="ui" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(1000)) max_text=(sc_ShowDistanceTool(%lua.wSplitScreenPOIOnRoute ? 5000 : 30000)) />
+	   <row name=(%lua.wSplitScreenPOIOnRoute ? "Detour length" : "Around area size") text=(sc_ShowDistanceTool(%lua.wSplitScreenPOIOnRoute ? %lua.wSplitScreenPOIDistance_Detour : %lua.wSplitScreenPOIDistance_Around)) type="Scroll" min=1000 max=(%lua.wSplitScreenPOIOnRoute ? 5000 : 30000) step=100 valuemodel=(%lua.wSplitScreenPOIOnRoute ? "lua.wSplitScreenPOIDistance_Detour" : "lua.wSplitScreenPOIDistance_Around") onrelease='st_wSplitScreenPOISettings.exit()' />
+</userlist>
+
+<observer obs_Detoure_Around value=(%lua.wSplitScreenPOIOnRoute && %route.list.navigated.has_navigable_path) 
+	onselect='MODEL.lua.wSplitScreenPOIDistance_20 = MODEL.lua.wSplitScreenPOIDistance_Detour()' 
+	ondeselect='MODEL.lua.wSplitScreenPOIDistance_20 = MODEL.lua.wSplitScreenPOIDistance_Around()' 
+	start />
+	
+;-----------modification-------------
+<modify ui_PropLayer> 
+	<insert into="IMPLEMENTATION"> 
+		<PROPERTY SplPoiListIsAvailable VALUE=( !(ui_PropLayer.JunctionViewVisible || (ui_PropLayer.MiniJunctionViewVisible && %lua.IsPortrait) || ui_PropLayer.TunnelOverviewVisible || (%navigation.tunnel_view.overview.available && %navigation.tunnel_view.enabled)) ) />
+		<PROPERTY ShowSplOpenBtn VALUE=(!SignpostVisible && !JunctionViewVisible && !%screen.msgbox.is_onscreen && !ui_Cockpit.p2p_valid) />
+	</insert>
+    <modify SplPoiListIsVisible VALUE=(%ui.lm_splitpoi.list.size > 0 && %lua.SplPoiListIsVisible && ui_PropLayer.SplPoiListIsAvailable && !ui_PropLayer.SignpostVisible && !%lua.DragMode && !%lua.MenuIsOpened ) />
+	<insert>
+		<OBSERVER  VALUE=( ui_PropLayer.SplPoiListIsVisible && %lua.CockpitMapMode ) ONCHANGE=sc_SetNavCarPos START />
+	</insert>
+</modify>
+<modify ui_Cockpit >
+	<insert into="IMPLEMENTATION"> 
+		<PROPERTY splitpoi_icon_id VALUE=( %ui.lm_splitpoi.list[0].icon_id // -1 ) /> 
+		<PROPERTY splitpoi_detour_len VALUE=( %ui.lm_splitpoi.list[0].detour_len // 0 ) /> 
+		<PROPERTY splitpoi_detour_id VALUE=( %ui.lm_splitpoi.list[0].detour_id // -1 ) /> 
+		
+		<PROPERTY splitpoi_position VALUE=( %ui.lm_splitpoi.list[0].position // 0L ) /> 
+		<PROPERTY splitpoi_onroute VALUE=(%lua.wSplitScreenPOIOnRoute && %route.list.navigated.has_navigable_path) />
+		;<PROPERTY splitpoi_distance VALUE=( distance(%navigation.car.position, splitpoi_position) ) /> 
+		<PROPERTY splitpoi_distance VALUE=( splitpoi_onroute && distance_onroute ? %ui.lm_splitpoi.list[0].distance : distance(%navigation.car.position, splitpoi_position) ) /> ;it is possible only at searching start
+	</insert>
+	<modify spl_poi_quick_menu VALUE=( !%lua.ShowSplitpoiInCockpit && %lua.ShowSplOpenBtn && %lua.SplPoiListIsVisible ) />
+	<modify spl_poi_quick_menu2 VALUE=( %lua.ShowSplitpoiInCockpit && %lua.ShowSplOpenBtn ) />
+
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON SplitPoiBtn CLASS="btn_map" ONRELEASE='
+			if MODEL.lua.SplPoiListIsVisible() then
+				if MODEL.screen.msgbox.is_onscreen() then 
+					MODEL.screen.msgbox.pause_tags("popup", true) 
+				else
+					if MODEL.screen.msgbox.list.size() > 0 then
+						MODEL.screen.msgbox.resume_tags("popup")
+					else
+						sc_OpenCloseSplPanel()
+						ui.selected_group_id = -1
+					end
+				end
+			else
+				sc_OpenCloseSplPanel()
+				ui.selected_group_id = -1
+			end' 
+			ONLONGCLICK='sc_NextStateAnim(st_wSplitScreenPOISettings, "fade", 1, "")' 
+			VISIBLE=( spl_poi_quick_menu || spl_poi_quick_menu2 ) >
+	       	<SPRITE CLASS="button map fill" />
+			<SPRITE CLASS="btn_map svg" IMG=(%lua.SplPoiListIsVisible ? (%lua.IsLandscape ? "ico_SplitClose_sml_landscape.svg" : "ico_SplitClose_sml_portrait.svg") : (%lua.IsLandscape ? "ico_SplitOpen_sml_landscape.svg" : "ico_SplitOpen_sml_portrait.svg"))  ZOOM="ZOOMVISIBLE" VISIBLE=(%ui.lm_splitpoi.list.size == 0 || !%lua.SplPoiListIsVisible) />
+			
+			<SPRITE CLASS="btn_map svg" ICONID=(splitpoi_icon_id) ICONINDEX=2
+				VISIBLE=(%ui.lm_splitpoi.list.size > 0 && %lua.SplPoiListIsVisible && !VW_isPoiBranded(splitpoi_icon_id, 2)) />
+			<SPRITE CLASS=poi_branded TOP=25% BOTTOM=25% ICONID=(splitpoi_icon_id) ICONINDEX=2
+				VISIBLE=(%ui.lm_splitpoi.list.size > 0 && %lua.SplPoiListIsVisible && VW_isPoiBranded(splitpoi_icon_id, 2)) />
+			
+			<DISTTEXT CLASS="detour_to_poi" DISTANCE=(splitpoi_detour_len) VISIBLE=(%ui.lm_splitpoi.list.size > 0 && %lua.SplPoiListIsVisible && splitpoi_onroute) />
+			<SPRITE CLASS="detour_icon" ICONID=(splitpoi_detour_id) ICONINDEX=0 VISIBLE=(%ui.lm_splitpoi.list.size > 0 && %lua.SplPoiListIsVisible && splitpoi_onroute) />
+			<DISTTEXT CLASS="distance_to_poi" DISTANCE=(splitpoi_distance) VISIBLE=(%ui.lm_splitpoi.list.size > 0 && %lua.SplPoiListIsVisible) />
+
+			<TEXT CLASS="BTN_top_text" TEXT=(VW_Return_button_text(translate("POI selector"), L"%s", 1)) VISIBLE=((%ui.lm_splitpoi.list.size == 0 || !%lua.SplPoiListIsVisible) && %lua.text_on_buttons) />
+			<TEXT CLASS="BTN_bottom_text" TEXT=(VW_Return_button_text(translate("POI selector"), L"%s", 99)) VISIBLE=((%ui.lm_splitpoi.list.size == 0 || !%lua.SplPoiListIsVisible) && %lua.text_on_buttons) />
+			
+			<SPRITE CLASS="btn_map svg" IMG="road-sign-arrow.svg" VISIBLE=(splitpoi_onroute && distance_onroute) IMAGE_W=(CSS.Param.svg_map_button_image_w*40/100) ALIGN="RIGHT+20" ZOOM=50% />			
+		</BUTTON>
+	</insert>
+</modify>
+<modify ui_SideList>       
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON CLASS="btn_map" 
+			ONRELEASE='sc_OpenCloseSplPanel(); ui.selected_group_id = -1' 
+			ONLONGCLICK='ui.SplitPoiBtn.ONLONGCLICK()()'
+			VISIBLE=(%lua.ShowSplOpenBtn)>
+	       	<SPRITE CLASS="button map fill" />
+			<SPRITE CLASS="btn_map svg" IMG=(%lua.SplPoiListIsVisible ? (%lua.IsLandscape ? "ico_SplitClose_sml_landscape.svg" : "ico_SplitClose_sml_portrait.svg") : (%lua.IsLandscape ? "ico_SplitOpen_sml_landscape.svg" : "ico_SplitOpen_sml_portrait.svg"))  ZOOM="ZOOMVISIBLE" VISIBLE=(%ui.lm_splitpoi.list.size == 0 || !%lua.SplPoiListIsVisible) />
+			
+			<SPRITE CLASS="btn_map svg" ICONID=(ui_Cockpit.splitpoi_icon_id) ICONINDEX=2
+				VISIBLE=(%ui.lm_splitpoi.list.size > 0 && %lua.SplPoiListIsVisible && !VW_isPoiBranded(ui_Cockpit.splitpoi_icon_id, 2)) />
+			<SPRITE CLASS=poi_branded TOP=25% BOTTOM=25% ICONID=(ui_Cockpit.splitpoi_icon_id) ICONINDEX=2
+				VISIBLE=(%ui.lm_splitpoi.list.size > 0 && %lua.SplPoiListIsVisible && VW_isPoiBranded(ui_Cockpit.splitpoi_icon_id, 2)) />
+			
+			<DISTTEXT CLASS="detour_to_poi" DISTANCE=(ui_Cockpit.splitpoi_detour_len) VISIBLE=(%ui.lm_splitpoi.list.size > 0 && %lua.SplPoiListIsVisible && ui_Cockpit.splitpoi_onroute) />
+			<SPRITE CLASS="detour_icon" ICONID=(ui_Cockpit.splitpoi_detour_id) ICONINDEX=0 VISIBLE=(%ui.lm_splitpoi.list.size > 0 && %lua.SplPoiListIsVisible && ui_Cockpit.splitpoi_onroute) />
+			<DISTTEXT CLASS="distance_to_poi" DISTANCE=(ui_Cockpit.splitpoi_distance) VISIBLE=(%ui.lm_splitpoi.list.size > 0 && %lua.SplPoiListIsVisible) />
+			
+			<TEXT CLASS="BTN_top_text" TEXT=(VW_Return_button_text(translate("POI selector"), L"%s", 1)) VISIBLE=((%ui.lm_splitpoi.list.size == 0 || !%lua.SplPoiListIsVisible) && %lua.text_on_buttons) />
+			<TEXT CLASS="BTN_bottom_text" TEXT=(VW_Return_button_text(translate("POI selector"), L"%s", 99)) VISIBLE=((%ui.lm_splitpoi.list.size == 0 || !%lua.SplPoiListIsVisible) && %lua.text_on_buttons) />
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=( (ui_Cockpit.spl_poi_quick_menu2 // 0) || (ui_Cockpit.spl_poi_quick_menu // 0) ) />
+	</insert>
+</modify>
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=( %lua.ShowSplOpenBtn ) />
+	</insert>
+</modify>
+
+<modify lm_MapVisualSettings>
+	<insert after="default">
+		<row prio=910 text="Split Screen(POI)" isselected="lua.ShowSplOpenBtn" type="ChkOnOff" />
+		<row prio=910 text="Split Screen(POI Page) Settings" haspopover=1 onrelease='sc_NextStateAnim(st_wSplitScreenPOISettings, "fade", 1, "" )' visible=(%lua.ShowSplOpenBtn) />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons >
+	<insert>
+		<row  text="Split Screen(POI Page) Button in Cockpit" haspopover=1 type="" icon="ico_SplitOpen_sml_landscape.svg"
+			onrelease=(!%lua.ShowSplOpenBtn ? 'sc_NextStateAnim(st_MapVisualSettings, "fade", 1, "" )' : 'sc_NextStateAnim(st_wSplitScreenPOISettings, "fade", 1, "" )') 
+			details=(%lua.ShowSplOpenBtn ? (%lua.ShowSplitpoiInCockpit ? "On" : "Off") : "Turn ON it in 'Map Settings'") />
+	</insert>
+</modify>
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row  text="Split Screen(POI Page) Button in Cockpit" haspopover=1 type="" icon="ico_SplitOpen_sml_landscape.svg"
+			onrelease=(!%lua.ShowSplOpenBtn ? 'sc_NextStateAnim(st_MapVisualSettings, "fade", 1, "" )' : 'sc_NextStateAnim(st_wSplitScreenPOISettings, "fade", 1, "" )') 
+			details=(%lua.ShowSplOpenBtn ? (%lua.ShowSplitpoiInCockpit ? "On" : "Off") : "Turn ON it in 'Map Settings'") />
+	</insert>
+</modify>

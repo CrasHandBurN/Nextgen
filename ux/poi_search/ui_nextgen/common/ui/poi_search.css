@@ -1,0 +1,62 @@
+/*------- VW -- 29.11.2017  ------ */
+SPRITE.detour_icon {
+	left: 1%; w: 35%; top:1%; h:35%; z:60; valign:"CENTER";  align:"CENTER"; zoom:80%;
+	ROTATE:(-(direction(%navigation.car.position, ui_Cockpit.splitpoi_position, %navigation.car.heading) + 1024) * 360.0 / 4096);
+}
+
+SPRITE.poi_branded {
+	left:0; right:0; top:0; bottom:0;
+	valign:"CENTER"; align:"CENTER"; 
+	zoom:"ZOOMVISIBLE";
+	/*
+	desired_w:brand_poi_image_w; 
+	desired_h:brand_poi_image_h;
+	
+	image_w: svg_map_button_image_w; image_h: svg_map_button_image_h;
+	*/
+	image_w: brand_poi_image_w; image_h: brand_poi_image_h;
+}
+
+SPRITE.listitem.poi_branded {
+	left:0; right:0; top:0; bottom:0;
+	valign:"CENTER"; align:"CENTER"; 
+	zoom:"ZOOMVISIBLE";
+	
+	desired_w:brand_poi_image_w; 
+	desired_h:brand_poi_image_h;
+	/*
+	image_w: svg_map_button_image_w; image_h: svg_map_button_image_h;
+	
+	image_w: brand_poi_image_w; image_h: brand_poi_image_h;
+	*/
+}
+
+DIV.list.poisearchcenter {
+	w: list_w;
+}
+
+HBOX.poi_visibility {
+	paddingleft:0; paddingright:0;
+	desired_w: 60;
+}
+
+HBOX.listitem.poigroup_container{
+	paddingleft:0; paddingright:0;
+	desired_w:60;
+}
+
+HBOX.poi_visibility SPRITE.listitem{
+	image_w:svg_listitem_image_w; image_h:svg_listitem_image_h;
+}
+
+SPRITE.listitem.poi_visibility{
+	left:0; top:0; right:0; bottom:0; 
+	position: "absolute";
+}
+
+SPRITE.listitem.svg.poi,
+SPRITE.listitem.icon_list.svg.poi {
+	desired_w:60; 	
+	zoom: (%my.poi.current_group("kmlpoi") ? "ZOOMVISIBLE" : undef ) ;
+	
+}

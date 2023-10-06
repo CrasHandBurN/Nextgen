@@ -1,0 +1,48 @@
+
+
+.junctionview{
+	left:(!(%navigation.tunnel_view.overview.available && %navigation.tunnel_view.enabled) && %navigation.junctionview_type == 1 ? -(30%) : (0)); 
+	z:(%navigation.junctionview_type == 0 ? 50 : 1);
+}
+
+.junctionview_patch{
+	left:0; 
+	top:0; 
+	right:0;
+	z:1000; 
+	img:("");
+}
+
+.ejv_patch{
+	left:0; 
+	top:0;
+	right:0;
+	bottom:0;
+	z:49; 
+	img:"ejv_patch.bmp";
+	resize_bmp:1;
+	visible:(%navigation.junctionview_type == 0);
+}
+
+DISTTEXT.tunnel{
+	bottom: 25%;
+}
+
+SPRITE.panel_map_tunnel{
+	left:80%; 
+	right:0; 
+	z:10;
+	resize_bmp:1; 
+	img:"panel_map.bmp";
+}
+
+SPRITE.panel_map_tunnel_length{
+	left:80%; 
+	right:0; 
+	z:10;
+	resize_bmp:1; 
+	img:"panel_map.bmp";
+}
+
+@import "~/common/ui/junctionview_landscape.css" landscape;
+@import "~/common/ui/junctionview_portrait.css" portrait;

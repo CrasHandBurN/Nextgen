@@ -1,0 +1,84 @@
+/*------------- arimi mod  11.03.2016 ------------*/
+
+#ui_WeatherForecast #lst_forecast{
+	col:7;
+	row:1;
+}
+
+BUTTON.listitem.weather{
+	padding: 0;
+	img: "btn_listitem_vertical.bmp#3";
+}
+
+BOX.listitem.weather{
+	orientation:"VERTICAL";
+	align:"CENTER";
+	box_align:"CENTER";
+	paddingleft: 0;
+	paddingright: 0;
+	CAN_SHRINK:0;
+}
+
+BOX.forecast{
+	FLEX:5;
+}
+
+BOX.listitem.weather > BOX.listitem.weather{
+	paddingleft: 0;
+	paddingright: 0;
+}
+
+BOX.listitem.weather > BOX.listitem.weather TEXT{
+	box_align:"CENTER";
+}
+
+TEMPERATURETEXT.listitem.weather{
+	box_align:"CENTER";
+}
+
+BOX.listitem.details{
+	orientation:"HORIZONTAL";
+}
+
+HBOX.details{
+	box_align:"STRETCH";
+	FLEX: 6;
+	paddingleft:0;
+}
+
+VBOX.details{
+	box_align:"STRETCH";
+	FLEX: 3;
+}
+
+TEXT.details{
+	FLEX: 4;
+}
+
+
+SPRITE.separator_listitem.connected_error{
+	right:(st_PointOnMap.isActive || st_ShowParkingAroundHereOnMap.isActive ? (%lua.QuickBarOpened ? (ui_MapHeader.weather_visible ? (weather_w + quickbar_w) : quickbar_w) : 0) : 0);
+	
+}
+
+BUTTON.background.weather>BOX{
+	orientation:"HORIZONTAL";
+}
+
+BUTTON.background.weather>BOX>TEMPERATURETEXT{
+	box_align:"stretch";
+}
+
+BUTTON.listitem BOX listitem.details HBOX.details HBOX.listitem.weather.details SPRITE.listitem.weather {
+	flex: 1;
+}
+
+
+
+TEMPERATURETEXT.details_weather {
+	fontsize: 50 ;
+}
+
+
+
+/*------------- arimi mod 2016.02.14 ------------*/

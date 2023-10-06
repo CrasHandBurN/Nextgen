@@ -1,0 +1,243 @@
+DIV.mapheader{
+	h:mapheader_h ;
+}
+
+DIV.mapmain.mapcontrol{
+	top: ( header_h + (ui_MapHeader_prop.isVisible ? (st_TrafficMap.isActive ? mapheader_h_tmc : mapheader_h):
+					  st_WhereAmI.isActive && %navigation.car.near_city ? whereami_mapcontrol_y : 0)
+					  + ((%lua.MapHeaderMode == "avoid" || %lua.MapHeaderMode == "avoid_ahead") ?  legend_h : 0 ) ); 
+}
+
+TABLE.traffic_summary{
+	row:4;
+	cellh:25%,35%,20%,20%;
+	compact:1;
+}
+
+DISTTEXT.next_event_distance{
+	orientation:"vertical";
+}
+
+SPACER.traffic {
+	desired_h:0;
+}
+
+BOX.traffic_summary_box{
+	orientation:"horizontal";
+}
+
+BOX.next_event.traffic_summary{
+	orientation:"horizontal";
+	flex:0; box_align:"stretch";
+}
+
+BUTTON.next_event.traffic_summary{
+	flex:2.5;
+}
+
+
+DIV.traffic_summary_icon{
+	box_align:"center";
+}
+
+BOX.traffic_summary_buttons{
+	orientation:"horizontal";
+}
+
+TEXT.traffic_summary_delay{
+	wordwrap:1 !important;
+}
+
+BUTTON.btn_main.tmcdetails, SPRITE.tmcdetails_panel{
+	h:26%;
+}
+
+ROADSHIELDEDTEXT.top.tmcdetails{
+	left:13%; right:10%;
+	fontsize:fontsize_main_poi !important;
+	twolinesize:fontsize_main_poi_twoline;
+	wordwrap:1 !important;
+}
+
+ROADSHIELDEDTEXT.bottom.tmcdetails{
+	left:13%; right:10%;
+	fontsize:fontsize_main_poi !important;
+	twolinesize:fontsize_main_poi_twoline;
+	wordwrap:( %regional.current_language.is_r2l ? 1 : 2 ) !important;
+}
+
+DISTTEXT.detailsinfo{
+	orientation:"horizontal";
+}
+
+SPRITE.tmc_details.main{
+	right:(%*.iconid2 != -1 ? svg_details_tmc_icon_overlap_w : 0); top:(%*.iconid2 != -1 ? svg_details_tmc_icon_overlap_h : 0);
+	image_w:(%*.iconid2 != -1 ? svg_listitem_tmc_double_icon_w : svg_listitem_tmc_icon_w);
+	image_h:(%*.iconid2 != -1 ? svg_listitem_tmc_double_icon_h : svg_listitem_tmc_icon_h);
+}
+
+SPRITE.tmc_details.sec{
+	left:svg_details_tmc_icon_overlap_w; bottom:svg_details_tmc_icon_overlap_h; 
+	image_w: svg_listitem_tmc_double_icon_w;
+	image_h: svg_listitem_tmc_double_icon_h;
+}
+
+BUTTON.listitem.tmc_eventlist> DIV.tmc_icon_eventlist{
+	left:1%; top:0; w:10%; h:100%;
+}
+
+HBOX.tmc_event{
+	left:12%;
+}
+
+SPRITE.fitbox.historicaltraffic {
+	left:14%; top:30%; right:14%; bottom:5%;
+}
+
+SPRITE.tmc_event.main.svg{
+	right:(%*.single_icon ? 0 : 15%);
+	top:(%*.single_icon ? 0 : 10%);
+	align:(%*.single_icon ? "CENTER":"LEFT");
+	image_w:(%*.single_icon ? svg_listitem_tmc_icon_w : svg_listitem_tmc_double_icon_w);
+	image_h:(%*.single_icon ? svg_listitem_tmc_icon_h : svg_listitem_tmc_double_icon_h);
+}
+
+SPRITE.tmc_event.sec.svg{
+	left:25%;
+	bottom: 10%;
+	image_w: svg_listitem_tmc_double_icon_w;
+	image_h: svg_listitem_tmc_double_icon_h;
+	align:"RIGHT";
+}
+
+BOX.tmc_event_road{
+	orientation:"horizontal";
+	flex:1;
+}
+
+.tmc_event_road>TEXT{
+	can_shrink:1;
+}
+
+.tmc_event_road>TEXT.tmc_direction{
+	paddingleft:( (%*.roadnumber_enc || %*.road_name) ? text_padding_tmc : 0 );
+}
+
+.tmc_dist_time{
+	left:5%; right:5%; top:3%; z:20;
+}
+
+BOX.mapheader_tmc{
+	orientation:"horizontal";
+}
+
+BOX.mapheader_tmc>BOX.mapheader_tmc.value{
+	orientation:"vertical"; 
+}
+
+ROADSHIELDEDTEXT.mapheader.tmc_road_name,
+ROADSHIELDEDTEXT.bottom.mapheader{
+	wordwrap:1;
+}
+
+TEXT.mapheader.tmc_description{
+	wordwrap:1;
+}
+
+TEXT.mapheader.top.tmc_direction{
+	paddingleft:0;
+}
+
+SPRITE.fitbox.current_traffic {
+	left: 20%;
+	right: 15%;
+}
+
+LIST2.routeprogress.tmc {
+	col:1; row:(%traffic.events.significant_events.size == 0 ? 1 : %traffic.events.significant_events.size);
+	cellh:5%; cellw:undef;
+}
+
+SPRITE.routeprogress.marker.tmc {
+	desired_w:route_progress_tmc_w;
+}
+
+BOX.routeprogress.marker.tmc {
+	orientation:"HORIZONTAL";
+	w:route_progress_w; y:(ui_PropLayer.RouteProgressDistance > 0 ? %*.distance_from_end * route_progressbar_size / ui_PropLayer.RouteProgressDistance : -100);
+	left:0; top:undef; right:undef; bottom: undef; x:undef;
+	h:((min(route_progress_tmc_max_h, max(route_progress_tmc_min_h, ui_PropLayer.RouteProgressDistance > 0 ? %*.length * route_progressbar_size / ui_PropLayer.RouteProgressDistance : 0))));
+}
+
+TEXT.mapheader_text{	
+	box_align:"stretch";
+	align:"left"; 
+	valign:"center";
+	paddingleft:12;
+	flex:1;
+	color: map_main_color;
+	font:"defaultbd";
+	fontsize:fontsize_main 
+}
+
+BOX.mapheader_value{
+	orientation:"VERTICAL";
+	flex:1;
+	box_align:"stretch";	
+}
+
+HBOX.pos{
+	align:"right";
+}
+
+#tmc_decriptiontext{
+	left:3%;
+	right:3%;
+	top:5%;
+	h:25%;
+	wordwrap:2;
+	align:"CENTER";
+	leading:_0.80;
+	padding:0;
+	twolinesmall:0;
+}
+
+#tmc_locationtext{
+	left:3%;
+	right:3%;
+	top:15%;
+	h:40%;
+	wordwrap:3;
+	z:20;
+	align:"CENTER";
+	leading:_0.80; 
+	shieldtextmod:_0.80;
+	padding:0;
+	twolinesmall:0;
+}
+
+#ui_wTMC_onroute .mapmsgbox {
+	w:100%;
+	h:50%;
+}
+
+#ui_wTMC_onroute .2_1_1 {
+	left:0;
+	h:70;
+	w:50%;
+	bottom:70;
+}
+
+#ui_wTMC_onroute .2_1_2 {
+	left:50%;
+	h:70;
+	w:50%;
+	bottom:70;
+}
+
+#ui_wTMC_onroute .1_1_1 {
+	left:0;
+	w:100%;
+	h:70;
+	bottom:0;
+}

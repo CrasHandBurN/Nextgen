@@ -1,0 +1,6 @@
+BmpFlags = 0
+DefFlags = ALPHA_PIXEL
+DefPhase = 0
+Stripes = 5
+
+Animation = "searchprogress_anim_2", 3, "A", "ABCDEFGH"

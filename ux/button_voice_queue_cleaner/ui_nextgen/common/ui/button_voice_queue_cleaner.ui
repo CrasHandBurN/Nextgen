@@ -1,0 +1,28 @@
+;----------------------------------------------------------------------------------
+<modify ui_Cockpit> 
+	<insert last_child into="#CockpitBTNTable"> 
+		<BUTTON_ICON ONRELEASE=VW_Clean_Voice_queue_onrelease ONLONGCLICK='sc_NextStateAnim(st_gLongTextTableToSay, "fade", 1, "" )'
+			ICON="mute.svg"  
+			T_TEXT="Reset" 
+			B_TEXT=(%lua.gLongTextTableToSay_size) 
+			VISIBLE=(%lua.gLongTextTableToSay_size) />
+	</insert>
+</modify>
+<modify lm_CockpitSideList>
+	<insert>
+		<row	visible=(%lua.gLongTextTableToSay_size) />
+	</insert>
+</modify>
+;------------------------------------------------------------------------------------------------
+<observer obs_is_say_bool model="sound.speech.is_say_bool" onchange='VW_VoiceQueueCleaner() if st_gLongTextTableToSay.isActive then st_gLongTextTableToSay.enter() end' START="NO_TRIGGER" />
+
+<userlist lm_gLongTextTableToSay text="wstr" onlongclick="ui" visible="bool" enable="bool" type="str" img="str">
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 type="" onlongclick='table.remove(gLongTextTableToSay, index + 1); obs_is_say_bool:TRIGGER()' />
+</userlist>
+
+<userlist lm_gLongTextTableToSay_footer text="str" onrelease="ui"  onlongclick="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+	<row   text="Clear"   onrelease='VW_Clean_Voice_queue_onrelease(); MODEL.ui.lm_gLongTextTableToSay.clear()' />
+</userlist>

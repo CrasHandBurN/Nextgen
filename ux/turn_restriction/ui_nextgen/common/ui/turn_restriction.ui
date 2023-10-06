@@ -1,0 +1,83 @@
+;------- 20.08.2020 ---- TURN RESTRICTION --WANDEL™--
+<observer value=(%lua.TurnRestrictionIsVisible) onselect='doDelayed(25, sc_wsay_aboutturnrestriction)' START="NO_TRIGGER" />
+<!if condition=( Plugin.isLoaded( "driveralerts" ) )/>
+
+	<modify lm_DA_freeAtTheMoment>
+		<insert>
+			<row TurnRestriction visible=( %lua.TurnRestrictionIsVisible && !%gps.blink ) />
+		</insert>
+	</modify>
+
+	<modify ui_Cockpit>
+		<insert last_child into=box_DA_freeAtTheMoment>
+			<BUTTON BOX_ALIGN="stretch" DESIRED_W=(CSS.Param.cockpit_da_warning_w) VISIBLE=( %lua.TurnRestrictionIsVisible && !%gps.blink ) >
+				<SPRITE CLASS="turn_restr" W=undef H=undef LEFT=0 RIGHT=0 TOP=0 BOTTOM=0 IMAGE_W=(CSS.Param.cockpit_da_warning_w) IMAGE_H=(CSS.Param.cockpit_da_warning_w) />
+			</BUTTON>
+		</insert>
+	</modify>
+<!else/>
+	<modify ui_Cockpit>
+		<insert into="DIV.cockpit">
+			<DIV CLASS="fill">
+				<SPRITE CLASS="turn_restr" VISIBLE=( %lua.TurnRestrictionIsVisible && !%gps.blink ) />
+			</DIV>
+		</insert>
+	</modify>
+<!end/>
+
+<modify lm_WarningsSettings>
+	<insert>
+		<row prio=400 text="Turn restriction" icon="ico_turnrestrictions.svg" onrelease='sc_NextStateAnim(st_TurnRestrictionSettings, "fade", 1, "" )' />
+	</insert>
+</modify>
+
+<userlist lm_TurnRestrictionsettings haspopover="bool" text="str" type="str" enable="bool" visible="bool" onrelease="ui" isselected="str" details="ui" dtooltip="str">
+  <view visibility_filter=visible />
+	<default visible=1 enable=1 onrelease=undef />
+		<row text="Turn restriction" haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_SetTurnRest_Popover")' details=(%ui.lm_SetTurnRest_Popover[%lua.wTurnRestriction].text) />
+		<row text="Turn restr. sound"  isselected="lua.vpTurnRestrictionSound" type="ChkOnOff" enable=(%lua.wTurnRestriction && !(%lua.MuteSoundWithTTS && %regional.current_voice.is_tts)) dtooltip="You have to Turn Off 'Mute All Alert Sounds with TTS' in 'Sound' settings." />
+		<row text="Choose Sound Turn Restriction" haspopover=1 details=(%lua.AudioTurnRestriction) onrelease={%lua.SelectedAudioFile = %lua.AudioTurnRestriction; sc_ScanAudioFiles()} enable=(%lua.vpTurnRestrictionSound && %lua.wTurnRestriction && !(%lua.MuteSoundWithTTS && %regional.current_voice.is_tts)) dtooltip="You have to Turn ON Turn restr. sound." />
+		<row text="Read Out Turn Restriction Info" isselected="lua.wTurnRestrictionVoice" type="ChkOnOff" enable=(%lua.wTurnRestriction) dtooltip="In 'Regional Settings' select supported TTS Voice" />
+		<row text="Speed limit to alert" details=(%lua.TurnRestrictions_speed_limit ? sc_ShowSpeedTool(%lua.TurnRestrictions_speed_limit) : "No limit") haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_TurnRestrictions_speed_limit_popover" )' enable=(%lua.wTurnRestriction) />
+		<row text="Turn Restriction Info Test" onrelease='sc_NextStateAnim(st_wTurnRestSettingTTS, "fade", 1, "")' enable=(%lua.wTurnRestriction && %lua.wTurnRestrictionVoice) dtooltip="In 'Regional Settings' select supported TTS Voice" />
+</userlist>
+
+<userlist lm_TurnRestrictions_speed_limit_popover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text="No limit" max_text=(sc_ShowSpeedTool(250)) />
+	   <row name="Speed limit to alert" text=(%lua.TurnRestrictions_speed_limit ? sc_ShowSpeedTool(%lua.TurnRestrictions_speed_limit) : translate("No limit")) type="Scroll" min=0 max=250 step=10 valuemodel="lua.TurnRestrictions_speed_limit" />
+</userlist>
+
+
+<userlist lm_SetTurnRest_Popover text="str" var="wstr" onrelease="ui" enable="str" value="str">
+	<default text enable=1 />
+	<row text="Off" onrelease='MODEL.lua.wTurnRestriction = 0 sc_ClosePopover()' />
+	<row text="Off route only" onrelease='MODEL.lua.wTurnRestriction = 1 sc_ClosePopover()' />
+	<row text="Always" onrelease='MODEL.lua.wTurnRestriction = 2 sc_ClosePopover()' />
+</userlist>
+
+<userlist list_wTurnRestTypes text="str" visible="bool" >
+	<view visibility_filter=visible />
+	<default visible=1 />
+		<row    text="No left turn" />
+		<row    text="No right turn" />
+		<row    text="Obligation to go straight" />
+		<row    text="No entry" />
+</userlist>
+
+<element_template et_wTurnRestSettingTTS>
+	<BUTTON class="listitem" onrelease=sc_SettingWarningsTurnRestTest >
+		<HBOX class="listitem">
+			<SPRITE class="listitem turnrestrictions svg" img="turnrestrictions.svg" zoom=70% phase=(index) z=20 />
+			<TEXT class="listitem icon" text=%*.text /> 
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_wTurnRestSettingTTS z=35>
+	<DIV class="list">
+		<LIST2 class="list_control" >
+			<LISTMODEL listmodel="ui.list_wTurnRestTypes" element_template="et_wTurnRestSettingTTS" />
+			<WHEEL>
+		</LIST2>
+	</DIV>
+</layer>

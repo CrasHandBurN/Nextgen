@@ -1,0 +1,260 @@
+<event hook_Back default='sc_doBack()' cancellable=1/>
+<event hook_LongBack default='sc_doLongBack()' cancellable=1/>
+<event hook_android_back />
+
+<event hook_StartInit/>
+
+<event hook_SetStartState default='sc_SetStartState()' cancellable=1/>
+<event hook_SetFirstStartDefaults default='sc_SetFirstStartDefaults()' cancellable=1/>
+<event hook_CockpitInit/>
+<event hook_CockpitDone/>
+
+<event hook_BackFromDragMode default='sc_SetNavCarPos()' cancellable=1/>
+
+<event hook_HwyFilterList cancellable=1/>
+
+<event hook_SignPostShow/>
+<event hook_SignPostHide/>
+
+<event hook_KeyboardOpened/>
+<event hook_KeyboardClosed/>
+
+<event hook_MapClick default='sc_OnMapClick(nil, true)' cancellable=1/>
+
+<event hook_SetMapHeader default='sc_SetMapHeader( "normal" )' cancellable=1/>
+<event hook_SetMapHeaderPaging/>
+
+<event hook_OnMapClickNoPoi default='sc_ResetCursorIcon()' cancellable=1/>
+
+<event hook_UpdateFit default='sc_UpdateDefaultFit()' cancellable=1/>
+
+<event hook_TriggerFindMenuInit/>
+
+<event hook_ShowPointOnMap default='sc_ShowPointOnMap()' cancellable=1 />
+<event hook_PoiMapInfo_NoPoi default='sc_ShowCursorInfo()' cancellable=1/>
+
+<event hook_QuickBarOnrelease default={sc_QuickBarOnrelease( $1, $2 )} cancellable=1/>
+
+<event hook_OpenMenu/>
+<event hook_CloseMenu/>
+<event hook_OpenMainMenuFinished default='sc_MenuAnimFinished()' cancellable=1/>
+<event hook_CloseMainMenuFinished default='sc_MenuAnimFinished()' cancellable=1/>
+
+<event hook_OpenLocalMenu/>
+<event hook_CloseLocalMenu/>
+<event hook_OpenLocalMenuFinished/>
+<event hook_CloseLocalMenuFinished/>
+<event hook_OpenPopover/>
+
+<event hook_InsertHistory/>
+<event hook_DeleteHistory cancellable=1/>
+<event hook_FactoryReset default='sc_Factory_Reset_OK()' cancellable=1/>
+<event hook_OpenDetailedInfo default='sc_OpenDetailedInfo()' cancellable=1 />
+
+<event hook_LanguageSelected/>
+
+
+<event hook_SearchAddress/>
+<event hook_SearchCityForPoi />
+<event hook_SearchCityForWeather/>
+<event hook_SearchCityForFuel/>
+
+
+<event hook_PoiInitialized/>
+<event hook_TriggerPOISearchWorkflow default='sc_ShowPoiSearchMain()' cancellable=1/>
+<event hook_RegisterPoiSearches/>
+<event hook_SetupPoiSearches/>
+<event hook_SelectProviderFilter/>
+<event hook_SetPoiSearchCenter/>
+<event hook_SelectPoiItem default='sc_SelectPoiItem()' cancellable=1/>
+<event hook_SelectPoiGroup default='sc_StructSearch_ToChild()' cancellable=1/>
+<event hook_PoiSearchMainInit/>
+<event hook_PoiSearchKeyDone/>
+
+<event hook_PoiOnMapNext default='sc_DefaultPoiOnMapNext()' cancellable=1/>
+<event hook_PoiOnMapPrev default='sc_DefaultPoiOnMapPrev()' cancellable=1/>
+
+
+<event hook_TriggerSavedLocationWorkflow/>
+<event hook_FavoritSearchCenter/>
+<event hook_SaveOrModifyFavourites cancellable=1/>
+<event hook_LocationSaved />
+
+
+<event hook_NewRoute default=sc_NewRoute cancellable=1/>
+<event hook_GetDirections default=sc_GetDirectionsCallback cancellable=1/>
+<event hook_GoOnRelease/>
+<event PedestrianWarningOff/>
+<event PedestrianWarningRestore/>
+<event hook_StartRoutePlanning default='sc_StartRoutePlanning()' cancellable=1/>
+<event hook_SetWaypointSelectionText default='sc_SetDefaultWaypointSelectionText()' cancellable=1/>
+
+<event hook_VehicleChanged default='sc_VehicleChanged()' cancellable=1/>
+<event hook_SetVehicle default='MODEL.map.car_display.set_category( "car" )' cancellable=1>
+<event hook_resetAllVehicleProfile default='MODEL.mydata.vehicle_profile.restore_defaults()'cancellable=1/>
+
+<event hook_StartTruckObservers>
+<event hook_StopTruckObservers>
+
+<event hook_NavModeChange/>
+
+<event hook_SetSystemMessageText>
+
+<event hook_AddStopover default={ sc_AddStopover( $1, $2 ) } cancellable=1 />
+<event hook_StopoverAdded />
+<event hook_StopoverDeleted/>
+<event hook_RouteDeleted/>
+
+<event hook_SimulationFinished default='sc_StopSimulate_NavigatedRoute()' cancellable=1/>
+<event hook_SaveOrModifySaveRoute default={sc_SavedRouteMessage($1, $2)} cancellable=1 />
+
+
+<event hook_addWeatherLocationDone/>
+
+
+<event hook_setFuelPricesCenterDone/>
+
+
+<event hook_checkConnectedProviderError/>
+<event hook_checkConnectedSearchError/>
+<event hook_ConnectedErrorNotification/>
+
+
+
+<event hook_FindPathErrorCheckIfSilent default={sc_FindPathErrorCheckIfSilent($1, $2, $3)} cancellable=1/>
+<event hook_FindPathErrorShowMessage default={sc_FindPathErrorShowMessage($1, $2, $3, $4)} cancellable=1/>
+
+<event hook_RouteChanged default='sc_RouteChanged()'>
+
+
+<event hook_GoToStartState>
+<event hook_FirstStartWizardFinished>
+<event hook_BackFromSuspend>
+
+
+
+<event hook_MapModeChange>
+
+<event hook_SetMapGesture default={sc_Set_Map_Gestures($1, $2, $3)}/>
+<event hook_MultiTouchStarted/>
+<event hook_MultiTouchStoped/>
+
+
+<event hook_ReadOutSystemMessage cancellable=1/>
+<event hook_ShowMessageBox default=sc_ShowMessageBox cancellable=1/>
+<event hook_HideMessageBox default=sc_HideMessageBox cancellable=1/>
+
+
+<event hook_ExitVR/>
+<event hook_MessageBoxShown />
+<event hook_StopNavigation default='sc_StopNavigation()' cancellable=1 />
+<event hook_MessageBoxHidden/>
+<event hook_SetupVRMsgBox />
+
+
+<event hook_Send_Notification />
+<event hook_Delete_Notification />
+<event hook_BatteryLow>
+<event hook_BatteryCritical>
+<event hook_Battery_Disconnected />
+<event hook_OnAC/>
+<event hook_OnTimejump/>
+<event hook_LMGCheck/>
+<event hook_SpeedCam_Notification />
+<event hook_hva_Notification />
+<event hook_CountryChanged/>
+<event hook_CountryChangedNotification/>
+
+
+<event hook_ChangeUserProfileIndex />
+
+<event hook_Navfusion_On_Event_Finised  default={sc_InfoMessageBox( $2 )} cancellable=1 />
+<event hook_Navfusion_Local_Bind_Result default={sc_InfoMessageBox( $2 )} cancellable=1 />
+
+<event hook_NavfusionSP_Bind_Result default={sc_InfoMessageBox( $2 )} cancellable=1 />
+
+<event hook_NF_Bind_Started/>
+<event hook_NF_Bind_Success/>
+<event hook_NF_Bind_With_Sync/>
+<event hook_NF_Failed_Limit_Reached/>
+<event hook_NF_Unbind_Reconnect_During_15D/>
+<event hook_NF_Connect/>
+<event hook_NF_Back_To_Car_Activated/>
+<event hook_NF_Last_Mile_Activated/>
+<event hook_NF_Last_Mile_Used/>
+<event hook_NF_Content_Transfer_Started/>
+<event hook_NF_Content_Transfer_Resumed/>
+<event hook_NF_Content_Transfer_Finished/>
+
+<event hook_IphoneContactsReady/>
+
+
+<event hook_networkerror default={sc_InfoMessageBox( $2 )} cancellable=1/>
+<event hook_LicenseUpdate default={sc_InfoMessageBox( $2 )} cancellable=1/>
+<event hook_DownloadsInterrupted default={sc_InfoMessageBox( $2 )} cancellable=1/>
+
+
+<event hook_UserRegistration_Errors/>
+
+<event hook_gcoorFormatChanged/>
+
+
+<event hook_SLAPI_SETDESTINATION	default='sc_SLApi_AppDestination()'>
+<event hook_SLAPI_SETWAYPOINT		default='sc_SLApi_AddVia()'>
+<event hook_SLAPI_SETSTART			default='sc_SLApi_AddStart()'>
+<event hook_SLAPI_DELETEROUTE		default='sc_SLApi_DeleteRoute()'>
+<event hook_SLAPI_ADDFAVORITE		default='sc_SLApi_SaveFavorite()'>
+<event hook_SLAPI_SHOWPOSITION		default='sc_SLApi_ShowPosition()'>
+<event hook_SLAPI_SETVEHICLE		default='sc_SLApi_SetVehicle()'>
+<event hook_SLAPI_SETPLANMODE		default='sc_SLApi_SetRoutingMethod()'>
+<event hook_SLAPI_ROUTE_CALCULATED	default='sc_SLApi_RouteCalculated()'>
+
+
+<event hook_AlternativesEnter/>
+<event hook_AutoGo/>
+<event hook_AvoidItinerEntry/>
+<event hook_ChangeCountry/>
+<event hook_ChangeKeyboard/>
+<event hook_ChangeIQSSearchCenter/>
+<event hook_SetStartPoint/>
+<event hook_CreateRoute/>
+<event hook_EnterDragMode/>
+<event hook_SaveFavorite/>
+<event hook_ManualGo/>
+<event hook_ItinerShortcut/>
+<event hook_HideJunctionView/>
+<event hook_startLocalSearch/>
+<event hook_NorthLock/>
+<event hook_ChangePoiSort/>
+<event hook_SelectAlternative/>
+<event hook_ShowParkingAroundDest/>
+<event hook_SignPostLayerHide/>
+<event hook_ChangeDataField/>
+<event hook_UseIQS/>
+<event hook_RouteVisualCheck/>
+<event hook_AddressSearchSelect/>
+<event hook_AvoidRoadAhead/>
+<event hook_AvoidancesMenuExit/>
+<event hook_IQS_Selectcategory/>
+<event hook_StatmanDayChange/>
+<event hook_SelectHistory/>
+<event hook_DetailedInfo/>
+<event hook_PoiSearchedFrom/>
+<event hook_RoutePlanning/>
+<event hook_PoiSearchCenterChanged/>
+<event hook_ShowFuelPrices/>
+<event hook_ShowOnlineParking/>
+<event hook_WeatherMenuEntered/>
+<event hook_ShowWeatherForecast/>
+<event hook_ShowWeatherDetails/>
+<event hook_ShowWeatherAlongRoute/>
+
+<event hook_DebugSnapshot/>
+<event hook_AudioSignalsSettings/>
+<event hook_StartWeather_at_location/>
+
+<event hook_CityChanged />
+<event hook_TownDistrictChanged />
+<event hook_DistrictChanged />
+
+<registrator globalReg/>

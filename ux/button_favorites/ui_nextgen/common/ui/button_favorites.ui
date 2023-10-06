@@ -1,0 +1,84 @@
+;----------------------------------------WANDEL™------------------------------------
+<modify ui_Cockpit>   
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">    
+		<BUTTON_ICON FavoritesButtonInCockpit ONRELEASE=sc_ShowSavedLocationQuick
+			ONLONGCLICK=undef
+			VISIBLE=(%lua.FavoritesButtonInCockpit)
+			ICON="ico_savedlocations_star.svg" ZOOM=80%
+			T_TEXT=(VW_Return_button_text(translate(%poi.initialized ? "Saved Location" : "Loading Location..."), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate(%poi.initialized ? "Saved Location" : "Loading Location..."), L"%s", 99)) 
+			/>
+		<BUTTON_ICON button_add_favorite ONRELEASE=VW_addFavoriteOnFly
+			ONLONGCLICK='sc_NextStateAnim(st_insert_IntofavoriteName_Settings, "fade", 1, "")'
+			VISIBLE=(%lua.button_add_favoriteCockpit)
+			ICON="ico_addpoi.svg" ZOOM=80% ;;"ico_delpoi.svg" 
+			T_TEXT=(VW_Return_button_text(translate("Add Favorite on fly"), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate("Add Favorite on fly"), L"%s", 99)) 
+			/>
+	</insert>
+</modify>
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="Show Favorites" bmp=(FavoritesButtonInCockpit.ICON) isselected="lua.FavoritesButtonInCockpit" />
+		<row text="'Add Favorite on fly' Button" bmp=(button_add_favorite.ICON) isselected="lua.button_add_favoriteCockpit" />
+	</insert>
+</modify>
+<modify lm_CockpitSideList>
+	<insert>
+		<row	visible=(%lua.FavoritesButtonInCockpit) />
+		<row 	visible=(%lua.button_add_favoriteCockpit) />
+	</insert>
+</modify>
+;---------------- in QuickMenu ----------------------
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE='ui.FavoritesButtonInCockpit.ONRELEASE()()' ONLONGCLICK='ui.FavoritesButtonInCockpit.ONLONGCLICK()()' 
+			VISIBLE=(%lua.FavoritesButtonInQuickMenu)
+			ICON=(FavoritesButtonInCockpit.ICON) ZOOM=80%
+			T_TEXT=(FavoritesButtonInCockpit.T_TEXT) 
+			B_TEXT=(FavoritesButtonInCockpit.B_TEXT)
+			/>
+		<BUTTON_ICON ONRELEASE='ui.button_add_favorite.ONRELEASE()()' ONLONGCLICK='ui.button_add_favorite.ONLONGCLICK()()' 
+			VISIBLE=(%lua.button_add_favoriteQuick)
+			ICON=(button_add_favorite.ICON) ZOOM=80%
+			T_TEXT=(button_add_favorite.T_TEXT)
+			B_TEXT=(button_add_favorite.B_TEXT) 
+			/>
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row	visible=(%lua.FavoritesButtonInQuickMenu) />
+		<row 	visible=(%lua.button_add_favoriteQuick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="Show Favorites" bmp=(FavoritesButtonInCockpit.ICON) isselected="lua.FavoritesButtonInQuickMenu" />
+		<row text="'Add Favorite on fly' Button" bmp=(button_add_favorite.ICON) isselected="lua.button_add_favoriteQuick" />
+	</insert>
+</modify>
+
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=(FavoritesButtonInCockpit.ICON) text=(translate("Saved Location")) onrelease='ui.FavoritesButtonInCockpit.ONRELEASE()()' />
+			<row  bmp="ico_addpoi.svg" text=(translate("Add Favorite on fly")) onrelease='ui.button_add_favorite.ONRELEASE()()' onlongclick='ui.button_add_favorite.ONLONGCLICK()()' />
+		</insert>
+	</modify>
+<!end/>
+;=================================================add on fly========================================
+<userlist lm_ItemIntoName text="str" type="str" isselected="str" details="ui" onrelease="ui" onlongclick="ui" haspopover="bool" dtooltip="str" visible="bool" enable="bool" >
+	<view visibility_filter=visible />
+	<default type="" visible=1 enable=1 onrelease=undef onlongclick=undef />
+		<row    text="Insert Time" type="ChkOnOff" isselected="lua.ins_TIME_IntofavoriteName" />
+		<row    text="Insert Address" type="ChkOnOff" isselected="lua.ins_STREET_IntofavoriteName" />
+		<row    text="Insert City" type="ChkOnOff" isselected="lua.ins_CITY_IntofavoriteName" />
+		<row    text="Insert Country" type="ChkOnOff" isselected="lua.ins_COUNTRY_IntofavoriteName" />
+		<row  	text="Insert today date" type="ChkOnOff" isselected="lua.ins_DATE_IntofavoriteName" />
+		<row  	text="This field is just an example" enable=0 haspopover=1
+			details=(WANDEL_details(%lua.ins_TIME_IntofavoriteName, %lua.ins_STREET_IntofavoriteName, %lua.ins_CITY_IntofavoriteName, %lua.ins_COUNTRY_IntofavoriteName, %lua.ins_DATE_IntofavoriteName)) />
+</userlist>

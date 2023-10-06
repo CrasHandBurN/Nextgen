@@ -1,0 +1,27 @@
+.junctionview{
+	top:(%lua.MiniJunctionView ? (ui_PropLayer.SignpostVisible ? %ui.vLaneInfoSignpostHeight : next_street_h+10) : 0);
+	left:(%lua.MiniJunctionView ? (ui_PropLayer.ShowRouteProgress ? route_progress_bg_w : 0) : 0);
+	h:(%lua.MiniJunctionView ? (3*screen_h/8 < (screen_h - cockpit_warning_h - (%lua.aHomeWork && !%route.list.navigated.has_navigable_path ? (4*datafield_h + cockpit_margin ) : (3*datafield_h + cockpit_margin)) - (ui_PropLayer.SignpostVisible ? %ui.vLaneInfoSignpostHeight : next_street_h+10)) ? 3*screen_h/8 : (screen_h - cockpit_warning_h - (%lua.aHomeWork && !%route.list.navigated.has_navigable_path ? (4*datafield_h + cockpit_margin ) : (3*datafield_h + cockpit_margin)) - (ui_PropLayer.SignpostVisible ? %ui.vLaneInfoSignpostHeight : next_street_h+10))) : 106%);
+	w:(%lua.MiniJunctionView ? 3*screen_w/8 : 106%);
+}
+
+.cockpit SPRITE.disttext_jv{
+	bottom:1%;
+}
+
+.ejv_patch{
+	top:(%lua.MiniJunctionView ? (ui_PropLayer.SignpostVisible ? %ui.vLaneInfoSignpostHeight : next_street_h+10) : 0);
+	left:(%lua.MiniJunctionView ? (ui_PropLayer.ShowRouteProgress ? route_progress_bg_w : 0) : 0);
+	right:(%lua.MiniJunctionView ? 5*screen_w/8 : 0);
+	bottom:(%lua.MiniJunctionView ? (3*screen_h/8 < (screen_h - cockpit_warning_h - (%lua.aHomeWork && !%route.list.navigated.has_navigable_path ? (4*datafield_h + cockpit_margin ) : (3*datafield_h + cockpit_margin)) - (ui_PropLayer.SignpostVisible ? %ui.vLaneInfoSignpostHeight : next_street_h+10)) ? (5*screen_h/8 - (ui_PropLayer.SignpostVisible ? %ui.vLaneInfoSignpostHeight : next_street_h+10)) : ((%lua.aHomeWork && !%route.list.navigated.has_navigable_path ? (4*datafield_h + cockpit_margin ) : (3*datafield_h + cockpit_margin)) + cockpit_warning_h)) : 0);
+}
+
+SPRITE.panel_map_tunnel{
+	top:35%;
+	bottom:30%; 
+}
+
+SPRITE.panel_map_tunnel_length{
+	top:73%;
+	bottom:17%; 
+}

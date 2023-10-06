@@ -1,0 +1,6 @@
+UNITTEXT.listitem.routemethod {
+	paddingleft: text_padding;
+	paddingright: 0;
+	box_align: "STRETCH";
+	flex:1;
+}

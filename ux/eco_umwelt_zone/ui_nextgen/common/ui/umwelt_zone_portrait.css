@@ -1,0 +1,4 @@
+DIV.umweltzone{
+	left:8; 
+	top: ( next_street_h + ( ui_Cockpit.MapPopupOnscreen ? map_messagebox_h : 0 ) + ( ui_PropLayer.SignpostVisible ? %ui.vLaneInfoSignpostHeight : 0 ) + ( %navigation.has_route ? (ui_PropLayer.hideDiriconBg ? ( ui_Cockpit.show_mini_diricon ? 0 : 30 ) : diricon_w / 2 - 5) ) );
+}

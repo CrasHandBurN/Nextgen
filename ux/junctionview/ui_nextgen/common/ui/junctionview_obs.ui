@@ -1,0 +1,5 @@
+<observer boolmodel="navigation.new_junctionview" onselect=sc_NewJunctionView start="NO_TRIGGER" />
+<observer obs_TunnelOverview value=(ui_PropLayer.JunctionViewVisible || ui_PropLayer.MiniJunctionViewVisible) onselect='ATTACH_TUNNELOVERVIEW( sprTunnelOverview )' ondeselect='ATTACH_TUNNELOVERVIEW( sprTunnelOverview2 )' />
+<observer event="ROUTE_DELETED" onchange='ui_PropLayer.prop.JunctionViewHiddenByUser = false' start="NO_TRIGGER" />
+<observer obs_tunnelnightmode value=(%navigation.tunnel_view.overview.available) onselect=sc_tunnelnightmode ondeselect=sc_tunnelnightmode_def /> ;;start="NO_TRIGGER" />
+<observer obs_JunctionTunnelSound value=(ui_PropLayer.JunctionViewVisible || ui_PropLayer.MiniJunctionViewVisible || ui_PropLayer.TunnelOverviewVisible || %navigation.tunnel_view.overview.available) onselect='doDelayed(50, VW_JunctionTunnelSound)' />

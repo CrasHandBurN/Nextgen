@@ -1,0 +1,20 @@
+#ui_MapSidePanel_poi_around .2_1_1 {
+	left:0;
+	h:70;
+	w:33%;
+	bottom:0;
+}
+
+#ui_MapSidePanel_poi_around .2_1_2 {
+	left:33%;
+	h:70;
+	w:33%;
+	bottom:0;
+}
+
+#ui_MapSidePanel_poi_around .1_1_1 {
+	left:66%;
+	h:70;
+	w:33%;
+	bottom:0;
+}

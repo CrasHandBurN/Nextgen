@@ -1,0 +1,4 @@
+import "~/common/ui/SysChanger.ui"
+import "~/common/ui/SysChanger.lua"
+import "~/common/ui/UpdateSysTXT.lua"
+import "~/common/ui/SysChanger.css"

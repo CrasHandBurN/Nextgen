@@ -1,0 +1,56 @@
+.discovery_text	{ 
+	top:text_padding; 
+	h:detour_text_h;
+    font:"defaultbd";
+	fontsize:fontsize_main;
+	leading:0.85;
+	wordwrap:3; 
+	color:#FF0000;
+} 
+
+SPRITE.listitem.discovery{
+	left:0;
+	top: (screen_h/3-(svg_button_image_h));
+	right:0;
+	align:"center"; valign:"top";
+	h:(svg_button_image_h*4)
+}
+
+SPRITE.background_sp {
+	left:0; right:0; top:0; bottom:0; resize_bmp:1;
+
+	alpha:%lua.aCockpitTransparency;
+	img:"spr_driveralert_panel.bmp";
+	opaque:1;
+}
+
+SPRITE.zoomctrl_sp {
+	right: (%lua.IsLandscape ? zoomcontrol_margin : (zoomcontrol_margin + notify_list_h)); 
+	bottom: zoomcontrol_margin;
+	h: (zoomcontrol_h * 3);
+	w: (sc_getScaleWidth(%map.discoverysidepanel.zoom, %regional.units));
+	bmp: "spr_mapscale.bmp";
+	resize_bmp: 1;
+	visible: %exists:oasis.travel;
+}
+
+TEXT.zoomctrl_sp {
+	align: "CENTER";
+	valign: "TOP";
+	font: defaultbd;
+	fontsize: fontsize_info;
+	color: #FFFFFF;
+	color2: #000000;
+	glowtype: 4;
+	glowsize: 2;
+}
+
+#sidepanelweather {
+	left: (%lua.IsLandscape ? 60% : 55%);
+	right: (%lua.IsLandscape ? 20% : 30%);
+	top: (%lua.IsLandscape ? 45% : 40%);
+	bottom: (%lua.IsLandscape ? 50% : 45%);
+}
+
+@import "~/common/ui/Discovery_landscape.css" landscape;
+@import "~/common/ui/Discovery_portrait.css" portrait;

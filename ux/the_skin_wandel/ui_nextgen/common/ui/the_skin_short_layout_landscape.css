@@ -1,0 +1,25 @@
+DIV.diricon > SPRITE.panel.map, DIV.roundabout > SPRITE.panel.map, DIV.secondary_diricon > SPRITE.panel.map {
+	h: 95%;
+}
+
+DISTTEXT.next_maneuver_dist {
+	bottom:18;
+}
+
+DISTTEXT.dist_to_next_maneuver {
+	top: 22%;
+}
+
+DIV.speedlimit{
+	h: (cockpit_warning_h - 10);
+}
+
+DIV.driver_alert {
+	bottom: (Plugin.isLoaded( "speedcam" ) ? (3*datafield_h + speedcam_h) : (3*datafield_h));
+	h: (cockpit_warning_h - 10);
+}
+
+
+/* -------------------------------------------------------------------------------------*/
+/* -----------------  Mod by arimi  -- updated -  05.03.2017 -------*/
+/* ------------------------------------------------------------------------------------*/

@@ -1,0 +1,3 @@
+import "~/common/ui/Attractions.css"
+import "~/common/ui/Attractions.ui"
+import "~/common/ui/Attractions.lua"

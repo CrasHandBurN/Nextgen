@@ -1,0 +1,21 @@
+@params{
+	listitem_h:96;
+	header_h:66;
+	header_bg_h:78;
+	map_info_h:90;
+	mapheader_h_tmc:180;
+	mapheader_tmc_separator:48;
+	coord_keyboard_left:12;
+	coord_keyboard_right:coord_keyboard_left;
+	coord_keyboard_top:180;
+	tripcomputer_speed_top: 60;
+	cockpit_warning_h:84;
+	current_speed_h:72;
+	header_overlap_h: 2;
+	sec_diricon_overlap_w:66;
+	next_street_h: 72;
+}
+
+/* ------------------------------------------------------------------------------------*/
+/* -----------------  Mod by arimi  -- updated -  18.02.2017 ------------*/
+/* ------------------------------------------------------------------------------------*/

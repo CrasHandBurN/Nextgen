@@ -1,0 +1,214 @@
+<observer value=(%traffic.detour_recalculation_status) onchange=sc_OnDetourStatusChanged start="NO_TRIGGER" />
+<observer obs_traffic_replan value=(%{"traffic.detour_recalculation_status"} == 2 && %traffic.detour_accepted) onselect='hook_Send_Notification:trigger("traffic","route_replanned")' />
+<observer obs_traffic_event event="TRAFFIC_JAM_AHEAD_EVENT" onchange='hook_Send_Notification:trigger("traffic","jam_ahead")' />
+<observer obs_fulldelay value=(%lua.trafficFullDelayTextOnMap) onchange=sc_TMC_DelayChanged />
+<observer obs_tmc_off value=(%traffic.settings.traffic_enabled) onselect=sc_TMC_Restart_Observers ondeselect=sc_TMC_DeleteAllNotif />
+
+<observer obs_TrafficChange_Delay value=(%traffic.events.full_delay) onchange=sc_UpdateFullDelayTextOnMap />
+<observer obs_TrafficChange_OnRoute value=(%traffic.events.has_event_on_route) onchange=sc_UpdateFullDelayTextOnMap />
+<observer obs_TrafficChange_Block value=(%traffic.events.has_block_on_route) onchange=sc_UpdateFullDelayTextOnMap />
+;-------
+;<observer event="TRAFFIC_JAM_AHEAD_EVENT" onchange='obs_Detour_Is_OnRoute:trigger()' start="NO_TRIGGER" />
+;<observer obs_Detour_Is_OnRoute model="traffic.events.significant_events.size", "traffic.events.has_event_on_route", "traffic.events.has_block_on_route" onchange='sc_DeclineDetourAndRecalculate("manual", 1)' start="NO_TRIGGER" />
+;-------
+<observer boolmodel="route.list.traffic_detour.valid" ondeselect=sc_Traffic_CancelDetourAnnouncement start />
+
+<observer value=(%gps.current_time) onchange=sc_w_timer START /> 
+
+<!ENABLE OVERRIDE>
+
+	<layer ui_MapHeader_TMCDetour z=41 visible=( (!st_Cockpit.isActive || %lua.DragMode) && (%lua.MapHeaderMode == "TMCDetour"))>
+		<implementation>
+			<property LastDetourSpareTime value=0 />
+			<property LastDetourSpareDistance value=0 />
+		</implementation>
+		<DIV class="mapheader">
+			<SPRITE class="panel map" />
+			<BOX class="mapheader avoid" >
+				<HBOX class="mapheader legend">
+					<TEXT class="mapheader avoid" text="Possible Detour" visible=(!%traffic.detour_recalculation_status == 1) />
+				</HBOX>
+				<BOX class="mapheader_value" visible=(!%traffic.detour_recalculation_status == 1)>
+					<HBOX class="mapheader ahead pos">
+						<SPRITE class="avoid distance svg" />
+						<TEXT class="avoid mapheader" text=(sc_FormatSpareDistance(LastDetourSpareDistance, false, true)) />				
+					</HBOX>
+					
+					<HBOX class="mapheader ahead pos">
+						<SPRITE class="avoid delay svg" />
+						<TEXT class="avoid mapheader" text=(sc_FormatSpareTime(LastDetourSpareTime, false, true)) />				
+					</HBOX>
+				</BOX>
+				
+				<SPRITE class="mapheader searchprogress wide" visible=(%traffic.detour_recalculation_status == 1) />
+
+			</BOX>
+		</DIV>
+		<DIV class="legend">
+			<SPRITE class="panel map">
+			<SPRITE class="separator_legend"/>
+			<HBOX class="mapheader legend">
+				<HBOX class="mapheader">
+					<SPRITE class="legend original_route" box_align="center" z=20 />
+					<TEXT class="mapheader legend" text="original route" z=20 />
+				</HBOX>
+				<HBOX class="mapheader">
+					<SPRITE class="legend new_route" box_align="center" z=20 />
+					<TEXT class="mapheader legend" text="new route" z=20 />
+				</HBOX>				
+			</HBOX>
+		</DIV>
+		
+		<SPRITE fitbox_tmc_detour class="fitbox avoid ahead" />
+	</layer>
+
+<!DISABLE OVERRIDE>
+
+<modify lm_WarningsSettings>
+	<insert after="default">
+		<row prio=400 text="Traffic" icon="ico_traffic.svg" onrelease='sc_NextStateAnim(st_TrafficSettings, "fade", 1, "" )' visible=(Plugin.isLoaded("tmc")) />
+	</insert>
+</modify>
+
+<modify ui_Cockpit>
+	<modify tmc_receiving VALUE=(%tmc.rds_present && (%tmc.state_integer == 2 || %tmc.state_integer == 4)) />
+	<modify tmc_icon VALUE=(%tmc.rds_present && %traffic.events.list.size ? "ico_tmc_onmap.svg" : "ico_tmc_disabled.svg") />
+	<modify traffic_detour_valid VALUE=(%traffic.detour_recalculation_status == 2 && %route.list.traffic_detour.valid && %traffic.name_of_suitable_detour != "") />
+
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON CLASS="btn_map" ONRELEASE=sc_TrafficSummary ONLONGCLICK='sc_NextStateAnim(st_TrafficSettings, "fade", 1, "" )'
+				VISIBLE=(%traffic.settings.traffic_enabled && %lua.tmcIconPhaseOnMap == -1 )>
+			<SPRITE CLASS="button map fill" />
+			<SPRITE CLASS="btn_map svg" IMG=(ui_Cockpit.tmc_icon) />
+			<SPRITE CLASS="btn_map svg" Z=105 IMG=(tmc_receiving ? "ico_tmc_receiving.svg" : "ico_tmc_noconnection.svg") />
+		</BUTTON>
+			
+		<BUTTON CLASS="btn_map" ONRELEASE=(traffic_detour_valid ? sc_OpenDetourPreview : sc_TrafficSummary) ONLONGCLICK='sc_NextStateAnim(st_TrafficSettings, "fade", 1, "" )'
+				VISIBLE=(%traffic.settings.traffic_enabled && %lua.tmcIconPhaseOnMap != -1 )>
+			<SPRITE CLASS="button map fill" />
+			<SPRITE CLASS="btn_map svg tmc" ICONID=(%lua.confirmTrafficDetourRadioBtn ? (vTmcButtonBlinkCounter < 10 ? sc_BlinkingTmcButton(%gps.fast_blink) : %lua.tmcIconPhaseOnMap) : %lua.tmcIconPhaseOnMap) />
+			<SPRITE CLASS="btn_map svg tmc" IMG=(tmc_receiving ? "ico_tmc_receiving.svg" : "ico_tmc_noconnection.svg") />
+			<TEXT CLASS="font_sec bd delay textpadding_small r2l" GLOWSIZE=1 LEFT=0 TOP=65% W=100% H=28% Z=15 VALIGN="CENTER" TEXT=(%lua.trafficFullDelayTextOnMap) CLIPSTYLE="NONE" />
+			<SPRITE RIGHT=2% W=25% TOP=2% H=25% VALIGN="CENTER" ALIGN="CENTER" ZOOM="ZOOMVISIBLE" IMG="detour.svg" PHASE=2 VISIBLE=(traffic_detour_valid) />
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify ui_SideList>
+	<modify tmc_receiving VALUE=(%tmc.rds_present && (%tmc.state_integer == 2 || %tmc.state_integer == 4)) />
+	<modify tmc_icon VALUE=(%tmc.rds_present && %traffic.events.list.size ? "ico_tmc_onmap.svg" : "ico_tmc_disabled.svg") />
+	
+	<insert  first_child after="BUTTON" into="TABLE">
+		<BUTTON CLASS="btn_map" ONRELEASE=sc_TrafficSummary ONLONGCLICK='sc_NextStateAnim(st_TrafficSettings, "fade", 1, "" )'
+				VISIBLE=(%traffic.settings.traffic_enabled && %lua.tmcIconPhaseOnMap == -1 )>
+			<SPRITE CLASS="button map fill" />
+			<SPRITE CLASS="btn_map svg" IMG=(ui_SideList.tmc_icon) />
+			<SPRITE CLASS="btn_map svg" Z=105 IMG=(tmc_receiving ? "ico_tmc_receiving.svg" : "ico_tmc_noconnection.svg") />
+		</BUTTON>
+			
+		<BUTTON CLASS="btn_map" ONRELEASE=sc_TrafficSummary ONLONGCLICK='sc_NextStateAnim(st_TrafficSettings, "fade", 1, "" )'
+				VISIBLE=(%traffic.settings.traffic_enabled && %lua.tmcIconPhaseOnMap != -1 )>
+			<SPRITE CLASS="button map fill" />
+			<SPRITE CLASS="btn_map svg tmc" ICONID=( %lua.confirmTrafficDetourRadioBtn ? (vTmcButtonBlinkCounter < 10 ? sc_BlinkingTmcButton(%gps.fast_blink) : %lua.tmcIconPhaseOnMap) : %lua.tmcIconPhaseOnMap ) />
+			<SPRITE CLASS="btn_map svg tmc" IMG=(tmc_receiving ? "ico_tmc_receiving.svg" : "ico_tmc_noconnection.svg") />
+			<TEXT CLASS="font_sec bd delay textpadding_small r2l" GLOWSIZE=1 LEFT=0 TOP=65% W=100% H=28% Z=15 VALIGN="CENTER" TEXT=(%lua.trafficFullDelayTextOnMap) CLIPSTYLE="NONE" />
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=( %traffic.settings.traffic_enabled && %lua.tmcIconPhaseOnMap == -1 ) />
+		<row 	visible=( %traffic.settings.traffic_enabled && %lua.tmcIconPhaseOnMap != -1 ) />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=( %traffic.settings.traffic_enabled && %lua.tmcIconPhaseOnMap == -1 ) />
+		<row 	visible=( %traffic.settings.traffic_enabled && %lua.tmcIconPhaseOnMap != -1 ) />
+	</insert>
+</modify>
+
+<modify ui_PropLayer>
+	<modify ShowTMCButton VALUE=(%lua.tmcWasPresented && !%lua.DragMode && %traffic.settings.traffic_enabled && !SignpostVisible && !JunctionViewVisible) />
+	<modify trafficFullDelayTextOnMap VALUE=(%lua.trafficFullDelayTextOnMap) />
+
+	<insert>
+		<OBSERVER VALUE=(%traffic.events.full_delay) ONCHANGE=sc_UpdateFullDelayTextOnMap START />
+		<OBSERVER VALUE=(%traffic.events.has_event_on_route) ONCHANGE=sc_UpdateFullDelayTextOnMap START />
+		<OBSERVER VALUE=(%traffic.events.has_block_on_route) ONCHANGE=sc_UpdateFullDelayTextOnMap START />
+	</insert>
+</modify>
+
+<modify ui_MapControl>
+	<insert first_child into="#box_mapcontrol">
+		<SPRITE CLASS="panel tmc_legend" VISIBLE=( st_CurrentTraffic.isActive )>
+			<VBOX CLASS="fill">
+				<SPRITE CLASS="hist_high_traffic" />
+				<SPRITE CLASS="hist_colorcode" />
+				<SPRITE CLASS="hist_low_traffic" />
+			</VBOX>
+		</SPRITE>
+	</insert>
+</modify>
+
+<modify ui_MapHeader_prop>
+	<insert>
+		<IMPLEMENTATION>
+			<PROPERTY mapheader_tmc_roadnumber_enc value="" />
+			<PROPERTY mapheader_tmc_direction value="" />
+			<PROPERTY mapheader_tmc_description value="" />
+		</IMPLEMENTATION>
+	</insert>
+</modify>
+
+<modify ui_MapHeader>
+	<insert into="BOX.mapheader.txt_top">
+		<TEXT CLASS="mapheader top tmc_direction" TEXT=( ui_MapHeader_prop.mapheader_tmc_direction ) VISIBLE=(%map.primary.clicked_tmc_id.valid) />
+	</insert>
+</modify>
+
+<modify ui_RouteOverview>
+	<insert into="#box_overview_dest_info">
+		<HBOX CLASS="route_overview_destination" VISIBLE=( %traffic.events.full_delay || %traffic.events.has_block_on_route )>
+			<SPRITE CLASS="route_summary delay svg" />
+			<TIMESPANTEXT CLASS="route_summary_text delay" TEXT="+" TIMESPAN=( %traffic.events.full_delay ) FORMATMODEL=5 />
+		</HBOX>	
+	</insert>
+</modify>
+
+<modify ui_Cockpit>
+	<insert after=lst_RouteProgress>
+		<LIST2 lst_RouteProgress_tmc CLASS="routeprogress">
+			<LISTMODEL LISTMODEL="traffic.events.significant_events" ELEMENT_TEMPLATE="et_routeprogress_tmc" CELLH=5% ROW=(%traffic.events.significant_events.size == 0 ? 1 : %traffic.events.significant_events.size) />
+		</LIST2>
+	</insert>
+</modify>
+
+<modify Counter>
+	<remove Paging>
+	<insert after=Listmodel>
+		<property Paging VALUE=(observe(vActiveState); States.CurrentState == st_TrafficMap ? ui_MapHeader_TMC.paging_current : ui_MapHeader.paging_current) />
+	</insert>
+</modify>
+
+<!if condition=(Plugin.isLoaded("ttspro"))>
+	<modify lm_tts_settings>
+		<insert after="default">
+			<row text="Read Out traffic events on route" isselected="lua.wTMCAnnounceTTS" 
+				onrelease_extra='sc_NextStateAnim(st_wTMCAnnounceTTS, "fade", 1, "" )' 
+				visible=(%lua.wTMCAnnounce && %lua.tmcWasPresented && %traffic.settings.traffic_enabled && ((%exists:tmc.present ? %{"tmc.present"} : 0) || %lua.OnlineTrafficExists && %network.supported))  />
+		</insert>
+	</modify>
+<!end/>
+/*
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=(%traffic.settings.traffic_enabled ? "ico_tmc_onmap.svg" : "ico_tmc_disabled.svg") text=(translate("Traffic")) onrelease='MODEL.traffic.settings.traffic_enabled = not MODEL.traffic.settings.traffic_enabled()' />
+		</insert>
+	</modify>
+<!end/>
+*/

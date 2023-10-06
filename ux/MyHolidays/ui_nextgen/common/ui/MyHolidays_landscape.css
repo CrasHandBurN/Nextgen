@@ -1,0 +1,5 @@
+SPRITE.MyHolyday {
+	left:0;
+	right: (%lua.ShowTimeInTitle ? headerclock_w : 0);
+	top:0; bottom:0;
+}

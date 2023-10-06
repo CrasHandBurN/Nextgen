@@ -1,0 +1,41 @@
+<layer ui_AutomaticUpdateFlag class="messagebox">
+	<DIV class="full">
+		<SPRITE class="messagebox_cover">
+		<DIV class="messagebox">
+			<SPRITE class="messagebox">
+			<DIV class="messagebox_panel">
+				<TEXT class="messagebox_first_line" text=%screen.msgbox.on_screen.first_line wordwrap=8>
+		
+				<DIV class="messagebox_checkbox" z=20 visible=(%screen.msgbox.on_screen.number_of_buttons == 3)>
+					<CHECKBOX class="btn_main_np" boolmodel="lua.LMGDontRemind">
+						<TEXT class="font_main bd messagebox_checkbox" z=100 left=0 text=(%screen.msgbox.on_screen.button_caption(3))>
+					</CHECKBOX>
+				</DIV>
+				
+				<DIALOGBUTTON class="dialog 2_1" z=20 iconspr=(%screen.msgbox.on_screen.button_icon_filename(1)) text=(%screen.msgbox.on_screen.button_caption(1)) onrelease='MODEL.screen.msgbox.on_screen.button_released(1)'>
+				<DIALOGBUTTON class="dialog 2_2" z=20 iconspr=(%screen.msgbox.on_screen.button_icon_filename(2)) text=(%screen.msgbox.on_screen.button_caption(2)) onrelease='MODEL.screen.msgbox.on_screen.button_released(2)'>
+			</DIV>
+		</DIV>
+	</DIV>
+</layer>
+
+<layer ui_LMGReminder class="messagebox">
+	<DIV class="full">
+		<SPRITE class="messagebox_cover">
+		<DIV class="messagebox_full">
+			<SPRITE class="messagebox">
+			<DIV class="messagebox_panel">
+				<TEXT class="messagebox_first_line"  top=0   h=15% wordwrap=1 text=%screen.msgbox.on_screen.first_line>
+				<TEXT class="messagebox_second_line" top=15% h=20% wordwrap=2 text=%screen.msgbox.on_screen.second_line>
+				
+				<SPRITE  class="icon_center" top=49% bmp="spr_naviextras_logo_lmg.bmp">
+				
+				<TEXT class="messagebox_first_line font_sec" top=62% h=8% text="Please go to www.naviextras.com">
+				
+				<DIALOGBUTTON  class="dialog 2_1" text=(%screen.msgbox.on_screen.button_caption(1)) iconspr=(%screen.msgbox.on_screen.button_icon_filename(1))  onrelease='MODEL.screen.msgbox.on_screen.button_released(1)' rawkey=0>
+				<CHECKBOX left=50% w=15% h=30% bottom=0 z=100 align="CENTER" valign="CENTER" bmp="spr_chkbox_skincol.bmp#2" boolmodel="!lua.ShowLMGReminder">
+				<TEXT class="font_sec color_inf_main textpadding_small" left=60% right=0 h=30% bottom=0 align="RIGHT" valign="CENTER" text="Don't remind me again">
+			</DIV>
+		</DIV>
+	</DIV>
+</layer>

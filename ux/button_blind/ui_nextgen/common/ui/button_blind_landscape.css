@@ -1,0 +1,19 @@
+SPRITE.btn_zoom_in{
+	w:38%;h:35%;
+	left:0;top:55%;
+}
+
+SPRITE.btn_zoom_center{
+	w:28%;h:35%;
+	left:38%;top:55%;
+}
+
+SPRITE.btn_zoom_out{
+	w:35%;h:35%;
+	left:66%;top:55%;
+}
+
+SPRITE.btn_overview{
+	w:30%;h:25%;
+	left:35%;top:30%;
+}

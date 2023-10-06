@@ -1,0 +1,17 @@
+/*---- WANDEL™  18.11.2020 ----*/
+BUTTON.btn_map.btn_add_speedcam {
+	resize_bmp:1; z: 50; align: "CENTER";  valign: "CENTER" ; alpha: 0;
+	img: "";
+	w: 4%; h: 4%;
+	left: (observe(%map.primary.car_posx); ((%map.primary.car_posx - 2) * screen_w / 100));
+	top: (observe(%map.primary.car_posy); ((%map.primary.car_posy - 2) * screen_h / 100));
+}
+
+VBOX.speedcam_btn{
+	paddingtop:10;
+}
+
+VBOX.speedcam_edit_btn{
+	box_align:"stretch";
+	FLEX:1;
+}

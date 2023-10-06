@@ -1,0 +1,155 @@
+;------car in city------
+<modify ui_Cockpit>
+	<insert last_child into="DIV.notify_list_ext TABLE.ari_ext">
+	
+		<INFORMATION_PLATE LEFT=0 RIGHT=0 TOP=0 BOTTOM=0 TEXT=(%lua.IN_City) FONTSIZE=(VW_Return_button_text(%lua.IN_City, L"%s", 99) == L"" ? 31 : 20)
+			ONRELEASE='java:call("android.open_webpage", L"https://" .. towstring(string.sub(MODEL.navigation.car.current_country(), 2, 3)) .. L".wikipedia.org/wiki/Special:Search?search=" .. MODEL.lua.IN_City())'
+			ONLONGCLICK='sc_NextStateAnim(st_ShowInCitySettings, "fade", 1, "" )' 
+			VISIBLE=( %navigation.car.is_incity && %lua.CarInCity && (%lua.CarInCity_inCockpit == 2 || %lua.CarInCity_inCockpit == 3) && %lua.IN_City != L"" ) />
+
+	</insert>
+</modify>
+
+;-------start lm_DA_freeAtTheMoment
+<userlist lm_DA_freeAtTheMoment visible="bool" enable="bool" >
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 />
+		<row CityName			visible=( %navigation.car.is_incity && %lua.CarInCity && %lua.IN_City != L"" && (%lua.CarInCity_inCockpit == 1 || %lua.CarInCity_inCockpit == 3) ) />
+		;<row TurnRestriction	visible=( %lua.TurnRestrictionIsVisible && !%gps.blink ) />
+		;<row UmweltZone		visible=( Umwelt_ZoneProp.UmweltZoneCockpit && !ui_LeftSide_Free_Button.ShowLeftSideUmweltZone_VISIBLE ) />
+		;<row curr_speedcam		visible=( %gps.blink && %navigation.curr_speedcam.speed_limit.valid && %navigation.curr_speedcam.speed_limit && ui_PropLayer.ShowSpeedCamera && %lua.ShowCentralSpeedCamLimit && (%navigation.car.current_speed // 1) > sc_GetToleranceSpeed(%navigation.curr_speedcam.speed_limit) ) />
+</userlist>
+
+<modify ui_PropLayer>
+	<modify DA_freeAtTheMoment VALUE=( (!ui_Cockpit.p2p_valid && !%lua.VehicleIsPedestrian && !%lua.DragMode && !(ui_PropLayer.JunctionViewVisible || ui_PropLayer.MiniJunctionViewVisible || ui_PropLayer.TunnelOverviewVisible) && !(%lua.DAEnabled && %ui.lm_alert_views.driver_alerts.size)) && (Plugin.isLoaded( "truck" ) ? !ui_PropLayer.TruckTurnRestrictionIsVisible : 1) ) />
+</modify>
+
+<modify ui_Cockpit>
+	<insert before="DIV.speedlimit">
+		<DIV div_DA_freeAtTheMoment CLASS="driver_alert" VISIBLE=( ui_PropLayer.DA_freeAtTheMoment ) W=( %ui.lm_DA_freeAtTheMoment.size * CSS.Param.cockpit_da_warning_w ) >
+			<BOX box_DA_freeAtTheMoment CLASS="driver_alert" >
+				<BUTTON BOX_ALIGN="stretch" DESIRED_W=(CSS.Param.cockpit_da_warning_w) 
+					ONRELEASE='java:call("android.open_webpage", L"https://" .. towstring(string.sub(MODEL.navigation.car.current_country(), 2, 3)) .. L".wikipedia.org/wiki/Special:Search?search=" .. MODEL.lua.IN_City())'
+					ONLONGCLICK='sc_NextStateAnim(st_ShowInCitySettings, "fade", 1, "" )' 
+					VISIBLE=( %navigation.car.is_incity && %lua.CarInCity && %lua.IN_City != L"" && (%lua.CarInCity_inCockpit == 1 || %lua.CarInCity_inCockpit == 3) ) >
+					<SPRITE CLASS="button map fill" IMG="INFORMATION_PLATE.bmp" ALPHA=32 />
+						
+					<SPRITE TOP=10% BOTTOM=10% LEFT=10% RIGHT=10% ALIGN="center" VALIGN="center" IMG="ico_city.svg" VISIBLE=(!ui_Cockpit.city_arm) />
+					<SPRITE TOP=20% BOTTOM=20% LEFT=20% RIGHT=20% ALIGN="center" VALIGN="center" IMG=(ui_Cockpit.city_arm) VISIBLE=(ui_Cockpit.city_arm) />
+						
+					<TEXT CLASS="BTN_top_text" TEXT=(VW_Return_button_text(%lua.IN_City, L"%s", 1)) FONT="defaultbd" COLOR=#ffffff COLOR2=#000000 />
+					<TEXT CLASS="BTN_bottom_text" TEXT=(VW_Return_button_text(%lua.IN_City, L"%s", 99)) FONT="defaultbd" COLOR=#ffffff COLOR2=#000000 />
+				</BUTTON>
+			</BOX>
+		</DIV>
+	</insert>
+</modify>
+;-------end lm_DA_freeAtTheMoment
+;   City on way
+
+;------car in city------
+<userlist lm_City_inCockpit_Popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+		<row text="None" onrelease='MODEL.lua.CarInCity_inCockpit = 0 sc_ClosePopover()' />
+		<row text="Left DA Button" onrelease='MODEL.lua.CarInCity_inCockpit = 1 sc_ClosePopover()' />
+		<row text="Right Info Button" onrelease='MODEL.lua.CarInCity_inCockpit = 2 sc_ClosePopover()' />
+		<row text="Both" onrelease='MODEL.lua.CarInCity_inCockpit = 3 sc_ClosePopover()' />
+</userlist>
+
+;-------City on way
+<views city_onway_list_filtered listmodel="route.list.navigated.itiner.list" >
+    <view filter filter=(VW_CityOnWayFilter($1.position)) />
+</views>
+
+<element_template et_city_onway_list>
+	<implementation>
+		<property city_arm value=(VW_City_by_city(VW_City( %*.position ))) />
+	</implementation>
+	<BUTTON class="listitem"  onrelease=VW_CityOnWayList_OnRelease onlongclick='java:call("android.open_webpage", L"https://" .. towstring(string.sub(MODEL.navigation.car.current_country(), 2, 3)) .. L".wikipedia.org/wiki/Special:Search?search=" .. VW_City(MODEL["*"].position()))'>
+		<HBOX class="listitem">
+		
+			<SPRITE  class="btn_map fit icon svg" img=(city_arm) visible=(city_arm) />
+			<SPRITE  class="btn_map fit icon svg" img=("ico_city.svg") visible=(!city_arm) />
+			
+			;<SPRITE  class="listitem icon_list svg" iconid=%*.icon_small_id visible=(%*.icon_small_id != -1)>
+			;<SPRITE  class="listitem icon_list svg" iconid=%*.icon_id iconindex=0 visible=(%*.icon_small_id == -1)>
+			<ROADSHIELDEDTEXT class="color_btn_main listitem itiner" text=(VW_City( %*.position )) />
+			<ROADSHIELDEDTEXT class="color_btn_main listitem itiner" text=(VW_District( %*.position )) FLEX=4/>
+			;<TEXT class="listitem" text=(VW_City( %*.position )) />
+			;<ROADSHIELDEDTEXT class="color_btn_main listitem itiner" textmodel_wstr="*.text_enc">
+			<SPACER flex=1>
+			<DISTTEXT class="listitem value color_btn_main itiner" distance=(%route.list.navigated.itiner.detailmode == "road" ? %*.length : %*.remaining_length) >
+		</HBOX>			
+	</BUTTON>
+</element_template>
+
+<layer ui_city_onway z=41>
+	<DIV class="list shrinked">
+		<SECTIONMARKER>
+		<LIST2 class="list_control"  SHOWSELECTION=1 SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.city_onway_list_filtered.filter" element_template="et_city_onway_list">
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<var CityOnWayCockpit = 0 permanent />
+<var CityOnWayQuick = 0 permanent />
+<modify ui_Cockpit>
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON CityOnWay 
+			ONRELEASE=VW_CityOnWay 
+			ONLONGCLICK='sc_NextStateAnim(st_CityOnWay, "fade", 1, "")'
+			VISIBLE=(CityOnWayCockpit && %navigation.has_route)
+			ICON="ico_urban.svg" 
+			ZOOM=80%
+			T_TEXT=(VW_Return_button_text(translate("City on way"), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate("City on way"), L"%s", 99)) />
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=(CityOnWayCockpit && %navigation.has_route) />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="City on way Button" bmp=(CityOnWay.ICON) isselected="ui.CityOnWayCockpit" />
+	</insert>
+</modify>
+;---- Quick Menu -----
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE='ui.CityOnWay.ONRELEASE()()' ONLONGCLICK='ui.CityOnWay.ONLONGCLICK()()' 
+			VISIBLE=(CityOnWayQuick && %navigation.has_route)
+			ICON=(CityOnWay.ICON) ZOOM=80%
+			T_TEXT=(CityOnWay.T_TEXT)
+			B_TEXT=(CityOnWay.B_TEXT) />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=(CityOnWayQuick && %navigation.has_route) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="City on way Button" bmp=(CityOnWay.ICON) isselected="ui.CityOnWayQuick" />
+	</insert>
+</modify>
+/*
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp="ico_urban.svg" text=(translate("City on way")) onrelease=VW_CityOnWay onlongclick='sc_NextStateAnim(st_CityOnWay, "fade", 1, "")' enable=(%navigation.has_route) />
+		</insert>
+	</modify>
+<!end/>
+*/

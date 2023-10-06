@@ -1,0 +1,6 @@
+BmpFlags = 0
+DefFlags = ALPHA_PIXEL | GRAB_CENTER 
+DefPhase = 0
+Stripes = 250
+Animation = "Attention", 5, "ABCDE", "ABCDE"
+

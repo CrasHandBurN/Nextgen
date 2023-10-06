@@ -1,0 +1,58 @@
+<modify ui_Cockpit>           
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON ShowTollButtonCockpit 
+			ONRELEASE=VW_Switch_Toll 
+			ONLONGCLICK='if Plugin:isLoaded("toll_booth") then sc_NextStateAnim(st_wTollBoothSettings, "fade", 1, "" ) end' 
+			VISIBLE=(%lua.ShowTollButtonCockpit)
+			ICON=(%route.settings.ui.allow_toll ? "ico_pay.svg" : "ico_no_pay.svg") ZOOM=90%
+			T_TEXT=(VW_Return_button_text(translate("Toll Roads"), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate("Toll Roads"), L"%s", 99))
+			/>
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=(%lua.ShowTollButtonCockpit) />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'Toll Roads' Button" bmp=(ShowTollButtonCockpit.ICON) isselected="lua.ShowTollButtonCockpit" />
+	</insert>
+</modify>
+;---- Quick Menu -----
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON 
+			ONRELEASE=VW_Switch_Toll 
+			ONLONGCLICK='ui.ShowTollButtonCockpit.ONLONGCLICK()()' 
+			VISIBLE=(%lua.ShowTollButtonQuick)
+			ICON=(ShowTollButtonCockpit.ICON) ZOOM=90%
+			T_TEXT=(ShowTollButtonCockpit.T_TEXT)
+			B_TEXT=(ShowTollButtonCockpit.B_TEXT)
+			/>
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=(%lua.ShowTollButtonQuick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'Toll Roads' Button" bmp=(ShowTollButtonCockpit.ICON) isselected="lua.ShowTollButtonQuick" />
+	</insert>
+</modify>
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=(%route.settings.ui.allow_toll ? "ico_pay.svg" : "ico_no_pay.svg") text=(translate("Toll Roads")) onrelease=VW_Switch_Toll 
+				onlongclick='ui.ShowTollButtonCockpit.ONLONGCLICK()()' />
+		</insert>
+	</modify>
+<!end/>

@@ -1,0 +1,423 @@
+;-------------WANDEL™ 07.06.2020--------------
+<observer value=(lua.DriverAlertsList) onchange='ui.vDAIsVisible = 1' start="NO_TRIGGER" />
+<observer obs_DriverAlertInTime value=(%navigation.car.current_speed) onchange=sc_DriverAlertInTime start="NO_TRIGGER" />
+
+<userlist lm_WarningSign text="str" haspopover="bool" type="str" enable="bool" onrelease="ui" boolmodel="str" visible="bool" isselected="str" details="ui" haspopover="bool" dtooltip="str" changevalue="ui">
+	<view visibility_filter=visible />
+	<default visible=1 enable=1 isselected="" />
+	<row	text=( %lua.DAEnabled ? "Driver Alerts" : "After 'On' all Driver Alerts Grupes will be On. Please use 'Driver Alerts Groups Settings' to change them." )
+		type="ChkOnOff" isselected="lua.DAEnabled" haspopover=1
+		changevalue='if MODEL.lua.DAEnabled() then sc_SetDriverAlertSystemVisual(true) else sc_SetDriverAlertSystemVisual(false) end' />
+	<row	text="Driver Alerts Count" details=(%lua.DriverAlertsCount) onrelease=VW_DriverAlertsCount enable=(%lua.DAEnabled) />
+	<row    text="Time to Driver Alerts" details=(sc_ShowTimeTool(%lua.DriverAlertDelay)) haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_WarningSignDelaySet")' enable=(%lua.DAEnabled) />
+	<row	text="On/Off Visual Driver Alerts Groups and Distance" haspopover=1 onrelease=sc_st_DAGrupePreshow enable=(%lua.DAEnabled) />
+	<row 	text="Choose Driver Alerts Warning Priority" haspopover=1 details=(%lua.DA_Read_Priority_Active ? "When active" : "Early") onrelease={invert(%lua.DA_Read_Priority_Active)} enable=(%lua.DAEnabled) />
+	<row  	text="Choose Driver Alerts Attention Sound" haspopover=1 
+		details=(%lua.OwnWarningRoadSigns == L"" ? %lua.AudioRoadSigns : %lua.OwnWarningRoadSigns) 
+		onrelease={%lua.SelectedAudioFile = %lua.AudioRoadSigns; %lua.SelectedOwnWarning = %lua.OwnWarningRoadSigns; sc_ScanAudioFiles()} 
+		enable=(%lua.DAEnabled) />
+	<row 	text="Read TTS or Audio Driver Alerts" haspopover=1 onrelease={invert(%lua.DA_ReadTTS_Enabled)} details=(%lua.DA_ReadTTS_Enabled ? (%regional.current_voice.is_tts ? "TTS" : "Audio is currently as TTS is Off") : (%lua.DAaudio_path == L"DA9999" ? "DA9999" : tostring(%lua.DAaudio_path))) enable=(%lua.DAEnabled) />
+	;<row 	text="Live Audio Driver Alerts" haspopover=1 onrelease=sc_LiveAudioSettings details=(tostring(%lua.DAaudio_path)) enable=(%lua.DAEnabled && !%lua.DA_ReadTTS_Enabled) />
+	<row 	text="On/Off Driver Alerts Warning and Pro Test" haspopover=1 onrelease='sc_NextStateAnim(st_DASoundTTS, "fade", 1, "")' enable=(%lua.DAEnabled) />
+	
+	<row    text="Enable Driver Alerts Place Show" type="ChkOnOff" isselected="lua.DAPlaceShowEnable" />
+	<row    text="Driver Alerts Place Show Time" details=(sc_ShowTimeTool(%lua.DAWarningShowTime)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_DAWarningShowTime" )' enable=(%lua.DAPlaceShowEnable) />
+	<row    text="Driver Alerts Place Show Zoom" details=(sc_ShowDistanceTool(%lua.DAWarningZoom)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_DAWarningZoom" )' enable=(%lua.DAPlaceShowEnable) />
+
+</userlist>
+
+<userlist lm_WarningSignDelaySet   name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowTimeTool(3)) max_text=(sc_ShowTimeTool(30)) />
+		<row name="Time to Driver Alerts" text=(sc_ShowTimeTool(%lua.DriverAlertDelay)) type="Scroll" min=3 max=30 step=1 valuemodel="lua.DriverAlertDelay" />
+</userlist>
+
+<userlist lm_DAWarningShowTime name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowTimeTool(5)) max_text=(sc_ShowTimeTool(30))/>
+	   <row name="Driver Alerts Place Show Time" text=(sc_ShowTimeTool(%lua.DAWarningShowTime)) type="Scroll" min=5 max=30 step=1 valuemodel="lua.DAWarningShowTime" />
+</userlist>
+
+<userlist lm_DAWarningZoom name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(100)) max_text=(sc_ShowDistanceTool(1000)) />
+	   <row name="Driver Alerts Place Show Zoom" text=(sc_ShowDistanceTool(%lua.DAWarningZoom)) type="Scroll" min=100 max=1000 step=10 valuemodel="lua.DAWarningZoom" />
+</userlist>
+
+<layer ui_driveralerts z=50 visible=( ui_PropLayer.SidePanelVisible )>
+	<implementation>
+		<property alert_active value=0 />
+	</implementation>  
+	<DIV class=cockpit>
+		<DIV class=map_messagebox >
+			<SPRITE class="map_messagebox listitem flag" img=(sc_returnDAImg(alert_active)) phasename="normal" /> 
+			;<SPRITE left=25% right=25% top=25% bottom=25% align="CENTER" valign="CENTER" img=(sc_returnDAImg(alert_active)) phasename="normal" visible=(%gps.blink) />
+			<VBOX left=25% right=25% top=25% bottom=25% align="CENTER" valign="CENTER" visible=(%gps.blink)>
+				<SPRITE left=15% right=15% top=15% bottom=15% img=(sc_returnDAImg(alert_active)) phasename=(alert_active.is_active ? "normal" : "disabled") />
+				
+				<TEXT class="da" text=(alert_active.value) visible=(alert_active.show_value) >
+					<SPRITE class="da_box" />
+				</TEXT>
+				
+				<TEXT class="da duration" text=(builtin.format(L"%{distance:*:}",alert_active.duration, lua.EDistanceDisplayMode.MidRound)) visible=(alert_active.show_duration) >
+					<SPRITE class="da_box" />
+					<SPRITE class="da_box duration left" />
+					<SPRITE class="da_box duration right" />
+				</TEXT>
+				
+				<TEXT class="da" text=(builtin.format(L"%{distance:*:}",alert_active.prewarn, lua.EDistanceDisplayMode.MidRound)) visible=(alert_active.show_prewarn) >
+					<SPRITE class="da_box" />
+				</TEXT>
+				
+				<TEXT class="da" text=(alert_active.validity_time) visible=(alert_active.show_validity_time) >
+					<SPRITE class="da_box" />
+				</TEXT>
+				
+				<SPRITE class="da picto" bmp="da_pictograms.svg" phase=(alert_active.pictoid0) visible=(alert_active.show_pictoid0) >
+					<SPRITE class="da_box" />
+				</SPRITE>
+				
+				<SPRITE class="da picto" bmp="da_pictograms.svg" phase=(alert_active.pictoid1) visible=(alert_active.show_pictoid1) >
+					<SPRITE class="da_box" />
+				</SPRITE>
+				
+				<SPRITE class="da picto" bmp="da_pictograms.svg" phase=(alert_active.pictoid2) visible=(alert_active.show_pictoid2) >
+					<SPRITE class="da_box" />
+				</SPRITE>
+				
+				<SPRITE class="da picto" bmp="da_pictograms.svg" phase=(alert_active.pictoid3) visible=(alert_active.show_pictoid3) >
+					<SPRITE class="da_box" />
+				</SPRITE>
+				
+				<SPRITE class="da picto" bmp="da_pictograms.svg" phase=(alert_active.pictoid4) visible=(alert_active.show_pictoid4) >
+					<SPRITE class="da_box" />
+				</SPRITE>
+				
+				<SPRITE class="da picto" bmp="da_pictograms.svg" phase=(alert_active.pictoid5) visible=(alert_active.show_pictoid5) >
+					<SPRITE class="da_box" />
+				</SPRITE>
+			</VBOX>
+		</DIV>
+	</DIV>
+</layer>
+	
+<define_element DRIVERALERT alert_index=0>
+	<implementation>
+		<property alert value=( observe(lua.DriverAlertsList); sc_DA_fill_alert(lua.DriverAlertsList.size > OWNER.ALERT_INDEX ? OWNER.ALERT_INDEX : undef) ) />
+;----------------------------WANDEL™-----------------------------------------------
+
+		<property value=( observe(alert.is_active); sc_DA_ReadOut(alert)) />
+
+;----------------------------------------------------------------------------------
+ 		<property alpha value=(alert.is_active ? 32 : 16 ) />
+		<property n_delta value=( (alert.show_value ? 1 : 0) + (alert.show_duration ? 1 : 0) + (alert.show_prewarn ? 1 : 0) + (alert.show_validity_time ? 1 : 0) ) />
+		<property owner_alert_index value=(OWNER.ALERT_INDEX) />
+	</implementation>   
+
+	<BUTTON class="da" onrelease='VW_SignInfoPanel(owner_alert_index, sc_returnDAImg(ui.alert()))' onlongclick='sc_NextStateAnim(st_DriverAlertsSettings, "fade", 1, "")'>  ;onrelease='VW_SignInfo(owner_alert_index)'
+		;<observer value=(%lua.DAPlaceShowEnable && alert.icon_index && alert.is_active && alert.icon_index == 1) onselect={DA_sc_DiscoverySidePanelChange(alert)} ondeselect='if temp_value[2].ACTION[1] == "driveralerts" then sc_HideDiscoverySidePopup() end' start="NO_TRIGGER" />
+		<observer value=(%lua.DAPlaceShowEnable && alert.is_active && alert.icon_index == 1) onselect={DA_sc_DiscoverySidePanelChange(alert)} ondeselect='if temp_value[2].ACTION[1] == "driveralerts" then sc_HideDiscoverySidePopup() end' start="NO_TRIGGER" />
+		<VBOX> ;class="da"
+			<SPRITE class="da" img=(sc_returnDAImg(alert)) phasename=(alert.is_active ? "normal" : "disabled") />
+			
+			<TEXT class="da" text=(alert.value) visible=(alert.show_value) alpha=alpha >
+				<SPRITE class="da_box" />
+			</TEXT>
+			
+			<TEXT class="da duration" text=(builtin.format(L"%{distance:*:}",alert.duration, lua.EDistanceDisplayMode.MidRound)) visible=(alert.show_duration) alpha=alpha>
+				<SPRITE class="da_box" />
+				<SPRITE class="da_box duration left" />
+				<SPRITE class="da_box duration right" />
+			</TEXT>
+			
+			<TEXT class="da" text=(builtin.format(L"%{distance:*:}",alert.prewarn, lua.EDistanceDisplayMode.MidRound)) visible=(alert.show_prewarn) alpha=alpha>
+				<SPRITE class="da_box" />
+			</TEXT>
+			
+			<TEXT class="da" text=(alert.validity_time) visible=(alert.show_validity_time) alpha=alpha>
+				<SPRITE class="da_box" />
+			</TEXT>
+			
+			<SPRITE class="da picto" bmp="da_pictograms.svg" phase=(alert.pictoid0) visible=(alert.show_pictoid0) alpha=alpha>
+				<SPRITE class="da_box" />
+			</SPRITE>
+			
+			<SPRITE class="da picto" bmp="da_pictograms.svg" phase=(alert.pictoid1) visible=(alert.show_pictoid1) alpha=alpha >
+				<SPRITE class="da_box" />
+			</SPRITE>
+			
+			<SPRITE class="da picto" bmp="da_pictograms.svg" phase=(alert.pictoid2) visible=(alert.show_pictoid2) alpha=alpha >
+				<SPRITE class="da_box" />
+			</SPRITE>
+			
+			<SPRITE class="da picto" bmp="da_pictograms.svg" phase=(alert.pictoid3) visible=(alert.show_pictoid3) alpha=alpha >
+				<SPRITE class="da_box" />
+			</SPRITE>
+			
+			<SPRITE class="da picto" bmp="da_pictograms.svg" phase=(alert.pictoid4) visible=(alert.show_pictoid4) alpha=alpha >
+				<SPRITE class="da_box" />
+			</SPRITE>
+			
+			<SPRITE class="da picto" bmp="da_pictograms.svg" phase=(alert.pictoid5) visible=(alert.show_pictoid5) alpha=alpha >
+				<SPRITE class="da_box" />
+			</SPRITE>
+		</VBOX>
+	</BUTTON>
+</define_element>
+;------------------------------------------------!!!!----------------------------------------
+<modify lm_WarningsSettings>
+	<insert after="default">
+		<row prio=300 text="Driver Alerts" icon="ico_da.svg" onrelease='sc_NextStateAnim(st_DriverAlertsSettings, "fade", 1, "")' />
+	</insert>
+</modify>
+
+<modify lm_alert_views>
+	<insert>
+		<view driver_alerts filter=($1.provider == lua.EIwsProviders.DriverAlert && $1.status != 0 && $1.status != 5 && (!view.__len || view[-1].icon_id != $1.icon_id) && sc_DAIconIsValid( $1.icon_id, $1.type )) />
+	</insert>
+</modify>
+
+<modify ui_Cockpit>
+	<insert before="DIV.speedlimit">
+		<DIV div_driver_alert CLASS="driver_alert">
+			<SPRITE CLASS="button map fill" />
+			<BOX box_driver_alert CLASS="driver_alert">
+				<DRIVERALERT ALERT_INDEX=0 />
+				<SPACER CLASS="driver_alert" />
+				<DRIVERALERT ALERT_INDEX=1 />
+				<SPACER CLASS="driver_alert" VISIBLE=(%lua.DriverAlertsCount > 2 && lua.DriverAlertsList.size > 2) />
+				<DRIVERALERT ALERT_INDEX=2 VISIBLE=(%lua.DriverAlertsCount > 2 && lua.DriverAlertsList.size > 2) />
+				<SPACER CLASS="driver_alert" VISIBLE=(%lua.DriverAlertsCount > 3 && lua.DriverAlertsList.size > 3) />
+				<DRIVERALERT ALERT_INDEX=3 VISIBLE=(%lua.DriverAlertsCount > 3 && lua.DriverAlertsList.size > 3) />
+			</BOX>
+		</DIV>
+	</insert>
+</modify>
+;-----------------------------------------------Preshow Grupe--------------------------------------------------
+<element_template et_DAGrupePreshow>
+  	<RADIO class="listitem" resize_bmp=1  right=5 top=10 bottom=10 left=5 
+		img=(%*.activate ? "btn_100_100.svg" : "btn_100_100_off.svg")
+		onrelease={%lua.Grupe_index = index; sc_SetPopoverListAndOpen("ui.lm_WarningPreShowDistance")}
+		onlongclick={%*.activate ? {%warning.driveralert.settings["show_cat" + index] = false} : {%warning.driveralert.settings["show_cat" + index] = true} }>
+		<SPRITE  class="listitem icon_center" position="absolute" img=("preshow_distance_cat" + index + ".svg") 
+			phasename=(%*.activate ? "normal" : "disabled")
+			resize_bmp=1  top=50  left=50 bottom=50 right=50  align="CENTER" valign="CENTER" />
+		<TEXT class="listitem name bd" text=(index == 0 ? "Curves and Corners" : index == 1 ? "Lanes and Overtaking" : index == 2 ? "General Warnings" : "Traffic and Crossing") fontsize=26 left=0 right=0 align="CENTER"  bottom=( %lua.IsLandscape ? 50 : 80 ) color=(%interface.theme == L"the_dark" || !%*.activate ? #fcf7f8 : #0f0f0e) />
+		<TEXT class="listitem name bd" text=(%*.activate ? "on" : "off") fontsize=20 left=0 right=0 align="CENTER" valign="TOP" top=( %lua.IsLandscape ? 20 : 50 )  color=(%interface.theme ==L"the_dark" || !%*.activate ? #fcf7f8 : #0f0f0e) />
+	</RADIO>
+</element_template>
+
+<layer ui_DAGrupePreshow z=160>
+	<DIV class="list">
+		<LIST2 class="list_control_groupe" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.list_DAGrupePreshow" element_template="et_DAGrupePreshow" />
+		</LIST2>
+	</DIV>
+</layer>
+
+<userlist lm_DAGrupePreshow_footer text="str" onrelease="ui"  onlongclick="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+	<row  text="Invert 'Visual'. Long Click - 'Reset'" isactionbutton=1 onrelease=sc_InvertVisual onlongclick={sc_SetDriverAlertSystemVisual(true)} />
+</userlist>
+
+<userlist list_DAGrupePreshow activate="bool" enable="bool" visible="bool" >
+	<view visibility_filter=visible/>
+	<default enable=1 visible=1 >
+	<row    activate=(%warning.driveralert.settings.show_cat0) />
+	<row    activate=(%warning.driveralert.settings.show_cat1) />
+	<row    activate=(%warning.driveralert.settings.show_cat2) />
+	<row    activate=(%warning.driveralert.settings.show_cat3) />
+    ;<row    text="Truck-specific" visible=(%lua.truckLicensed) />
+</userlist>
+
+<userlist lm_WarningPreShowDistance onchange="ui" name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(50)) max_text=(sc_ShowDistanceTool(300)) />
+	<row	name=(%lua.Grupe_index == 0 ? "Curves and Corners" : %lua.Grupe_index == 1 ? "Lanes and Overtaking" : %lua.Grupe_index == 2 ? "General Warnings" : "Traffic and Crossing") 
+		text=(sc_ShowDistanceTool(%lua["MinimalPreshowDADistance" + %lua.Grupe_index])) 
+		type="Scroll" min=50 max=300 step=10 
+		valuemodel=("lua.MinimalPreshowDADistance" + %lua.Grupe_index) 
+		onchange=({%warning.driveralert.settings["preshow_distance_cat" + %lua.Grupe_index] = %lua["MinimalPreshowDADistance" + %lua.Grupe_index]}) />
+</userlist>
+
+;---------------------------------------------------tts--------------------------------------------
+<element_template et_DASoundTTS>  
+  	<RADIO class="listitem" onrelease=(%lua.SelectedRoadSignsInfo ? sc_DATTSInfo_test : sc_DATTSVoice_test) onlongclick='VW_VisibilityAudibility(index)'
+		resize_bmp=1  right=12 top=2 bottom=2 left=2 
+		img=(%*.visible || %*.audible ? "btn_100_100.svg" : "btn_100_100_off.svg") >
+		<SPRITE  class="listitem icon svg" img=(sc_returnDAIconName()) phasename=(%*.visible || %*.audible ? "normal" : "disabled") position="absolute" />
+		<SPRITE  class="listitem icon svg" img=(%*.visible ? "ico_visibility_on.svg" : "ico_visibility_off.svg") align="left" valign="top" zoom=400 />
+		<SPRITE  class="listitem icon svg" img=(%*.audible ? "ico_sound.svg" : "ico_muteStatus.svg") align="right" valign="top" zoom=400 />
+		<TEXT class="listitem name bd"
+			text=(%lua.DA_ReadTTS_Enabled && %regional.current_voice.is_tts ? "TTS" : "Audio") 
+			fontsize=16 left=0 right=0 align="CENTER" valign="TOP" top=3  color=(%interface.theme == L"the_dark" || (!%*.visible && !%*.audible) ? #fcf7f8 : #0f0f0e) />
+	</RADIO>
+</element_template>
+
+<layer ui_DASoundTTS z=160>
+	<DIV class="list">
+		<LIST2 class="list_control_da" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.lm_fda_filtered.filter" element_template="et_DASoundTTS" />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<userlist lm_LocalMenuDAInfo text="str" onrelease="ui" enable="bool" selected="bool" type="str">
+	<default text="" onrelease=undef enable=1 visible=1 selected=0 type="Selection" />
+	<row text="Road Signs Info" onrelease={invert(%lua.SelectedRoadSignsInfo)} selected=(%lua.SelectedRoadSignsInfo) />
+</userlist>
+
+<userlist lm_DASoundTTS_footer text="str" onrelease="ui"  onlongclick="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+	<row   text="Invert 'Enable'. Long Click - 'Reset'" isactionbutton=1 onrelease=sc_InvertVisible onlongclick=sc_ResetVisible />
+</userlist>
+
+<layer ui_VisibleAudibleEnableBox z=100001 >
+	<DIV class=full> 
+		<SPRITE class="messagebox_cover" />
+		<DIV class=messagebox> 
+			<SPRITE class="messagebox" />
+			<DIV class="messagebox_panel">
+				<TABLE col=1 row=6 top=0 bottom=0 left=0 right=0>
+					<VBOX class="listitem">
+						<SPRITE  class="listitem icon_list svg top" img=(sc_returnDAIconName()) >
+						<TEXT class="listitem bottom" align="center" text=(%ui.lm_fda[lua.VW_idx].text) />
+					</VBOX>
+					<TEXT class="listitem" align="center" text="" visible=(!%lua.screen4x3 && %lua.IsLandscape) />
+					;<DIALOGBUTTON class="dialog" iconspr=(sc_returnDAIconName()) text=(%ui.lm_fda[lua.VW_idx].text) onrelease=undef />
+					;;<BUTTON class="listitem" text="Enable visibility & audibility" onrelease='ui.lm_fda[VW_idx].visible = true ui.lm_fda[VW_idx].audible = true' />
+					<DIALOGBUTTON class="dialog" text="Enable visibility & audibility" onrelease='ui.lm_fda[VW_idx].visible = true ui.lm_fda[VW_idx].audible = true' />
+					;;<CHECKBOX class="listitem chkonoff" iconspr=(%ui.lm_fda[lua.VW_idx].visible ? "ico_visibility_on.svg" : "ico_visibility_off.svg") 
+					;;	text="Visibility" checked=(%ui.lm_fda[lua.VW_idx].visible) changevalue={invert(%ui.lm_fda[lua.VW_idx].visible)} />
+					<CHECKBOX class="listitem chkonoff" iconspr=(%ui.lm_fda[lua.VW_idx].audible ? "ico_sound.svg" : "ico_muteStatus.svg") 
+						text="Audibility" checked=(%ui.lm_fda[lua.VW_idx].audible) changevalue={invert(%ui.lm_fda[lua.VW_idx].audible)}  enable=(%ui.lm_fda[lua.VW_idx].visible)/>
+					;;<BUTTON class="listitem" text="Disable visibility & audibility" onrelease='ui.lm_fda[VW_idx].visible = false ui.lm_fda[VW_idx].audible = false' />
+					<DIALOGBUTTON class="dialog" text="Disable visibility & audibility" onrelease='ui.lm_fda[VW_idx].visible = false ui.lm_fda[VW_idx].audible = false' />
+					<DIALOGBUTTON class="dialog" text="Close" onrelease=sc_RemoveAllBoxes />
+				</TABLE>
+			</DIV>
+		</DIV>
+	</DIV>
+</layer>
+;---------------------------------------Lists ------------------------------------------------
+<views lm_fda_filtered listmodel="ui.lm_fda" >
+	<view filter filter=(sc_lm_fda_filter(index)) /> 
+</views>
+
+<userlist lm_fda text="str" audible="bool" visible="bool">
+	<default FILENAME="lm_fda.txt" />
+	<default audible=1 visible=1 />
+
+	<row    text="start of no overtaking"/> ;000
+	<row    text="end of no overtaking"/> ;001
+	<row    text="protected overtaking extra lane"/> ;002
+	<row    text="protected overtaking extra lane right side"/> ;003
+	<row    text="protected overtaking extra lane left side"/> ;004
+	<row    text="lane merge right"/> ;005
+	<row    text="lane merge left"/> ;006
+	<row    text="lane merge center"/> ;007
+	<row    text="railway crossing protected"/> ;008
+	<row    text="railway crossing unprotected"/> ;009
+	<row    text="road narrows"/> ;010
+	<row    text="sharp curve left"/> ;011
+	<row    text="sharp curve right"/> ;012
+	<row    text="winding road starting left"/> ;013
+	<row    text="winding road starting right"/> ;014
+	<row    text="start of no overtaking trucks"/> ;015
+	<row    text="end of no overtaking trucks"/> ;016
+	<row    text="steep hill upwards"/> ;017
+	<row    text="steep hill downwards"/> ;018
+	<row    text="stop sign"/> ;019
+	<row    text="lateral wind"/> ;020
+	<row    text="general warning"/> ;021
+	<row    text="risk of grounding"/> ;022
+	<row    text="general curve sharp curve us"/> ;023
+	<row    text="end of all restrictions"/> ;024
+	<row    text="general hill us"/> ;025
+	<row    text="animal crossing"/> ;026
+	<row    text="icy conditions"/> ;027
+	<row    text="slippery road"/> ;028
+	<row    text="falling rocks"/> ;029
+	<row    text="school zone"/> ;030
+	<row    text="tramway crossing"/> ;031
+	<row    text="congestion hazard"/> ;032
+	<row    text="accident hazard"/> ;033
+	<row    text="priority over oncoming traffic"/> ;034
+	<row    text="yield to oncoming traffic"/> ;035
+	<row    text="truck risk of grounding"/> ;036
+	<row    text="truck sharp curve"/> ;037
+	<row    text="truck tree overhang"/> ;038
+	<row    text="crossing with priority from the right"/> ;039
+	<row    text="pedestrian crossing"/> ;040
+	<row    text="yield"/> ;041
+	<row    text="toll gate"/> ;42
+	<row    text="25kph zone isr"/> ;043
+	<row    text="traffic light isr"/> ;044
+	<row    text="road narrows on left"/> ;045
+	<row    text="road narrows on right"/> ;046
+	<row    text="cattle crossing"/> ;047
+	<row    text="roundabout"/> ;048
+	<row    text="roundabout alt"/> ;049
+	<row    text="uneven road"/> ;050
+	<row    text="crossroads"/> ;051
+	<row    text="crossroad from right"/> ;052
+	<row    text="crossroad from left"/> ;053
+	<row    text="bicycle"/> ;054
+	<row    text="tunnel"/> ;055
+	<row    text="two way traffic"/> ;056
+	<row    text="low flying aircraft"/> ;057
+	<row    text="soft shoulder"/> ;058
+	<row    text="loose gravel"/> ;059
+	<row    text="no horn"/> ;060
+	<row    text="minimum following distance"/> ;061
+	<row    text="priority road"/> ;062
+	<row    text="end of priority road"/> ;063
+	<row    text="road works"/> ;064
+	<row    text="opening or swing bridge"/> ;065
+	<row    text="quayside or river bank"/> ;066
+	<row    text="winding road isr"/> ;067
+	<row    text="serpentine to the left isr"/> ;068
+	<row    text="serpentine to the right isr"/> ;069
+	<row    text="no left turn isr"/> ;070
+	<row    text="no right turn isr"/> ;071
+	<row    text="no uturn isr"/> ;072
+	<row    text="parking area isr"/> ;073
+	<row    text="ford"/> ;074 for israile should be deer_warning
+	<row    text="low level bridge"/> ;075
+	<row    text="narrow bridge ahead"/> ;076
+	<row    text="na."/> ;077
+	<row    text="be aware of pedestrian"/> ; 078 israile
+</userlist>
+
+;------------------------mini sign text panel--------------------------
+<var SignInfoPanelDA = "" />
+<var SignInfoPanelName = "" />
+<var SignInfoPanelText = "" />
+<layer ui_RoadSignsText_mini z=30 onshow=map_free_area_onshow onhide=map_free_area_onhide >	
+	<DIV class=cockpit>
+		<DIV class="map_free_area">
+			<DIV class="panel">
+				<BUTTON top=0 bottom=0 left=0 right=0 onrelease=Hide_map_free_area onlongclick='VW_LongTextToSay(SignInfoPanelText())' >
+					<BOX orientation="vertical" >
+							
+						<BOX orientation="horizontal" box_align="CENTER">
+							<SPRITE class="da" img=(SignInfoPanelDA) />
+							<TEXT class="font_main_large bd  color_inf_sec" text=(SignInfoPanelName) />
+						</BOX>
+								
+						<TEXT class="font_info  color_inf_main" text=(SignInfoPanelText) />
+
+					</BOX>
+				</BUTTON>
+			</DIV>
+			<layer z=16>
+				<DIV class=cockpit>
+					<DIV class="map_free_area">
+						<SPRITE class="substrate" />	
+					</DIV>
+				</DIV>
+			</layer>
+		</DIV>
+	</DIV>
+</layer>

@@ -1,0 +1,21 @@
+<modify lm_MapVisualSettingsExtended>
+	<insert after="default">
+		<row prio=1900 text="Font Changer" icon="ico_font.svg" onrelease=VW_FontChanger />
+	</insert>
+</modify>
+
+<userlist list_FontsName enable="bool" visible="bool" group="str" type="str" text="wstr" >
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 value=0 group="lua.SelectedFont" type="RadioTextFont" > 
+</userlist>
+
+<element_template et_ListRadioTextFont>
+	<RADIO class="listitem" groupmodel=%*.group var=%*.text onrelease=%*.onrelease enable=( %*.enable // 1 )>
+		<HBOX class="listitem">
+			<SPRITE class="listitem icon_list radio svg" visible=(%{%*.group} == %*.text)>
+			<TEXT class="listitem" text=(%*.text == L"Default" ? translate("Default") : %*.text) font=(%*.text == L"Default" ? "roboto, Light" : tostring(%*.text)) />
+			<SPACER flex=1>
+		</HBOX>
+	</RADIO>
+</element_template>
+

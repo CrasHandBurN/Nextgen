@@ -1,0 +1,131 @@
+;-------------WANDEL™---release 13.07.2021------------
+<!ENABLE OVERRIDE>
+
+	<userlist lm_RouteMethod_More text="str" onrelease="ui" visible="bool" enable="bool">
+		<view visibility_filter=visible />
+		<row text="More Results"   onrelease=sc_RouteMethod_MoreAlternativeRoutes visible=(%lua.gotMoreAlternatives)>
+		<row text="Multiplan Route"	onrelease=sc_GetAllShowedRouteModel
+				visible=(%navigation.has_route && !%navigation.calculation_todo && !%route.list.navigated.off_road && %route.list.navigated.settings.vehicle_type != lua.EVehicleType.Pedestrian && %route.list.navigated.settings.vehicle_type != lua.EVehicleType.Bicycle) />
+	</userlist>
+
+	<element_template et_RouteMethod>
+		<implementation>
+			<property showData	value=(%{"route.list.multiplan" + (index + 1)}.valid && !%{"route.list.multiplan" + (index + 1)}.has_calculation_todo) />
+			<property dist		value=(%{"route.list.multiplan" + (index + 1)}.distance) />
+			<property time		value=(sc_GetAlternativeTime(index + 1, %{"route.list.multiplan" + (index + 1)}.time) ) />
+		
+			<property text_color value=(%lua.FindAlternativesOriginal || (index + 1) > 5 ? CSS.Param.map_main_color : #ffffff) />
+		</implementation>
+
+		<RADIO class="routemethod" flex=1 groupmodel="lua.alternativeModes" var=(index+1) onrelease='sc_RouteMethod_DrawSelectedAlternative(); sc_RefreshShowedRouteModel()' onlongclick=sc_HideSelectedAlternative
+			img=(%lua.FindAlternativesOriginal || (index + 1) > 5 ? "btn_listitem.bmp#3" : ui_RouteMethod.routecolors[index]) >
+			<SPRITE left=0 right=0 top=0 bottom=0 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 z=100 />
+			<HBOX class="listitem routemethod" flex=1>
+				<SPRITE class="routemethod routecolor" />
+				<HBOX class="routemethod container" flex=1 >	
+					<SPRITE class="radio routemethod svg" z=10 />
+					<VBOX class="routemethod" flex=4>
+						<TEXT class="listitem routemethod" text=(%*.text) FLEX=1 color=text_color />
+						<UNITTEXT class="listitem routemethod" value=(ui_RouteMethod.cost ? sc_FormatFuelCost(%{"route.list.multiplan" + (index + 1)}.fuel_cost, 3) : sc_FormatFuelValue(%{"route.list.multiplan" + (index + 1)}.fuel_usage)) unit=(ui_RouteMethod.cost ? %lua.Currency : sc_FormatFuelUnit()) visible=(showData) />
+						<HBOX class="routemethod" FLEX=1 visible=(showData)>
+							<TIMESPANTEXT class="listitem routemethod" timespan=(time) formatmodel=5 color=text_color />
+							<SPACER class="routemethod" />
+							<DISTTEXT class="listitem routemethod" distance=(dist) color=text_color />
+						</HBOX>
+						<HBOX class="box_searchprogress routemethod" FLEX=1 visible=(!showData)>
+							<SPRITE class="searchprogress wide" FLEX=1 />
+						</HBOX>
+					</VBOX>
+				</HBOX>
+			</HBOX>
+		</RADIO>
+	</element_template>
+
+	<layer ui_RouteMethod z=41>
+		<implementation>
+			<property cost value=(sc_RouteMethodGetPriceValid()) />
+			<property routecolors value=#ff208000, #ff200080, #ff208080, #ff802000, #ffff8800 /> ;Default
+		</implementation>
+		<DIV class="main"> 
+			<DIV class="sidepanel routemethod"> 
+				<SECTIONMARKER class="routemethod">
+				
+				<TEXT   class="list_header side" text="Alternative Routes">
+				<LIST2 lst_rmethod class="list_control routemethod" z=20002 SMOOTHSCROLLING>
+					<LISTMODEL listmodel="ui.lm_RouteMethod.list"		element_template="et_RouteMethod">
+					<LISTMODEL listmodel="ui.lm_RouteMethod_More.list"  element_template="et_RouteMethod_More">			
+					<VSMARTSCROLL>
+					<WHEEL>
+					<LISTCONTROL>
+				</LIST2>
+				<layer>
+					<DIV class="main"> 
+						<DIV class="sidepanel routemethod"> 
+							<SPRITE class="panel map">
+						</DIV>
+					</DIV>
+				</layer>
+			</DIV>
+		</DIV>
+		<DIV class="full">
+			<SPRITE fitbox_routemethod class="fitbox routemethod">
+		</DIV>
+	</layer>
+	
+<!DISABLE OVERRIDE>
+
+<var MultiPlanCockpit = 0 permanent />
+<var MultiPlanQuick = 0 permanent />
+<modify ui_Cockpit>           
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON MultiPlan ONRELEASE='sc_NextStateAnim(st_RouteMethod, "fade", 1, "" )'
+			;ONLONGCLICK='sc_NextStateAnim(st_TankDigitsValue, "fade", 1, "")'
+			VISIBLE=(MultiPlanCockpit)
+			ICON="ico_multiplan.svg" ZOOM=80%
+			T_TEXT=(VW_Return_button_text(translate("Alternatives"), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate("Alternatives"), L"%s", 99)) />
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=(MultiPlanCockpit) />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'Alternatives' Button" bmp=(MultiPlan.ICON) isselected="ui.MultiPlanCockpit" />
+	</insert>
+</modify>
+;---- Quick Menu -----
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE='ui.MultiPlan.ONRELEASE()()' ONLONGCLICK='ui.MultiPlan.ONLONGCLICK()()' 
+			VISIBLE=(MultiPlanQuick)
+			ICON=(MultiPlan.ICON) ZOOM=80%
+			T_TEXT=(MultiPlan.T_TEXT)
+			B_TEXT=(MultiPlan.B_TEXT) />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=(MultiPlanQuick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'Alternatives' Button" bmp=(MultiPlan.ICON) isselected="ui.MultiPlanQuick" />
+	</insert>
+</modify>
+
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=(MultiPlan.ICON) text=(translate("Alternatives")) onrelease='ui.MultiPlan.ONRELEASE()()' />
+		</insert>
+	</modify>
+<!end/>

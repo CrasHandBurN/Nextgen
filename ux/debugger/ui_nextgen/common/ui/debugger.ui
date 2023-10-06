@@ -1,0 +1,177 @@
+;-------------------debug---WANDEL™ ------24.11.20019-------------
+
+<userlist lm_DebugToList variable="wstr" >
+	<default FILENAME="lm_DebugToList.txt" variable="" />
+</userlist>
+
+<var EnvironmentVarType="all" />
+<userlist lm_EnvironmentList text="ui" details="ui" onrelease="ui" onlongclick="ui" enable="bool" visible="bool" >
+	<default visible=1 enable=1 onrelease='
+		if MODEL["*"].details() == "function" or MODEL["*"].details() == "userdata" then
+			VW_Debugger("***|" .. MODEL["*"].text() .. "()|***", _G[MODEL["*"].text()]())
+		else
+			VW_Debugger("***|" .. MODEL["*"].text() .. "|***", _G[MODEL["*"].text()])
+		end
+		sc_NextStateAnim(st_ShortVarView, "fade", 1, "" )' 
+		onlongclick='
+		if MODEL["*"].details() == "function" or MODEL["*"].details() == "userdata" then
+			functionTextToRun = towstring("return " .. MODEL["*"].text() .. "()")
+		else
+			functionTextToRun = towstring("return " .. MODEL["*"].text())
+		end
+		sc_NextStateAnim(st_VW_SimpleInputText, "fade", 1, "" )
+		' />
+	<view visibility_filter=((inp_Input.VALUE ? VW_Filter_VarName($1.text) : 1) && (EnvironmentVarType == "all" ? 1 : ($1.details == EnvironmentVarType))) />
+</userlist>
+
+<userlist lm_EnvironmentListLocal text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+	<row text="Sort by Type" onrelease='ui.lm_EnvironmentList:sort("details")' />
+	<row text="Show All" onrelease='ui.EnvironmentVarType="all"' />
+	<row text="Show 'string'" onrelease='ui.EnvironmentVarType="string"' />
+	<row text="Show 'number'" onrelease='ui.EnvironmentVarType="number"' />
+	<row text="Show 'boolean'" onrelease='ui.EnvironmentVarType="boolean"' />
+	<row text="Show 'table'" onrelease='ui.EnvironmentVarType="table"' />
+</userlist>
+
+/*
+<modify lm_MainMenu>
+	<insert before=Information>
+         <row text="View Debugger List" icon="ico_debugger.svg" onrelease='sc_NextStateAnim(st_VW_Debugger, "fade", 1, "")' />
+	</insert>
+</modify>
+*/
+
+<element_template et_lm_DebugToList>
+	<TEXT class="debugger_listitem" text=%*.variable />
+</element_template>
+
+<layer ui_list_view z=300>
+	<DIV class=list>
+		<SPRITE class=list_panel />
+		<LIST2 class=list_control SMOOTHSCROLLING REVERSED=0>
+			<LISTMODEL listmodel="ui.lm_DebugToList" element_template="et_lm_DebugToList" visible=1 />
+			<VSMARTSCROLL>
+			<WHEEL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<userlist lm_VW_localmenu_footer text="str" onrelease="ui"  onlongclick="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+	<row   text=("SnapShot or Clear by Long Click. \nButton in Cockpit now " + (%lua.ShowSnapshotBtn ? "'ON'" : "'OFF'")) onrelease=VW_Debugger_Get_Snapshot onlongclick='MODEL.ui.lm_DebugToList.clear()  MODEL.ui.lm_DebugToList.save()' />
+</userlist>
+;----------------------------------------------------------------------------------------------------
+<userlist lm_UX_List Name="str" visible="bool" enable="bool" >
+	<default visible=1 enable=1 />
+	<view visibility_filter=(inp_Input.VALUE ? VW_Filter_VarNameString($1.Name) : 1) /> ;sort_by doesn't make sense due to uppercase and lowercase
+</userlist>
+
+<element_template et_UX_List>
+	<CHECKBOX class="listitem chkonoff" text=(VW_UX_List_view(%*.Name)) checked=(lua.UX_Name_Control_Table[%*.Name]) changevalue={invert(lua.UX_Name_Control_Table[%*.Name])} />
+</element_template>
+
+<layer ui_UX_control z=300>
+	<DIV class=list>
+		<SPRITE class=list_panel />
+		<LIST2 class=list_control SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.lm_UX_List" element_template="et_UX_List" />
+			<VSMARTSCROLL>
+			<WHEEL>
+		</LIST2>
+	</DIV>
+</layer>
+;-----------------------------------------------------------------------------------------------------
+<userlist lm_VW_localmenu text="ui" onrelease="ui" onlongclick="ui" enable="bool"  visible="bool">
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 />
+      	<row	text="UX Name Control" onrelease='sc_NextStateAnim(st_VW_UX_Name, "fade", 1, "" )' />
+		<row	text=(sc_translate_VoiceOrLang("Table Depth Limit: %s", %lua.depth_limit)) onrelease='sc_SetPopoverListAndOpen( "ui.lm_Table_Depth_Limit_popover" )' />
+		<row	text="Environment" onrelease='sc_NextStateAnim(st_EnvironmentList, "fade", 1, "" )' />
+      	<row	text=("ON/OFF Snapshot Button. Now " + (%lua.ShowSnapshotBtn ? "'ON'" : "'OFF'")) onrelease={invert(%lua.ShowSnapshotBtn)} />
+      	<row	text="Enter Chunk" onrelease='sc_NextStateAnim(st_VW_SimpleInputText, "fade", 1, "" )' />
+		<row	text="Overmap Snapshot Button:show&config" onrelease='MODEL.lua.OvermapSnapshotBtn = not MODEL.lua.OvermapSnapshotBtn(); ui_Overmap_Snapshot_Btn:SHOW()' onlongclick='sc_NextStateAnim(st_Overmap_Snapshot_Btn, "fade", 1, "" )' />
+      	<row	text="Clear List" onrelease='MODEL.ui.lm_DebugToList.clear() MODEL.ui.lm_DebugToList.save()' />
+      	<row	text="Help" onrelease='VW_Show_xhtmlQuest("Debugger_Help.xhtml", "Help")' /> 
+      	<row	text="About" onrelease='VW_Show_xhtmlQuest("Debugger_credits.xhtml", "About")' />   
+</userlist>
+
+<userlist lm_Table_Depth_Limit_popover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text="NO limit" max_text="50" />
+	   <row name="Table Depth Limit" text=(%lua.depth_limit) type="Scroll" min=0 max=50 step=1 valuemodel="lua.depth_limit" />
+</userlist>
+
+<layer ui_Overmap_Snapshot_Btn z=50000 visible=1 onhide='if MODEL.lua.OvermapSnapshotBtn() then ui_Overmap_Snapshot_Btn:SHOW() else ui_Overmap_Snapshot_Btn:HIDE() end'>
+	<BUTTON class="Overmap_Snapshot_Btn" onrelease=VW_Debugger_Get_Snapshot 
+		onlongclick='sc_SetPopoverListAndOpen("ui.lm_PopoverDragButton_or_onlongclick")' >
+		<SPRITE class="listitem flag" overmaplayer img="ico_debugger.svg" image_h=(PARENT.H) image_w=(PARENT.W) />
+	</BUTTON>
+</layer>
+
+<userlist lm_PopoverDragButton_or_onlongclick text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+	<row text="On Long Click" onrelease='sc_ClosePopover(); sc_NextStateAnim(st_VW_Debugger, "fade", 1, "")' />
+	<row text="Drag Button" onrelease='sc_ClosePopover(); VW_DrugButtin()' />
+</userlist>
+
+<layer ui_Overmap_Snapshot_Btn_cnt z=180 >
+	<DIV class="full">
+	
+		<SPRITE class="listitem" top=0 left=0 right=0 h=10% bmp="btn_map.bmp#3" resize_bmp=1  alpha=10 > 
+			<CHECKBOX  class="listitem chkonoff" text="Overmap Snapshot Button" boolmodel="lua.OvermapSnapshotBtn" onrelease='ui_Overmap_Snapshot_Btn:HIDE()' />
+		</SPRITE>
+
+		<SPRITE class="listitem" left=0 top=10% right=0 alpha=10 bmp="btn_map.bmp#3" resize_bmp=1 h=(%lua.IsLandscape ? 15% : 10%) > 
+			<TEXT class="listitem" z=45 left=7% right=7% top=12% align="CENTER" 
+				text=(%lua.IsLandscape ? "Horizontal BUTTON position (landscape)" : "Horizontal BUTTON position (portrait)") />
+   			<HSMARTSCROLL class="scroll BtnH" min=0 left=5% right=5% top=28% z=50 dragable=1 
+				valuemodel=(%lua.IsLandscape ? "lua.Overmap_Snapshot_Btn_HorizontalLand" : "lua.Overmap_Snapshot_Btn_HorizontalPort") />
+		</SPRITE>
+		<SPRITE class="listitem" left=0 resize_bmp=1 alpha=10 bmp="btn_map.bmp#3"
+				top=(%lua.IsLandscape ? 25% : 20%) w=(%lua.IsLandscape ? 10% : 15%)	bottom=(%lua.IsLandscape ? 12% : 8%) > 
+  			<VSMARTSCROLL class="scroll BtnV" min=0 left=0 right=0 align="CENTER"  top=5% bottom=5% z=50 dragable=1 
+				valuemodel=(%lua.IsLandscape ? "lua.Overmap_Snapshot_Btn_VerticalLand" : "lua.Overmap_Snapshot_Btn_VerticalPort") />
+		</SPRITE>
+		<SPRITE class="listitem" resize_bmp=1 alpha=10 right=0 h=10% bmp="btn_map.bmp#3"
+				top=(%lua.IsLandscape ? 25% : 20%) left=(%lua.IsLandscape ? 10% : 15%) > 
+			<TEXT class="listitem" z=45 left=7% right=7% top=10%  bottom=10% align="CENTER" 
+				text=(%lua.IsLandscape ? "<<--  Vertical BUTTON position (landscape)" : "<<--  Vertical BUTTON position (portrait)") />
+		</SPRITE>
+		<BUTTON class="Overmap_Snapshot_Btn" >
+	 	  	<SPRITE class="listitem flag" overmaplayer IMG="ico_debugger.svg" image_h=(PARENT.H) image_w=(PARENT.W) />
+		</BUTTON>
+	</DIV>
+	<DIV class="footer">
+		<FOOTERBUTTON class="btn_footer left back icon svg" onrelease='sc_Cockpit_Back_From_Dragmode() sc_back()'
+			onlongclick=sc_longBack rawkey=(%lua.LocalMenuOpen ? undef : 27) />
+	</DIV>
+</layer> 
+;--------------------------------------------------------------------
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">      
+		<BUTTON_ICON ONRELEASE=VW_Debugger_Get_Snapshot ONLONGCLICK='sc_NextStateAnim(st_VW_Debugger, "fade", 1, "")' VISIBLE=(%lua.ShowSnapshotBtn)
+			ICON="ico_debugger.svg" T_TEXT="Debugger" />
+	</insert>
+</modify>
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row  text="Debugger Snapshot Button in Cockpit" bmp="ico_debugger.svg" isselected="lua.ShowSnapshotBtn" />
+	</insert>
+</modify>
+<modify lm_QuickSideList>
+	<insert>
+		<row  visible=(%lua.ShowSnapshotBtn) />
+	</insert>
+</modify>
+;--------------------------------------------------------
+/*
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp="ico_debugger.svg" text=(translate("Debugger")) onrelease='sc_NextStateAnim(st_VW_Debugger, "fade", 1, "")' />	
+		</insert>
+	</modify>
+<!end/>
+*/

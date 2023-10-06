@@ -1,0 +1,27 @@
+DIV.driver_alert {
+	left: 0;
+	bottom: ( (%lua.CityShow ? 25 : 0) + (menu_button_h*2 + route_progress_h + route_progress_padding) + cockpit_margin + current_speed_h + cockpit_margin ); 
+	w: (%ui.lm_alert_views.driver_alerts.size >= 2 ? cockpit_warning_w+current_speed_w : current_speed_w); 
+}
+
+DIV.driver_alert>BOX.driver_alert{
+	orientation:"horizontal";
+}
+
+SPRITE.da{
+	z: 100;
+	box_align: "CENTER";
+	align:"CENTER";
+}
+
+BOX.driver_alert>DRIVERALERT[alert_index=1]{
+	visible:(%ui.lm_alert_views.driver_alerts.size >= 2);
+}
+
+LIST2.list_control_da {
+	row:8; col:4;
+}
+
+LIST2.list_control_groupe {
+	row:2; col:2;
+}

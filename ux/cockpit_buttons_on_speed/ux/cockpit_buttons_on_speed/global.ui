@@ -1,0 +1,2 @@
+import "~/common/ui/cockpit_buttons_on_speed.lua"
+import "~/common/ui/cockpit_buttons_on_speed.ui"

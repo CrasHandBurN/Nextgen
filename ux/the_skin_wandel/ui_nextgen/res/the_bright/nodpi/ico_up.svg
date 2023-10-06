@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 17.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="120px"
+	 height="120px" viewBox="0 114 120 120" enable-background="new 0 114 120 120" xml:space="preserve">
+<g id="Layer_2" display="none">
+	<circle display="inline" opacity="0.5" fill="#DF1F26" cx="60" cy="174" r="60"/>
+	<rect x="6.5" y="120.5" display="inline" opacity="0.5" fill="#3B4FA1" width="107" height="107"/>
+</g>
+<g id="normal">
+	<polygon fill="#3A3A3A" points="66.825,227.5 66.825,148.937 96.545,178.653 108.962,168.111 59.4,120.5 11.038,168.412 
+		22.252,178.653 51.972,148.937 51.972,227.5 	"/>
+</g>
+<g id="active">
+	<polygon fill="#3A3A3A" points="66.825,227.5 66.825,148.937 96.545,178.653 108.962,168.111 59.4,120.5 11.038,168.412 
+		22.252,178.653 51.972,148.937 51.972,227.5 	"/>
+</g>
+<g id="disabled" opacity="0.2">
+	<polygon fill="#3A3A3A" points="66.825,227.5 66.825,148.937 96.545,178.653 108.962,168.111 59.4,120.5 11.038,168.412 
+		22.252,178.653 51.972,148.937 51.972,227.5 	"/>
+</g>
+</svg>

@@ -1,0 +1,21 @@
+DIV.driver_alert {
+  	left: ( ui_PropLayer.ShowRouteProgress ? (%lua.aColorCockpitInterface_Set == lua.SkinInterfaceColor.DEFAULT ? route_progress_w : route_progress_bg_w) : 0 );
+	bottom: ( (Plugin.isLoaded( "speedcam" ) ? (3*datafield_h + 2*cockpit_margin + speedcam_h + cockpit_margin) : (3*datafield_h + 2*cockpit_margin + cockpit_warning_h + cockpit_margin)) + cockpit_margin );
+	w: (%ui.lm_alert_views.driver_alerts.size >= 2 ? 2*cockpit_da_warning_w : cockpit_da_warning_w); 
+}
+
+DIV.driver_alert>BOX.driver_alert{
+	orientation:"horizontal";
+}
+
+BOX.driver_alert>DRIVERALERT[alert_index=1]{
+	visible:(%ui.lm_alert_views.driver_alerts.size >= 2);
+}
+
+LIST2.list_control_da {
+	row:4; col:8;
+}
+
+LIST2.list_control_groupe {
+	row:2; col:2;
+}

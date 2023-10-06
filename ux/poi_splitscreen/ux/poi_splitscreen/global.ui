@@ -1,0 +1,6 @@
+import "~/common/ui/poi_splitscreen.css"
+
+import "~/common/ui/poi_splitscreen.ui"
+import "~/common/ui/poi_splitscreen.lua"
+
+;import "~/common/ui/poi_splitscreen_mods.ui"

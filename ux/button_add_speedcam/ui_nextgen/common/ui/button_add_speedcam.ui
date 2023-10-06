@@ -1,0 +1,68 @@
+;---- WANDEL™ 18.05.2023 ----;
+<!if condition=(Plugin.isLoaded("speedcam"))>
+	<modify ui_Cockpit>
+		<insert into="DIV.cockpit" > 
+			<LAYER Z=26 VISIBLE=(%warning.speedcam_warning && %warning.speedcam_enabled) >
+				<BUTTON CLASS="btn_map btn_add_speedcam" ONRELEASE=sc_AddSpeedcamBtn ONLONGCLICK='sc_NextStateAnim (st_AlertPointSettings, "fade", 1, "")' />
+			</LAYER>
+		</insert>
+	</modify>
+<!end/>
+
+<layer ui_EditSpeedcam_Btn z=50>
+	<DIV class="main">
+		<DIV class="speedcam_icons">
+			<SPRITE class="speedcam svg" img="speedwarn_list.svg" phase=(%lua.SpeedCam_Type) />
+			<SPRITE class="camrotate svg" img="spr_speedcamdirection.svg" phase=(%lua.SpeedCam_Direction_type) rotate=(%warning.calculate_heading_with_map_rotate(%lua.SpeedCam_Direction, 0)) />
+		</DIV>
+		
+		<DIV class="speedcam sidepanel">
+			<SECTIONMARKER class="editspeedcam" />
+			<SPRITE class="panel fill" />
+			<DIV class="speedcam panel">
+				<VBOX class="speedcam_btn">
+					<VBOX class="speedcam_edit_btn">
+						<BUTTON class="btn_main" box_align="stretch" flex=1 onrelease='MODEL.warning.speedcam_enabled = true; sc_EditSpeedcameraType()'>
+							<VBOX>
+								<SPRITE class="listitem edit_speedcam svg" z=100 img="speedwarn_list.svg" phase=(%lua.SpeedCam_Type) />
+								<TEXT class="listitem icon edit_speedcam" align="CENTER" valign="CENTER" text="Alert type" />							
+							</VBOX>
+						</BUTTON>
+				
+						<BUTTON class="btn_main" box_align="stretch" flex=1 onrelease='sc_OpenPopover( nil, nil, nil, 1 )'>
+							<VBOX>
+								<TEXT class="speedcam edit_speedcam useroadspeedlimit" z=45 text=(sc_GetSpeedCamCatValue(%lua.SpeedCam_Type, "useroadspeedlimit") ? "Auto" : "Off" ) visible=(!%lua.SpeedCam_SpeedLimit) />
+								<SPEEDTEXT class="speedcam edit_speedcam" z=45 speed=(%lua.SpeedCam_SpeedLimit) visible=%lua.SpeedCam_SpeedLimit />
+								<TEXT class="speedcam listitem edit_speedcam" text="Speed limit" />
+							</VBOX>
+						</BUTTON>
+					</VBOX>
+				</VBOX>
+			</DIV>	
+		</DIV>	
+	</DIV>	
+</layer>
+
+
+<element_template et_aEditSpeedcam_Type>
+	<RADIO class="listitem" img="btn_speedcam.svg" resize_bmp=1  left=0 top=0 z=0 groupmodel="lua.SpeedCam_Type" var=%*.id onrelease='sc_SpeedcamSelectCameraType() sc_ariSaveSpeedcam()' >
+		<SPRITE class="listitem speedcam svg" img="speedwarn_list.svg" phase=%*.id z=20 />
+		<TEXT class="listitem icon" text=%*.text  visible=(0) />
+	</RADIO>
+</element_template>
+
+<layer ui_aEditSpeedcam_Type z=30>
+	<DIV class="list">
+		<SPRITE class=list_panel>
+		<LIST2  class="list_control_cam" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.lm_extendedSpeedCamList" element_template="et_aEditSpeedcam_Type" />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+	<DIV class="footer">
+		<FOOTERBUTTON  class="btn_footer left back icon svg" onrelease=sc_back_to_cockpit  onlongclick=sc_back_to_cockpit />
+	</DIV>
+</layer>
+	

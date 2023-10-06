@@ -1,0 +1,2 @@
+import "~/common/ui/send_message.ui"
+import "~/common/ui/send_message.lua"

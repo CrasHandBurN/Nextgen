@@ -1,0 +1,326 @@
+;---------------------------------WANDEL™----icon-------------------------------------------
+<data poi_around_ready>
+	<property icon value=(observe(%lua.poi_around_path_child, %lua.poi_around_iconindex); VW_POI_AroundGroupGetIcon(%lua.root_name)) />
+	<property iconid value=(observe(%lua.poi_around_path_child, %lua.poi_around_iconindex); VW_POI_AroundGroupGetIconId(%lua.root_name)) />
+	<property icon_branded value=(observe(%lua.poi_around_path_child, %lua.poi_around_iconindex); VW_isPoiBranded(iconid, 2)) />
+
+	<property t_text value=( observe(%lua.poi_around_path_child, %lua.poi_around_iconindex); VW_Return_requested_Text(1) ) />
+	<property b_text value=( observe(%lua.poi_around_path_child, %lua.poi_around_iconindex); VW_Return_requested_Text(99) ) />
+</data>
+<observer obs_root_name model="lua.root_name" onchange=VW_Return_path_child />
+<modify ui_Cockpit>
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON ShowSmartPOIBtn CLASS="btn_map"
+			ONRELEASE=sc_ShowSmartPOI 
+			ONLONGCLICK='
+				if #ui.lm_SetRoot_name_groups_popover then
+					sc_SetPopoverListAndOpen("ui.lm_SetRoot_name_groups_popover", MODEL.lua.poi_around_path_child())
+				else
+					sc_NextStateAnim(st_poi_around_Settings, "fade", 1, "" )
+				end' 
+			VISIBLE=(%lua.ShowSmartPOIBtn) >
+			
+	       	<SPRITE CLASS="button map fill" />
+			<TEXT CLASS="BTN_top_text" TEXT=(poi_around_ready.t_text) VISIBLE=( %lua.text_on_buttons ) />
+			<TEXT CLASS="BTN_bottom_text" TEXT=(poi_around_ready.b_text) VISIBLE=( %lua.text_on_buttons ) />
+			
+			<SPRITE CLASS="btn_map svg" ICONID=(poi_around_ready.iconid) ICONINDEX=(%lua.poi_around_iconindex)
+				VISIBLE=(!poi_around_ready.icon_branded) />
+			<SPRITE CLASS=poi_branded TOP=25% BOTTOM=25% ICONID=(poi_around_ready.iconid) ICONINDEX=2
+				VISIBLE=(poi_around_ready.icon_branded) />
+				
+			<SPRITE CLASS="btn_map svg" IMG="road-sign-arrow.svg" VISIBLE=(%lua.POIOnRoute && %route.list.navigated.has_navigable_path) IMAGE_W=(CSS.Param.svg_map_button_image_w*40/100) ALIGN="RIGHT+20" ZOOM=50% />
+				
+			<SPRITE CLASS="searchprogress wide" LEFT=0 RIGHT=0 TOP=0 BOTTOM=0 VISIBLE=( poi_around_ready.iconid == -1 ) />
+		</BUTTON>
+	</insert>
+</modify>
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'POI around' Button" bmp="ico_poiaround.svg" isselected="lua.ShowSmartPOIBtn" />
+	</insert>
+</modify>
+<modify lm_CockpitSideList>
+	<insert>
+		<row  visible=(%lua.ShowSmartPOIBtn) />
+	</insert>
+</modify>
+;---------------- in QuickMenu ----------------------
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON CLASS="btn_map"
+			ONRELEASE='ui.ShowSmartPOIBtn.ONRELEASE()()' 
+			ONLONGCLICK='ui.ShowSmartPOIBtn.ONLONGCLICK()()'
+			VISIBLE=(%lua.ShowSmartPOIBtnQuick) >
+			
+	       	<SPRITE CLASS="button map fill" />
+			<TEXT CLASS="BTN_top_text" TEXT=(poi_around_ready.t_text) VISIBLE=( %lua.text_on_buttons ) />
+			<TEXT CLASS="BTN_bottom_text" TEXT=(poi_around_ready.b_text) VISIBLE=( %lua.text_on_buttons ) />
+			
+			<SPRITE CLASS="btn_map svg" ICONID=(poi_around_ready.iconid) ICONINDEX=(%lua.poi_around_iconindex)
+				VISIBLE=(!poi_around_ready.icon_branded) />
+			<SPRITE CLASS=poi_branded TOP=25% BOTTOM=25% ICONID=(poi_around_ready.iconid) ICONINDEX=2
+				VISIBLE=(poi_around_ready.icon_branded) />
+				
+			<SPRITE CLASS="btn_map svg" IMG="road-sign-arrow.svg" VISIBLE=(%lua.POIOnRoute && %route.list.navigated.has_navigable_path) IMAGE_W=(CSS.Param.svg_map_button_image_w*40/100) ALIGN="RIGHT+20" ZOOM=50% />
+				
+			<SPRITE CLASS="searchprogress wide" LEFT=0 RIGHT=0 TOP=0 BOTTOM=0 VISIBLE=( poi_around_ready.iconid == -1 ) />
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row  visible=(%lua.ShowSmartPOIBtnQuick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'POI around' Button" bmp="ico_poiaround.svg" isselected="lua.ShowSmartPOIBtnQuick" />
+	</insert>
+</modify>
+
+<userlist lm_SetRoot_name_groups path="str" enable="bool">
+	<default enable=1 FILENAME="poiaround_groups.txt" />
+	<row path="Petrol_Station" />
+	<row path="Accommodation" />
+	<row path="Restaurant" />
+	<row path="Parking" />
+	
+	<row path="AutomotiveCar_Service" />
+	<row path="Medical" />
+	<row path="CommunityPublic_ServicesPolice_Station" />
+	<row path="FinanceCash_Dispenser" />
+	<row path="LeisureTravelTourist_Attractions" />
+	
+</userlist>
+
+<userlist lm_SetRoot_name_groups_popover text="wstr" path="str" onrelease="ui" onlongclick="ui" enable="bool" type="str" icon_id="int" iconindex="int">
+	<default enable=1 onrelease='MODEL.lua.root_name = MODEL["*"].path() sc_ClosePopover()' type="IconBranding" 
+		onlongclick='sc_NextStateAnim(st_poi_around_Settings, "fade", 1, "" )' />
+</userlist>
+
+<modify lm_PointOnMap>
+	<insert>
+		<row Places_Around_Stopover text="Places Around Stopover" onrelease='sc_back_to_cockpit() sc_ShowSmartPOI(MODEL.route.list.navigated.waypoints.list[1].strapped_position())' 
+			visible=(%route.list.navigated.has_navigable_path && %route.list.navigated.waypoints.list.size > 2 && %lua.POIAroundShowOnVW) />
+		<row Places_Around_Destination text="Places Around Destination" onrelease='sc_back_to_cockpit() sc_ShowSmartPOI(MODEL.route.list.navigated.waypoints.list[MODEL.route.list.navigated.waypoints.list.size() - 1].strapped_position())' 
+			visible=(%route.list.navigated.has_navigable_path && %lua.POIAroundShowOnVW) />
+		<row Show_POI_around_setting text="Show POI around setting" onrelease='sc_back_to_cockpit() sc_NextStateAnim(st_poi_around_Settings, "fade", 1, "" )' 
+			visible=(%lua.POIAroundShowOnVW) />
+	</insert>
+</modify>
+
+;----------------setting-------------
+<!if condition=(Plugin.isLoaded("labs"))>
+	<modify lm_ExtraSettingsList>
+		<insert>
+			<row text="Show POI around setting" icon="ico_poiaround.svg" haspopover=1 onrelease='sc_NextStateAnim(st_poi_around_Settings, "fade", 1, "" )' />
+		</insert>
+	</modify>
+<!end>
+<modify lm_aRouteWarningsSettings>
+	<insert>
+		<row text="Show POI around setting" haspopover=1 onrelease='sc_NextStateAnim(st_poi_around_Settings, "fade", 1, "" )' />
+	</insert>
+</modify>
+
+<element_template et_SetRoot_name_groups>
+	<implementation>
+		<property iconid value=(VW_POI_AroundGroupGetIconId(%*.path)) />
+	</implementation>
+	<HBOX class="listitem">
+		<SPRITE class="listitem poi_branded" iconid=(iconid) visible=(VW_isPoiBranded(iconid, 2)) iconindex=2 />
+		<SPRITE class="btn_map svg" iconid=(iconid) visible=(!VW_isPoiBranded(iconid, 2)) iconindex=2 />
+		<VBOX class="listitem">
+			<TEXT class="listitem top" text=(sc_wSplitScreenPOIGroupGetName(%*.path)) />
+			<TEXT class="listitem bottom" text=(sc_wSplitScreenPOIGroupGetPath(%*.path)) />
+	  	</VBOX>
+	</HBOX>
+	<BUTTON class="btn_main" right=10 top=0 bottom=0 w=100 z=50 
+		onrelease='MODEL.ui.lm_SetRoot_name_groups.list.index = index sc_SetRoot_nameDel_OnRelease()' >
+		<SPRITE class="btn_map svg" img="ico_del_sml.svg" />
+	</BUTTON>
+</element_template>
+
+<userlist lm_SetRoot_name_groups_footer text="str" onrelease="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+		<row text="Change" isactionbutton=1 onrelease='obs_Load_lm_poiaround_groups:START() sc_wSplitScreenPOIGroupStartSelect()' enable=(%ui.lm_SetRoot_name_groups.list.size < 16) />
+</userlist>
+          
+<layer ui_SetRoot_name_groups z=160>
+	<DIV class="list">
+		<LIST2 class="list_control" element_template="et_SetRoot_name_groups" listmodel="ui.lm_SetRoot_name_groups.list" SMOOTHSCROLLING>
+			<VSMARTSCROLL>
+			<WHEEL>
+		</LIST2>
+		<TEXT class=noitems text="<No items>" visible=%ui.lm_SetRoot_name_groups.list.isempty />
+	</DIV>
+</layer>
+
+<userlist lm_poi_around_SettingsList icon="str" text="str" type="str" haspopover="bool" isselected="str" visible="bool" enable="bool" onrelease="ui" onlongclick="ui" details="ui" dtooltip="str">
+	<view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 />
+	<row    text="Button in Cockpit" type="ChkOnOff" isselected="lua.ShowSmartPOIBtn" />
+	<row 	text="Button in QuickMenu" type="ChkOnOff" isselected="lua.ShowSmartPOIBtnQuick" />	
+	<row 	text="View Map on side panel" type="ChkOnOff" isselected="lua.poi_around_sidepanel" />
+	
+	<row  	text="Change categories list" haspopover=1 
+			details=(translate("Quantity") + L": " + (%ui.lm_SetRoot_name_groups.list.size)) 
+			onrelease='sc_NextStateAnim(st_SetRoot_name_groups, "fade", 1, "" )' />
+	/*
+	<row 	text="Add category" onrelease='obs_Load_lm_poiaround_groups:START() sc_wSplitScreenPOIGroupStartSelect()' 
+			details=(translate("Quantity") + L": " + (%ui.lm_SetRoot_name_groups.list.size)) 
+			onlongclick='obs_Load_lm_poiaround_groups:START(); MODEL.ui.lm_SetRoot_name_groups.clear() obs_Load_lm_poiaround_groups:STOP()'
+			enable=(%ui.lm_SetRoot_name_groups.list.size < 16) />
+	*/
+	<row    text="POI icon type" icon=(VW_POI_AroundGroupGetIcon("LeisureTravelTourist_Attractions")) onrelease='MODEL.lua.poi_around_iconindex = (MODEL.lua.poi_around_iconindex() + 1) % 7' 
+			visible=(poi_around_ready.icon_branded) />
+	<row    text="POI icon type" icon=(poi_around_ready.icon) onrelease='MODEL.lua.poi_around_iconindex = (MODEL.lua.poi_around_iconindex() + 1) % 7' 
+			visible=(!poi_around_ready.icon_branded) />
+	<row    text="Show activity time" details=(sc_ShowTimeTool(%lua.poi_around_activity_Time)) onrelease='sc_SetPopoverListAndOpen( "ui.lm_poi_around_activity_Time" )' />
+	<row	text="Search" haspopover=1 details=(%lua.POIOnRoute ? "Along Route" : "Around Here") onrelease={invert(%lua.POIOnRoute)} />
+	<row  	text=(%lua.POIOnRoute ? "Detour length" : "Around area size") details=(sc_ShowDistanceTool(%lua.POIOnRoute ? %lua.poi_around_area_size_Detour : %lua.poi_around_area_size_Around)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_poi_around_area_size" )' />
+	<row    text="Maximum result" details=(%lua.poi_around_max_result) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_poi_around_max_result" )' />
+</userlist>
+
+<userlist lm_poi_around_activity_Time name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowTimeTool(10)) max_text=(sc_ShowTimeTool(120)) />
+	   <row name="Show activity time" text=(sc_ShowTimeTool(%lua.poi_around_activity_Time)) type="Scroll" min=10 max=120 step=5 valuemodel="lua.poi_around_activity_Time" />
+</userlist>
+;-------
+<userlist lm_poi_around_area_size name="str" text="wstr" onrelease="ui" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(1000)) max_text=(sc_ShowDistanceTool(%lua.POIOnRoute ? 5000 : 30000)) />
+	   <row name=(%lua.POIOnRoute ? "Detour length" : "Around area size") text=(sc_ShowDistanceTool(%lua.POIOnRoute ? %lua.poi_around_area_size_Detour : %lua.poi_around_area_size_Around)) type="Scroll" min=1000 max=(%lua.POIOnRoute ? 5000 : 30000) step=100 valuemodel=(%lua.POIOnRoute ? "lua.poi_around_area_size_Detour" : "lua.poi_around_area_size_Around") />
+</userlist>
+;--------
+<userlist lm_poi_around_max_result name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text="10" max_text="100" />
+	   <row name="Maximum result" text=(%lua.poi_around_max_result) type="Scroll" min=10 max=100 step=1 valuemodel="lua.poi_around_max_result" />
+</userlist>
+
+<layer ui_MapSidePanel_poi_around z=99980 visible=( ui_PropLayer.SidePanelVisible )
+	onshow='
+			--sc_FillSmartPois()
+			sc_fit_resultpoi("discoverysidepanel")
+			MODEL.map.discoverysidepanel.show_pois = 2
+			local TopLeft, BottomRight = MODEL.poi.resultpoi.get_boundingbox()
+			--sc_Fit_To_Screen(TopLeft, BottomRight, "discoverysidepanel")
+			
+			local g = GCOOR.new({lat=(TopLeft.lat - (TopLeft.lat - BottomRight.lat)/2), lon=(TopLeft.lon  - (TopLeft.lon - BottomRight.lon)/2)})
+			--MODEL.map.discoverysidepanel.center_follow = true
+			doDelayed(3, function() MODEL.map.discoverysidepanel.center = g end)
+			'
+	onhide='MODEL.map.discoverysidepanel.show_pois = 1; MODEL.poi.resultpoi.clear()' >
+	/*
+	<implementation>
+		<property onroute value=(%lua.POIOnRoute && %route.list.navigated.has_navigable_path && %poi.flat_search.position == %lua.current_entry_position) />
+		<property distance value=( onroute ? %poi.flat_search.list[0].distance_on_route : distance(%navigation.car.position, %poi.flat_search.list[0].position) ) /> 
+		<property distance_text value=(builtin.format("%{distance:3}", distance)) />
+	</implementation>
+	*/
+	<observer value=(%screen.current_orientation) onchange='ui_MapSidePanel_poi_around:HIDE(); doDelayed(5, VW_WaitPOI_sidepanel)' start="NO_TRIGGER" />
+	
+	<DIV class="cockpit">
+		<DIV class="map_messagebox">
+			<TEXT class="map_messagebox discovery_text" fontsize=(CSS.Param.fontsize_map_msgbx_sec) text=(sc_translate_VoiceOrLang("To select press button: %s", VW_InsertShield("blue", %lua.poi_around_path_child))) />
+
+			<DIV class="dialog_buttons">
+				<DIALOGBUTTON class="dialog 2_1_1 mapmsgbox" text=(%lua.poi_around_path_child) onrelease='sc_HideDiscoverySidePopup(); VW_WaitPOI()' >
+					<SPRITE class="button map fill" />
+				</DIALOGBUTTON>
+				<DIALOGBUTTON class="dialog 2_1_2 mapmsgbox" text=(%lua.Show_POI_List ? "Hide List" : "Show List") onrelease='MODEL.lua.Show_POI_List = not MODEL.lua.Show_POI_List()' > 
+	       			<SPRITE class="button map fill" />
+				</DIALOGBUTTON>
+				<DIALOGBUTTON class="dialog 1_1_1 mapmsgbox" text="Close" onrelease='sc_HideDiscoverySidePopup()' > 
+	       			<SPRITE class="button map fill" />
+				</DIALOGBUTTON>
+			</DIV>
+				
+		</DIV>
+	</DIV>
+</layer>
+
+<element_template et_poi_around_info >
+	<implementation>
+		<property onroute value=(%lua.POIOnRoute && %route.list.navigated.has_navigable_path && %poi.flat_search.position == %lua.current_entry_position) /> ; last one as a place indicator
+		<property icon_id value=( %*.icon // -1 ) /> 
+		<property detour_len value=( %*.detour_length // 0 ) /> 
+		<property detour_id value=( %*.detour_icon // -1 ) />  
+		<property distance value=( onroute ? %*.distance_on_route : distance(%navigation.car.position, %*.position) ) /> 		
+	</implementation>
+
+	<BUTTON class="btn_map" left=0 top=0 h=100% w=75 z=15 onrelease='VW_StopoverOrNewRoute(); MODEL.my.poi.select_poi(MODEL["*"].provider_id(), MODEL["*"].id()); st_PointOnMap.poiselected = EPoiselected.poi; hook_ShowPointOnMap:trigger(); sc_HideDiscoverySidePopup()' >
+		<SPRITE class="button map fill" />
+		
+		<SPRITE class="btn_map svg" z=2 iconid=icon_id iconindex=2 visible=(!VW_isPoiBranded(icon_id, 2)) />
+		<SPRITE class="listitem poi_branded" left=2% right=2% TOP=2% bottom=2% z=2 iconid=icon_id iconindex=2 visible=(VW_isPoiBranded(icon_id, 2)) />
+	
+	</BUTTON>
+
+	<BUTTON class="btn_map" left=75 right=15 top=0 h=100% onrelease='VW_StopoverOrNewRoute(); MODEL.my.poi.select_poi(MODEL["*"].provider_id(), MODEL["*"].id()); hook_StartRoutePlanning(); sc_HideDiscoverySidePopup()' > 
+		<SPRITE CLASS="button map fill" />
+		<TEXT class="font_sec r2l" left=10 right=84 top=5 bottom=5 align=(%regional.current_language.is_r2l ? "RIGHT" : "LEFT") leading=0.85 wordwrap=2 text=%*.name />
+		<DISTTEXT class="font_sec r2l" right=0 bottom=65% h=30% w=86 align="CENTER" text="+ " distance=detour_len visible=(onroute) />
+		<DISTTEXT class="font_sec r2l" right=0 bottom=5%  h=30% w=86  align="CENTER" distance=distance />
+		<SPRITE class="listitem_svg" iconid=detour_id iconindex=0 visible=(onroute) />
+		<SPRITE class="svg poi_dir_split" visible=(!onroute) />
+	</BUTTON>
+</element_template>
+
+<layer ui_poi_around_Info z=99981 visible=( ui_PropLayer.SidePanelVisible && %lua.Show_POI_List && %poi.flat_search.ready) onhide='MODEL.lua.Show_POI_List = false' > 
+	<DIV class="cockpit">
+		<DIV class="map_messagebox">
+			<LIST2 class="list_control" SMOOTHSCROLLING valign="CENTER" >
+				<LISTMODEL listmodel="poi.flat_search.list" element_template="et_poi_around_info" />
+				<VSMARTSCROLL>
+				<WHEEL>
+			</LIST2>
+		</DIV>
+		<layer>
+			<DIV class="cockpit">
+				<DIV class="map_messagebox">
+					<SPRITE class="panel map background" overmaplayer />
+	           		<EMPTYLISTTEXT  text=( sprintf( translate(m_i18n( "No matching results: %s" )), %lua.PoiSearchCenterName ) ) visible=( %lua.PoiSearchList == "struct_search" ? ( %poi.struct_search.ready && !%poi.struct_search.group_list.size && !%poi.struct_search.poi_list.size ) : ( %poi.flat_search.ready && !%poi.flat_search.list.size && %poi.struct_filter.ready && !%poi.struct_filter.group_list.size ) ) />
+				</DIV>
+			</DIV>
+		</layer>
+	</DIV>
+</layer>
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp="ico_poiaround.svg" text=(translate("poiaround")) onrelease=sc_ShowSmartPOI enable=(%navigation.has_route) />
+			<row  bmp="ico_poiaround.svg" text=(translate("stopover")) onrelease='sc_ShowSmartPOI(MODEL.route.list.navigated.waypoints.list[1].strapped_position())' enable=(%navigation.has_route && %route.list.navigated.waypoints.list.size > 2) />
+			<row  bmp="ico_poiaround.svg" text=(translate("destination")) onrelease='sc_ShowSmartPOI(MODEL.route.list.navigated.waypoints.list[MODEL.route.list.navigated.waypoints.list.lastindex()].strapped_position())' enable=(%navigation.has_route) />
+		</insert>
+	</modify>
+<!end/>
+;-------------------------------New-Popover type IconBranding---------------------
+<element_template et_PopoverIconBranding>
+	<implementation>
+		<property zoom_On value=( %*._list.index == index && ( !%*.animate // 1 ) ? 80% : 100% ) />
+		<property icon_branded value=(%*.icon_id ? VW_isPoiBranded(%*.icon_id, 2) : -1) />
+	</implementation>
+	<BUTTON class="listitem" onrelease='if not gPopoverAnimInProgress then MODEL["*"].onrelease()() end' 
+		onlongclick='if not gPopoverAnimInProgress then MODEL["*"].onlongclick()() end'  enable=( %*.enable // 1 )>
+		<HBOX class="listitem popover">
+			<SPRITE class="listitem searchprogress wide" visible=( %*.animate // 0 )/>
+			<SPRITE class="radio svg" visible=( %*._list.index == index && ( !%*.animate // 1 ) )/>
+			;<SPRITE class="btn_map svg" img=(%*.img // "") visible=(%*.img) zoom=(zoom_On) /> 
+			
+			;<SPRITE class="btn_map svg" iconid=(%*.icon_id // -1) iconindex=(%*.iconindex // 0) visible=(%*.icon_id // 0) zoom=(zoom_On) /> 
+			<HBOX left=0 right=0 top=0 bottom=0 visible=((%*.icon_id // 0) && !icon_branded)>
+				<SPRITE class="btn_map svg" iconid=(%*.icon_id // -1) iconindex=(%*.iconindex // 0) visible=((%*.icon_id // 0) && !icon_branded) zoom=(zoom_On) /> 
+			</HBOX>
+			<HBOX left=0 right=0 top=0 bottom=0 visible=((%*.icon_id // 0) && icon_branded)>
+				<SPRITE class="listitem poi_branded" iconid=(%*.icon_id // -1) iconindex=2 visible=((%*.icon_id // 0) && icon_branded) />
+			</HBOX>
+			<TEXT class="listitem" right=0 top=0 bottom=0 text=%*.text/>
+			<SPACER flex=1>
+		</HBOX>
+	</BUTTON>
+</element_template>

@@ -1,0 +1,107 @@
+;-------- WANDEL™ 27.09.2018------------
+<!ENABLE OVERRIDE>
+	<element_template et_detailsinfo_name>
+		<HBOX class="listitem detailsinfo name">
+			<SPRITE class="detailsinfo" iconmodel=%*.icon iconindex=2 visible=(!VW_isPoiBranded(%{%*.icon}, 2)) />
+			<SPRITE class="listitem poi_branded" iconmodel=%*.icon iconindex=2 visible=(VW_isPoiBranded(%{%*.icon}, 2)) />
+			<VBOX class="listitem" box_align="STRETCH" flex=1>
+				<TEXT class="listitem top detailsinfo_name bd icon" text=( %*.name ) />
+			</VBOX>
+		</HBOX>
+	</element_template>
+
+	<element_template et_POIItemList>
+		<implementation>
+			<property isFavorite		 value=(%*.provider_id == lua.gUserPOI_Provider) />
+			<property show_dist_on_route value=(%*.distance_on_route.valid && %navigation.has_route) />
+			<property is_on_move         value=(%navigation.car.current_speed > 6) />
+			<property poi_direction      value=(direction(%navigation.car.position, %*.position, is_on_move ? %navigation.car.heading : 0) * 360.0 / 4096) />
+			<property is_multi			 value=(%map.primary.clicked_poi_list.size > 1) />
+		</implementation>
+		
+		<BUTTON class="listitem" onrelease='hook_SelectPoiItem:trigger()'>
+			<HBOX class="listitem">
+				<HBOX class="listitem poi_container">
+					
+					<SPRITE class="listitem poi_branded" iconid=%*.icon visible=(VW_isPoiBranded(%*.icon, 2)) iconindex=2 />
+					<SPRITE class="listitem icon_list svg poi" iconid=%*.icon visible=(!VW_isPoiBranded(%*.icon, 2)) />
+					
+					;;<SPRITE class="listitem poi_branded" iconid=%*.provider_icon visible=(VW_isPoiBranded(%*.provider_icon, 2)) iconindex=2 />
+					<SPRITE class="listitem poi_provider_overlay" iconid=%*.provider_icon visible=(VW_isPoiBranded(%*.provider_icon, 2)) iconindex=2 />
+					<SPRITE class="listitem poi_provider_overlay" iconid=%*.provider_icon visible=(!VW_isPoiBranded(%*.provider_icon, 2)) />
+									
+				</HBOX>
+				<VBOX class="listitem">
+					<TEXT class="listitem icon top" text=%*.highlighted_name />
+					<TEXT class="listitem icon bottom" text=%*.address.long_format visible=(!isFavorite) />
+				</VBOX>
+				<SPACER flex=1>
+				<BOX class="listitem detour" visible=(!isFavorite && !is_multi)>
+					<SPRITE class="listitem svg" image_h=undef iconmodel="*.detour_icon" iconindex=0 />
+					<DISTTEXT class="listitem detour" text=(!show_dist_on_route && %*.detour_length.valid && %navigation.has_route ? "+" : "") distance=(show_dist_on_route ? %*.distance_on_route : %*.distance) />
+				</BOX>
+				<SPRITE class="listitem icon popover" visible=(isFavorite && %lua.FavEditMode) />
+			</HBOX>
+		</BUTTON>
+	</element_template>
+
+	<element_template et_POIGroupList>
+		<BUTTON class="listitem" onrelease='hook_SelectPoiGroup:trigger()'>;  || %my.poi.current_group("kmlpoi") 
+			<HBOX class="listitem">
+			
+				<SPRITE class="listitem poi_branded" iconid=%*.icon iconindex=3 visible=(%*.0.visible_at > -1 && VW_isPoiBranded(%*.icon, 2)) />		
+				<SPRITE class="listitem svg poi" iconid=%*.icon iconindex=3 visible=(%*.0.visible_at > -1 && !VW_isPoiBranded(%*.icon, 2)) />
+				
+				<VBOX class="listitem">
+					<TEXT class="listitem icon" text=%*.name />
+				</VBOX>
+			</HBOX>
+		</BUTTON>
+	</element_template>
+
+	<element_template et_QuickBarPoiProviders>
+		<DIV class="fill">
+			<BUTTON class="listitem quickbar fill"  onrelease='hook_QuickBarOnrelease:trigger( function() sc_SelectPoiProviderFilter( MODEL["*"].id() ) end )'>
+				<TEXT class="listitem fill" align="CENTER-160" fontsize=25  text=%*.text visible=( %*.icon_id == -1 ) />
+				<DIV class="fill">
+					<HBOX class="listitem fill" >
+
+						<SPRITE class=poi_branded iconid=%*.icon_id  iconindex=2 visible=(VW_isPoiBranded(%*.icon_id, 2)) />
+						<SPRITE class="quickbar_icon" iconid=%*.icon_id iconindex=2 visible=(!VW_isPoiBranded(%*.icon_id, 2)) />
+						
+					</HBOX>
+					<SPRITE class="quickbar_selection fill" />
+				</DIV>
+			</BUTTON>
+		</DIV>
+	</element_template>
+<!DISABLE OVERRIDE>
+
+
+<modify lm_PoiSearch_Main>
+	<insert>
+		<row icon="ico_search.svg" text="Search by Name or Category" onrelease=sc_ShowPoiSearch />
+		<row Gas_station 	text="Gas Stations"	icon="poi_normal_050.svg"	details=( sc_SetPoiQuickSearchAreaName( 1, %navigation.has_route, %gps.valid ) ) engine="petrol_search"		path="Petrol_Station"	onrelease=sc_ShowPoiQuickSearch enable=( %{"poi.petrol_search.list.size"} && %{"poi.petrol_search.search_root"}>-1 ) />
+		<row Accommodation	text="Accommodation" icon="poi_normal_030.svg"	details=( sc_SetPoiQuickSearchAreaName( 0, %navigation.has_route, %gps.valid ) ) engine="accomodation_search" path="Accommodation"	onrelease=sc_ShowPoiQuickSearch enable=( %{"poi.accomodation_search.list.size"} && %{"poi.accomodation_search.search_root"}>-1 ) />
+		<row Restaurant		text="Restaurant"	icon="poi_normal_031.svg"	details=( sc_SetPoiQuickSearchAreaName( 1, %navigation.has_route, %gps.valid ) ) engine="restaurant_search"	path="Restaurant"		onrelease=sc_ShowPoiQuickSearch enable=( %{"poi.restaurant_search.list.size"} && %{"poi.restaurant_search.search_root"}>-1 ) />
+		<row Parking		text="Parking"		icon="poi_normal_043.svg"	details=( sc_SetPoiQuickSearchAreaName( 0, %navigation.has_route, %gps.valid ) ) engine="parking_search"	path="Parking"			onrelease=sc_ShowPoiQuickSearch enable=( %{"poi.parking_search.list.size"} && %{"poi.parking_search.search_root"}>-1 ) />
+	</insert>
+</modify>
+
+<modify lm_LocalMenuCockpit>
+	<insert after=Detail_Information>
+		<row text="Places Nearby" onrelease='sc_ShowPoiAround( st_PoiAround_Cockpit, "around_cursor" )' />
+	</insert>
+</modify>
+
+<modify lm_PointOnMap>
+	<insert after=Detail_Information>
+		<row text="Places Around Cursor" onrelease='sc_ShowPoiAround( st_PoiAround_PointOnMap, "around_cursor" )' visible=(%lua.RoutePlanEnable) />
+	</insert>
+</modify>
+
+<modify lm_MapVisualSettings>
+	<insert after="default">
+		<row prio=900 text="Place Markers"   haspopover=1 onrelease=sc_Poi_Visibilities enable=1 />
+	</insert>
+</modify>

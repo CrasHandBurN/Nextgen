@@ -1,0 +1,24 @@
+sizex=425
+sizey=425
+center_x=213
+center_y=213
+scale=0
+tilt=100
+
+[polygona]
+color=155, 100, 0
+alpha=26
+p= 0, 170
+p= -31, 121
+p= 0, 143
+p= 31, 121
+
+[polygonb]
+color=255, 200, 0
+alpha=26
+p= 0, 168
+p= -29, 122
+p= 0, 145
+p= 29, 122
+
+

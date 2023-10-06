@@ -1,0 +1,146 @@
+DIV.map_free_area, USE_LAYER.map_free_area {
+	left:( ( ui_PropLayer.ShowRouteProgress ? (%lua.aColorCockpitInterface_Set == lua.SkinInterfaceColor.DEFAULT ? route_progress_w : route_progress_bg_w) : 0 ) + (2*cockpit_da_warning_w) );
+	top: (ui_PropLayer.SignpostVisible ? %ui.vLaneInfoSignpostHeight : ui_Cockpit.notify_list_landscape_top);
+	right: (ui_Cockpit.NotifyListCol * notify_list_w);
+	bottom:( (Plugin.isLoaded( "speedcam" ) ? (3*datafield_h + 2*cockpit_margin + speedcam_h + cockpit_margin ) : (3*datafield_h + cockpit_margin + cockpit_margin)) + (%lua.screen4x3 ? cockpit_warning_h : (-1) * cockpit_warning_h) );
+	visible:( !%lua.DragMode && !(ui_PropLayer.JunctionViewVisible || ui_PropLayer.MiniJunctionViewVisible || ui_PropLayer.TunnelOverviewVisible || ui_Cockpit.MapPopupOnscreen ) );
+}
+
+/*-----------------------------------mini------------------------------*/
+DIV.VW_logo {
+	left:0;
+	right:0; 
+	h:(map_messagebox_h - map_messagebox_w - notify_list_h);
+	bottom:notify_list_h;
+	visible:(!%navigation.has_route && (map_messagebox_h - notify_list_h) > map_messagebox_w);
+}
+
+BUTTON.VW_Main_button {
+	left:0; right:0; top:0; 
+	bottom:(%navigation.has_route ? 3*notify_list_h : notify_list_h);
+}
+
+DIV.VW_computer{
+	left:3%;
+	right:3%;
+	top:2%;
+	bottom:3%;
+}
+
+DIV.VW_compass, DIV.VW_clock, DIV.VW_speedometer, SPRITE.VW_compass, SPRITE.VW_clock, SPRITE.VW_speedometer {
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+	align:"center";
+	valign:"top";
+}
+/* ------------------------------------ */
+DIV.VW_info_details {
+	left:0;
+	right:0; 
+	h:notify_list_h; 	
+	bottom:(2*notify_list_h);
+}
+
+
+/* ------------------------------------ */
+DIV.VW_info_address {
+	left:0;
+	right:0; 
+	h:notify_list_h;
+	bottom:notify_list_h;
+}
+
+
+/* ------------------------------------ */
+DIV.VW_button {
+	left:0;
+	right:0; 
+	h:notify_list_h;
+	bottom:0;
+}
+
+LIST2.VW_button {
+	left:0;
+	right:0; 
+	top:0;
+	bottom:0;
+	row:1;
+	col:7;
+}
+/*===================GPS================*/
+DIV.VW_GPSStatus_bg {
+	left:0;
+	right:0; 
+	bottom:(3*notify_list_h);
+	top:0;
+}
+
+BUTTON.VW_gps_graph, DIV.VW_gps_graph {
+	left:0;
+	right:0; 
+	top:(map_messagebox_h - 3*notify_list_h); 	
+	bottom:notify_list_h;	
+}
+/*===============Settings===============*/
+DIV.VW_listTripComp {
+	left:0; 
+	right:0; 
+	top:0; 
+	bottom:notify_list_h;
+}
+
+/*===================Help================*/
+LAYER.TripComplayer_controlVW {
+	x:(screen_w - map_messagebox_w);
+	y:next_street_h;
+	w:map_messagebox_w;
+	h:(map_messagebox_h - notify_list_h);
+	z:100;
+}
+/*========Point on Map Backtocar=========*/
+TABLE.VW_TwoButton {
+	left:(map_messagebox_w/2 - notify_list_h);
+	right:(map_messagebox_w/2 - notify_list_h);
+	top:(notify_list_h + (map_messagebox_h - 3*notify_list_h)/2);
+	bottom:((map_messagebox_h - 3*notify_list_h)/2);
+	col:2;
+	row:1;
+}
+
+TEXT.distance_total {
+	left:0;
+	top:65%;
+	h:100%;
+	w:100%;
+	font: "6622"; 
+	fontsize:20;
+	color: #FFFFFF; 
+	align:"CENTER"; 
+	valign:"TOP"; 
+}
+
+TEXT.driving_time {
+	left:0;
+	top:33%;
+	h:100%;
+	w:100%;
+	font: "6622"; 
+	fontsize: 17; 
+	color: #2F4F4F; 
+	align:"CENTER"; 
+	valign:"TOP"; 
+}
+
+TEXT.time_total {
+	left:0;
+	top:58%;
+	h:100%;
+	w:100%;
+	font: "6622"; 
+	fontsize: (%lua.screen4x3 ? 17 : 14); 
+	color: #2F4F4F; 
+	align:"CENTER"; 
+	valign:"TOP"; 
+}

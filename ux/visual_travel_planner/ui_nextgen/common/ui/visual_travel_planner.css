@@ -1,0 +1,25 @@
+SPRITE.destination.svg {
+	img: "spr_itinerary_arrow_dest.svg"; 
+	z: 15;
+}
+
+SPRITE.deletestopover.svg {
+	img: "ico_deletestopover.svg";
+	z: 15;
+}
+
+SPRITE.addstopover.svg {
+	img: "ico_addStopover.svg";
+	z: 15;
+}
+
+SPRITE.start_point.svg {
+	img: "spr_itinerary_arrow_start.svg";
+	z: 15;
+}
+
+BUTTON.btn_map.travel_planner {
+	box_align: "stretch";
+	desired_h: mapcontrol_button_h;
+}
+

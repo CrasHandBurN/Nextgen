@@ -1,0 +1,46 @@
+;---------------------------------left buttons inclusion-------------------------------------------------
+<!if condition=(Plugin.isLoaded("left_big_button"))>
+	<var ShowLeftSideQuickMenuIcon  = 0 permanent />
+	
+	<!DISABLE COMPAT_UPCASE_ATTR_SELECTOR/>
+	<modify lm_LeftButtonsSettings>
+		<modify element="row[prio=11]" bmp="ico_footer_menu.svg" text="Show Left Side QuickMenuIcon" isselected="ui.ShowLeftSideQuickMenuIcon" visible=1 />
+	</modify>
+
+	<modify lm_N_buttons>
+		<modify element="row[prio=11]" name="ShowLeftSideQuickMenuIcon_VISIBLE" visible=(ShowLeftSideQuickMenuIcon) />
+	</modify>
+
+	<modify ui_LeftSide_Free_Button>
+		<insert last_child into="#table_left_big_buttons"> 
+					<BUTTON CLASS="left_big" 
+						VISIBLE=((%ui.lm_N_buttons.size && %ui.lm_N_buttons.list[0].name == "ShowLeftSideQuickMenuIcon_VISIBLE") ||
+							(%ui.lm_N_buttons.size > 1 && %ui.lm_N_buttons.list[1].name == "ShowLeftSideQuickMenuIcon_VISIBLE" && %lua.current_buttons == 2))
+
+						ONLONGCLICK='sc_NextStateAnim(st_LeftButtonsSettings, "fade", 1, "" )'
+						ONRELEASE='sc_SetPopoverListAndOpen("ui.lm_SetQuickMenuIcon_Popover", ui.lm_SetQuickMenuIcon_Popover[MODEL.lua.aSetQuickMenuIcon()].text())' >
+						<SPRITE CLASS="button map fill" />
+						<SPRITE CLASS="btn_map svg" IMG="MyLogo.svg" VISIBLE=( %lua.aSetQuickMenuIcon == 0 && ui_Cockpit.height_direction == "") ZOOM=50% IMAGE_H=(PARENT.H) IMAGE_W=(PARENT.W) />
+						
+						<DIV TOP=0 BOTTOM=0 LEFT=0 RIGHT=0 VISIBLE=(ui_Cockpit.height_direction == "") >
+							<SPRITE CLASS="btn_map rotatecompass icon svg" Z=40 ZOOM=65% IMAGE_H=(PARENT.H) IMAGE_W=(PARENT.W)
+									ROTATE=( %map.primary.rotate * 360.0 / 4096 )   
+									VISIBLE=( %lua.aSetQuickMenuIcon == 1 || %lua.aSetQuickMenuIcon == 3 ) />
+							<SPRITE CLASS="btn_map rotatedestarrow icon svg" Z=50 ZOOM=60% IMAGE_H=(PARENT.H) IMAGE_W=(PARENT.W)
+									ROTATE=( ui_Cockpit.rotate_destarrow )  
+									VISIBLE=( %navigation.has_route && %lua.aSetQuickMenuIcon >= 2 ) />
+						</DIV>
+
+						<SPRITE	CLASS="btn_map icon svg" ZOOM=40% IMAGE_H=(PARENT.H) IMAGE_W=(PARENT.W)
+							IMG=(ui_Cockpit.height_direction == "ico_arrow_up.svg" ? "ico_car_up.svg" : ui_Cockpit.height_direction == "ico_arrow_down.svg" ? "ico_car_down.svg" : "") 
+							VISIBLE=(ui_Cockpit.height_direction != "") />
+						;<SPRITE	CLASS="gps_2d3d_height_ico svg" TOP=0 BOTTOM=0 LEFT=4 RIGHT=undef IMAGE_W=100 IMAGE_H=(PARENT.H) IMG=(ui_Cockpit.height_direction) />
+						
+						<SPRITE	CLASS="gps_2d3d_status_ico svg" LEFT=10 VISIBLE=( !%lua.Button2d3dInCockpit ) /> 
+						<TEXT	CLASS="gps_2d3d_status" VISIBLE=( !%lua.Button2d3dInCockpit ) FONTSIZE=30 />
+						<SPRITE	CLASS="gps_2d3d_height_ico svg" BOTTOM=2 LEFT=7 VISIBLE=( !%lua.Button2d3dInCockpit ) />
+						<TEXT	CLASS="gps_2d3d_height" BOTTOM=0 VISIBLE=( !%lua.Button2d3dInCockpit ) FONTSIZE=30 />			
+					</BUTTON>
+		</insert>
+	</modify>
+<!end/>

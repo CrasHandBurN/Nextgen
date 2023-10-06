@@ -1,0 +1,14 @@
+<observer obs_carpos value=(%map.primary.car_posy) onchange=sc_CarPosition >
+
+<modify lm_MapVisualSettings>
+	<insert>
+		<row prio=101 text="Cursor position in cockpit:" details=(sprintf("%d%%", %lua.wPosition_cursorup)) onrelease='sc_SetPopoverListAndOpen("ui.lm_PositionFromBottom_popover")' />
+	</insert>
+</modify>
+
+<userlist lm_PositionFromBottom_popover enable="bool" name="str" text="str" type="str" min="int" max="int" step="int" valuemodel="str" min_text="str" max_text="str">
+	<default enable=1 type="" name="" min_text="50%" max_text="85%" />
+	<row name="Vertical cursor position" text=(sprintf("%d%%", %lua.wPosition_cursorup)) type="Scroll" min=50 max=85 step=1 valuemodel="lua.wPosition_cursorup" />
+</userlist>
+
+

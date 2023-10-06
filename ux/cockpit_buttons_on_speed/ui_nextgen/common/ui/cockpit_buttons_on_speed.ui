@@ -1,0 +1,54 @@
+;----------------------WANDEL™-- 04.06.2023----------------
+<var HideCockpitButtonsOnSidePanel = 0 permanent />
+<var HideCockpitButtonsOnSidePanelTemp = HideCockpitButtonsOnSidePanel />
+
+<modify ui_Cockpit>
+	<insert into="IMPLEMENTATION"> 
+		<PROPERTY cockpit_buttons_visible VALUE=( (!(HideCockpitButtonsOnSidePanel && %lua.IsLandscape && ui_Cockpit.MapPopupOnscreen) || !HideCockpitButtonsOnSidePanelTemp) && (!%navigation.car.current_speed.valid || %navigation.car.current_speed < %lua.btn_map_in_cockpit_on_speed || !%lua.btn_map_in_cockpit_on_speed) ) /> 
+		<PROPERTY notify_list_visibility_main VALUE=(!%lua.arQuickMenu && !%lua.DragMode && !(ui_PropLayer.JunctionViewVisible || ui_PropLayer.MiniJunctionViewVisible || ui_PropLayer.TunnelOverviewVisible) && !ui_PropLayer.SignpostVisible && !%lua.MenuIsOpened) /> 
+	</insert>
+
+	<insert into="DIV.cockpit">
+		<DIV button_show_speed CLASS="fill" Z=10000 VISIBLE=(!ui_Cockpit.cockpit_buttons_visible) >
+			<DIV CLASS="notify_list" VISIBLE=(ui_Cockpit.notify_list_visibility_main) >
+				<BUTTON TOP=0 BOTTOM=0 RIGHT=0 LEFT=0 ONRELEASE=VW_QuickCockpit_button_show ONLONGCLICK=VW_QuickCockpit_button_switch >
+					<SPRITE TOP=25% BOTTOM=0 RIGHT=0 LEFT=80% IMG="ico_cockpit_buttons_back.svg" />
+				</BUTTON>
+			</DIV>
+		</DIV>
+	</insert>
+
+	<modify notify_list_visibility VALUE=( ui_Cockpit.cockpit_buttons_visible && ui_Cockpit.notify_list_visibility_main ) />
+	<modify element=box_speedlimit_table ONRELEASE=VW_QuickCockpit_button_switch ONLONGCLICK='sc_NextStateAnim(st_Hide_cockpit_btn_Settings, "fade", 1, ""); MODEL.sound.playchanneltest("ding", L"!button")' />
+</modify>
+
+<modify ui_PropLayer> 
+	<insert>
+		<OBSERVER MODEL="ui.lm_CockpitSideList.list.size" ONCHANGE=VW_QuickCockpit_button_show START="NO_TRIGGER" />
+	</insert>
+</modify>
+
+<userlist lm_btn_map_in_cockpit_on_speed text="str" type="str" haspopover="bool" isselected="str" visible="bool" enable="bool" onrelease="ui" details="ui" dtooltip="str">
+  <view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 />
+		<row    text="Speed to hide button" details=(%lua.btn_map_in_cockpit_speed_limit ? sc_ShowSpeedTool(%lua.btn_map_in_cockpit_speed_limit) : "Never") haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_btn_map_in_cockpit_speed_limit_popover" )' />
+		<row    text="Delay before hide after show" details=(sc_ShowTimeTool(%lua.btn_map_in_cockpit_time_limit)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_btn_map_in_cockpit_time_limit" )' />
+</userlist>
+
+<userlist lm_btn_map_in_cockpit_speed_limit_popover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text="Never" max_text=(sc_ShowSpeedTool(250)) />
+	   <row name="Speed to hide button" text=(%lua.btn_map_in_cockpit_speed_limit ? sc_ShowSpeedTool(%lua.btn_map_in_cockpit_speed_limit) : translate("Never")) type="Scroll" min=0 max=250 step=10 valuemodel="lua.btn_map_in_cockpit_speed_limit" />
+</userlist>
+
+<userlist lm_btn_map_in_cockpit_time_limit name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowTimeTool(5)) max_text=(sc_ShowTimeTool(30)) />
+	   <row name="Delay before hide after show" text=(sc_ShowTimeTool(%lua.btn_map_in_cockpit_time_limit)) type="Scroll" min=5 max=30 step=1 valuemodel="lua.btn_map_in_cockpit_time_limit" />
+</userlist>
+
+<modify lm_VQuickMenuSettings>
+	<insert>
+		<row text="Hide the 'Cockpit' buttons depending on the speed" haspopover=1 onrelease='sc_NextStateAnim(st_Hide_cockpit_btn_Settings, "fade", 1, "")'
+			details=(%lua.btn_map_in_cockpit_speed_limit ? sc_ShowSpeedTool(%lua.btn_map_in_cockpit_speed_limit) : translate("Never")) />
+		<row text="Hide the 'Cockpit' buttons depending on side panel" type="ChkOnOff" isselected="ui.HideCockpitButtonsOnSidePanel" />
+	</insert>
+</modify>

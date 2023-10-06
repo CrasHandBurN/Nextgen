@@ -1,0 +1,5 @@
+import "~/common/ui/favorites_search.css"
+import "~/common/ui/favorites_search.ui"
+import "~/common/ui/favorites_search_hook.ui"
+import "~/common/ui/favorites_search.lua"
+

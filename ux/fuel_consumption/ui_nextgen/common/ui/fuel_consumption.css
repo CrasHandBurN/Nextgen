@@ -1,0 +1,33 @@
+UNITTEXT.odometer {
+	color:	(%lua.current_mileometer <= %lua.last_mileometer ? error_red_color : chk_radio_color) !important;
+	color2:	(%lua.current_mileometer <= %lua.last_mileometer ? error_red_color2 : chk_radio_color2) !important;
+	paddingleft: list_padding;
+	paddingright: list_padding;
+}
+
+UNITTEXT.input_text_fake{
+	paddingleft:0;
+	align:"LEFT"; valign:"CENTER"; 
+	font: "default"; fontsize: fontsize_inputfield; 
+	color: e_input_color; color2: e_input_color2;
+	glowsize:0; flex:0;
+}
+
+HBOX.inputfield{
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	align:"LEFT";
+	paddingleft: input_padding;
+	paddingright: input_padding;
+	flex:0;
+}
+
+RADIO.btn_main.fuelunits > VBOX.listitem {
+	paddingtop: quickbar_top;
+}
+RADIO.btn_main.fuelunits > VBOX.listitem > TEXT.listitem {
+	wordwrap: 1;
+	minaspect: 0.8;
+}

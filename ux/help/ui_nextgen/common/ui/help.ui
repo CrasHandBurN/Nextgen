@@ -1,0 +1,372 @@
+<var vHNRHasCoveredMaps=0>
+<var vHNRHasIncompatibleMaps=0>
+<var vContentCheck=0>
+
+<userlist lm_AboutList text="str" icon="str" onrelease="ui" enable="bool" visible="bool" details="ui" haspopover="bool">
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 details="" />
+	<row Version text="Version Information" onrelease=sc_VersionInfo visible=(!%lua.IsDemoMode) />
+	<row         text="Licences" onrelease=sc_Licences_onrelease  visible=(!%lua.IsDemoMode) />
+	;<row         text="Content show" onrelease='ui.vContentCheck = 0; sc_contentcatlist()' />
+	;<row         text="Content check" onrelease='VW_CheckContent(); ui.vContentCheck = 1; sc_contentcatlist()' />
+	<row         text="Content" onrelease='sc_SetPopoverListAndOpen("ui.lm_Content_Popover")' haspopover=1 />
+	<row         text="Demo Routes" onrelease=sc_ShowDemoRoutes visible=(sc_GetSysEntry("interface", "show_demo_routes", 1)) />
+	<row Legal   text="Legal" onrelease=sc_EULA visible=(!sc_GetSysEntry("interface","hide_eula",0)) />
+	<row Credits text="Credits" onrelease=sc_Credits_onrelease />
+	<row Statistics text="Statistics" onrelease=sc_statistics_onrelease visible=(!%lua.IsDemoMode) />
+	<row         text="SWID" onrelease=sc_ShowSWID />
+</userlist>
+
+<userlist lm_Content_Popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+		<row text="Content show" onrelease='ui.vContentCheck = 0; sc_contentcatlist(); sc_ClosePopover()' />
+		<row text="Content check" onrelease='VW_CheckContent(); ui.vContentCheck = 1; sc_contentcatlist(); sc_ClosePopover()' />
+</userlist>
+
+<element_template et_License>
+	<BUTTON class="listitem" onrelease=sc_LicencesType_onrelease>
+		<HBOX class="listitem" paddingleft=12 paddingright=12>
+			<VBOX class="listitem" flex=5>
+				<TEXT class="listitem sec licence" align="LEFT" text=%*.name />
+				<TEXT class="listitem aboutinfo licence" align="LEFT" textmodel_wstr="*.code" />
+			</VBOX>
+
+			<VBOX class="listitem" flex=2>
+				<TEXT class="listitem info licence" align="RIGHT" textmodel_wstr="*.type" />
+				<TEXT class="listitem aboutinfo licence" align="RIGHT" textmodel_date="*.timelimit" formatmodel="regional.dateformat" visible=%*.timelimit.valid />		
+			</VBOX>
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<views licence_list_filtered listmodel="other.license.license_list">
+	<view valid filter=( $1.valid || (!$1.valid && $1.expired)) >
+</views>
+
+<layer ui_AboutLicenses z=30>
+	<DIV class="list">
+		<SECTIONMARKER>
+		<SPRITE class=list_panel>
+		<LIST2 class="list_control" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.licence_list_filtered.valid" element_template="et_License"/>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<element_template et_LicenseType>
+	<SPRITE class="listitem info">
+		<HBOX class="listitem">
+			<VBOX class="listitem">
+				<TEXT class="listitem" text=%*.name wordwrap=2/>
+			</VBOX>
+		</HBOX>
+	</SPRITE>
+</element_template>
+
+<layer ui_AboutLicenseTypes z=30>
+	<DIV class="list layerscroll">
+		<SECTIONMARKER class="layerscroll"/>
+		<SPRITE class=list_panel>
+		<LIST2 lst_LicenseTypes class="list_control" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="other.license.license_types" element_template="et_LicenseType"/>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<element_template et_Statistics>
+</element_template>
+
+<element_template et_Statistics_speed>
+	<SPRITE class="listitem info">
+	<HBOX class="listitem">
+		<VBOX class="listitem">
+			<TEXT class="listitem top" text=%*.text>
+			<SPEEDTEXT class="listitem bottom" speed=(%other.trips[1][%*.details])>
+		</VBOX>
+	</HBOX>		
+</element_template>
+
+<element_template et_Statistics_timespan>
+	<SPRITE class="listitem info">
+	<HBOX class="listitem">
+		<VBOX class="listitem">
+			<TEXT class="listitem top" text=%*.text>
+			<TIMESPANTEXT class="listitem bottom" timespan=(%other.trips[1][%*.details]) formatmodel=1>
+		</VBOX>
+	</HBOX>
+</element_template>
+
+<element_template et_Statistics_altdist>
+	<SPRITE class="listitem info">
+	<HBOX class="listitem">
+		<VBOX class="listitem">
+			<TEXT class="listitem top" text=%*.text>
+			<DISTTEXT class="listitem bottom" distance=(%other.trips[1][%*.details])>
+		</VBOX>
+	</HBOX>
+</element_template>
+
+<element_template et_Statistics_altitude>
+	<SPRITE class="listitem info">
+	<HBOX class="listitem">
+		<VBOX class="listitem">
+			<TEXT class="listitem top" text=%*.text>
+			<ALTITUDETEXT class="listitem bottom" altitude=(%other.trips[1][%*.details])>
+		</VBOX>
+	</HBOX>
+</element_template>
+
+<userlist lm_drivestat text="str" details="str" type="str">
+  <row    text="Avg. Speed" details="speed_total_avg" type="_speed"/>
+  <row    text="Driving Avg. Speed" details="speed_driving_avg" type="_speed"/>
+  <row    text="Max. Speed" details="speed_max" type="_speed"/>
+  <row    text="Total Time" details="time_total" type="_timespan"/>
+  <row    text="Driving Time" details="time_driving" type="_timespan"/>
+  <row    text="Stopped Time" details="time_stopped" type="_timespan"/>
+  <row    text="Total Distance" details="distance_total" type="_altdist"/>
+  <row MinAltitude text="Min. Altitude" details="min_elevation" type="_altitude"/>
+  <row MaxAltitude text="Max. Altitude" details="max_elevation" type="_altitude"/>
+</userlist>
+
+<layer ui_Statistics z=51>
+	<DIV class="list layerscroll">
+		<SECTIONMARKER class="layerscroll"/>
+		<SPRITE class=list_panel>
+		<LIST2 lst_Statistics class="list_control"  SMOOTHSCROLLING TEMPLATE_TYPE_MODEL="*.type">
+			<LISTMODEL listmodel="ui.lm_drivestat.list" element_template="et_Statistics"/> 
+			<VSMARTSCROLL> 
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</LAYER>
+
+<userlist lm_localmenu_statistics text="str" onrelease="ui" visible="bool">
+	<view visibility_filter=visible />
+	<default visible=1 />
+	<row text="Reset" onrelease='MODEL.other.trips[1].reset()' />
+</userlist>
+
+<views VW_contents_category_list_filtered listmodel="other.contents.category_list" >
+	<field filtered_types=(lua.gContentErrorIndex) />
+	<view filter filter=(in_set(index, views.filtered_types)) />
+</views>
+
+<layer ui_AboutContents z=30>
+	<DIV class="list">
+		<SECTIONMARKER>
+		<SPRITE class=list_panel>
+		<LIST2 class="list_control" SMOOTHSCROLLING>
+			<LISTMODEL listmodel=(vContentCheck ? "ui.VW_contents_category_list_filtered.filter" : "other.contents.category_list") element_template="et_TemplateList" text=%*.name  details=undef 
+				onrelease='indexY=(vContentCheck() and ui.VW_contents_category_list_filtered.filter:get_index(ui.VW_contents_category_list_filtered.filter[index]) or index); sc_ContentListOnRelease(indexY)' />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+		<EMPTYLISTTEXT text="No errors" visible=( vContentCheck && !%ui.VW_contents_category_list_filtered.filter.size ) />
+	</DIV>
+</layer>
+
+
+<element_template et_ContentItem>
+	<implementation>
+		<property hnrError value=(%lua.ContentIsHNR && (%*.error_code == 4 || %*.error_code == 5))>
+	</implementation>
+	
+	<BUTTON btnContentItem class="listitem icon" onrelease='MODEL.other.contents.list.index = index sc_ContentDetails()' enable=(%*.error_code == 0 || %*.error_code == 2 || hnrError)>
+		<HBOX class="listitem padding">
+			<VBOX class="listitem">
+				<TEXT class="listitem sec" z=100 text=%*.name visible=(%*.error_code != 2)>
+				<TEXT class="listitem sec inactive_content" z=100 text=%*.name visible=(%*.error_code == 2)>
+			
+				<TEXT class="listitem aboutinfo" z=100 text=(%*.description + L" " + %*.timestamp) visible=(%*.error_code == 0) minaspect=65>
+				<TEXT class="listitem aboutinfo inactive_content" z=100 text=(%*.error + L" (" + %*.path + L")") visible=(%*.error_code == 2) minaspect=65>
+
+				<TEXT class="listitem aboutinfo inactive_content" z=100 text=((hnrError ? sc_GetHnrErrorText(%*.error_code) : %*.error) + L" (" + %*.path + L")") visible=(%*.error_code == 1 || %*.error_code > 2) minaspect=65>				
+			</VBOX>
+		</HBOX>
+	</BUTTON >
+</element_template>
+
+<views VW_contents_list_filtered listmodel="other.contents.list" >
+	<view filter filter=($1.error_code > 0) />
+</views>
+
+<layer ui_AboutContentList z=30>
+	<DIV class="list">
+		<SECTIONMARKER>
+		<SPRITE class=list_panel>
+		<LIST2 class="list_control" SMOOTHSCROLLING>
+			<LISTMODEL listmodel=(vContentCheck ? "ui.VW_contents_list_filtered.filter" : "other.contents.list") element_template="et_ContentItem"/> 
+			<VSMARTSCROLL> 
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+		<EMPTYLISTTEXT text="No errors" visible=( vContentCheck && !%ui.VW_contents_list_filtered.filter.size ) />
+	</DIV>
+</layer>
+
+
+<userlist lm_AboutContentDetails visible="bool" type="str">
+	<view visibility_filter=visible/>
+	<default visible=1>
+	<row            type="_name">
+	<row  visible=(%other.contents.list[current].path) type="_path">
+	<row            type="_category">
+	<row  visible=(%other.contents.list[current].size_kb) type="_filesize">
+	<row  visible=0 type="_timestamp">
+	<row  visible=(%other.contents.list[current].copyright) type="_copyright">
+	<row  visible=(%other.contents.list[current].copyright) type="_provider">
+	
+	<row  visible=(vHNRHasCoveredMaps) type="_hnr_covered">
+	<row  visible=(vHNRHasIncompatibleMaps) type="_hnr_incompatible">
+</userlist>
+
+<element_template et_AboutContentDetails_name>
+	<SPRITE class="listitem info">
+		<HBOX class="listitem padding">
+			<VBOX class="listitem" >
+				<TEXT class="listitem sec" text="Name:">
+				<TEXT class="listitem aboutinfo" text=%other.contents.list[current].name>
+			</VBOX>
+		</HBOX>
+	<SPRITE>
+</element_template>
+
+<element_template et_AboutContentDetails_path>
+	<SPRITE class="listitem info">
+		<HBOX class="listitem padding">
+			<VBOX class="listitem">
+				<TEXT class="listitem sec" text="File:">
+				<TEXT class="listitem aboutinfo" text=(%other.contents.list[current].path)>
+			</VBOX>
+		</HBOX>
+	</SPRITE>
+</element_template>
+
+<element_template et_AboutContentDetails_category>
+	<SPRITE class="listitem info">
+		<HBOX class="listitem padding">
+			<VBOX class="listitem">
+				<TEXT class="listitem sec" text="Type:">
+				<TEXT class="listitem aboutinfo" textmodel_wstr="other.contents.current_category">
+			</VBOX>
+		</HBOX>	
+	</SPRITE>
+</element_template>
+
+<element_template et_AboutContentDetails_filesize>
+	<SPRITE class="listitem info">
+		<HBOX class="listitem padding">
+			<VBOX class="listitem">
+				<TEXT class="listitem sec" text="Size:">
+				<TEXT class="listitem aboutinfo" text=(sprintf( m_i18n("%s kilobytes"), %other.contents.list[current].size_kb )) visible=(%other.contents.list[current].size_kb)>
+			</VBOX>
+		</HBOX>
+	</SPRITE>
+</element_template>
+
+<element_template et_AboutContentDetails_provider>
+	<SPRITE class="listitem info">
+		<HBOX class="listitem provider padding">
+			<SPRITE class="listitem icon provider" iconid=(%other.contents.list[current].prov_icon_id)>
+		</HBOX>
+	</SPRITE>
+</element_template>
+
+<element_template et_AboutContentDetails_timestamp>
+	<HBOX class="listitem padding">
+		<SPRITE class="listitem info">
+		<TEXT class="listitem" text=(%other.contents.list[current].timestamp)>
+	</HBOX>
+</element_template>
+
+<element_template et_AboutContentDetails_copyright>
+	<SPRITE class="listitem info">
+		<HBOX class="listitem padding">
+			<VBOX class="listitem">
+				<TEXT class="listitem sec" text="Copyright:">
+				<TEXT class="listitem aboutinfo" line_break_method="auto" text=(%other.contents.list[current].copyright)>
+			</VBOX>
+		</HBOX>
+	</SPRITE>
+</element_template>
+
+
+<element_template et_AboutContentDetails_hnr_covered>
+	<BUTTON class="listitem" z=21 text="Covered Maps" align="CENTER" onrelease=sc_ShowHnrCoveredMaps>
+</element_template>
+
+<element_template et_AboutContentDetails_hnr_incompatible>
+	<BUTTON class="listitem" z=21 text="Incompatible Maps" align="CENTER" onrelease=sc_ShowHnrIncompatibleMaps>
+</element_template>
+
+<layer ui_AboutContentDetails z=30>
+	<DIV class="list layerscroll">
+		<SECTIONMARKER class="layerscroll"/>
+		<SPRITE class=list_panel>
+		<LIST2 lst_ContentDetails class="list_control" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.lm_AboutContentDetails" element_template="et_AboutContentDetails" template_type_model="*.type"/>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+
+<element_template et_HNRCountriesList>
+	<SPRITE class="listitem info">
+	<HBOX class="listitem">
+		<VBOX class="listitem">
+			<TEXT class="listitem top" text=%*.long_name>
+			<TEXT class="listitem bottom" textmodel_date="*.timestamp.date" formatmodel="regional.dateformat">
+		</VBOX>
+	</HBOX>
+</element_template>
+
+<layer ui_HNRCountriesList z=30>
+	<DIV class="list">
+		<SECTIONMARKER>
+		<SPRITE class=list_panel>
+		<LIST2 lst_HNRCountries class=list_control element_template="et_HNRCountriesList" SMOOTHSCROLLING>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<layer ui_VersionInformation z=30>
+	<DIV class="main">
+		<VBOX class="fill about_vesion">
+			<SPRITE class="logo svg" z=1>
+			<TEXT Release class="about_vesion font_info bd color_inf_main" text=L"$release$" REPLACETAGS>
+			<TEXT Buildnum class="about_vesion font_info bd color_inf_main" text=L"$buildnum$" REPLACETAGS>
+			<TEXT Date class="about_vesion font_info color_inf_main" text=L"$date$" REPLACETAGS>
+			<TEXT SkinVersion class="about_vesion font_info bd color_inf_main" text=(%lua.aSkinVersionTXT) />
+			<TEXT class="about_vesion font_info bd color_inf_main" text=(tostring(L"version " + %lua.aSkinVersionNo + L" | " + %lua.aSkinVersionDate)) />
+			<TEXT class="about_vesion font_info bd color_inf_main" text="<Web Address> | <Support E-mail>">
+			<TEXT Copyright class="about_vesion font_info color_inf_main" text=L"$copyright$" REPLACETAGS>
+		</VBOX>
+	</DIV>
+</layer>
+
+<layer ui_DemoRoute z=30>
+	<DIV class="list">
+		<SECTIONMARKER>
+		<SPRITE class=list_panel>
+		<LIST2 class="list_control" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="mydata.routes.demo.list" element_template="et_TemplateList" text=%*.name onrelease=sc_LoadRouteDemo_onrelease/>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>

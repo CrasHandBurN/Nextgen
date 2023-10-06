@@ -1,0 +1,60 @@
+/*------- VW -- 04.09.2021  ------ */
+DISTTEXT.detour_to_poi {
+	left: 0; w: 100%; 
+	top: 0; h:30%; 
+	z: 56;
+	font: defaultbd; 
+	fontsize: 15; 
+	color: btn_main_color; 
+	color2: btn_main_color2;
+	color3: btn_main_color3;
+	align:"CENTER"; 
+	valign:"CENTER"; 
+	paddingleft: 0; 
+	paddingright: 0;
+}
+
+DISTTEXT.distance_to_poi {
+	left: 0; w: 100%; 
+	top: 70%; h: 30%; 
+	z: 56;
+	font: defaultbd; 
+	fontsize: 15; 
+	color: btn_main_color; 
+	color2: btn_main_color2;
+	color3: btn_main_color3;
+	align:"CENTER"; 
+	valign:"CENTER"; 
+	paddingleft: 0; 
+	paddingright: 0;
+}
+
+#ui_SplitscreenInfo DIV.cockpit DIV.map_messagebox.splitscreeninfo LIST2.spl_panel {
+	left:0;	right:0; top:0;	bottom:0; 
+	valign:"CENTER";
+	REVERSED: 0;
+}
+
+SPRITE.poi_dir_split {
+	right: 0; w: 86; top: 8%;  bottom: 30%; z:100;  valign:"TOP";  align: "CENTER";
+	img: "poi_dir_split.svg"; ZOOM: 700;
+	ROTATE:(-(direction(%navigation.car.position, %*.position, %navigation.car.heading) + 1024) * 360.0 / 4096);
+	
+}
+
+SPRITE.listitem_svg {
+	right: 0; w: 86; top:30%; bottom: 30%; z:100;  valign:"CENTER";  align:"CENTER"; image_h: undef; ZOOM: 700;
+	ROTATE:(-(direction(%navigation.car.position, %*.position, %navigation.car.heading) + 1024) * 360.0 / 4096);
+}
+
+SPRITE.listitem.icon.mypoi.svg{
+	desired_w:60; resize_bmp:1;
+}
+
+#ui_SplitscreenInfo LAYER DIV.cockpit DIV.map_messagebox SPRITE.panel.map.background,
+#ui_SplitscreenInfo DIV.cockpit DIV.map_messagebox.splitscreeninfo LIST2.spl_panel  {
+	visible: ( ui_Cockpit.MapPopupOnscreen && !(ui_PropLayer.SignpostVisible || ui_PropLayer.JunctionViewVisible ) );
+}
+
+@import "~/common/ui/poi_splitscreen_landscape.css" landscape;
+@import "~/common/ui/poi_splitscreen_portrait.css" portrait;

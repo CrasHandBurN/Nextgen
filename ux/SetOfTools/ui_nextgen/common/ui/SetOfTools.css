@@ -1,0 +1,83 @@
+/*-------------GRAPH-------------*/
+SPRITE.graph{
+	box_align: "stretch";
+}
+
+GRAPH.graph_btn{
+	left: 85%;
+	right:1;
+	top:3%;
+	bottom:3%;
+	/*zoom: "zoomvisible";*/
+}
+
+/*----------BUTTON TEXT----------*/
+TEXT.BTN_top_text {
+	left: 10%; top: 0%; bottom: 70%; right: 10%; z: 56;
+	font: defaultbd; 
+	fontsize: 15; 
+	color: map_main_color; 
+	align:"CENTER"; 
+	paddingleft: 0; 
+	paddingright: 0;
+}
+
+TEXT.BTN_bottom_text {
+	left: 5%; top: 70%; bottom: 0%; right: 5%; z: 56;
+	font: defaultbd; 
+	fontsize: 15; 
+	color: map_main_color; 
+	align:"CENTER"; 
+	paddingleft: 0; 
+	paddingright: 0;
+}
+
+TEXT.BTN_right_top_text {
+	top:6%; right:7%; w:21%; h:21%;
+	z: 56;
+	font: defaultbd; 
+	fontsize: 16; 
+	color: map_main_color; 
+	align:"CENTER"; 
+	valign:"CENTER"; 
+}
+
+TEXT.BTN_left_top_text {
+	top:6%; left:7%; w:21%; h:21%;
+	z: 56;
+	font: defaultbd; 
+	fontsize: 16; 
+	color: map_main_color; 
+	align:"CENTER"; 
+	valign:"CENTER"; 
+}
+
+/* -- mod -- */
+
+
+CHECKBOX.listitem.chkonoff TEXT {
+	binding: (CHECKBOX.listitem > TEXT);
+	left: (PARENT.ICONSPR == "" ? 0 : (svg_chkbox_image_w + text_padding));
+	right: ((svg_chkbox_image_w + text_padding)*2 + 4*text_padding);
+}
+
+BUTTON.btn_main.extra {
+	right: (svg_chkbox_image_w*2 + text_padding);
+	w: (svg_chkbox_image_w*2);
+	top: 5;
+	bottom: 5; 
+	z: 50;
+}
+/*
+et_ListQuestChkOnOff_Icon {
+	binding: #et_ListSetChkOnOff_Icon;
+	IMG:"diricon_036.svg";
+}
+
+et_ListPlayChkOnOff_Icon {
+	binding: #et_ListSetChkOnOff_Icon;
+	IMG:"ico_announce.svg";
+}
+*/
+@import "~/common/ui/SetOfTools_landscape.css" landscape;
+@import "~/common/ui/SetOfTools_portrait.css" portrait;

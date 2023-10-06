@@ -1,0 +1,14 @@
+#ui_wMapSidePanel_NextRouteWarningSPR .2_1_1 {
+	left:undef; right:0; w:notify_list_h;
+	bottom:0; h:(map_messagebox_h/3);
+}
+
+#ui_wMapSidePanel_NextRouteWarningSPR .2_1_2 {
+	left:undef; right:0; w:notify_list_h;
+	bottom:(map_messagebox_h/3); h:(map_messagebox_h/3);
+}
+
+#ui_wMapSidePanel_NextRouteWarningSPR .1_1_1 {
+	left:undef; right:0; w:notify_list_h;
+	bottom:(map_messagebox_h/3*2); h:(map_messagebox_h/3);
+}

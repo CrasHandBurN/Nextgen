@@ -1,0 +1,219 @@
+<modify lm_UsefulInformation>
+	<insert>
+		<row prio=8000 text="Fuel Consumption" icon="ico_fuel_consumption.svg"  onrelease='sc_NextStateAnim( st_FuelConsumption, "fade", 1, "")' enable=(!%lua.IsDemoMode) />
+	</insert>
+</modify>
+
+<modify lm_RegionalSettings_units>
+	<insert>
+		<row text="Currency" details=%lua.Currency onrelease='sc_NextStateAnim( st_setCurrency, "fade", 1, "")' />
+	</insert>
+</modify>
+;------------------Tank-------------------
+<modify ui_Cockpit>           
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON ShowTankButtonCockpit ONRELEASE='MODEL.lua.Vol_Dist = not MODEL.lua.Vol_Dist()'
+			ONLONGCLICK='sc_NextStateAnim(st_TankDigitsValue, "fade", 1, "")'
+			VISIBLE=(%lua.ShowTankButtonCockpit)
+			ICON=(VW_CURRENT_tank_volume(%{"other.trips.@0"}.distance_total) > 0 ? "ico_tank.svg" : (%gps.blink ? "ico_tank.svg" : "warning-icon.svg")) ZOOM=80%
+			T_TEXT=(VW_Return_button_text(translate("Tank"), L"%s", 1))
+			B_TEXT=(%lua.Vol_Dist ? (towstring(VW_CURRENT_tank_volume(%{"other.trips.@0"}.distance_total)) + L" " + translate(sc_FormatFuelUnit())) : VW_Tank_dist(%{"other.trips.@0"}.distance_total)) >
+			<GRAPH CLASS="graph_btn" FULL=(%lua.tank_capacity * 10) CURRENT=(VW_CURRENT_tank_volume(%{"other.trips.@0"}.distance_total) * 10) />
+		</BUTTON_ICON>
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=(%lua.ShowTankButtonCockpit) />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'Tank' Button" bmp=(ShowTankButtonCockpit.ICON) isselected="lua.ShowTankButtonCockpit" />
+	</insert>
+</modify>
+;---- Quick Menu -----
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE='ui.ShowTankButtonCockpit.ONRELEASE()()' ONLONGCLICK='ui.ShowTankButtonCockpit.ONLONGCLICK()()' 
+			VISIBLE=(%lua.ShowTankButtonQuick)
+			ICON=(ShowTankButtonCockpit.ICON) ZOOM=80%
+			T_TEXT=(ShowTankButtonCockpit.T_TEXT)
+			B_TEXT=(ShowTankButtonCockpit.B_TEXT) >
+			<GRAPH CLASS="graph_btn" FULL=(%lua.tank_capacity * 10) CURRENT=(VW_CURRENT_tank_volume(%{"other.trips.@0"}.distance_total) * 10) />
+		</BUTTON_ICON>
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=(%lua.ShowTankButtonQuick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'Tank' Button" bmp=(ShowTankButtonCockpit.ICON) isselected="lua.ShowTankButtonQuick" />
+	</insert>
+</modify>
+/*
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=(ShowTankButtonCockpit.ICON) text=(translate("Tank")) onrelease='ui.ShowTankButtonCockpit.ONRELEASE()()' />
+		</insert>
+	</modify>
+<!end/>
+*/
+<layer ui_TankValue z=30>
+	<implementation>
+		<property tank_capacity value=(%lua.tank_capacity * 10) />
+		<property tank_volume value=(%lua.tank_volume * 10) />
+	</implementation>
+	<DIV class="half" left=50%> 
+		<RADIO class="btn_main fuelunits" left=0 right=2% top=5.5% h=23.5% var=0 groupmodel="lua.tank_volume_or_capacity" onrelease={inp_TankItemValue.VALUE = towstring(%lua.tank_capacity)}>
+			<VBOX class="listitem">
+				<TEXT	class="listitem" paddingleft=(CSS.Param.list_padding) paddingright=(CSS.Param.list_padding) text="Fuel Tank Capacity" />
+				<UNITTEXT class="listitem bd" paddingleft=(CSS.Param.list_padding) paddingright=(CSS.Param.list_padding) value=(sc_FormatFuelValue(tank_capacity)) unit=(sc_FormatFuelUnit()) />
+			</VBOX>
+		</RADIO>
+		
+		<RADIO class="btn_main fuelunits" left=0 right=2% top=29% h=23.5% var=1 groupmodel="lua.tank_volume_or_capacity" onrelease={inp_TankItemValue.VALUE = towstring(%lua.tank_volume)}>
+			<VBOX class="listitem">
+				<TEXT	class="listitem" paddingleft=(CSS.Param.list_padding) paddingright=(CSS.Param.list_padding) text="Fuel Tank Volume" />
+				<UNITTEXT class="listitem bd" paddingleft=(CSS.Param.list_padding) paddingright=(CSS.Param.list_padding) value=(sc_FormatFuelValue(tank_volume)) unit=(sc_FormatFuelUnit()) />
+			</VBOX>
+		</RADIO>
+		
+		<VBOX left=0 right=2% top=54% bottom=0 visible=(%navigation.has_route)> 
+			<HBOX class="route_overview_destination">
+				<SPRITE class="route_summary fuelgreen svg" />
+			</HBOX>
+			<HBOX class="route_overview_destination">
+				<SPRITE class="route_summary fuelprice svg" img="ico_travel.svg" />
+				<UNITTEXT class="route_summary_text" color=(CSS.Param.map_main_color) value=(sc_FormatConsumptionValue( VW_fuel_per_100km_pm() )) unit=(sc_FormatConsumptionUnit()) />
+			</HBOX>
+			<HBOX class="route_overview_destination">
+				<SPRITE class="route_summary fuelprice svg" />
+				<UNITTEXT class="route_summary_text" color=(CSS.Param.map_main_color) value=(sc_FormatFuelCost(%route.list.navigated.fuel_cost)) unit=(%lua.Currency) />
+			</HBOX>
+			<HBOX class="route_overview_destination">
+				<SPRITE class="route_summary fuelusage svg" />
+				<UNITTEXT class="route_summary_text" color=(CSS.Param.map_main_color)  value=(sc_FormatFuelValue(%route.list.navigated.fuel_usage)) unit=(sc_FormatFuelUnit()) />
+			</HBOX> 
+			<HBOX class="route_overview_destination">
+				<SPRITE class="route_summary fuelco2 svg" />
+				<UNITTEXT class="route_summary_text" color=(CSS.Param.map_main_color) value=(sc_FormatCo2(%route.list.navigated.co2_emission)) unit="kg" />
+			</HBOX>                             
+		</VBOX>
+		<VBOX left=0 right=2% top=54% bottom=0 visible=(!%navigation.has_route)>            
+			<HBOX class="route_overview_destination">
+				<SPRITE class="route_summary fuelprice svg" img="ico_urban.svg" />
+				<UNITTEXT class="route_summary_text" color=(CSS.Param.map_main_color) value=(sc_FormatConsumptionValue( %{"mydata.vehicle_profile.list"}[%mydata.vehicle_profile.selected_profile].consumption_urban )) unit=(sc_FormatConsumptionUnit()) />
+			</HBOX>
+			<HBOX class="route_overview_destination">
+				<SPRITE class="route_summary fuelusage svg" img="ico_rural.svg" />
+				<UNITTEXT class="route_summary_text" color=(CSS.Param.map_main_color) value=(sc_FormatConsumptionValue( %{"mydata.vehicle_profile.list"}[%mydata.vehicle_profile.selected_profile].consumption_rural )) unit=(sc_FormatConsumptionUnit()) />
+			</HBOX>                            
+		</VBOX>
+	</DIV>
+</layer>
+
+<layer ui_InputTankValue z=30>
+	<DIV class="half">
+		<BUTTON class="button_input">
+			<HBOX class="inputfield">
+				<INPUTTEXT inp_TankItemValue class="input_text" onchange=sc_Tank_SetValue />
+			</HBOX>
+		</BUTTON>
+	</DIV>
+</layer>
+
+<modify et_splitscreeninfo>
+   	<insert into="IMPLEMENTATION"> 
+		<PROPERTY refuel_here VALUE=((%lua.ShowTankButtonCockpit || %lua.ShowTankButtonQuick) ? (VW_refuel_here(index) ? %gps.blink : 1) : 1) />
+	</insert>
+	;;(lua.EVehicleIcon[sc_GetVehicleTypeFiel(%mydata.vehicle_profile.selected_profile, "vehicle_type")])
+	<modify element="#Small_Left_Button" IMG=(refuel_here ? "" : "ico_refuel.svg") />
+	<modify element="#Small_Left_Button_icon_NB" VISIBLE=(!VW_isPoiBranded(splitpoi_icon_id, 2) && refuel_here) />
+	<modify element="#Small_Left_Button_icon_B" VISIBLE=(VW_isPoiBranded(splitpoi_icon_id, 2) && refuel_here) />
+</modify>
+;Long_Right_Button
+<observer obs_NextGasStationReady boolmodel="lua.NextGasStationReady" onselect=VW_NextGasStationReady START="NO_TRIGGER" /> 
+<observer obs_distance_total_to_zero value=(%{"other.trips.@0"}.distance_total) 
+	ondeselect='MODEL.lua.distance_total_before_refueling = 0; 
+	if (MODEL.lua.ShowTankButtonCockpit() or MODEL.lua.ShowTankButtonQuick()) then
+		local msg = sc_translate_VoiceOrLang("The trip statistics that affected the choice of refueling was cleared. Set the remaining fuel in the tank again.")
+		--VW_LongTextToSay(msg)
+		sc_InfoNotification(msg)
+	end' 
+	START="NO_TRIGGER" /> ;MODEL.sound.playchanneltest("ding", L"Ferry"); 
+
+;===========================left buttons inclusion====================
+<!if condition=(Plugin.isLoaded("left_big_button"))>
+	<var ShowLeftSideRouteHistory  = 0 permanent />
+	<var HistotyGreen = 1 />
+	<!DISABLE COMPAT_UPCASE_ATTR_SELECTOR/>
+	<modify lm_LeftButtonsSettings>
+		<modify element="row[prio=9]" bmp="ico_history.svg" text="Show Left Side RouteHistory" isselected="ui.ShowLeftSideRouteHistory" visible=1 />	
+	</modify>
+
+	<modify lm_N_buttons>
+		<modify element="row[prio=9]" name="ShowLeftSideRouteHistory_VISIBLE" visible=(ShowLeftSideRouteHistory) />
+	</modify>
+
+	<modify ui_LeftSide_Free_Button>
+		<insert into="IMPLEMENTATION"> 
+			<PROPERTY average_speed VALUE=(%{"other.trips.@0"}.speed_total_avg) />
+		</insert>
+		<insert last_child into="#table_left_big_buttons"> 
+					<DIV CLASS="left_big" 
+							ONRELEASE={HistotyGreen = !HistotyGreen; doDelayed(500, "ui.HistotyGreen = 1")} 
+							ONLONGCLICK='sc_NextStateAnim(st_LeftButtonsSettings, "fade", 1, "" )' 
+							VISIBLE=((%ui.lm_N_buttons.size && %ui.lm_N_buttons.list[0].name == "ShowLeftSideRouteHistory_VISIBLE") ||
+								(%ui.lm_N_buttons.size > 1 && %ui.lm_N_buttons.list[1].name == "ShowLeftSideRouteHistory_VISIBLE" && %lua.current_buttons == 2)) >
+						<BUTTON_ICON LEFT=0 RIGHT=0 TOP=0 BOTTOM=0 VISIBLE=(HistotyGreen || (%lua.screen4x3 ? 0 : %lua.IsLandscape))
+								ICON=""
+								T_L_ICON="ico_itinerary_currentpoint_distance.svg"
+								C_L_ICON="ico_itinerary_currentpoint_time.svg"
+								B_L_ICON="ico_itinerary_currentpoint_speed.svg"
+								>
+							<SPRITE CLASS="btn_map rotatecompass icon svg" Z=40 ZOOM=50% IMAGE_H=(PARENT.H) IMAGE_W=(PARENT.W)
+									IMG="spr_itinerary_arrow_start.svg"
+									ROTATE=( %map.primary.rotate * 360.0 / 4096 ) />
+							<DISTTEXT CLASS="valuetext" TOP=5% BOTTOM=80% LEFT=22% RIGHT=1% W=undef H=undef Z=40 DISTANCE=(%{"other.trips.@0"}.distance_total) ALIGN="RIGHT" />
+							<TIMESPANTEXT CLASS="valuetext"	H=25% BOTTOM=38% LEFT=22% RIGHT=0 W=undef Z=40 TIMESPAN=(%{"other.trips.@0"}.time_total) FORMATMODEL=7 ALIGN="RIGHT" />
+							<SPEEDTEXT CLASS="valuetext" TOP=80% BOTTOM=5% LEFT=22% RIGHT=1% W=undef H=undef Z=40 UNITVISIBLE=1 SPEED=average_speed ALIGN="RIGHT" />
+						</BUTTON_ICON>
+						<BUTTON LEFT=0 RIGHT=0 TOP=0 BOTTOM=0 VISIBLE=(!HistotyGreen && (%lua.screen4x3 ? 1 : !%lua.IsLandscape)) >
+							<SPRITE CLASS="route_fuel_background" >
+								<BOX CLASS="fill" ORIENTATION="vertical" TOP=2% BOTTOM=2% > 
+									<HBOX CLASS="route_overview_destination" VISIBLE=(%lua.screen4x3) >
+										<SPRITE CLASS="route_summary fuelgreen svg" />
+									</HBOX>
+									<HBOX CLASS="route_overview_destination" ALIGN="LEFT">
+										<SPRITE CLASS="route_summary fuelprice svg" />
+										<UNITTEXT CLASS="route_summary_text" VALUE=(sc_FormatFuelCost(%route.list.navigated.fuel_cost, %gps.blink)) UNIT=(%lua.Currency) />
+									</HBOX>
+									<HBOX CLASS="route_overview_destination" ALIGN="LEFT">
+										<SPRITE CLASS="route_summary fuel_per_100 svg" />
+										<UNITTEXT CLASS="route_summary_text" VALUE=(sc_FormatConsumptionValue( VW_fuel_per_100km_pm(%gps.blink) )) UNIT=(sc_FormatConsumptionUnit()) />
+									</HBOX>
+									<HBOX CLASS="route_overview_destination" ALIGN="LEFT">
+										<SPRITE CLASS="route_summary fuelusage svg" />
+										<UNITTEXT CLASS="route_summary_text" VALUE=(sc_FormatFuelValue(%route.list.navigated.fuel_usage, %gps.blink)) UNIT=(sc_FormatFuelUnit()) />
+									</HBOX> 
+									<HBOX CLASS="route_overview_destination" ALIGN="LEFT">
+										<SPRITE CLASS="route_summary fuelco2 svg" />
+										<UNITTEXT CLASS="route_summary_text" VALUE=(sc_FormatCo2(%route.list.navigated.co2_emission, %gps.blink)) UNIT="kg" />
+									</HBOX>                             
+								</BOX>
+							</SPRITE>
+						</BUTTON>
+					</DIV>
+		</insert>
+	</modify>
+<!end/>

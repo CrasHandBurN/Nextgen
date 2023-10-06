@@ -1,0 +1,265 @@
+; -- WANDEL™ -- 31.08.2021 -- 
+;--modification and dependency--
+<modify ui_PropLayer> 
+    <modify SplPoiListIsVisible VALUE=(!ui_LeftSide_Free_Button.ShowLeftSidePOI_Info_VISIBLE && %ui.lm_splitpoi.list.size > 0 && %lua.SplPoiListIsVisible && ui_PropLayer.SplPoiListIsAvailable && !ui_PropLayer.SignpostVisible && !%lua.DragMode && !%lua.MenuIsOpened ) />
+</modify>
+
+<modify lm_VQuickMenuSettings>
+	<insert>
+		<row text="Left Side Buttons" haspopover=1 onrelease='sc_NextStateAnim(st_LeftButtonsSettings, "fade", 1, "" )' />
+	</insert>
+</modify>
+
+<modify lm_SpeedWarnings >
+	<insert last_child >
+		<row text="Show Left Side Tolerance Overspeed" type="ChkOnOff" isselected="lua.ShowLeftSideToleranceOverspeed" />
+	</insert>	
+</modify>
+
+<modify wSplitScreenPOISettingsList >
+	<insert last_child >
+		<row text="Show Left Side POI_Info" type="ChkOnOff" isselected="lua.ShowLeftSidePOI_Info" />
+	</insert>	
+</modify>
+
+;---!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+<modify ui_PropLayer>
+	<modify DA_freeAtTheMoment VALUE=( (!ui_Cockpit.p2p_valid && !%lua.VehicleIsPedestrian && !%lua.DragMode && !(ui_PropLayer.JunctionViewVisible || ui_PropLayer.MiniJunctionViewVisible || ui_PropLayer.TunnelOverviewVisible) && !(%lua.DAEnabled && %ui.lm_alert_views.driver_alerts.size)) && (Plugin.isLoaded( "truck" ) ? !ui_PropLayer.TruckTurnRestrictionIsVisible : 1) && !(!%lua.screen4x3 && %ui.lm_N_buttons.size && %lua.IsLandscape) ) />
+</modify>
+
+<var CityOrTolerance = 1 />
+<var Tachograph = 1 />
+;--------------------------------------------------------------------------------
+<userlist lm_LeftButtonsSettings text="str" bmp="str" prio="int" isselected="str" onrelease="ui" enable="bool" visible="bool" type="str" dtooltip="ui" haspopover="bool" >
+	<view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 type="ChkOnOff_Icon" prio=100 />
+		<row prio=0 bmp="ico_speedcams_menu.svg" text="Show Left Side Speedcam" isselected="lua.ShowLeftSideSpeedcam" />
+		<row prio=1 bmp="ico_tolerance.svg" text="Show Left Side ToleranceOverspeed" isselected="lua.ShowLeftSideToleranceOverspeed" visible=(%warning.speedcam_warning && %warning.speedcam_enabled) /> ;dtooltip="Speedcam Warning is Off" enable=(%warning.speedcam_warning && %warning.speedcam_enabled)
+		<row prio=2 visible=0 />
+		<row prio=3 visible=0 />
+		<row prio=4 visible=0 />
+		<row prio=5 bmp="ico_SplitOpen_sml_landscape.svg" text="Show Left Side POI_Info" isselected="lua.ShowLeftSidePOI_Info" />
+		<row prio=6 bmp="ico_maintenance.svg" text="Show Left Side TakeABreak" isselected="lua.ShowLeftSideTakeABreak" />
+		<row prio=7 visible=0 />
+		<row prio=8 visible=0 />
+		<row prio=9 visible=0 />
+		<row prio=10 visible=0 />
+		<row prio=11 visible=0 />
+		<row prio=12 visible=0 />
+		
+</userlist>
+
+<userlist lm_LocalMenuLeftButtons text="ui" onrelease="ui" enable="bool">
+	<default text="" onrelease=undef enable=1 visible=1 />
+	<row text=(translate("Buttons on screen: ") + tostring(%lua.possible_buttons)) onrelease={{if (%lua.possible_buttons == 1} {%lua.possible_buttons = 2} else {%lua.possible_buttons = 1}}; {%lua.current_buttons = %lua.possible_buttons}} />
+</userlist>
+		
+<userlist lm_N_buttons prio="int" name="str" visible="bool" enable="bool">
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 />
+	
+		<row prio=0 name="ShowLeftSpeedCamera_VISIBLE" 		visible=(%lua.ShowLeftSideSpeedcam && %navigation.curr_speedcam.category.valid) />
+		<row prio=1 name="ShowLeftSideToleranceOverspeed_VISIBLE" 	visible=(%lua.ShowLeftSideToleranceOverspeed && ui_Cockpit.AdvancedSpeedLimitPhase == 2) />
+		<row prio=2 visible=0 />
+		<row prio=3 visible=0 />
+		<row prio=4 name="ShowLeftSideTCMap_VISIBLE" 		visible=(%route.list.navigated.has_navigable_path && (Plugin.isLoaded("screen_saver") ? %lua.screen_saver_mode : 0)) />
+		<row prio=5 name="ShowLeftSidePOI_Info_VISIBLE"		visible=(%lua.wSplitScreenPOIReady && %lua.ShowLeftSidePOI_Info && %lua.SplPoiListIsVisible && %ui.lm_splitpoi.list.size > 0) />
+		<row prio=6 name="ShowLeftSideTakeABreak_VISIBLE"	visible=(%lua.ShowLeftSideTakeABreak && ((Plugin.isLoaded( "tachoguard" ) ? %lua.TachoGuardOn : 0) || (Plugin.isLoaded( "take_a_break" ) ? %lua.Take_a_breakOnOff : 0)) && %navigation.has_route) />
+		<row prio=7 visible=0 />
+		<row prio=8 visible=0 />
+		<row prio=9 visible=0 />
+		<row prio=10 visible=0 />
+		<row prio=11 visible=0 />
+		<row prio=12 visible=0 />
+</userlist>
+
+<layer ui_hide_second_button z=30 visible=((ui_Cockpit.MapPopupOnscreen && (%lua.IsPortrait ? 1 : %lua.screen4x3)) || is_map_free_area_busy)
+	onshow='MODEL.lua.current_buttons = 1'
+	onhide='MODEL.lua.current_buttons = MODEL.lua.possible_buttons()'>
+</layer>
+;--------------------------------------------------------------------------------
+<layer ui_LeftSide_Free_Button z=30
+	onshow={if (Plugin.isLoaded( "tachoguard" ) && %lua.TachoGuardOn) {Tachograph = 1} else (Tachograph = 0}} >
+	<implementation>
+
+		<property TownEntryName value=(%navigation.curr_speedcam.position.valid && %navigation.curr_speedcam.category.valid && %navigation.curr_speedcam.category == 10 ? VW_SpeedcamTownEntryName(%navigation.curr_speedcam.category) : L"") />
+
+		<property ShowLeftSideInCity_VISIBLE value=(%navigation.car.is_incity && %lua.CarInCity && %lua.IN_City != L"" && CityOrTolerance) />
+
+		<property splitpoi_icon_id value=( %ui.lm_splitpoi.list[0].icon_id // -1 ) /> 
+		<property splitpoi_detour_len value=( %ui.lm_splitpoi.list[0].detour_len // 0 ) /> 
+		<property splitpoi_detour_id value=( %ui.lm_splitpoi.list[0].detour_id // -1 ) /> 
+
+		<property splitpoi_position value=( %ui.lm_splitpoi.list[0].position // 0L ) /> 
+		<property splitpoi_onroute value=(%lua.wSplitScreenPOIOnRoute && %route.list.navigated.has_navigable_path) />
+		<property splitpoi_distance value=( splitpoi_onroute && distance_onroute ? %ui.lm_splitpoi.list[0].distance : distance(%navigation.car.position, splitpoi_position) ) /> ;it is possible only at searching start
+		
+		<property ShowLeftSideTCMap_VISIBLE value=((%ui.lm_N_buttons.size && %ui.lm_N_buttons.list[0].name == "ShowLeftSideTCMap_VISIBLE") || (%ui.lm_N_buttons.size > 1 && %ui.lm_N_buttons.list[1].name == "ShowLeftSideTCMap_VISIBLE" && %lua.current_buttons == 2)) />
+		<property ShowLeftSidePOI_Info_VISIBLE value=((%ui.lm_N_buttons.size && %ui.lm_N_buttons.list[0].name == "ShowLeftSidePOI_Info_VISIBLE") || 
+			(%ui.lm_N_buttons.size > 1 && %ui.lm_N_buttons.list[1].name == "ShowLeftSidePOI_Info_VISIBLE" && !(((sc_IsMapPopupOnscreen(%screen.msgbox.is_onscreen) || ui_PropLayer.HwyPoiListIsVisible || ui_PropLayer.SidePanelVisible) && (%lua.IsPortrait ? 1 : %lua.screen4x3))))) />
+
+	</implementation>
+	
+	<observer value=(%gps.blink) onselect={CityOrTolerance = !CityOrTolerance} start="NO_TRIGGER" />
+
+	<DIV class=cockpit >
+		<DIV LeftSideFreeArea class=left_side_free_area >
+			<TABLE table_left_big_buttons>
+
+				<BUTTON class="left_big" 
+					visible=((%ui.lm_N_buttons.size && %ui.lm_N_buttons.list[0].name == "ShowLeftSpeedCamera_VISIBLE") ||
+						(%ui.lm_N_buttons.size > 1 && %ui.lm_N_buttons.list[1].name == "ShowLeftSpeedCamera_VISIBLE" && %lua.current_buttons == 2))
+
+					onrelease=sc_ToggleSpeedcamSound 
+					onlongclick='sc_NextStateAnim(st_LeftButtonsSettings, "fade", 1, "" )' >
+					<TEXT class="BTN_top_text" left=1% right=1% bottom=75% valign="CENTER" text=(TownEntryName) clipstyle="NONE" fontsize=(VW_FieldFontsize(11, TownEntryName)) visible=(%navigation.curr_speedcam.category == 10) />
+					<SPRITE class="speedcam_bg" OPAQUE=1 />
+					<SPEEDTEXT class="left_speedcam" unitvisible=1 speed=(%navigation.curr_speedcam.avg_speed) visible=(%navigation.curr_speedcam.avg_speed.valid) />
+					<DISTTEXT class="left_speedcam" distance=(%navigation.curr_speedcam.distance) visible=(%navigation.curr_speedcam.distance.valid) />
+					<GRAPH class="graph_btn" full=(Graph_speedcam_category_start) current=(%navigation.curr_speedcam.distance) />
+					<SPRITE top=0 bottom=0 left=0 right=0 align="CENTER" valign="CENTER" zoom=(sc_GetSysEntry("left_speedcam_sign", "zoom", 1000)) 
+						img="ico_speedcams.svg" phase=%navigation.curr_speedcam.category />
+				</BUTTON>
+				
+				<BUTTON class="left_big"
+					visible=((%ui.lm_N_buttons.size && %ui.lm_N_buttons.list[0].name == "ShowLeftSideToleranceOverspeed_VISIBLE") ||
+						(%ui.lm_N_buttons.size > 1 && %ui.lm_N_buttons.list[1].name == "ShowLeftSideToleranceOverspeed_VISIBLE" && %lua.current_buttons == 2))
+					onlongclick='sc_NextStateAnim(st_LeftButtonsSettings, "fade", 1, "" )'
+					onrelease=(ShowLeftSideInCity_VISIBLE ? 'java:call("android.open_webpage", L"https://" .. towstring(string.sub(MODEL.navigation.car.current_country(), 2, 3)) .. L".wikipedia.org/wiki/Special:Search?search=" .. MODEL.lua.IN_City())' : undef) >
+					<DIV top=0 bottom=0 left=0 right=0 visible=(ShowLeftSideInCity_VISIBLE ? !CityOrTolerance : 1) >
+						<SPRITE class="button map fill" />
+						<SPRITE top=0 bottom=0 left=0 right=0 align="center" valign="center" img=(%lua.speedlimit_USACAN ? "spr_speedlimit_usa.svg" : "spr_speedlimit_eu.svg") >   
+							<TEXT class="speedlimit" text=(format(L"%{speed[%D]:*}", sc_GetToleranceSpeed(%lua.SpeedLimitValue), 1)) fontsize=(sc_GetToleranceSpeed(%lua.SpeedLimitValue) > 99 ? 35 : 50) />
+						</SPRITE>
+					</DIV>
+					<DIV top=0 bottom=0 left=0 right=0 visible=(ShowLeftSideInCity_VISIBLE) >
+						<SPRITE class="button map fill" />
+						<TEXT class="BTN_top_text" left=1% right=1% bottom=75% valign="CENTER" text=(%lua.IN_District) clipstyle="NONE" wordwrap=1 fontsize=(VW_FieldFontsize(11, %lua.IN_District)) />
+						
+						<SPRITE top=10% bottom=10% left=10% right=10% align="CENTER" valign="CENTER" img="ico_city.svg" VISIBLE=(!ui_Cockpit.city_arm) />
+						<SPRITE top=20% bottom=20% left=20% right=20% align="CENTER" valign="CENTER" IMG=(ui_Cockpit.city_arm) VISIBLE=(ui_Cockpit.city_arm) />
+						
+						<TEXT class="BTN_bottom_text" left=1% right=1% top=75% valign="CENTER" text=(%lua.IN_City) clipstyle="NONE" font="defaultbd" fontsize=(VW_FieldFontsize(11, %lua.IN_City)) />
+					</DIV>
+				</BUTTON>
+
+				<USE_LAYER class="left_big" layer=(tcmap3d_left) LAYER_Z=12 visible=(ShowLeftSideTCMap_VISIBLE) >
+					<SPRITE top=-1 bottom=-1 left=-1 right=-1 z=112 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 />
+					<GRAPH class="graph_btn" full=(%ui.Graph_dist_limit_temp) current=(%navigation.distance_to_maneuver) visible=(GraphEnable && %navigation.distance_to_maneuver.valid && %navigation.distance_to_maneuver <= VW_right_distance()) />
+				</USE_LAYER>
+				
+				<USE_LAYER class="left_big" layer=(splitpoi_left) LAYER_Z=12 visible=(%ui.ShowLeftSidePOI_Info_VISIBLE)>
+					<observer model="ui.lm_splitpoi.list.size", "lua.wSplitScreenPOIReady"
+						onchange='
+								if MODEL.lua.wSplitScreenPOIReady() then 
+									MODEL.map.splitpoi_left.show_pois = 2
+									sc_FillSmartPois_bySplitScreen()
+								else
+									MODEL.map.splitpoi_left.show_pois = 1
+								end' start />
+
+					<SPRITE top=-1 bottom=-1 left=-1 right=-1 z=112 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 />
+
+					<DISTTEXT class="detour_to_poi" fontsize=30 left=22% distance=(splitpoi_detour_len) visible=(%ui.lm_splitpoi.list.size > 0 && splitpoi_onroute) />
+					<SPRITE class="detour_icon" iconid=(splitpoi_detour_id) iconindex=0 visible=(%ui.lm_splitpoi.list.size > 0 && splitpoi_onroute) />
+					/*	
+						<SPRITE class="btn_map svg" iconid=(splitpoi_icon_id) iconindex=2 zoom=65% image_h=(PARENT.H) image_w=(PARENT.W)
+							visible=(%ui.lm_splitpoi.list.size > 0 && !VW_isPoiBranded(splitpoi_icon_id, 2)) zoom=60% />
+						<SPRITE class=poi_branded TOP=25% bottom=25% iconid=(splitpoi_icon_id) iconindex=2
+							visible=(%ui.lm_splitpoi.list.size > 0 && VW_isPoiBranded(splitpoi_icon_id, 2)) zoom=60% />
+					*/	
+					<DISTTEXT class="distance_to_poi" fontsize=30 distance=(splitpoi_distance) visible=(%ui.lm_splitpoi.list.size > 0) />
+						
+					<SPRITE class="btn_map svg" img="road-sign-arrow.svg" visible=(splitpoi_onroute && distance_onroute) image_w=(CSS.Param.svg_map_button_image_w*30/100) align="RIGHT" right=5% zoom=100% />
+				</USE_LAYER>
+				
+				<DIV class="left_big" 
+						onrelease='
+							ui.Tachograph = (Tachograph() + 1) % 3
+							if not Plugin:isLoaded( "tachoguard" ) or not MODEL.lua.TachoGuardOn() then
+								ui.Tachograph = 0
+							end
+							if (not Plugin:isLoaded( "take_a_break" ) or not  MODEL.lua.Take_a_breakOnOff()) and not Tachograph() then
+								ui.Tachograph = 1
+							end
+							'
+						onlongclick='sc_NextStateAnim(st_LeftButtonsSettings, "fade", 1, "" )' 
+						visible=((%ui.lm_N_buttons.size && %ui.lm_N_buttons.list[0].name == "ShowLeftSideTakeABreak_VISIBLE") ||
+							(%ui.lm_N_buttons.size > 1 && %ui.lm_N_buttons.list[1].name == "ShowLeftSideTakeABreak_VISIBLE" && %lua.current_buttons == 2)) >
+					
+					<BUTTON left=0 right=0 top=0 bottom=0 visible=(!Tachograph && (Plugin.isLoaded( "take_a_break" ) && %lua.Take_a_breakOnOff)) >
+						<SPRITE class="button map fill" />
+						<SPRITE class="btn_map svg" image_h=(PARENT.H) image_w=(PARENT.W) zoom=50% img=(%lua.overtake_color && !%navigation.car.current_speed ? "ico_coffe_break.svg" : "ico_maintenance.svg") /> 
+						<TEXT class="BTN_right_top_text" fontsize=30 TEXT=(Format_Timespan(%lua.Rest_Period, lua.ETimespanFormat.HrMinRounded)) visible=(%lua.overtake_color) />
+						<TEXT class="BTN_left_top_text" fontsize=30 TEXT=(Format_Timespan(%lua.Remaining_Resting_Time, lua.ETimespanFormat.HrMinRounded)) visible=(%lua.overtake_color) />
+						<TEXT class="BTN_bottom_text" fontsize=40 TEXT=(!%lua.overtake_color || %navigation.car.current_speed ? VW_TimeGuard(%gps.blink) : VW_DUMMY_VW_TimeGuard(%gps.blink)) /> 
+						<GRAPH class="graph_btn" full=(%lua.Driving_Period) CURRENT=(%lua.Driving_Time_in_period_term) invert=1 visible=(!%lua.overtake_color || %navigation.car.current_speed) />
+						<GRAPH class="graph_btn" full=(%lua.Rest_Period) CURRENT=(%lua.Remaining_Resting_Time) invert=0 visible=(%lua.overtake_color && !%navigation.car.current_speed) />
+					</BUTTON>
+				
+					<BUTTON left=0 right=0 top=0 bottom=0 visible=(Tachograph == 1 && (Plugin.isLoaded( "tachoguard" ) && %lua.TachoGuardOn)) >
+						<SPRITE class="button map fill" />
+						<SPRITE left=25% right=25% top=1% bottom=75% align="center" zoom="zoomvisible" img="Happy New Year.spr" animate="anime" visible=( %lua.TachoGuardOn ) />
+						<SPRITE class="btn_map svg" image_h=(PARENT.H) image_w=(PARENT.W) zoom=50% img="Standby.svg" 
+							phasename=(%lua.TachoGuardOn ? (%gps.blink && ui_Cockpit.NO_running ? (%lua.POAorResting ? "active_POA" : "active_Rest" ) : "active") : "disabled") /> 
+						<TEXT class="BTN_bottom_text" fontsize=30 text="Tachograph" />
+						<GRAPH class="graph_btn" full=(%lua.POA_Delay * 1000) current=(%lua.POACurrent_Delay) visible=(%lua.POAorResting) />
+						<GRAPH class="graph_btn" full=(%lua.max_break_time) current=(%lua.max_break_time - ui_Cockpit.resting_time) visible=(!%lua.POAorResting && ui_Cockpit.NO_running) />
+
+					</BUTTON>
+					
+					<VBOX left=0 right=0 top=0 bottom=0 visible=(Tachograph == 2 && (Plugin.isLoaded( "tachoguard" ) && %lua.TachoGuardOn)) >
+						
+						<BUTTON box_align="stretch" desired_h=10000 >
+							<SPRITE CLASS="button map fill" img="signpost_template_border.bmp" />
+							<HBOX class="tacho" >
+								<SPRITE class="btn_map svg" zoom=90% box_align="center" IMG="Tachograph Drive.svg" />
+								<SPRITE class="driving" visible=(!GRAPHorCHART) />
+								<GRAPH class="driving" visible=(GRAPHorCHART) />
+							</HBOX>
+							<TEXT class="tacho" color=(CSS.Param.map_main_color) top=0 bottom=0 left=0 right=0 align="center" fontsize=17
+								text=(L"D: " + Format_Timespan(ui_Cockpit.driving_time, lua.ETimespanFormat.HrMinRounded)) />
+						</BUTTON>
+						
+						<BUTTON box_align="stretch" desired_h=10000 >
+							<SPRITE class="button map fill" img="signpost_template_border.bmp" />
+							<HBOX class="tacho" >
+								<SPRITE class="btn_map svg" zoom=90% box_align="center" 
+									img=(%lua.POAorResting && ui_Cockpit.NO_running ? (%gps.blink ? "Tachograph POA.svg" : "warning-icon.svg") : "Tachograph POA.svg") />
+								<SPRITE class="poa" visible=(!GRAPHorCHART) />
+								<GRAPH class="poa" visible=(GRAPHorCHART) />
+							</HBOX>
+							<TEXT class="tacho" color=(CSS.Param.map_main_color) top=0 bottom=0 left=0 right=0 align="center" fontsize=17
+								text=(L"POA: " + Format_Timespan(ui_Cockpit.POA_time, lua.ETimespanFormat.HrMinRounded)) />
+						</BUTTON>
+						<BUTTON box_align="stretch" desired_h=10000 >
+							<SPRITE class="button map fill" img="signpost_template_border.bmp" />
+							<HBOX class="tacho" >
+								<SPRITE class="btn_map svg" zoom=90% box_align="center" 
+									img=(!%lua.POAorResting && ui_Cockpit.NO_running ? (%gps.blink ? "Tachograph Rest.svg" : "warning-icon.svg") : "Tachograph Rest.svg") />
+								<SPRITE class="resting" visible=(!GRAPHorCHART) />
+								<GRAPH class="resting" visible=(GRAPHorCHART) />
+							</HBOX>
+							<TEXT class="tacho" color=(CSS.Param.map_main_color) top=0 bottom=0 left=0 right=0 align="center" fontsize=17
+								text=(L"R: " +  Format_Timespan(ui_Cockpit.resting_time, lua.ETimespanFormat.HrMinRounded)) />
+						</BUTTON>
+						
+						<BUTTON box_align="stretch" desired_h=10000 >
+							<SPRITE class="button map fill" img="signpost_template_border.bmp" />
+							<HBOX class="tacho" >
+								<SPRITE class="btn_map svg" zoom=90% box_align="center" img="Tachograph Work.svg" />
+								<SPRITE class="working" visible=(!GRAPHorCHART) />
+								<GRAPH class="working" visible=(GRAPHorCHART) />
+							</HBOX>
+							<TEXT class="tacho" color=(CSS.Param.map_main_color) top=0 bottom=0 left=0 right=0 align="center" fontsize=17
+								text=(L"W: " +  Format_Timespan(ui_Cockpit.working_time, lua.ETimespanFormat.HrMinRounded)) />
+						</BUTTON>
+						
+					</VBOX>
+					
+				</DIV>
+			
+			</TABLE>
+		</DIV>
+	</DIV>
+</layer>

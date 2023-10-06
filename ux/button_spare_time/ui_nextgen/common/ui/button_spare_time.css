@@ -1,0 +1,43 @@
+SPRITE.panel.map.arrive {
+	left: 0 ; top:0; right: 0 ; bottom:0; z:1; 
+	img:(%lua.LatenessTime > 0 ? "btn_arrive_plan_red.bmp" : "btn_arrive_plan_green.bmp");
+	alpha: (%lua.aCockpitTransparency);
+	resize_bmp:1;
+}
+
+TEXT.simple_clock {
+	text:( %other.format_time_dayperiod(%gps.current_time, SimpleTimeFormat, 0 ) );
+	top:0; bottom:0;
+	right:4%; left:4%; 
+	align: "center"; 
+	valign:"CENTER";
+	font: "defaultbd"; 
+	fontsize:42;
+	color: (ui_Cockpit.font_color[SimpleTimeColor]);
+}
+
+TIMESPANTEXT.arrive_plan {
+	left:0; bottom:0;
+	w: 100%;
+	h: 100%;
+	font: "defaultbd";
+	fontsize: 35;
+	color: (%lua.aCockpitTransparency > 4 ? notification_area_textcolor : (%lua.LatenessTime > 0 ? #FF0000 : #00FF00));
+	align:"CENTER"; 
+	valign:"CENTER";
+	padding:text_padding_small;
+	wordwrap:1;
+}
+
+DISTTEXT.arrive_plan {
+	left:0; bottom:0;
+	w: 100%;
+	h: 100%;
+	font: "defaultbd";
+	fontsize: 35;
+	color: (%lua.aCockpitTransparency > 4 ? notification_area_textcolor : (%lua.LatenessTime > 0 ? #FF0000 : #00FF00));
+	align:"CENTER"; 
+	valign:"CENTER";
+	padding:text_padding_small;
+	wordwrap:1;
+}

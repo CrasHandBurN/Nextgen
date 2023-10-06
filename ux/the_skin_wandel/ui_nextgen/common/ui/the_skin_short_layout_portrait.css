@@ -1,0 +1,165 @@
+DIV.current_street {
+	bottom:( ui_PropLayer.ShowRouteProgress && %navigation.has_route ? (route_progress_h+menu_button_h) : menu_button_h ); 
+	h: (current_street_h+5);
+}
+
+SPRITE.speedlimit {
+	image_w: svg_speedlimit_image_w; image_h: svg_speedlimit_image_h;
+}
+
+SPRITE.speedcam_icon{
+	image_h: 48;
+}
+
+TEXT.speedlimit{
+	fixedwidthnumbers:0
+	/*fontsize: (%navigation.curr_speedcam.speed_limit < 100 ? fontsize_speedlimit : (fontsize_speedlimit - 4));*/
+}
+
+
+/* ---- NEW ---- */
+
+DIV.driver_alert {
+	top:undef; 
+	left:  cockpit_warning_w;
+	bottom:  ( (%lua.CityShow ? 20 : 0) + menu_button_h + ( ( ui_Cockpit.MapPopupOnscreen && !(ui_PropLayer.SignpostVisible || ui_PropLayer.JunctionViewVisible) ) ? 0 : menu_button_h ) + route_progress_h + route_progress_padding);
+	h:( %ui.lm_alert_views.driver_alerts.size >= 2 ? cockpit_warning_h+current_speed_h+5 : cockpit_warning_h ); 
+	w: (cockpit_da_warning_w-10);
+	visible: (%lua.DAEnabled && !ui_Cockpit.p2p_valid && !%lua.VehicleIsPedestrian 
+			&& !%lua.DragMode && %ui.lm_alert_views.driver_alerts.size 
+			&& !(ui_PropLayer.SignpostVisible && ui_Cockpit.show_sec_diricon) );
+}
+
+DIV.driver_alert>BOX.driver_alert{
+	orientation:"vertical"; 
+}
+
+SPRITE.da{
+	z: 100;
+	box_align: "CENTER";
+	align:"CENTER";
+}
+
+BOX.driver_alert>DRIVERALERT[alert_index=1]{
+	visible:(%ui.lm_alert_views.driver_alerts.size >= 2 );
+}
+
+DIV.cockpit DIV.speedlimit{
+	top: undef ;
+	bottom: (  (%lua.CityShow ? 20 : 0) + menu_button_h + (( ui_Cockpit.MapPopupOnscreen && !(ui_PropLayer.SignpostVisible || ui_PropLayer.JunctionViewVisible)) ? 0 : menu_button_h) + route_progress_h + route_progress_padding );  
+	left:0;
+	w: ( cockpit_warning_w+5 );
+	h: ( ui_Cockpit.MapPopupOnscreen ? (ui_PropLayer.ShowSpeedCamera ? 33% : cockpit_warning_h + current_speed_h + 5 ) : (ui_PropLayer.ShowSpeedCamera ? 33% : cockpit_warning_h + current_speed_h + 5 ) );
+}
+
+BOX.speedlimit{
+	orientation:"vertical"; box_align:"bottom";
+	paddingleft:4; paddingright:6; paddingtop: 4; paddingbottom:0;
+}
+		
+BOX.speedlimit_container{
+	top:0; bottom:0;
+	orientation:"vertical";
+	paddingright:box_padding_small;
+}
+
+BOX.speedlimit>SPEEDTEXT.speed{
+	visible:(!(ui_PropLayer.SignpostVisible || sc_IsMapPopupOnscreen(%screen.msgbox.is_onscreen) || ui_PropLayer.HwyPoiListIsVisible)  || !%navigation.has_route );
+}
+
+SPRITE.speedlimit_bg_panel{
+	visible:0;
+	
+}
+
+BOX.speedlimit_speedcam>BOX.speedlimit{
+	desired_h: (ui_PropLayer.ShowSpeedLimit ? (cockpit_warning_h + current_speed_h) : cockpit_warning_h);
+	valign:"center";
+}
+
+
+BOX.popover {
+	desired_h:(%{States.CurrentState.popover}.size == 1 && (in_set(%{States.CurrentState.popover}[0].type // "", lua.EPopoverScrollTypes)) ? ((PARENT.H/100)*70) :( min (PARENT.H, ((%{States.CurrentState.popover}.size * menuitem_h) + popover_button_h + popover_margin + popover_margin))));
+}
+
+
+
+BOX.speedlimit>BOX.fill{
+	orientation:"vertical"; box_align:"stretch"; align:"center";
+}
+
+BOX.speedlimit_table {
+	orientation:"vertical"; desired_h: cockpit_warning_h;
+}
+
+BOX.speed{
+	desired_h:current_speed_h; desired_w:cockpit_warning_w;
+}
+
+SPRITE.condspeed_box{
+	desired_h: (int(current_speed_h/3)); 
+}
+
+
+DANGERZONE,BOX.speedcam {
+	orientation:"vertical";
+	desired_h:cockpit_warning_h;
+	
+}
+
+DIV.sidepanel.speedcam{
+	h: alertpoint_panel_size;
+}
+
+DIV.speedcam_icons{
+	bottom: alertpoint_panel_size;
+	w: 100%;
+}
+
+BOX.speedlimit_speedcam{
+	orientation:"vertical";
+}
+
+
+TEXT.speedcam_type{
+	line_break_method: "auto";
+}
+
+DIV.current_city {
+	left:0; right:0;
+	bottom:(menu_button_h + 7 + (ui_PropLayer.ShowRouteProgress ? route_progress_h : 0) + current_street_h);
+}
+
+TEXT.listitem.Home_Work{
+	top:0; bottom:0; left:55; right:2;  w:70;
+}
+
+HBOX.next_street TEXT{
+	wordwrap: 2;
+}
+
+DIV.diricon > SPRITE.panel.map, DIV.roundabout > SPRITE.panel.map, DIV.secondary_diricon > SPRITE.panel.map {
+	h: 90%;
+}
+
+SPRITE.secondary_diricon {
+	left:20; top:-40; 
+}
+
+DISTTEXT.next_maneuver_dist {
+	bottom:36;
+}
+
+DISTTEXT.dist_to_next_maneuver {
+	fontsize: 20;
+	top: 18%;
+}
+
+DIV.cockpit DIV.capture{
+	bottom:((ui_PropLayer.JunctionViewVisible && %navigation.tunnel_view.overview.available) || ui_Cockpit.MapPopupOnscreen ? (menu_button_h+(ui_PropLayer.ShowRouteProgress ? route_progress_h : 0)) : (menu_button_h+menu_button_h+current_street_h+(ui_PropLayer.ShowRouteProgress ? route_progress_h : 0)));
+}
+
+
+/* -------------------------------------------------------------------------------------*/
+/* -----------------  Mod by arimi  -- updated -  05.03.2017 -------*/
+/* ------------------------------------------------------------------------------------*/

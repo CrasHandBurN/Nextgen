@@ -1,0 +1,82 @@
+; --  Compass -- 21.10.2019 -- 
+
+<modify lm_MapVisualSettingsExtended>
+	<insert after="default">
+		<row prio=1100 text="Compass Settings" icon="ico_compass.svg" onrelease=sc_ar_CompassSettings_OnRelease />
+	</insert>
+</modify>
+
+<layer ui_CompassPointer z=30 visible=(!%lua.DragMode && (%lua.CompassInCockpit || %lua.ar_DestArrow) && !ui_PropLayer.TunnelOverviewVisible && !ui_PropLayer.JunctionViewVisible) >
+	<implementation>
+		<property wp_ari_pos value=(%route.list.navigated.waypoints.list.size >= 2 ? (%lua.switch_Destination_Waypoint ? %route.list.navigated.waypoints.list[1].strapped_position : %route.list.navigated.waypoints.list[%route.list.navigated.waypoints.list.lastindex].strapped_position) : 0L) />
+		<property wp_ari_dir value=(%route.list.navigated.waypoints.list.size >= 2 ? direction(%navigation.car.position, wp_ari_pos, %navigation.car.heading + 2048) : 0) />
+	</implementation>
+
+	<DIV class="cockpit">
+		<VSPRITE  class="compass 3d"  vec=( !%lua.ar_TwoCompass ? "newcompass3d.vpr" : "newcompass3d_a.vpr") scale=( !%lua.ar_TwoCompass ? (_0.125 * %lua.ar_CompasSize) : (_0.250 * %lua.ar_CompasSize) )   rotatemodel="map.primary.rotate" OPPOSITE_ROTATE  visible=(!%lua.DragMode && %map.primary.mode=="3d" && %lua.CompassInCockpit) alpha=(%screen.nightmode ? %lua.ar_CompasTransparencyN : %lua.ar_CompasTransparencyD) />
+		<VSPRITE  class="compass 2d"  vec=( !%lua.ar_TwoCompass ? "newcompass2d.vpr" : "newcompass2d_a.vpr") scale=( !%lua.ar_TwoCompass ? (_0.125 * %lua.ar_CompasSize) : (_0.250 * %lua.ar_CompasSize) )   rotatemodel="map.primary.rotate" OPPOSITE_ROTATE  visible=(!%lua.DragMode && %map.primary.mode=="2d" && %lua.CompassInCockpit) alpha=(%screen.nightmode ? %lua.ar_CompasTransparencyN : %lua.ar_CompasTransparencyD) />
+		<VSPRITE  class="compass 3d"  vec=( !%lua.ar_TwoCompass ? "newdestarrow3d.vpr" : "newdestarrow3d_a.vpr") scale=( !%lua.ar_TwoCompass ? (_0.125 * %lua.ar_CompasSize) : (_0.150 * %lua.ar_CompasSize) )   rotation=wp_ari_dir   visible=(!%lua.DragMode && %map.primary.mode=="3d" && %lua.ar_DestArrow) alpha=(%screen.nightmode ? %lua.ar_CompasTransparencyN : %lua.ar_CompasTransparencyD) />
+		<VSPRITE  class="compass 2d"  vec=( !%lua.ar_TwoCompass ? "newdestarrow2d.vpr" : "newdestarrow2d_a.vpr") scale=( !%lua.ar_TwoCompass ? (_0.125 * %lua.ar_CompasSize) : (_0.150 * %lua.ar_CompasSize) )   rotation=wp_ari_dir   visible=(!%lua.DragMode && %map.primary.mode=="2d" && %lua.ar_DestArrow) alpha=(%screen.nightmode ? %lua.ar_CompasTransparencyN : %lua.ar_CompasTransparencyD) />
+	</DIV>
+</layer>  
+
+<element_template et_ar_compass> 
+	<CHECKBOX  class="listitem chkonoff" text="Enable Compass" boolmodel="lua.CompassInCockpit" />
+</element_template>
+
+<element_template et_ar_destarrow> 
+	<CHECKBOX  class="listitem chkonoff" text="Enable destination arrow" boolmodel="lua.ar_DestArrow" />
+</element_template>
+
+<element_template et_ar_twocompass> 
+	<CHECKBOX  class="listitem chkonoff" text="Change Compass Style" boolmodel="lua.ar_TwoCompass" />
+</element_template>
+
+<element_template et_ar_CompassTransparency>
+	<BUTTON class="listitem"> 
+		<TEXT class="listitem" z=45 left=7% right=7% top=12%  align="CENTER" text=(translated_format(m_i18n("\fnTransparency: \fb%s"), sc_arGetTransparencyPercent(%screen.nightmode,%lua.ar_CompasTransparencyN,%lua.ar_CompasTransparencyD))) />
+   		<HSMARTSCROLL class=scroll min=5 max=32 left=5% right=5% top=28% z=50 dragable=1 
+			valuemodel=(%screen.nightmode ? "lua.ar_CompasTransparencyN" : "lua.ar_CompasTransparencyD") onchange=sc_CompassTransparencyChange /> 
+	</BUTTON>
+</element_template>
+
+<element_template et_ar_CompassPosition>
+	<BUTTON class="listitem" >
+		<TEXT class="listitem" z=45 left=7% right=5% top=12% align="CENTER" text="Compass Size" />
+		<HSMARTSCROLL class=scroll min=1 max=16 left=5% right=5% top=40% z=50 dragable=1 valuemodel="lua.ar_CompasSize" />
+	</BUTTON>
+</element_template>
+
+<element_template et_ar_CompassCockpit>
+	<VSPRITE   vec=( !%lua.ar_TwoCompass ? "newcompass3d.vpr" : "newcompass3d_a.vpr") 
+		scale=( !%lua.ar_TwoCompass ? (_0.125 * %lua.ar_CompasSize) : (_0.250 * %lua.ar_CompasSize) )  
+		left=0 right=0   top=(%lua.IsLandscape ? -120% : -50%)    align="CENTER" 
+		rotatemodel="map.primary.rotate" OPPOSITE_ROTATE  
+		visible=(!st_Cockpit.isActive && %lua.CompassInCockpit) 
+		alpha=(%screen.nightmode ? %lua.ar_CompasTransparencyN : %lua.ar_CompasTransparencyD) />
+	<VSPRITE  vec=( !%lua.ar_TwoCompass ? "newdestarrow3d.vpr" : "newdestarrow3d_a.vpr") 
+		scale=( !%lua.ar_TwoCompass ? (_0.125 * %lua.ar_CompasSize) : (_0.150 * %lua.ar_CompasSize) )  
+		left=0 right=0  top=(%lua.IsLandscape ? -120% : -50%)    align="CENTER" rotation=300  
+		visible=(!st_Cockpit.isActive && %lua.ar_DestArrow) 
+		alpha=(%screen.nightmode ? %lua.ar_CompasTransparencyN : %lua.ar_CompasTransparencyD) />
+</element_template>
+
+<layer ui_ari_compass_settings z=170>
+	<DIV class="list">
+		<LIST2 class="list_control" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.warningSignChk" element_template="et_ar_compass" />
+			<LISTMODEL listmodel="ui.warningSignChk" element_template="et_ar_destarrow" />
+			<LISTMODEL listmodel="ui.warningSignChk" element_template="et_ar_twocompass" visible=(%lua.CompassInCockpit || %lua.ar_DestArrow) />
+			<LISTMODEL listmodel="ui.warningSignChk" element_template="et_ar_CompassTransparency" visible=(%lua.CompassInCockpit || %lua.ar_DestArrow) />
+			<LISTMODEL listmodel="ui.warningSignChk" element_template="et_ar_CompassPosition" visible=(%lua.CompassInCockpit || %lua.ar_DestArrow) />
+			<LISTMODEL listmodel="ui.warningSignChk" element_template="et_ar_CompassCockpit" visible=(!st_Cockpit.isActive && %lua.CompassInCockpit || %lua.ar_DestArrow) />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<userlist warningSignChk text="str" model="str" type="str" >
+	<row >
+</userlist>

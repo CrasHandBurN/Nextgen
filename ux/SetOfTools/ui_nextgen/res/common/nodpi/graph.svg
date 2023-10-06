@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" width="150" height="150" >
+	<g id="phase10" width="150" height="150">
+		<rect x="0" y="0" width="0" height="0" fill="#FFFFFF" />
+	</g>
+	<g id="phase9" >
+		<rect x="3" y="3" width="144" height="144" fill="#FF4500" />
+	</g>
+	<g id="phase8" >
+		<rect x="3" y="3" width="144" height="144" fill="#FF6347" />
+	</g>
+	<g id="phase7" >
+		<rect x="3" y="3" width="144" height="144" fill="#FFA500" />
+	</g>
+	<g id="phase6" >
+		<rect x="3" y="3" width="144" height="144" fill="#FFD700" />
+	</g>
+	<g id="phase5" >
+		<rect x="3" y="3" width="144" height="144" fill="#FFFF00" />
+	</g>
+	<g id="phase4" >
+		<rect x="3" y="3" width="144" height="144" fill="#ADFF2F" />
+	</g>
+	<g id="phase3" >
+		<rect x="3" y="3" width="144" height="144" fill="#7CFC00" />
+	</g>
+	<g id="phase2" >
+		<rect x="3" y="3" width="144" height="144" fill="#32CD32" />
+	</g>
+	<g id="phase1" >
+		<rect x="3" y="3" width="144" height="144" fill="#228B22" />
+	</g>
+	<g id="phase0" >
+		<rect x="3" y="3" width="144" height="144" fill="#008000" />
+	</g>
+</svg>

@@ -1,0 +1,207 @@
+<userlist lm_localmenu_VehicleList text="str" icon="str" onrelease="ui" enable="bool" visible="bool">
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 />
+	<row text="Edit" onrelease='MODEL.lua.EditMode = true sc_SetEditTitle(m_i18n("Select Vehicle to Edit"))' visible=(!%lua.EditMode) />
+	<row RestoreAllProfiles text="VEHICLE~Reset All"  onrelease=sc_ResetAllVehicleProfile_Onrelease visible=( %lua.EditMode ) />
+</userlist>
+
+<userlist lm_VehicleDetailedList text="str" icon="str" onrelease="ui" enable="bool" visible="bool">
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 />
+	<row DeleteProfile   text="VEHICLE~Delete Profile"    icon="ico_delete.svg" onrelease=sc_DeleteVehicleProfile_Onrelease enable=(sc_VehicleProfileIsDeletable(%mydata.vehicle_profile.list.index, %mydata.vehicle_profile.selected_profile)) visible=(!%lua.ShowOnlyExtendedProfileSettings && !%lua.CreateNewVehicle && !%lua.WizardModeActive) />
+	<row ResettoDefaults text="VEHICLE~Reset to Defaults" icon="ico_ResettoDefaults_mid.bmp#3" onrelease=sc_ResetVehicleProfile_Onrelease visible=(!%lua.ShowOnlyExtendedProfileSettings && !%lua.WizardModeActive) />
+</userlist>
+
+<userlist lm_SelectableVehicle id="int" text="str" onrelease="ui" selectable="bool" visible="bool">
+	<view visibility_filter=visible />
+	<default onrelease=sc_SelectVehicle  selectable=1 visible=1 />
+	<row            id=0 text="Car" />
+	<row Pedestrian id=5 text="Pedestrian" />
+	<row Bicycle    id=6 text="Bicycle" />
+	<row Emergency  id=4 text="Emergency" />
+	<row            id=2 text="Bus" />
+	<row Taxi       id=1 text="Taxi" />
+	<row            id=3 text="Truck" />
+</userlist>
+
+<userlist lm_VehicleProfileSettings text="str" icon="str" details="ui" isselected="str" onrelease="ui" type="str" visible="bool" enable="bool" extended="bool" hazard="bool" haspopover="bool">
+	<view full_list visibility_filter=(_.visible && !_.hazard) />
+	<view extended_only visibility_filter=(_.extended && _.visible) />
+	<view hazard_only visibility_filter=(_.hazard && _.visible) />
+	
+	<default visible=1 enable=1 icon="" type="" extended=0 hazard=0 haspopover=0 />
+	<row Name     text="VEHICLE~Name" details=(%{"mydata.vehicle_profile.list"}[current].name // L"") onrelease=sc_VehicleProfileName_OnRelease />
+	<row Type     text="VEHICLE~Type" details=(%{"mydata.vehicle_profile.list"}[current].type_name // "") enable=0 />
+	<row MaxSpeed text="VEHICLE~Max. Speed" details=(format(L"%{speed:*:*}", %{"mydata.vehicle_profile.list"}[current].maxspeed // 0, 1, %regional.units)) onrelease='sc_SetPopoverListAndOpen("ui.lm_VehicleSpeedPopover")' haspopover=1 /> 
+	
+	<row Extended text="VEHICLE~Use Extended Settings" isselected="bool:mydata.vehicle_profile.list.current.use_extended" type="ChkOnOff" visible=(%mydata.vehicle_profile.list[current].use_extended.valid && %mydata.vehicle_profile.licensed) />
+	<row text="Show this page for each route planning" isselected="bool:mydata.vehicle_profile.list.current.ask_for_confirm" type="ChkOnOff" visible=(%mydata.vehicle_profile.list[current].ask_for_confirm.valid && %mydata.vehicle_profile.licensed && %mydata.vehicle_profile.list[current].use_extended) />
+	
+	<default visible=1 enable=1 icon="" extended=1 hazard=0 haspopover=0>
+	<row text="VEHICLE~Length" details=( format( L"%{distance[%D %U]:8}", %{"mydata.vehicle_profile.list"}[current].length // 0) ) onrelease='sc_VehicleProfileProps_OnRelease(m_i18n("VEHICLE~Vehicle Length"),"length")' visible=(%mydata.vehicle_profile.list[current].length.valid && %mydata.vehicle_profile.licensed && %mydata.vehicle_profile.list[current].use_extended) />
+	<row text="VEHICLE~Width" details=( format( L"%{distance[%D %U]:8}", %{"mydata.vehicle_profile.list"}[current].width // 0) ) onrelease='sc_VehicleProfileProps_OnRelease(m_i18n("VEHICLE~Vehicle Width"),"width")' visible=(%mydata.vehicle_profile.list[current].width.valid && %mydata.vehicle_profile.licensed && %mydata.vehicle_profile.list[current].use_extended) />
+	<row text="VEHICLE~Height" details=( format( L"%{distance[%D %U]:8}", %{"mydata.vehicle_profile.list"}[current].height // 0) ) onrelease='sc_VehicleProfileProps_OnRelease(m_i18n("VEHICLE~Vehicle Height"),"height")' visible=(%mydata.vehicle_profile.list[current].height.valid && %mydata.vehicle_profile.licensed && %mydata.vehicle_profile.list[current].use_extended) />
+	<row text="VEHICLE~Trailer" isselected="int:mydata.vehicle_profile.list.current.trailers" onrelease=sc_VehicleProfileTrailer_OnRelease type="ChkOnOff" visible=(%mydata.vehicle_profile.list[current].trailers.valid && %mydata.vehicle_profile.licensed && %mydata.vehicle_profile.list[current].use_extended) />
+	<row text="VEHICLE~Axles" details=(%{"mydata.vehicle_profile.list"}[current].axles // 0) onrelease='sc_SetPopoverListAndOpen("ui.lm_truck_axles_popover")' visible=(%mydata.vehicle_profile.list[current].axles.valid && %mydata.vehicle_profile.licensed && %mydata.vehicle_profile.list[current].use_extended) haspopover=1 />
+	<row Max_Allowed_Weight text="VEHICLE~Maximum Allowed Weight" details=( format( L"%{mass[%D %U]:0}", %{"mydata.vehicle_profile.list"}[current].maxweight // 0 ) ) onrelease='sc_VehicleProfileProps_OnRelease(m_i18n("VEHICLE~Maximum Allowed Weight"),"maxweight")' visible=(%mydata.vehicle_profile.list[current].maxweight.valid    && %mydata.vehicle_profile.licensed && %mydata.vehicle_profile.list[current].use_extended) />
+	<row text="VEHICLE~Actual Weight" details=( format( L"%{mass[%D %U]:0}", %{"mydata.vehicle_profile.list"}[current].actualweight // 0 ) ) onrelease='sc_VehicleProfileProps_OnRelease(m_i18n("VEHICLE~Actual Weight"),"actualweight")' visible=(%mydata.vehicle_profile.list[current].actualweight.valid && %mydata.vehicle_profile.licensed && %mydata.vehicle_profile.list[current].use_extended) />
+	<row Freight text="VEHICLE~Freight"	onrelease=sc_TruckProfileFreight_OnRelease type="Freight" visible=(%mydata.vehicle_profile.list[current].hazmat.valid && %mydata.vehicle_profile.licensed && %mydata.vehicle_profile.list[current].use_extended && %lua.truck_ShowFreight) extended=0 hazard=1 />
+	<row text="VEHICLE~Disable U-turns on All Roads" isselected="bool:mydata.vehicle_profile.list.current.uturn_allowed" type="ChkOnOff" visible=(%mydata.vehicle_profile.list[current].uturn_allowed.valid && %mydata.vehicle_profile.licensed && %mydata.vehicle_profile.list[current].use_extended && %lua.UTurnSettingVisible && %mydata.vehicle_profile.list[current].vehicle_type!=4) />
+</userlist>
+
+<userlist lm_VehicleSpeedPopover text="wstr" onrelease="ui" enable="bool" type="str" min="int" max="int" step="int" onchange="ui" valuemodel="str" phase="int" visible="bool" name="str" min_text="str" max_text="str">
+	<property maxSpeed value=(%mydata.vehicle_profile.list[current].maxspeed) setter={%mydata.vehicle_profile.list[current].maxspeed = $1} />
+	<default enable=1 type="" min_text="Min" max_text="Max" />
+	<row text=(format(L"%{speed:*:*}", %{"mydata.vehicle_profile.list"}[current].maxspeed, 1, %regional.units)) type="Scroll" min=(%mydata.vehicle_profile.list[current].vehicle_type == 5 ? 1 : %mydata.vehicle_profile.list[current].vehicle_type == 6 ? 5 : 50 ) max=( %mydata.vehicle_profile.list[current].vehicle_type == 5 ? 20 : %mydata.vehicle_profile.list[current].vehicle_type == 6 ? 100 : 200 ) step=1 valuemodel="ui.lm_VehicleSpeedPopover.maxSpeed" name="Max. speed" />
+</userlist>
+
+<userlist lm_truck_axles_popover text="str" onrelease="ui">
+	<row text="2" onrelease='sc_SetTruckAxles( 2 )' />
+	<row text="3" onrelease='sc_SetTruckAxles( 3 )' />
+	<row text="4" onrelease='sc_SetTruckAxles( 4 )' />
+	<row text="5" onrelease='sc_SetTruckAxles( 5 )' />
+	<row text="6" onrelease='sc_SetTruckAxles( 6 )' />
+	<row text="7" onrelease='sc_SetTruckAxles( 7 )' />
+	<row text="8" onrelease='sc_SetTruckAxles( 8 )' />
+	<row text="9" onrelease='sc_SetTruckAxles( 9 )' />
+	<row text="10" onrelease='sc_SetTruckAxles( 10 )' />
+</userlist>
+
+<userlist lm_truckFreightList text="str" value="int" icon="str" type="str">
+	<default type="Chk" />
+    
+    <row    text="TRUCK~Explosives"                 value=(lua.EHazMatCategories.CLASS_1) icon="icon_hazard_1.svg" />
+    <row    text="TRUCK~Flammable Gas"              value=(lua.EHazMatCategories.CLASS_2_1) icon="icon_hazard_21.svg" />
+    <row    text="TRUCK~Nonflammable Gas"           value=(lua.EHazMatCategories.CLASS_2_2) icon="icon_hazard_22.svg" />
+    <row    text="TRUCK~Poisonous Gas"              value=(lua.EHazMatCategories.CLASS_2_3) icon="icon_hazard_23.svg" />
+    <row    text="TRUCK~Flammable Liquids"          value=(lua.EHazMatCategories.CLASS_3)   icon="icon_hazard_3.svg" />
+    <row    text="TRUCK~Flammable Solids"           value=(lua.EHazMatCategories.CLASS_4_1) icon="icon_hazard_41.svg" />
+    <row    text="TRUCK~Spontaneously Combustible"  value=(lua.EHazMatCategories.CLASS_4_2) icon="icon_hazard_42.svg" />
+    <row    text="TRUCK~Dangerous when Wet"         value=(lua.EHazMatCategories.CLASS_4_3) icon="icon_hazard_43.svg" />
+    <row    text="TRUCK~Oxidizing Agents"           value=(lua.EHazMatCategories.CLASS_5_1) icon="icon_hazard_51.svg" />
+    <row    text="TRUCK~Organic Peroxides"          value=(lua.EHazMatCategories.CLASS_5_2) icon="icon_hazard_52.svg" />
+    <row    text="TRUCK~Poison"                     value=(lua.EHazMatCategories.CLASS_6_1) icon="icon_hazard_61.svg" />
+    <row    text="TRUCK~Biohazard"                  value=(lua.EHazMatCategories.CLASS_6_2) icon="icon_hazard_62.svg" />
+    <row    text="TRUCK~Radioactive Substances"     value=(lua.EHazMatCategories.CLASS_7) icon="icon_hazard_7.svg" />
+    <row    text="TRUCK~Corrosive Substances"       value=(lua.EHazMatCategories.CLASS_8) icon="icon_hazard_8.svg" />
+    <row    text="TRUCK~Miscellaneous Substances"   value=(lua.EHazMatCategories.CLASS_9) icon="icon_hazard_9.svg" />
+</userlist>
+
+<userlist lm_hazardIcons icon="str" visible="bool">
+	<view valid_icon visibility_filter=(_.icon) />
+</userlist>
+
+<userlist lm_FooterVehicleList text="str" onrelease="ui" visible="bool" isactionbutton="bool">
+	<view visibility_filter=visible />
+	<row text="Done" isactionbutton=1 onrelease='sc_EditModeDone()' visible=( %lua.EditMode ) />
+	<row AddProfile text="Add Profile" onrelease=sc_AddVehicleProfile_OnRelease visible=( !%lua.EditMode && !%lua.WizardModeActive ) />
+</userlist>
+
+<userlist lm_FooterAddVehicleProfile text="str" onrelease="ui" enable="bool" visible="bool">
+	<view visibility_filter=visible />
+	<default enable=1 />
+	<row text="Save Profile" onrelease=sc_AddNewVehicleProfile visible=(%lua.CreateNewVehicle) />
+	<row text="OK" onrelease='sc_back() sc_ConfirmExtendedSettingsDone()' visible=( %lua.ShowOnlyExtendedProfileSettings ) />
+</userlist>
+
+<element_template et_ListFreightIcons>
+	<SPRITE class="icon" bmp=%*.icon />
+</element_template>
+
+<element_template et_ListFreight>
+	<BUTTON class="listitem"  onrelease=%*.onrelease>
+		<BOX class="listitem freight">
+			<TEXT class="listitem" text=%*.text />
+			<DIV div_VehicleProfileSettingsList_button_freight>
+				<SPRITE class="listitem svg" left=86% z=100  img=(%ui.lm_hazardIcons[14].icon) />
+				<SPRITE class="listitem svg" left=80% z=100  img=(%ui.lm_hazardIcons[13].icon) />
+				<SPRITE class="listitem svg" left=74% z=100  img=(%ui.lm_hazardIcons[12].icon) />
+				<SPRITE class="listitem svg" left=68% z=100  img=(%ui.lm_hazardIcons[11].icon) />
+				<SPRITE class="listitem svg" left=62% z=100  img=(%ui.lm_hazardIcons[10].icon) />
+				<SPRITE class="listitem svg" left=56% z=100  img=(%ui.lm_hazardIcons[9].icon) />
+				<SPRITE class="listitem svg" left=50% z=100  img=(%ui.lm_hazardIcons[8].icon) />
+				<SPRITE class="listitem svg" left=44% z=100  img=(%ui.lm_hazardIcons[7].icon) />
+				<SPRITE class="listitem svg" left=38% z=100  img=(%ui.lm_hazardIcons[6].icon) />
+				<SPRITE class="listitem svg" left=32% z=100  img=(%ui.lm_hazardIcons[5].icon) />
+				<SPRITE class="listitem svg" left=26% z=100  img=(%ui.lm_hazardIcons[4].icon) />
+				<SPRITE class="listitem svg" left=20% z=100  img=(%ui.lm_hazardIcons[3].icon) />
+				<SPRITE class="listitem svg" left=14% z=100  img=(%ui.lm_hazardIcons[2].icon) />
+				<SPRITE class="listitem svg" left=8%  z=100  img=(%ui.lm_hazardIcons[1].icon) />
+				<SPRITE class="listitem svg" left=2%  z=100  img=(%ui.lm_hazardIcons[0].icon) />
+			</DIV>
+		</BOX>
+	</BUTTON>
+</element_template>
+
+<element_template et_TruckFreightList>
+	<CHECKBOX class="listitem" checked=( sc_IsBitOn( %lua.CurrentHazmat, %*.value ) ) changevalue='sc_ChangeBitValue( MODEL.lua.CurrentHazmat, MODEL["*"].value() )'>
+		<HBOX class="listitem freight">
+			<SPRITE class="listitem svg" img=%*.icon z=200 />
+			<TEXT class="icon listitem" text=%*.text z=200 />
+		</HBOX>
+	</CHECKBOX>
+</element_template>
+
+<layer ui_TruckFreightSettings z=30>
+	<DIV class="list">
+		<SECTIONMARKER>
+		<LIST2 lst_TruckFreightList class="list_control" listmodel="ui.lm_truckFreightList" element_template="et_TruckFreightList" SMOOTHSCROLLING>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>	
+</layer>
+
+<element_template et_VehicleList>
+	<RADIO class="listitem" iconphasesync=1 groupmodel="mydata.vehicle_profile.selected_profile" var=(index) onrelease=sc_SelectVehicleProfile visible=( !%lua.EditMode )>
+		<HBOX class="listitem">
+			<SPRITE class="listitem svg" img=(lua.EVehicleIcon[%*.vehicle_type]) />
+			<TEXT   class="listitem icon" text=%*.name />
+			<SPACER flex=1 />
+		</HBOX>
+	</RADIO>
+	
+	<BUTTON class="listitem" onrelease=sc_EditVehicleProfile visible=( %lua.EditMode )>
+		<HBOX class="listitem">
+			<SPRITE class="listitem svg" img=(lua.EVehicleIcon[%*.vehicle_type]) />
+			<TEXT   class="listitem icon" text=%*.name />
+			<SPACER flex=1 />
+			<SPRITE class="listitem icon popover" />
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_VehicleList z=30>
+	<DIV class="list">
+		<SECTIONMARKER/>
+		<LIST2 class="list_control" SMOOTHSCROLLING STARTSELECTIONONSCREEN=1>
+			<LISTMODEL listmodel="mydata.vehicle_profile.list" element_template="et_VehicleList" />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+	
+	<DIV class="full">
+		<DIV class="footer" visible=( %lua.WizardModeActive )>
+			<SECTIONMARKER class="footer" />
+			<SPRITE class="background footer" />
+			<FOOTERBUTTON class="btn_footer left back icon svg" onrelease=sc_back rawkey=27 />
+		</DIV>
+	</DIV>
+</layer>
+
+<layer ui_VehiclesProfileSettings z=30>
+	<DIV class="list">
+		<SECTIONMARKER/>
+		<LIST2 lm_VehicleProfile_full class="list_control" SMOOTHSCROLLING>
+			<LISTMODEL full     listmodel="ui.lm_VehicleProfileSettings.full_list" element_template="et_List" template_type_model="*.type" visible=(!%lua.ShowOnlyExtendedProfileSettings) />
+			<LISTMODEL extended listmodel="ui.lm_VehicleProfileSettings.extended_only" element_template="et_List" template_type_model="*.type" visible=(%lua.ShowOnlyExtendedProfileSettings) />
+			<LISTMODEL hazard   listmodel="ui.lm_VehicleProfileSettings.hazard_only" element_template="et_List" template_type_model="*.type" />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>

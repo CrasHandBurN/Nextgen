@@ -1,0 +1,2 @@
+import "~/common/ui/affordable_plugins.lua"
+import "~/common/ui/affordable_plugins.ui"

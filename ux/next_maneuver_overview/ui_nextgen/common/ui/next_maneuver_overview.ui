@@ -1,0 +1,206 @@
+;---------------WANDEL™--- 08.01.2020-------
+<observer value=(%lua.wNextManeuverValid) 
+	onselect='sc_WarnNextManeuverPopup() sc_DiscoverySidePanelChange(
+			{
+				"", --"Next maneuver"
+				{
+					ACTION = {
+						"next_maneuver_overview",
+					},
+					POSITION = {
+						lat = tostring(MODEL.regional.unlocalize_gcoor(builtin.format("%{gcoor[%lat]}", VW_ManeuverPosition()))),
+						lon = tostring(MODEL.regional.unlocalize_gcoor(builtin.format("%{gcoor[%lon]}", VW_ManeuverPosition()))),
+						},
+					DISTANCE = MODEL.navigation.distance_to_maneuver(),
+					VISIBLE = true,
+					ENABLE = true,
+				},
+				true, --have been not activated
+			}, "wNextManeuverZoom", "wNextManeuverShowTimeBIG", {discoverysidepanel, ui_maneuver_diricon, ui_Discovery_Zoom, ui_zoomctr})'
+	ondeselect='if temp_value[2].ACTION[1] == "next_maneuver_overview" then sc_HideDiscoverySidePopup() end'
+	START="NO_TRIGGER">
+<observer value=(%lua.wNextManeuverPreviewValid) 
+	onselect='MODEL.navigation.force_say_next_command() sc_DiscoverySidePanelChange(
+			{
+				"Next maneuver preview",
+				{
+					ACTION = {
+						"next_maneuver_preview",
+					},
+					POSITION = {
+						lat = tostring(MODEL.regional.unlocalize_gcoor(builtin.format("%{gcoor[%lat]}", VW_ManeuverPosition()))),
+						lon = tostring(MODEL.regional.unlocalize_gcoor(builtin.format("%{gcoor[%lon]}", VW_ManeuverPosition()))),
+						},
+					DISTANCE = MODEL.navigation.distance_to_maneuver(),
+					VISIBLE = true,
+					ENABLE = true,
+				},
+				true, --have been not activated
+			}, "wNextManeuverZoomPreview", "wNextManeuverPreview_time_out", {discoverysidepanel, ui_NextManeuverPreview, ui_Discovery_Zoom, ui_zoomctr, ui_cursor})'
+	ondeselect='if temp_value[2].ACTION[1] == "next_maneuver_preview" then sc_HideDiscoverySidePopup() end'
+	START="NO_TRIGGER">
+	
+<!if condition=(Plugin.isLoaded("labs"))>
+	<modify lm_ExtraSettingsList>
+		<insert>
+			<row text="Maneuver 2D-overview" icon="preview.svg" haspopover=1 onrelease='sc_NextStateAnim(st_wNextManeuverSettings, "fade", 1, "" )' />
+		</insert>
+	</modify>
+<!end>
+<modify lm_aRouteWarningsSettings>
+	<insert>
+		<row text="Maneuver 2D-overview" haspopover=1 onrelease='sc_NextStateAnim(st_wNextManeuverSettings, "fade", 1, "" )' />
+	</insert>
+</modify>
+
+<userlist lm_wNextManeuverSettingsList text="str" type="str" haspopover="bool" isselected="str" visible="bool" enable="bool" onrelease="ui" details="ui" dtooltip="str">
+  <view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 />
+		<row    text="Maneuver 2D-overview Button in Cockpit" type="ChkOnOff" isselected="lua.ShowNextManeuverBtnPreview" />
+		<row 	text="Maneuver 2D-overview Button in QuickMenu" type="ChkOnOff" isselected="lua.ShowNextManeuverBtnPreviewQuick" />	
+		<row  	text="Sound for Maneuver 2D-overview" 
+			details=(%lua.OwnWarningNextManeuver == L"" ? %lua.AudioNextManeuver : %lua.OwnWarningNextManeuver) 
+			onrelease={%lua.SelectedAudioFile = %lua.AudioNextManeuver; %lua.SelectedOwnWarning = %lua.OwnWarningNextManeuver; sc_ScanAudioFiles()} 
+			haspopover=1 enable=1 />		
+		<row 	text="Show graph 'Approach to maneuvering'" type="ChkOnOff" isselected="ui.GraphEnable" />
+		
+		<row    text="Maneuver 2D-overview" type="ChkOnOff" isselected="lua.wNextManeuverEnable"/>
+		<row    text="Time to Maneuver" details=(sc_ShowTimeTool(%lua.wNextManeuverRemainingTime)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_wNextManeuverRemainingTime" )' enable=(%lua.wNextManeuverEnable) />
+		<row    text="Distance(NO-LESS) to Maneuver" details=(sc_ShowDistanceTool(%lua.wNextManeuverRemainingDistance)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_DistancePreview_popover" )' enable=(%lua.wNextManeuverEnable) />
+		<row    text="Maneuver 2D-overview zoom" details=(sc_ShowDistanceTool(%lua.wNextManeuverZoom)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_ZoomOverview_popover" )' enable=(%lua.wNextManeuverEnable) />
+
+		<row    text="Maneuver 2D-preview" type="ChkOnOff" isselected="lua.wNextManeuverPreviewEnable" />
+		<row    text="Distance(NO-LESS) to Show 2D-preview" details=(sc_ShowDistanceTool(%lua.wNextManeuverDistanceToShow)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_wNextManeuverDistanceToShow_popover" )' enable=(%lua.wNextManeuverPreviewEnable) />
+		<row    text="Maneuver 2D-preview time" details=(sc_ShowTimeTool(%lua.wNextManeuverPreview_time_out)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_wNextManeuverPreview_time_out" )' enable=(%lua.wNextManeuverPreviewEnable) />
+		<row    text="Maneuver 2D-preview zoom" details=(sc_ShowDistanceTool(%lua.wNextManeuverZoomPreview)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_ZoomPreview_popover" )' enable=(%lua.wNextManeuverPreviewEnable) />
+</userlist>
+
+<userlist lm_wNextManeuverRemainingTime name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowTimeTool(8)) max_text=(sc_ShowTimeTool(30)) />
+	   <row name="Time to Maneuver" text=(sc_ShowTimeTool(%lua.wNextManeuverRemainingTime)) type="Scroll" min=8 max=30 step=1 valuemodel="lua.wNextManeuverRemainingTime" />
+</userlist>
+
+<userlist lm_DistancePreview_popover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(10)) max_text=(sc_ShowDistanceTool(500)) />
+	   <row name="Distance(NO-LESS) to Maneuver" text=(sc_ShowDistanceTool(%lua.wNextManeuverRemainingDistance)) type="Scroll" min=10 max=500 step=10 valuemodel="lua.wNextManeuverRemainingDistance" />
+</userlist>
+
+<userlist lm_ZoomOverview_popover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(30)) max_text=(sc_ShowDistanceTool(1000)) />
+	   <row name="Maneuver 2D-overview zoom" text=(sc_ShowDistanceTool(%lua.wNextManeuverZoom)) type="Scroll" min=30 max=1000 step=10 valuemodel="lua.wNextManeuverZoom" />
+</userlist>
+
+<userlist lm_wNextManeuverDistanceToShow_popover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(300)) max_text=(sc_ShowDistanceTool(2000)) />
+	   <row name="Distance(NO-LESS) to Show 2D-preview" text=(sc_ShowDistanceTool(%lua.wNextManeuverDistanceToShow)) type="Scroll" min=300 max=2000 step=100 valuemodel="lua.wNextManeuverDistanceToShow" />
+</userlist>
+
+<userlist lm_wNextManeuverPreview_time_out name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowTimeTool(5)) max_text=(sc_ShowTimeTool(30)) />
+	   <row name="Maneuver 2D-prerview time" text=(sc_ShowTimeTool(%lua.wNextManeuverPreview_time_out)) type="Scroll" min=5 max=30 step=1 valuemodel="lua.wNextManeuverPreview_time_out" />
+</userlist>
+
+<userlist lm_ZoomPreview_popover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(100)) max_text=(sc_ShowDistanceTool(1000)) />
+	   <row name="Maneuver 2D-preview zoom" text=(sc_ShowDistanceTool(%lua.wNextManeuverZoomPreview)) type="Scroll" min=100 max=1000 step=10 valuemodel="lua.wNextManeuverZoomPreview" />
+</userlist>
+
+<modify lm_MapVisualSettingsExtended>
+	<insert after="default">
+		<row prio=1999 bmp="graph.svg" text="Show graph 'Approach to maneuvering'" type="ChkOnOff_Icon" isselected="ui.GraphEnable" />
+	</insert>
+</modify>
+;-------------------------------show------------------------------------------------
+<observer event="ITINER_NEXT_MANEUVER_CHANGED_EVENT" onchange=sc_wNextManeuverChange START />
+;------------------------------------------------------------------------------------
+<modify ui_Cockpit>   
+	<insert first_child after="BUTTON" into="#CockpitBTNTable"> 
+		<BUTTON_ICON ShowNextManeuverBtnPreview ONRELEASE='MODEL.navigation.force_say_next_command() sc_DiscoverySidePanelChange(
+			{
+				"Next maneuver preview",
+				{
+					ACTION = {
+						"next_maneuver_preview",
+					},
+					POSITION = {
+						lat = tostring(MODEL.regional.unlocalize_gcoor(builtin.format("%{gcoor[%lat]}", VW_ManeuverPosition()))),
+						lon = tostring(MODEL.regional.unlocalize_gcoor(builtin.format("%{gcoor[%lon]}", VW_ManeuverPosition()))),
+						},
+					DISTANCE = MODEL.navigation.distance_to_maneuver(),
+					VISIBLE = true,
+					ENABLE = true,
+				},
+				true, --have been not activated
+			}, "wNextManeuverZoomPreview", "wNextManeuverPreview_time_out", {discoverysidepanel, ui_NextManeuverPreview, ui_Discovery_Zoom, ui_zoomctr, ui_cursor})'
+			ONLONGCLICK='sc_NextStateAnim(st_wNextManeuverSettings, "fade", 1, "" )' 
+			VISIBLE=(%lua.ShowNextManeuverBtnPreview && %navigation.has_route && %route.list.navigated.has_navigable_path && %navigation.distance_to_maneuver.valid)
+			ICON="preview.svg" ZOOM=130%
+			T_TEXT=(builtin.format("%{distance:3}", %navigation.distance_to_maneuver))
+			B_TEXT=(builtin.format("%{timespan:5}",%navigation.time_to_maneuver)) >
+			<GRAPH Z=100 CLASS="graph_btn" FULL=(%ui.Graph_dist_limit_temp) CURRENT=(%navigation.distance_to_maneuver) VISIBLE=(GraphEnable && %navigation.distance_to_maneuver.valid && %navigation.distance_to_maneuver <= VW_right_distance()) />
+		</BUTTON_ICON>
+	</insert>
+</modify>
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="Maneuver 2D-overview Button" bmp="preview.svg" isselected="lua.ShowNextManeuverBtnPreview" />
+	</insert>
+</modify>
+<modify lm_CockpitSideList>
+	<insert>
+		<row  visible=(%lua.ShowNextManeuverBtnPreview && %navigation.has_route && %route.list.navigated.has_navigable_path && %navigation.distance_to_maneuver.valid) />
+	</insert>
+</modify>
+;-------------------------------In Quick Menu------------------------------------------------------
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE='ui.ShowNextManeuverBtnPreview.ONRELEASE()()'
+			ONLONGCLICK='ui.ShowNextManeuverBtnPreview.ONLONGCLICK()()'
+			VISIBLE=(%lua.ShowNextManeuverBtnPreviewQuick && %navigation.has_route && %route.list.navigated.has_navigable_path && %navigation.distance_to_maneuver.valid)
+			ICON=(ShowNextManeuverBtnPreview.ICON) ZOOM=130%
+			T_TEXT=(ShowNextManeuverBtnPreview.T_TEXT)
+			B_TEXT=(ShowNextManeuverBtnPreview.B_TEXT) />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row  visible=(%lua.ShowNextManeuverBtnPreviewQuick && %navigation.has_route && %route.list.navigated.has_navigable_path && %navigation.distance_to_maneuver.valid) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="Maneuver 2D-overview Button" bmp="preview.svg" isselected="lua.ShowNextManeuverBtnPreviewQuick" />
+	</insert>
+</modify>
+
+<layer ui_NextManeuverPreview z=100 visible=( ui_PropLayer.SidePanelVisible )>
+	<DIV class=cockpit>
+		<DIV class=map_messagebox >
+			<TEXT class="map_messagebox discovery_text"
+				text=( builtin.format("%{distance:3}", %navigation.distance_to_maneuver) + L" | " + builtin.format("%{timespan:5}",%navigation.time_to_maneuver) ) 
+				visible=(%gps.blink) />
+				
+			<SPRITE right=85% left=2% bottom=90% top=1% align="left" valign="top" r2l_invert=0 attach_sprite_provider=("other.roundabout_icons.attach_sprite_provider(roundabout_icons_red.ini,0)") visible=(%navigation.exit_icon.valid) > ;visible=(ui_Cockpit.roundabout_show)
+				<TEXT class="roundabout" text=(%navigation.exit_id + 1) />
+			</SPRITE>
+			<SPRITE right=85% left=2% bottom=90% top=1% align="left" valign="top" iconid=%navigation.direction_icon zoom="zoomvisible" visible=(!%navigation.exit_icon.valid) />	;visible=(ui_Cockpit.show_diricon)
+
+		</DIV>
+	</DIV>
+</layer>
+
+<layer ui_maneuver_diricon z=90 visible=( ui_PropLayer.SidePanelVisible )>
+	<DIV class=cockpit>
+		<DIV class=map_messagebox >
+		
+			<SPRITE right=85% left=2% bottom=90% top=1% align="left" valign="top" r2l_invert=0 attach_sprite_provider=("other.roundabout_icons.attach_sprite_provider(roundabout_icons_red.ini,0)") visible=(%navigation.exit_icon.valid) >
+				<TEXT class="roundabout" text=(%navigation.exit_id + 1) />
+			</SPRITE>
+			<SPRITE right=85% left=2% bottom=90% top=1% align="left" valign="top" iconid=%navigation.direction_icon zoom="zoomvisible" visible=(!%navigation.exit_icon.valid) />
+			
+			<GRAPH class="graph_side_box" full=(%ui.Graph_dist_limit_temp) current=(%navigation.distance_to_maneuver) visible=(%ui.GraphEnable) />
+		</DIV>
+	</DIV>
+</layer>

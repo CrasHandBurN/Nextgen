@@ -1,0 +1,82 @@
+<modify lm_MapVisualSettingsExtended>
+	<insert after="default">
+		<row prio=1010 text="Additional invisible buttons (Zoom, Route editing)" icon="ico_blind.svg" onrelease='sc_NextStateAnim(st_Invisible_buttonsSettings, "fade", 1, "" )' 
+			details=((%lua.rmAdditionallyZoom ? translate("On") : translate("Off")) + L" | " + (%lua.GlobalZoomRestore_Time ? sc_ShowTimeTool(%lua.GlobalZoomRestore_Time) : translate("Never"))) />
+	</insert>
+</modify>
+
+<userlist lm_Invisible_buttonsSettingsList text="str" type="str" icon="str" bmp="str" haspopover="bool" isselected="str" visible="bool" enable="bool" onrelease="ui" details="ui" dtooltip="str">
+	<view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 />
+		<row 	text="Additional invisible buttons (Zoom, Route editing)" type="ChkOnOff" isselected="lua.rmAdditionallyZoom" />
+		<row    text="Time to restore Zoom" details=(%lua.GlobalZoomRestore_Time ? sc_ShowTimeTool(%lua.GlobalZoomRestore_Time) : translate("Never")) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_GlobalZoomRestore_Time" )' enable=(%lua.rmAdditionallyZoom) />
+</userlist>
+
+<userlist lm_GlobalZoomRestore_Time name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text="Never" max_text=(sc_ShowTimeTool(120)) />
+	   <row name="Time to restore Zoom" text=(%lua.GlobalZoomRestore_Time ? sc_ShowTimeTool(%lua.GlobalZoomRestore_Time) : translate("Never")) type="Scroll" min=0 max=120 step=15 valuemodel="lua.GlobalZoomRestore_Time" />
+</userlist>
+
+<modify ui_Cockpit>   
+	<insert first_child after="BUTTON" into="#CockpitBTNTable"> 
+		<BUTTON_ICON button_blind_Label
+			ONRELEASE='MODEL.lua.rmAdditionallyZoom = not MODEL.lua.rmAdditionallyZoom()' 
+			ONLONGCLICK='sc_NextStateAnim(st_Invisible_buttonsSettings, "fade", 1, "" )'
+			ICON="ico_blind.svg" 
+			PHASENAME=(%lua.rmAdditionallyZoom ? "phase1" : "phase0") 
+			ZOOM=95%
+			T_TEXT=(VW_Return_button_text(translate("Invisible buttons"), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate("Invisible buttons"), L"%s", 99))
+			VISIBLE=(%lua.Invisible_buttons_btn_cockpit) />
+	</insert>
+</modify>
+<modify lm_CockpitSideList>
+	<insert>
+		<row  visible=(%lua.Invisible_buttons_btn_cockpit) />
+	</insert>
+</modify>
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="Additional invisible buttons (Zoom, Route editing)" bmp=(button_blind_Label.ICON) isselected="lua.Invisible_buttons_btn_cockpit" />
+	</insert>
+</modify>
+;-------------------------------In Quick Menu------------------------------------------------------
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON 
+			ONRELEASE='ui.button_blind_Label.ONRELEASE()()' 
+			ONLONGCLICK='ui.button_blind_Label.ONLONGCLICK()()' 
+			ICON=(button_blind_Label.ICON)
+			PHASENAME=(button_blind_Label.PHASENAME)
+			ZOOM=(button_blind_Label.ZOOM)
+			T_TEXT=(button_blind_Label.T_TEXT)
+			B_TEXT=(button_blind_Label.B_TEXT) 
+			VISIBLE=(%lua.Invisible_buttons_btn_quick) />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row  visible=(%lua.Invisible_buttons_btn_quick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="Additional invisible buttons (Zoom, Route editing)" bmp=(button_blind_Label.ICON) isselected="lua.Invisible_buttons_btn_quick" />
+	</insert>
+</modify>
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=(button_blind_Label.ICON) phasename=(button_blind_Label.PHASENAME) text=(translate("Invisible buttons")) 
+				onrelease='
+					MODEL.lua.rmAdditionallyZoom = not MODEL.lua.rmAdditionallyZoom()
+					if MODEL.lua.rmAdditionallyZoom() and Plugin:isLoaded("compass_vw") and MODEL.lua.Compass_VW_enable() then
+						MODEL.lua.Compass_VW_enable = false
+					end' 
+				onlongclick='ui.button_blind_Label.ONLONGCLICK()()' />
+		</insert>
+	</modify>
+<!end/>

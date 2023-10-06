@@ -1,0 +1,4 @@
+BUTTON.Overmap_Snapshot_Btn {
+	top: %lua.Overmap_Snapshot_Btn_VerticalPort;
+	left: %lua.Overmap_Snapshot_Btn_HorizontalPort;
+}

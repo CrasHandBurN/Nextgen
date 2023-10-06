@@ -1,0 +1,586 @@
+;----WANDEL™ 22.09.2020
+<var vCurrentTrafficLockToCar=0 />
+<var vTmcButtonBlinkCounter=0 />
+
+<dict TMC>
+	<field Title = (format(m_i18n("Traffic Events (%d)"), (%traffic.events.filtered_significant_events.size + ( %lua.showSignificantEventsOnly ? 0 : %traffic.events.filtered_non_significant_events.size)) )) /> 
+	<field Title_map = (format(m_i18n("Event Details (%d/%d)"), ui_MapHeader.paging_current, (%traffic.events.filtered_significant_events.size + ( %lua.showSignificantEventsOnly ? 0 : %traffic.events.filtered_non_significant_events.size)) )) /> 
+</dict>
+
+<userlist lmCurrentTrafficSavedPos item="history">
+	<row item="" />
+</userlist>
+
+<userlist lm_TrafficMenu text="str" onrelease="ui" enable="bool" visible="bool">
+	<default enable=1 visible=1 />
+	<row text="Traffic Settings" onrelease=sc_showTrafficSettings />
+</userlist>
+
+<userlist lm_TrafficMenu_Footer text="str" onrelease="ui" enable="bool" dtooltip="str" visible="bool">
+	<view visibility_filter=visible />
+	<default enable=1 dtooltip="" />
+	<row text="Replan Route" onrelease=sc_Traffic_ManualDetour visible=( %lua.confirmTrafficDetourRadioBtn ) enable=(%lua.TrafficNextIconVisible && !%route.list.navigated.calculating) />
+</userlist>
+
+<userlist trafficEventTypesBase name="str" id="str" visible="bool" enable="bool" phase="int" categories="string" show_in_summary="bool" icon_id="int">
+	<default visible=true enable=true show_in_summary=true />
+	<view setting visibility_filter=(_.show_in_summary) />
+	<row name="All events"			id="traffic_all"              icon_id=(%traffic.events.regionalize_icon(9, %navigation.car.position)) categories="" show_in_summary=false />
+	<row name="Flow events"			id="traffic_flow"             icon_id=(%traffic.events.regionalize_icon(3, %navigation.car.position)) categories="" />
+	<row name="Closure and block"	id="traffic_closure"          icon_id=(%traffic.events.regionalize_icon(1, %navigation.car.position)) categories="34,41,47,48,74,75" />
+	<row name="Accident"			id="traffic_accident"         icon_id=(%traffic.events.regionalize_icon(0, %navigation.car.position)) categories="31,32,40,43,44,69,70,72,73" />
+	<row name="Lane restriction"	id="traffic_lane_restriction" icon_id=(%traffic.events.regionalize_icon(5, %navigation.car.position)) categories="33,35,36,37,38,39,42,45,46,50,51,52" />
+	<row name="Other"				id="traffic_other"            icon_id=(%traffic.events.regionalize_icon(6, %navigation.car.position)) categories="49,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,89,90,91,68,71,76,77,78,79,80,81,82,83,84,85,86,87,88,92,93,94,95,96,97" />
+</userlist>
+
+<userlist lm_TrafficSettings text="str" icon="str" onrelease="ui" enable="bool" visible="bool" type="str" details="ui" isselected="str" checked="ui" changevalue="ui" haspopover="bool">
+	<view visibility_filter=visible />
+	<default enable=(%traffic.settings.traffic_enabled) visible=1 />
+	<row TrafficOnOff text="Traffic" type="ChkOnOff" isselected="traffic.settings.traffic_enabled" enable=1 />						
+	<row DataSource text="Data Source" details=(sc_SetDataSourceDetails(%tmc.rds_present, %tmc.rds_tmc_connector_enabled, %tmc.online_present, %tmc.src.http.enabled)) haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_TrafficData_popover")' visible=(%tmc.rds_present) />
+	<row text="Use Real Time Traffic" type="ChkOnOff" isselected="lua.UseTrafficInfo" onrelease=sc_SetUseTrafficInfo />
+	<row text="Show Traffic Info" details=( lua.EShowTrafficInfo[ %lua.TrafficInfoColoring ] ) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_ShowTrafficInfo_popover" )' />
+	<row text="Show Free Traffic Flow As Well" type="ChkOnOff" checked=( %lua.ShowFreeFlow ) changevalue={{if (%lua.ShowFreeFlow == 0) {%lua.ShowFreeFlow = 1} else {%lua.ShowFreeFlow = 0}}} onrelease='sc_SetShowFreeFlow( MODEL.lua.ShowFreeFlow() )' enable=( %lua.TrafficInfoColoring ) />
+	<row HistTraffic text="Use Historical Traffic" type="ChkOnOff" isselected="route.histspeed.enabled" icon="ico_historicaltraffic.svg" enable=( %map.has_any_historical_traffic_or_speed_profile ) />
+	<row OfferWhen text=(lm_OfferWhenPopover.detourSpareTimeThresholdScroll == 0 ? m_i18n("Offer detour") : m_i18n("Offer detour if it saves at least:")) haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_OfferWhenPopover")' details=(sc_FormatDetourTimeText(lm_OfferWhenPopover.detourSpareTimeThresholdScroll)) />
+	<row ManualConfirm text="Confirm Detours Manually" type="ChkOnOff" isselected="lua.confirmTrafficDetourRadioBtn" onrelease=sc_ToggleDetourNotification />
+    <row text="Announce traffic events on route" haspopover=1 onrelease='sc_NextStateAnim(st_TrafficSettingsAnnounce, "fade", 1, "" )' /> 
+	<row text="Audio TMC Announcement with no TTS" details=(%lua.AudioTMCAnnounce) onrelease={%lua.SelectedAudioFile = %lua.AudioTMCAnnounce; sc_ScanAudioFiles()} haspopover=1 enable=(%traffic.settings.traffic_enabled) />
+</userlist>
+
+<userlist lm_TrafficSettingsAnnounce text="str" onrelease="ui" visible="bool" type="str" details="ui" isselected="str" checked="ui" changevalue="ui" haspopover="bool">
+	<view visibility_filter=visible />
+	<default visible=(%lua.wTMCAnnounce) />
+		<row 	text="Announce traffic events on route" type="ChkOnOff" isselected="lua.wTMCAnnounce" visible=1 />
+		<row    text="Announce if distance is more than" details=(sc_ShowDistanceTool(%lua.wTMCAnnounceMinDistance)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_MinDistAnnounceSldPopover" )' />
+		<row    text="Announce if distance is less than" details=(sc_ShowDistanceTool(%lua.wTMCAnnounceMaxDistance)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_MaxDistAnnounceSldPopover" )' />
+		<row    text="Announce if delay is more than" details=(sc_ShowTimeTool(%lua.wTMCAnnounceDelay)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_TimeDelay_popover" )' />
+		<row    text="Event description filter" details=(sc_SetFilterAnnounce(%lua.wTMCAnnounceFilter)) onrelease='sc_NextStateAnim(st_TrafficFilterAnnounce, "fade", 1, "" )' />  
+</userlist>
+;---------------------------------------------------------------------------------------------------
+<userlist lm_MinDistAnnounceSldPopover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(0)) max_text=(sc_ShowDistanceTool(250)) />
+	   <row name="Set minimal distance" text=(sc_ShowDistanceTool(%lua.wTMCAnnounceMinDistance)) type="Scroll" min=0 max=250 step=10 valuemodel="lua.wTMCAnnounceMinDistance" />
+</userlist>
+
+<userlist lm_MaxDistAnnounceSldPopover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(300)) max_text=(sc_ShowDistanceTool(50000)) />
+	   <row name="Set maximal distance" text=(sc_ShowDistanceTool(%lua.wTMCAnnounceMaxDistance)) type="Scroll" min=300 max=50000 step=100 valuemodel="lua.wTMCAnnounceMaxDistance" />
+</userlist>
+
+<userlist lm_TimeDelay_popover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowTimeTool(0)) max_text=(sc_ShowTimeTool(600)) />
+	   <row name="Set delay,sec." text=(sc_ShowTimeTool(%lua.wTMCAnnounceDelay)) type="Scroll" min=0 max=600 step=10 valuemodel="lua.wTMCAnnounceDelay" />
+</userlist>
+;---------------------------------------------------------------------------------------------------
+
+<userlist lm_TrafficData_popover text="str" onrelease="ui" enable="bool" type="str" checked="ui" visible="bool" animate="bool">
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 onrelease=undef animate=0 />
+		<row TrafficRadio text="Radio" checked=(%tmc.rds_tmc_connector_enabled) type="Chk" onrelease={invert(%tmc.rds_tmc_connector_enabled)} visible=(%exists:tmc.rds_present && %tmc.rds_present) />
+</userlist>
+
+<userlist lm_OfferWhenPopover text="wstr" onrelease="ui" enable="bool" type="str" min="int" max="int" step="int" onchange="ui" valuemodel="str" possiblevalues="str" phase="int" visible="bool" name="str" min_text="str" max_text="wstr">
+	<property detourSpareTimeThresholdScroll value=(%traffic.settings.detour_spare_time_threshold / 60) setter={%traffic.settings.detour_spare_time_threshold = $1 * 60 }/>
+	<default enable=1 />
+		<row text=(sc_FormatDetourTimeText(SELF.detourSpareTimeThresholdScroll)) min=(lua.gDetourMin) max=(lua.gDetourMax) step=1 possiblevalues=(lua.gDetourMinuteValues) valuemodel="ui.lm_OfferWhenPopover.detourSpareTimeThresholdScroll" type="Scroll" name="Offer detour if it saves at least:" min_text="Always" max_text=(format("%d minutes", lua.gDetourMax)) />
+</userlist>
+
+<userlist lm_ShowTrafficInfo_popover text="str" onrelease="ui">
+	<row text="Off" onrelease='sc_SwitchShowTrafficInfo( 0 )' />
+	<row text="Color" onrelease='sc_SwitchShowTrafficInfo( 1 )' />
+	<row text="Color And Icon" onrelease='sc_SwitchShowTrafficInfo( 3 )' />
+</userlist>
+
+<userlist lm_FooterTrafficMap text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+	<row />
+</userlist>
+
+<userlist TrafficSortingLocalMenu text="str" icon="str" onrelease="ui" enable="bool" visible="bool">
+	<view visibility_filter=visible />
+	<default visible=1 enable=1 />
+	<row text=(%lua.showSignificantEventsOnly ? "Show All Events" : "Show Relevant Events")   icon="ico_tmcsignific.svg"  onrelease=sc_LocalMenuShowSignificantEvents />
+</userlist>
+
+<userlist trafficEventDetailedInfo name="str" id="str" visible="bool" enable="bool" />
+
+<element_template et_Traffic_Event_List>
+	<BUTTON class="listitem tmc_eventlist" onrelease='MODEL["*"]._list.setcurrent(index) initialRecordId = MODEL["*"].record_id() sc_showTrafficMap()'>
+		<DIV class="tmc_icon_eventlist" r2l_invert=1>
+			<SPRITE class="listitem tmc_event main svg" r2l_invert=0 z=15 iconmodel="*.icon_id" />
+			<SPRITE class="listitem tmc_event sec svg" r2l_invert=0 z=14 iconmodel="*.icon_id2" visible=(!%*.single_icon) />
+		</DIV>
+		<HBOX class="listitem tmc_event">	
+			<VBOX>
+				<BOX class="tmc_event_road">
+					<HBOX>
+						<ROADSHIELDEDTEXT class="listitem top r2l" z=100 text=(%*.roadnumber_enc) visible=(%*.roadnumber_enc) />
+						<TEXT class="listitem top tmc_roadname bd r2l" text=(%*.road_name) visible=(%*.road_name) />
+					</HBOX>
+					<TEXT class="listitem top tmc_direction r2l" text=(%*.direction) visible=(%*.direction) />
+				</BOX>
+				<TEXT class="listitem bottom tmc_location r2l" text=(%*.location) />
+			</VBOX>
+			<DISTTEXT class="font_main bd listitem tmc r2l" distance=(%*.distance) visible=(%*.distance.valid) />
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_Traffic_Event_List z=30>
+	<DIV class="list">	
+		<LIST2 lst_TrafficEvents class="list_control traffic" SMOOTHSCROLLING>
+			<SECTIONMARKER/>
+			<LISTMODEL listmodel="traffic.events.filtered_significant_events" element_template="et_Traffic_Event_List" >
+				<SEPARATOR insert_at=0 element_template=et_Separator TEXT="Relevant events" />
+			</LISTMODEL>
+			<LISTMODEL listmodel="traffic.events.filtered_non_significant_events" element_template="et_Traffic_Event_List" visible=(!%lua.showSignificantEventsOnly)>
+				<SEPARATOR insert_at=0 element_template=et_Separator TEXT="Other events" visible=(%traffic.events.filtered_significant_events.size) />
+			</LISTMODEL>
+	        <VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+       	<EMPTYLISTTEXT visible=( !%traffic.events.filtered_significant_events.size && (%lua.showSignificantEventsOnly ? 1 : !%traffic.events.filtered_non_significant_events.size)) />
+	</DIV>
+</layer>
+
+<layer ui_Traffic_Summary z=35>
+	<OBSERVER boolmodel="other.tmc_station_finder.provider_in_use" onchange=sc_SetUsedStation START />
+	<DIV class="main">	
+		
+		<VBOX class="traffic_summary_container">
+			<HBOX class="traffic_summary next_event">
+			<SECTIONMARKER class="traffic_summary_top" leftonly=1>
+				<VBOX class="traffic_summary_route">
+					<HBOX class="traffic_summary_route" >
+						<DISTTEXT txt_TrafficSummaryNextEventDistance class="next_event_distance" distance="" visible=(%lua.TrafficNextIconVisible) />
+						<SPACER flex=1 visible=(!%lua.TrafficNextIconVisible) />
+						<DIV class="listitem traffic_summary start" visible=(%navigation.has_route) >
+							<HBOX class="listitem route" >
+								<SPRITE class="listitem route" />
+							</HBOX>
+							<SPRITE class="listitem icon" />
+						</DIV>
+					</HBOX>
+				</VBOX>
+				
+				<VBOX class="next_event_container">
+					<SPACER flex=1 />
+					<BOX class="next_event traffic_summary" visible=(%lua.TrafficNextIconVisible) >
+						<BUTTON class="next_event traffic_summary" z=10 onrelease=sc_TrafficClosestEventOnMap />
+						<DIV class="traffic_summary_icon">
+							<SPRITE txt_TrafficSummaryNextIcon class="tmc_event svg id" z=30 />
+							<SPRITE txt_TrafficSummaryNextIcon2 class="tmc_event svg id2" z=29 />
+						</DIV>
+						<VBOX class="next_event traffic_summary">
+							<ROADSHIELDEDTEXT txt_TrafficSummaryNextEventRoad  class="r2l traffic_summary_text road" text="" />
+							<SPACER class="traffic"/>
+							<TEXT txt_TrafficSummaryNextEventDirection  class="r2l traffic_summary_text direction" text="" />
+							<TEXT txt_TrafficSummaryNextEventLocation  class="r2l traffic_summary_text sec location" text="" />
+							<TEXT txt_TrafficSummaryNextEventDescription  class="r2l traffic_summary_text sec description" text="" />
+						</VBOX>	
+					</BOX>
+					<TEXT   class="traffic_summary_text font_main" z=10 text="A summary of on-route traffic events will be displayed here if you plan a route." visible=(!%navigation.has_route) />
+					<TEXT   class="traffic_summary_text font_main" z=10 text="There are no traffic events affecting your route." visible=(%navigation.has_route && !%lua.TrafficNextIconVisible) />
+					<SPACER flex=1 />
+					
+					<HBOX class="traffic_summary_box">
+						<VBOX class="traffic_summary_box" visible=(!%traffic.events.significant_events.size)>
+							<TEXT   class="font_sec r2l traffic_all_events" text="All Events:" box_align="center" />
+							<TEXT   class="font_main bd r2l traffic_all_events" text="" box_align="center" text=(%traffic.events.list.size) />
+						</VBOX>
+						
+						<VBOX class="traffic_summary_box relevant_event" visible=(%traffic.events.significant_events.size || %traffic.events.has_block_on_route )>
+							<TEXT   class="font_sec color_btn_main traffic_summary_delay" box_align="center" clipstyle="none" text="Relevant Events:" />
+							<TEXT   class="bd traffic_summary_delay value" box_align="center" text=(%traffic.events.significant_events.size) />
+						</VBOX>	
+						
+						<VBOX class="traffic_summary_box all_delay" visible=(%traffic.events.has_block_on_route || %traffic.events.significant_events.size)>
+							<HBOX class="all_delay">
+								<SPRITE CLASS="traffic_summary all_delay svg" />
+								<TEXT class="font_sec r2l traffic_summary_delay" text="All Delay:" />
+							</HBOX>
+							<TEXT txt_TrafficSummaryAllDelay class="bd r2l traffic_summary_delay value" text="" />
+						</VBOX>
+					</HBOX>
+					<SPACER flex=1 />
+				</VBOX>
+				;<SECTIONMARKER class="traffic_summary_top" rightonly=1>
+			</HBOX>
+		
+			<HBOX class="traffic_summary bottom">
+				<SECTIONMARKER class="traffic_summary_bottom" leftonly=1 />
+				<VBOX class="traffic_summary_provider">
+					<TEXT Scanning class="traffic_summary_station left scanning" text="Scanning:" visible=((!%other.tmc_station_finder.provider_in_use && !%lua.TMCOldProviderName) || (%tmc.state_integer != 2 && %tmc.state_integer != 4) && %tmc.rds_tmc_connector_enabled && %tmc.state_integer != 0) />
+					<TEXT Provider class="traffic_summary_station left provider" text=(%lua.TMCOldProviderName ? %tmc.current_provider_name : %other.tmc_station_finder.provider_list[current].provider_name // 0) visible=((%lua.TMCOldProviderName || %other.tmc_station_finder.provider_in_use) && (%tmc.state_integer == 2 || %tmc.state_integer == 4)) />
+					<TEXT Station class="traffic_summary_station right station" text=(%lua.TMCProviderName ? %tmc.current_station_name : (%tmc.current_station_frequency)) visible=( %lua.TMCProviderName || %tmc.state_integer != 0 ) />
+				</VBOX>
+
+				<BOX class="traffic_summary_buttons">
+					<BUTTON class="btn_main traffic_summary" onrelease=sc_showTrafficEvents enable=(%traffic.events.list.size)>
+						<TEXT  class="traffic_summary_text r2l" text="Traffic Events" />	
+					</BUTTON>
+			
+					<BUTTON class="btn_main traffic_summary" onrelease=sc_CurrentTraffic_onrelease enable=( %traffic.events.list.size || %map.has_any_historical_traffic_or_speed_profile )>
+						<TEXT class="traffic_summary_text r2l" text="Traffic Map" />
+					</BUTTON>
+				</BOX>
+			<SECTIONMARKER class="traffic_summary_bottom" rightonly=1 />
+			</HBOX>
+		</VBOX>
+	</DIV>
+</layer>
+
+<userlist lm_QuickbarTrafficMap bmp="str" onrelease="ui" enable="bool" visible="bool">
+	<default bmp="" onrelease=undef enable=1 visible=1 />
+	<view visibility_filter=visible />
+	<row bmp="ico_currenttraffic.svg" onrelease='sc_SwitchTraffic("current")' enable=(%traffic.events.list.size) />
+	<row bmp="ico_historicaltraffic.svg" onrelease='sc_SwitchTraffic("historical")' enable=( %map.has_any_historical_traffic_or_speed_profile ) />
+</userlist>
+
+
+<userlist lm_PopoverTrafficMap text="str" daytext="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+	<row text=(lua.eDaysOfWeekFull[1]) daytext=(lua.eDaysOfWeek[1]) onrelease='MODEL.route.histspeed.timeslice.day = 0 sc_ClosePopover()' />
+	<row text=(lua.eDaysOfWeekFull[2]) daytext=(lua.eDaysOfWeek[2]) onrelease='MODEL.route.histspeed.timeslice.day = 1 sc_ClosePopover()' />
+	<row text=(lua.eDaysOfWeekFull[3]) daytext=(lua.eDaysOfWeek[3]) onrelease='MODEL.route.histspeed.timeslice.day = 2 sc_ClosePopover()' />
+	<row text=(lua.eDaysOfWeekFull[4]) daytext=(lua.eDaysOfWeek[4]) onrelease='MODEL.route.histspeed.timeslice.day = 3 sc_ClosePopover()' />	
+	<row text=(lua.eDaysOfWeekFull[5]) daytext=(lua.eDaysOfWeek[5]) onrelease='MODEL.route.histspeed.timeslice.day = 4 sc_ClosePopover()' />
+	<row text=(lua.eDaysOfWeekFull[6]) daytext=(lua.eDaysOfWeek[6]) onrelease='MODEL.route.histspeed.timeslice.day = 5 sc_ClosePopover()' />
+	<row text=(lua.eDaysOfWeekFull[7]) daytext=(lua.eDaysOfWeek[7]) onrelease='MODEL.route.histspeed.timeslice.day = 6 sc_ClosePopover()' />
+</userlist>
+
+<layer ui_CurrentTraffic z=30>
+	<DIV class="mapheader" visible=( %lua.useHistSpeedColors )>
+		<SECTIONMARKER class="mapheader" />
+		<SPRITE class="panel map tmc_header histcurr">
+			<HBOX class="header">
+				<BUTTON class="btn_main historicaltraffic_days" text=(sc_GetHistoricalDayName(%route.histspeed.timeslice.day)) onrelease='sc_OpenPopover(sc_GetHistoricalDayName(MODEL.route.histspeed.timeslice.day()), popoverList, "daytext", IsSettingProp)' />
+				<HSMARTSCROLL class="scroll" can_shrink=0 flex=1 box_align="stretch" min=0 max=23 value=(%route.histspeed.timeslice.hour) onchange={%route.histspeed.timeslice.hour = SELF.value} dragable=1 />
+				<TIMETEXT class="mapheader" can_shrink=0 time=(%route.histspeed.timeslice.hour * 3600 * 1000 ) />
+			</HBOX>
+		</SPRITE>
+	</DIV>
+	
+	<DIV class="mapmain mapcontrol">
+		<SPRITE fitbox_current_traffic class="fitbox current_traffic" />
+	</DIV>
+</layer>
+
+<userlist lm_TrafficDetour_Footer text="str" onrelease="ui" enable="bool" isactionbutton="bool">
+	<default enable=1 />
+	<row text="Accept" onrelease=sc_AcceptTrafficDetour isactionbutton=1 enable=( %traffic.detour_recalculation_status == 2 ) />
+</userlist>
+
+<userlist lm_TrafficDetour_localmenu text="str" onrelease="ui" enable="bool" visible="bool">
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 />
+	<row text="Show relevant events" onrelease=sc_showTrafficEvents visible =(%traffic.events.list.size) />
+</userlist>
+
+<userlist lm_LocalMenuCurrentTraffic text="str" onrelease="ui" enable="bool" visible="bool">
+	<view visibility_filter=visible />
+	<row text="Detailed Information" onrelease=sc_OnMapInfo enable=(%map.primary.clicked_tmc_id.valid && ( %map.primary.cursor_icon == "cursor_tmc" || %map.primary.cursor_icon == "cursor_tmc_pacific" ) ) visible=( !%lua.useHistSpeedColors ) />
+</userlist>
+
+<userlist lm_TrafficLocation type="str" name="ui" iconid1="ui" iconid2="ui" distance="ui">
+	<default name="" iconid1="" iconid2="" distance="" />
+	<row type="_location" name=(%lua.traffic_current_location) iconid1=(%lua.traffic_current_icon) iconid2=( %lua.traffic_current_icon2 ) /> 
+</userlist>
+
+<userlist lm_TrafficDetails type="str" name="ui" iconid1="ui" iconid2="ui" distance="ui">
+	<default name="" iconid1="" iconid2="" distance="" />
+	<row type="_roadinfo" name=( %lua.traffic_current_roadinfo ) distance=( %lua.traffic_current_distance ) />
+	<row type="_description" name=( %lua.traffic_current_description ) />
+</userlist>
+
+<element_template et_detailsinfo_location>
+	<HBOX class="listitem">
+		<DIV class="tmc_icon_detailsinfo" r2l_invert=1>
+			<SPRITE class="svg tmc_details main" iconid=%*.iconid1 />
+			<SPRITE class="svg tmc_details sec" iconid=%*.iconid2 visible=(%*.iconid2 != -1) />
+		</DIV>
+		<TEXT class="listitem detailsinfo_name tmc bd icon" text=%*.name />
+	</HBOX>
+</element_template>
+
+<element_template et_detailsinfo_roadinfo>
+	<implementation>
+		<property activeListName value=( sc_GetTmcListName() ) />
+		<property position value=( %gcoor:traffic.events[ activeListName ].current.position // "" ) />
+	</implementation>
+	
+	<HBOX class="listitem">
+		<SPRITE class="detailsinfo address tmc">
+		<VBOX class="detailsinfo" box_align="stretch">
+			<VBOX tmcicon class="detailsinfo tmc address" box_align="stretch">
+				<ROADSHIELDEDTEXT class="detailsinfo tmc bd" text=%*.name />
+			</VBOX>
+		</VBOX>
+		<DISTTEXT class="listitem detailsinfo" distance=%*.distance />
+	</HBOX>
+</element_template>
+
+<element_template et_detailsinfo_description>
+	<HBOX class="listitem" box_align="stretch">
+		<SPACER class="detailsinfo noicon" />
+		<VBOX class="detailsinfo" box_align="stretch">
+			<TEXT class="detailsinfo bd" text="Description" />
+			<TEXT class="detailsinfo" text=%*.name />
+		</VBOX>
+	</HBOX>
+</element_template>
+
+<layer ui_TrafficDetails z=30>
+	<DIV class="list layerscroll">
+		<SECTIONMARKER class="layerscroll"/>
+		<LIST2 lst_TrafficDetails class="list_control details tmc" SMOOTHSCROLLING>
+			<LISTMODEL class="traffic location" listmodel="ui.lm_TrafficLocation" element_template="et_detailsinfo" template_type_model="*.type" />
+			<LISTMODEL class="traffic details" listmodel="ui.lm_TrafficDetails" element_template="et_detailsinfo" template_type_model="*.type" />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<element_template et_routeprogress_tmc>
+	<BOX class="routeprogress marker tmc">
+		<SPRITE class="routeprogress marker tmc" visible=(%*.on_route) />
+	</BOX>
+</element_template>
+
+<layer ui_MapHeader_TMC z=25 visible=( (!st_Cockpit.isActive || %lua.DragMode) && %lua.MapHeaderMode == "TMC")>
+	<implementation>
+		<property isVisible value = false />
+		<property paging_visibility_modifier value = false />
+		<property mapheader_tmc_distance value=undef />
+		<property mapheader_tmc_timespan value=undef />
+		<property paging_current value=0 />
+		<property paging_max value=0 />
+	</implementation>
+	
+	<DIV class="mapheader tmc">
+		<SPRITE class="panel mapheader fill" onrelease='sc_UpdateTrafficMapViewFromCurrentEvent(false) sc_OnMapInfo()'>
+		<HBOX class="mapheader_container">
+			<BUTTON btn_tmc_header_prev_landscape class="mapheader btn_prev tmc" onrelease=( ui_MapHeader_prop.mapheader_paging_prev // undef ) enable=(paging_current != 1) visible=(%lua.IsLandscape && ui_MapHeader_prop.paging_visible && paging_visibility_modifier) z=99>
+				<SPRITE class="btn_map prev icon svg" z=100 />
+			</BUTTON>
+			
+			<VBOX class="mapheader_container_tmc">
+				<BOX class="mapheader_tmc">
+					<VBOX class="mapheader tmc_event">
+						<ROADSHIELDEDTEXT class="mapheader top" Z=100 text=(ui_MapHeader_prop.mapheader_text_top) visible=(ui_MapHeader_prop.mapheader_text_top) />
+						<TEXT class="mapheader tmc_direction r2l" text=(ui_MapHeader_prop.mapheader_tmc_direction) visible=(ui_MapHeader_prop.mapheader_tmc_direction) />	
+					</VBOX>
+					
+					<SPRITE class="mapheader_tmc separator" visible=(%lua.IsPortrait)>
+						<TEXT class="mapheader tmc_description r2l" text=(ui_MapHeader_prop.mapheader_tmc_description) visible=(ui_MapHeader_prop.mapheader_tmc_description) />	
+					</SPRITE>
+				
+					<BOX class="mapheader_tmc value" >
+						<HBOX class="mapheader_value disttext" visible=( mapheader_tmc_distance // 0 )>
+							;<SPRITE class="avoid distance svg"
+							<DISTTEXT class="mapheader" distance=( mapheader_tmc_distance // undef ) />
+						</HBOX>
+						<HBOX class="mapheader_value timespantext" visible=( mapheader_tmc_timespan // 0 )>
+							;<SPRITE class="avoid delay svg"
+							<TIMESPANTEXT class="mapheader" timespan=( mapheader_tmc_timespan // undef ) />
+						</HBOX>
+					</BOX>	
+				</BOX>
+				
+				<SPRITE class="mapheader_tmc separator" visible=(%lua.IsLandscape)>
+					<TEXT class="mapheader tmc_description r2l" text=(ui_MapHeader_prop.mapheader_tmc_description) visible=(ui_MapHeader_prop.mapheader_tmc_description) />	
+				</SPRITE>
+			</VBOX>
+			
+			
+			<VBOX class="paging_button">
+				<BUTTON btn_tmc_header_prev_portrait class="mapheader btn_prev tmc" onrelease=( ui_MapHeader_prop.mapheader_paging_prev // undef ) enable=(paging_current != 1) visible=(%lua.IsPortrait && ui_MapHeader_prop.paging_visible && paging_visibility_modifier) z=99>
+					<SPRITE class="btn_map prev icon svg" z=100 />
+				</BUTTON>
+			
+				<BUTTON btn_tmc_header_next class="mapheader btn_next tmc" onrelease=( ui_MapHeader_prop.mapheader_paging_next // undef ) enable=(paging_current != paging_max) visible=(ui_MapHeader_prop.paging_visible && paging_visibility_modifier) z=99>
+					<SPRITE class="btn_map next icon svg" z=100 />
+				</BUTTON>
+			</VBOX>
+		</HBOX>
+	</DIV>
+</layer>
+
+;--------------TMC Announce------------
+<userlist lm_wTMCAnnounceSettings prio="int" text="str" bmp="str" iconphase="int" bitvalue="int" isselected="str"  visible="bool" enable="bool" onrelease="ui" details="ui" type="str">
+  <view visibility_filter=visible />
+  <default onrelease=undef visible=1 enable=1 dtooltip="" />
+    <row text="Phrase(distance)" type="ChkOnOff" isselected="lua.wTMCAnnounceTTSDistPhrase" />
+    <row text="Location phrase" type="ChkOnOff" isselected="lua.wTMCAnnounceTTSLocationPhrase" />
+</userlist>
+
+<userlist lm_wTMCAnnounceSettings_footer text="str" onrelease="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+	<row text="Test" isactionbutton=1 onrelease=sc_wTMCAnnounceTTS_play />
+</userlist>
+
+<layer ui_wTMC_onroute z=50 visible=( ui_PropLayer.SidePanelVisible && %lua.wTMCAnnounceIndex != -1 )>
+	<implementation>
+		<property disttext value=(builtin.format(m_i18n("%{distance:3}"), %traffic.events.significant_events[%lua.wTMCAnnounceIndex].distance) + (%lua.trafficFullDelayTextOnMap ? L" | " : L"")) /> 
+		<property delaytext value=(%traffic.events.significant_events[%lua.wTMCAnnounceIndex].is_block ? translate(m_i18n("infinite delay")) : builtin.format(m_i18n("+%{timespan:0}"), %traffic.events.significant_events[%lua.wTMCAnnounceIndex].delay)) />	
+		<property roadname value=(sc_wRoadNameExistInLocation(%traffic.events.significant_events[%lua.wTMCAnnounceIndex].road_name, %traffic.events.significant_events[%lua.wTMCAnnounceIndex].location_from)) />
+		<property roadtext value=(L"" + (%traffic.events.significant_events[%lua.wTMCAnnounceIndex].roadnumber_length ? (%traffic.events.significant_events[%lua.wTMCAnnounceIndex].roadnumber_enc + L" >> ") : L"") + (roadname ? (%traffic.events.significant_events[%lua.wTMCAnnounceIndex].road_name + L" >> ") : L"")) />		
+	</implementation>
+	<observer value=(%screen.current_orientation) onchange=sc_ShowTMCAnnouncePopup START="NO_TRIGGER" />
+	<DIV class="cockpit">
+		<DIV class="map_messagebox" > 
+		    <TEXT class="map_messagebox discovery_text" align="CENTER" text=(disttext + delaytext) /> 
+          	<DIV class="tmc_description" visible=(%lua.IsLandscape) >
+				<TEXT tmc_decriptiontext class="map_messagebox discovery_text" text=(%traffic.events.significant_events[%lua.wTMCAnnounceIndex].description) />
+				<ROADSHIELDEDTEXT tmc_locationtext class="font_sec_tmc discovery_text" text=(L"" + roadtext + %traffic.events.significant_events[%lua.wTMCAnnounceIndex].location_from + ((%traffic.events.significant_events[%lua.wTMCAnnounceIndex].location_from && %traffic.events.significant_events[%lua.wTMCAnnounceIndex].location_to) ? (L", ") : (L"")) + %traffic.events.significant_events[%lua.wTMCAnnounceIndex].location_to) />
+          	</DIV>
+			<DIV class="dialog_buttons">
+				<DIALOGBUTTON class="dialog 2_1_1 mapmsgbox" iconspr=(ui_Cockpit.traffic_detour_valid ? "detour.svg" : "") onrelease=sc_OpenDetourPreview enable=(ui_Cockpit.traffic_detour_valid)>
+					<SPRITE class="button map fill" />
+					<SPRITE class="listitem svg" img="ico_avoidroute_avoided.svg" zoom=70% />
+				</DIALOGBUTTON>
+				<DIALOGBUTTON class="dialog 2_1_2 mapmsgbox" onrelease=sc_TrafficClosestEventOnMap > 
+	       			<SPRITE class="button map fill" />
+					<SPRITE class="listitem svg" img="ico_traffic.svg" zoom=70% />
+				</DIALOGBUTTON>
+				<DIALOGBUTTON class="dialog 1_1_1 mapmsgbox" text="TMC~Ignore" onrelease=sc_HideDiscoverySidePopup visible=(!LuaJava.LuaJavaActive) > 
+					<SPRITE class="button map fill" />
+				</DIALOGBUTTON>
+				<DIALOGBUTTON class="dialog 1_1_1 mapmsgbox" 
+					onrelease='VW_GoogleMaps("https://www.google.com/maps/search/?api=1&map_action=map&query=" .. string.gsub(tostring(MODEL.traffic.events.significant_events[sc_GetClosestEventData()].position()), "longitude = (-?%d+.%d+), latitude = (-?%d+.%d+)", "%2,%1"))'
+					visible=(LuaJava.LuaJavaActive) >
+					<SPRITE class="button map fill" />
+					<SPRITE class="listitem svg" img="ico_GoogleMaps.svg" zoom=70% />
+				</DIALOGBUTTON>
+			</DIV>
+		</DIV>
+	</DIV>
+</layer>
+;----------------------------smart traffic detour-------------------------
+<modify ui_Cockpit>   
+	<insert last_child into="#CockpitBTNTable">    
+		<BUTTON BTN_TrafficDetour CLASS="btn_map" ONRELEASE=VW_Traffic_AnnounceDetour ONLONGCLICK=sc_OpenDetourPreview
+			VISIBLE=(%traffic.detour_recalculation_status == 2 && %route.list.traffic_detour.valid && %traffic.name_of_suitable_detour != "") >
+			<SPRITE CLASS="button map fill" />
+			<TEXT CLASS="BTN_top_text" TEXT=(%traffic.detour_recalculation_status == 2 ? sc_FormatSpareDistance(%route.list.traffic_detour.spare_distance, false, true) : "Recalculating...") />
+			<SPRITE CLASS="btn_map svg" IMG="detour.svg" PHASE=2 VISIBLE=(%gps.blink) />
+			<TEXT CLASS="BTN_bottom_text" TEXT=(%traffic.detour_recalculation_status == 2 ? sc_FormatSpareTime(%route.list.traffic_detour.spare_time, false, true) : "Recalculating...") />
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row  visible=(%traffic.detour_recalculation_status == 2 && %route.list.traffic_detour.valid && %traffic.name_of_suitable_detour != "") />
+	</insert>
+</modify>
+<layer ui_TrafficDetourPopup2 z=99980 visible=(st_Cockpit.isActive && !%lua.MenuIsOpened && !%lua.DragMode && !ui_PropLayer.JunctionViewVisible && !(ui_PropLayer.MiniJunctionViewVisible && %lua.IsPortrait))
+		onshow='VW_Traffic_AnnounceDetour()' onhide='sc_HideDiscoverySidePopup()' >
+	<DIV class="cockpit">
+		<DIV class="map_messagebox" visible=(ui_Cockpit.detect_gps) >
+		
+			<SPRITE CLASS="button map fill" />
+			;<SPRITE class="panel map" z=10>
+			<TEXT class="map_messagebox detour discovery_text" z=20 text=%screen.msgbox.on_screen.first_line />
+			<HBOX class="fill detect_gps">
+					
+				<SPRITE class="fill searchprogress wide" box_align="stretch">
+				<TEXT class="next_street fill" text=( %gps.connection_status > 2 ? ( %gps.connection_status == 3 ? m_i18n( "Autodetecting GPS receiver..." ) : m_i18n( "GPS receiver disconnected..." ) ) : m_i18n( "Looking for GPS signal..." ) )>
+					
+			</HBOX>
+			<DIV class="dialog_buttons">
+				<DIALOGBUTTON class="dialog 2_1 mapmsgbox" z=101 iconspr=(%screen.msgbox.on_screen.button_icon_filename(1)) text=(%screen.msgbox.on_screen.button_caption(1)) onrelease='MODEL.screen.msgbox.on_screen.button_released(1)' >
+					<SPRITE class="button map fill" />
+				</DIALOGBUTTON>	
+				<DIALOGBUTTON class="dialog 2_2 mapmsgbox" z=101 iconspr=(%screen.msgbox.on_screen.button_icon_filename(2)) text=(%screen.msgbox.on_screen.button_caption(2)) onrelease='MODEL.screen.msgbox.on_screen.button_released(2)' >
+					<SPRITE class="button map fill" />
+				</DIALOGBUTTON>	
+			</DIV>
+			
+		</DIV>
+	</DIV>
+</layer>
+<var st_TrafficDetourPreview_hasStarted = 0 />
+<layer ui_TrafficDetourPopup z=99980 visible=( ui_PropLayer.SidePanelVisible )
+	onshow='
+	
+		ui.st_TrafficDetourPreview_hasStarted = 0 --!!!!!!!!!!!!!!!!!!!!
+	
+		suppressDetourAnnouncement = true
+        MODEL.route.list.navigated.recalculate_on_modify = false
+        trafficLastDetourDataValid = false
+        --SELF.trafficAccepted = false
+		
+		local function VW_getFitboxSN()
+			return 	ui.DiscoverySidePanel_propertybox.X + 10, ui.DiscoverySidePanel_propertybox.Y + 10, ui.DiscoverySidePanel_propertybox.W - 20, ui.DiscoverySidePanel_propertybox.H - 20
+		end
+		local mapLayer = MODEL.map.discoverysidepanel
+		
+		local topLeft, bottomRight = MODEL.traffic.get_detour_boundrect()
+		if MODEL.traffic.get_detour_boundrect.valid() then
+			sc_Fit_To_Screen(topLeft, bottomRight, "discoverysidepanel", VW_getFitboxSN)
+		else
+			topLeft, bottomRight = MODEL.route.get_boundrect()
+			if MODEL.route.get_boundrect.valid() then
+				sc_Fit_To_Screen(topLeft, bottomRight, "discoverysidepanel", VW_getFitboxSN)
+			else
+				--mapLayer.center = MODEL.navigation.car.position()
+			end
+		end
+		
+        --sc_SelectMapProfile(gMinimalColor_Name, gMinimalColorNight_Name)
+        --mapLayer.route_model = "traffic_detour:2,navigated:1"
+        --mapLayer.show_cursor = false
+		
+		mapLayer.highlight_color = "planned_road_alt3"
+		sc_SelectMapProfile(gMinimalColor_Name, gMinimalColorNight_Name)
+		mapLayer.route_model = "traffic_detour:2,navigated:1"
+        mapLayer.show_cursor = false
+
+		local g = GCOOR.new({lat=(topLeft.lat - (topLeft.lat - bottomRight.lat)/2), lon=(topLeft.lon  - (topLeft.lon - bottomRight.lon)/2)})
+		--mapLayer.center_follow = true
+		doDelayed(3, function() mapLayer.center = g end)
+		--VW_LongTextToSay(ui.ui_MapSidePanel_QuickDetourVW.QuickDetour_MSG1() .. ui.ui_MapSidePanel_QuickDetourVW.QuickDetour_MSG2() .. L" " .. ui.ui_MapSidePanel_QuickDetourVW.QuickDetour_MSG3() .. L". ")
+	'
+	onhide='
+		local mapLayer = MODEL.map.discoverysidepanel
+			
+		mapLayer.route_model = ""
+		mapLayer.highlight_color = ""
+		sc_SelectOriginalMapProfile()
+			
+		trafficStatusCheckIsNeeded = false
+		MODEL.traffic.waiting_for_user = false
+		suppressDetourAnnouncement = false
+		MODEL.route.list.navigated.recalculate_on_modify = true
+		if not st_TrafficDetourPreview_hasStarted() then	
+			sc_DeclineTrafficDetourOnPopup()
+		end
+		--ui.st_TrafficDetourPreview_hasStarted = 0 --!!!!!!!!!!!!!!!!!!!!
+	' >
+	<observer value=(%screen.current_orientation) onchange=VW_Traffic_AnnounceDetour START="NO_TRIGGER" />
+
+	<DIV class="cockpit">
+		<DIV class="map_messagebox">
+			
+			<TEXT class="map_messagebox detour discovery_text" z=20 text=%screen.msgbox.on_screen.first_line />
+			<DIV class="dialog_buttons">
+				<DIALOGBUTTON class="dialog 1_1 mapmsgbox" bottom=(CSS.Param.notify_list_h) img=#ffff8800 z=101 text="Accept" onrelease=sc_AcceptTrafficDetour enable=( %traffic.detour_recalculation_status == 2 ) >  
+					<SPRITE left=0 right=0 top=0 bottom=0 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 z=102 />
+				</DIALOGBUTTON>	
+				<DIALOGBUTTON class="dialog 2_1 mapmsgbox" z=101 iconspr="ico_done.svg" text="Preview" onrelease='ui.st_TrafficDetourPreview_hasStarted=1; sc_OpenDetourPreview()' >
+					<SPRITE class="button map fill" />
+				</DIALOGBUTTON>	
+				<DIALOGBUTTON class="dialog 2_2 mapmsgbox" z=101 iconspr="ico_cancel.svg" text="Cancel" onrelease=sc_HideDiscoverySidePopup >
+					<SPRITE class="button map fill" />
+				</DIALOGBUTTON>	
+			</DIV>
+
+		</DIV>
+	</DIV>
+</layer>

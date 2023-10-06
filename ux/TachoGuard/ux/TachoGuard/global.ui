@@ -1,0 +1,6 @@
+import "~/common/ui/TachoGuard.css"
+import "~/common/ui/TachoGuard.ui"
+import "~/common/ui/TachoGuard.lua"
+
+import "~/common/ui/TachoGuard_by_original.lua"
+import "~/common/ui/TachoGuard_by_original.ui"

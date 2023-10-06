@@ -1,0 +1,2 @@
+<observer obs_UpdateFlag boolmodel="other.map_update_checker.notification_needed" onselect=sc_CheckMapUpdateNotification>
+<observer obs_LMGReminder value=(%gps.gpstime) onchange=sc_WeeklyLMGReminder>

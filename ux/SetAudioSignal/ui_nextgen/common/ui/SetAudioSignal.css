@@ -1,0 +1,17 @@
+LIST2.list_control_audio {
+	left: 0; top: ( %lua.IsLandscape ? 20% : 15% ); right: 0; bottom: 0; z:100;
+	row: ( %lua.IsLandscape ? 4 : 6 ); col: ( %lua.IsLandscape ? 3 : 2 );
+	showselection:0;
+}
+RADIO.listitem.select_red {
+	right: 10%; resize_bmp: 1;
+	img:"btn_speedcam.svg";
+	phasename:(%lua.SelectedAudioFile == %*.text ? "active" : "normal");
+	iconphasesync:1;
+}
+
+TEXT.listitem.value.rad {
+	paddingleft: 2; paddingright: 5; left:5%; right:5%; top:15%; bottom:15%; r2l_invert: 1; 
+	font: "defaultbd"; fontsize: fontsize_main;
+	align: "CENTER";
+}

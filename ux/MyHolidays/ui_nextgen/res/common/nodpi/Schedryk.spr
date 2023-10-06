@@ -1,0 +1,7 @@
+BmpFlags = 0
+DefFlags = ALPHA_PIXEL | ALPHA_LAYER
+DefPhase = 1
+Stripes = 168
+DefAlpha = 30
+
+Animation = "anime", 15, "A", "AB", "AB"

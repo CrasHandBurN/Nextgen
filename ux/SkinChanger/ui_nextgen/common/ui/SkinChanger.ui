@@ -1,0 +1,14 @@
+<modify lm_MainMenu>
+	<insert after=Settings>
+		<row SkinChanger text="Skin Changer" icon="ico_skinchanger.svg" onrelease=VW_SelectSkin /> 
+	</insert>
+</modify>
+<userlist list_Skin ux="str" text="str" value="str" img="str" group="str" type="str" enable="bool" visible="bool" >
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 group="lua.SelectedSkin_radio" type="RadioCustomIcon" /> 
+	<default FILENAME="SkinList.txt" />
+</userlist>
+
+<userlist lm_SelectSkin_footer text="str" onrelease="ui" isactionbutton="bool">
+	<row text="Select" isactionbutton=1 onrelease='sc_btnSkinChange_OnRelease() sc_back()' />
+</userlist>

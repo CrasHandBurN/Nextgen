@@ -1,0 +1,247 @@
+/* ---------------------- WANDEL™ mod -- 09.04.2023 ---------------- */
+SPRITE.speedlimit {
+	box_align:"stretch";
+	img:( %lua.speedlimit_USACAN ? (ui_PropLayer.ShowSpeedCamera ? "spr_speedlimit_speedcam_usa.svg" : "spr_speedlimit_usa.svg") : (ui_PropLayer.ShowSpeedCamera ? "spr_speedlimit_speedcam_eu.svg" : "spr_speedlimit_eu.svg") );
+	image_w: svg_speedlimit_image_w ; 
+	image_h: svg_speedlimit_image_h ;
+	align: "CENTER";
+}
+
+/* it is from data.zip 
+TEXT.speedlimit {
+	top:(%lua.speedlimit_USACAN ? 50% : 0); 
+	bottom:(%lua.speedlimit_USACAN ? 23% : 0);
+	fixedwidthnumbers:0;
+	font:valuefontbd;
+}
+*/
+DISTTEXT.BTN_bottom_text, SPEEDTEXT.BTN_bottom_text{
+	left: 5%; top: 70%; bottom: 0%; right: 5%; z: 56;
+	w:undef;
+	h:undef;
+	font: defaultbd; 
+	fontsize: 15; 
+	color: map_main_color; 
+	align:"CENTER"; 
+	paddingleft: 0; 
+	paddingright: 0;
+}
+
+.color_speedcam		{ color: ad_speedcam_color; }
+.cockpit>.speedcam
+{
+	top: speedcamlimit_top;
+	w:speedcamlimit_w;
+	h:speedcamlimit_h;
+}
+
+#ui_EditSpeedcam HSMARTSCROLL{
+	left:40%;
+	top:17%;
+}
+
+TABLE.edit_speedcam{
+	row:1; col:4;
+}
+
+SPRITE.speedcam.svg, SPRITE.edit_speedcam.svg{
+	image_w: 70;
+	image_h: 70;
+	left:0;
+	right:0;
+	top:0; 
+	bottom:0;
+	align: "CENTER";
+	valign: "CENTER";
+	z:11;
+}
+
+SPRITE.listitem.edit_speedcam{
+	box_align: "CENTER";
+}
+
+SPRITE.camrotate.svg{
+	image_w: 160;
+	image_h: 160;
+	left:0;
+	right:0;
+	top:0; 
+	bottom:0;
+	align: "CENTER";
+	valign: "CENTER";
+	alpha:25;
+	z:10;
+}
+
+SPRITE.listitem.speedcam{
+	image_w: 70;
+	image_h: 70;
+	bmpalign: "LEFT";
+	bmpvalign: "TOP";
+}
+
+SPEEDTEXT.speedcam{
+	w:undef;
+	left:0;
+	right:0;
+	h:undef;
+	top:20%;
+	bottom:38%;
+	align:"CENTER";
+}
+
+TEXT.speedcam{
+	left:0;
+	right:0;
+	top:0;
+	bottom:50%;
+	align:"CENTER";
+	valign:"TOP";
+}
+
+SPRITE.speedcamdirection.svg{
+	left:0; right:0; top:0; bottom:0;
+	image_w: svg_speedcamdirect_image_w; image_h: svg_speedcamdirect_image_h;
+	align:"CENTER"; valign:"TOP"; 
+	img:"spr_speedcamdirection.svg";
+	flex: 1;
+}
+
+SPRITE.speedcamalert.icon.svg{
+	left:0; right:0; top:0; bottom:0;
+	image_w: svg_speedcamalert_image_w; image_h: svg_speedcamalert_image_h;
+	align:"CENTER"; valign:"TOP"; 
+	img:"spr_speedcamalert.svg";
+	flex: 1;
+}
+
+SPRITE.speedcam_bg {
+	left:0; top:0; right:0; bottom:0;
+	img:panel_grad; z:1;
+	position:"absolute";
+}
+
+SPEEDTEXT.speedcam.edit_speedcam{
+	paddingleft: text_padding;
+	paddingright:text_padding;
+	desired_h:66;
+	box_align:"center";
+	color: btn_main_color; color2: btn_main_color2; color3: btn_main_color3;
+}
+
+TEXT.listitem.edit_speedcam, TEXT.speedcam.edit_speedcam{
+	paddingleft: text_padding;
+	paddingright:text_padding;
+	valign:"center";
+	box_align:"stretch";
+	fontsize: 28;
+}
+
+TEXT.speedcam.edit_speedcam.useroadspeedlimit{
+	desired_h:66;
+}
+
+BOX.speedlimit>SPEEDTEXT.speed{
+	orientation:"vertical";
+}
+
+DIV.speedcam.panel{
+	w: undef;
+	h: undef;
+	left: ( panel_margin );
+	right: panel_margin;
+	top: panel_margin;
+	bottom: panel_margin;
+}
+
+SPRITE.speedcam_icon{
+	image_h: 48;
+	box_align:"STRETCH";
+	flex:0; align:"CENTER";
+}
+
+DISTTEXT.speedcam_text, SPEEDTEXT.speedcam_text{
+	box_align:"STRETCH";
+	FLEX:1;
+	align:"CENTER";
+	paddingleft:0;paddingright:0;
+	fontsize:fontsize_speedcam;
+	color:overspeed_color;
+}
+
+BOX.speedlimit.speedcam	{
+	top:20;
+}
+
+BOX.speedlimit_speedcam{
+	box_align:"stretch"; flex:1;
+	paddingleft:0;
+	paddingright:0;
+}
+
+VBOX.speedcam{
+	paddingtop:24;
+}
+
+HBOX.speedcam_edit{
+	box_align:"stretch";
+	FLEX:1;
+}
+
+BOX.speedcam{
+	orientation:"vertical"; box_align:"stretch";
+	paddingtop:box_padding_small; paddingbottom:box_padding_small;
+	align:"center";
+ }
+
+DIV.speedcam_icons{
+	left: 0;
+	y: header_h;
+}
+
+DANGERZONE {
+	box_align:"STRETCH";
+	left:0; right:0;
+	top:0; bottom:0;
+	align:"CENTER";
+}
+
+SPEEDTEXT.listitem{
+	color: btn_main_color; color2: btn_main_color2; color3: btn_main_color3;
+}
+
+SPEEDTEXT.listitem.popover{
+	paddingleft:0;
+}
+
+TEXT.listitem.popover{
+	align:"CENTER";
+}
+
+TEXT.speedcam_edittext{
+	fontsize: 25;
+	font: default;
+	align:"CENTER"; 
+	valign:"CENTER";
+	paddingleft: 0;
+	paddingright: 0;
+	r2l_invert: 1;
+	color: btn_main_color; color2: btn_main_color2; color3: btn_main_color3;
+	box_align:"STRETCH";
+	wordwrap: 2; 
+	clipstyle:"none";
+	line_break_method: "hard";
+}
+
+SPRITE.editspeedcam_radio{
+	box_align:"stretch";
+	flex:1;
+}
+
+RADIO.list {
+	color: btn_main_color; 
+	align:"CENTER"; valign:"CENTER";
+}
+
+@import "~/common/ui/speedcam_landscape.css" landscape;
+@import "~/common/ui/speedcam_portrait.css" portrait;

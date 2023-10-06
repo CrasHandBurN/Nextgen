@@ -1,0 +1,5 @@
+import "~/common/ui/fuel_consumption.lua"
+import "~/common/ui/fuel_consumption_mods.lua"
+import "~/common/ui/fuel_consumption_mods.ui"
+import "~/common/ui/fuel_consumption.ui"
+import "~/common/ui/fuel_consumption.css"

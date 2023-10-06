@@ -1,0 +1,455 @@
+;----------------------WANDEL™-- 05.05.2021 ----------------
+<observer obs_speedcam value=(%navigation.curr_speedcam.category) onchange=hook_SpeedCam_Notification />
+<observer obs_speedcam_valid value=(%navigation.curr_speedcam.category.valid) onselect='obs_speedcam:START()' ondeselect='obs_speedcam:STOP() hook_Delete_Notification:trigger("alert_point","speed_camera_ahead")' start />
+
+<observer obs_contron_section_end value=(%navigation.curr_speedcam.speed_limit == 5 && %navigation.curr_speedcam.section_active) 
+	onselect='VW_SectionCamEnd() hook_Send_Notification:trigger("alert_zone", "end_average_speed_zone")' start="NO_TRIGGER" />
+
+<observer obs_speedzone value=(%{"warning.speedcam_visualtype_" + %navigation.curr_speedcam.category} && %navigation.curr_speedcam.section_active) 
+	onselect='hook_Send_Notification:trigger("alert_zone", "in_average_speed_zone")' 
+	ondeselect='hook_Delete_Notification:trigger("alert_zone", "in_average_speed_zone")' 
+	start />
+
+<observer obs_speedcam_click value=(%navigation.curr_speedcam.id) onchange=sc_ResetFirstClick start="NO_TRIGGER" />
+<observer obs_hva_ahead value=( %{"ui.lm_hva_view.hva_alerts"}.size > 0 ) onselect=sc_show_hva ondeselect=sc_hide_hva start="NO_TRIGGER" />
+
+<observer gjm_spcon value=((!%regional.current_voice.is_tts || !%warning.is_spoken) && %navigation.curr_speedcam.category.valid && %navigation.curr_speedcam.speed_limit.valid) onselect=sc_gjfirstplayspeedcam start="NO_TRIGGER" />
+
+<observer gjm_spcrep value=((!%regional.current_voice.is_tts || !%warning.is_spoken) && (%navigation.curr_speedcam.category.valid && (%navigation.car.current_speed // 1) > sc_GetToleranceSpeed(%lua.SpeedLimitValue)) && (%navigation.curr_speedcam.category.valid && %navigation.curr_speedcam.distance < %lua.gjSpRepDist)) onselect=sc_gjrepeatplayspeedcam />
+
+<var vQuickAdd=0>
+
+<layer ui_EditSpeedcam z=50>
+	<implementation>
+		<property SpeedLimit />
+	</implementation>
+
+	<DIV class="main">
+	
+		<DIV class="speedcam_icons">
+			<SPRITE class="speedcam svg" img="speedwarn_list.svg" phase=(%lua.SpeedCam_Type) />
+			<SPRITE class="camrotate svg" img="spr_speedcamdirection.svg" phase=(%lua.SpeedCam_Direction_type) rotate=(%warning.calculate_heading_with_map_rotate(%lua.SpeedCam_Direction, 0)) />
+		</DIV>
+	
+		<DIV class="speedcam sidepanel">
+			<SECTIONMARKER class="editspeedcam">
+			<SPRITE class="panel fill" z=9>
+			<DIV class="speedcam panel">
+				<VBOX class="speedcam">
+					<HBOX class="speedcam_edit">
+						<BUTTON class="btn_main" box_align="stretch" FLEX=1 onrelease='MODEL.warning.speedcam_enabled = true sc_EditSpeedcameraType()'>
+							<VBOX>
+								<SPRITE class="listitem edit_speedcam svg" z=100 img="speedwarn_list.svg" phase=(%lua.SpeedCam_Type) />
+								<TEXT class="listitem icon edit_speedcam" align="CENTER" valign="CENTER" text="Alert type" />
+							</VBOX>
+						</BUTTON>
+				
+						<BUTTON class="btn_main" box_align="stretch" flex=1 onrelease='sc_OpenPopover( nil, nil, nil, 1 )'>
+							<VBOX>
+								<TEXT class="speedcam edit_speedcam useroadspeedlimit" z=45 text=(sc_GetSpeedCamCatValue(%lua.SpeedCam_Type, "useroadspeedlimit") ? "Auto" : "Off" ) visible=(!%lua.SpeedCam_SpeedLimit) />
+								<SPEEDTEXT class="speedcam edit_speedcam" z=45 speed=(%lua.SpeedCam_SpeedLimit) visible=%lua.SpeedCam_SpeedLimit />
+								<TEXT class="speedcam listitem edit_speedcam" text="Speed limit" />
+							</VBOX>
+						</BUTTON>
+					</HBOX>
+					
+					<SPRITE class="listitem speedcam_edittext">
+						<TEXT class="speedcam_edittext fill" text="Direction" />		
+						<SPRITE class="listitem icon_list svg" />
+					</SPRITE>
+					
+					<DIV class="speedcam panel" box_align="stretch" FLEX=1>
+						<SPRITE class="panel_map">
+						<TABLE class="edit_speedcam">
+							<SPRITE class="editspeedcam_radio" onrelease='MODEL.lua.SpeedCam_Direction_type = 3'>
+								<VBOX box_align="stretch" flex=1>
+									<SPRITE class="radio svg" z=20 visible=(%lua.SpeedCam_Direction_type == 3) align="CENTER" box_align="stretch" flex=1 />
+									<SPACER flex=1 visible=(%lua.SpeedCam_Direction_type != 3) />
+									<RADIO class="list" iconphasesync=1 groupmodel="lua.SpeedCam_Direction_type" var=3 box_align="stretch" flex=2>
+										<SPRITE class="speedcamdirection svg"  z=20 phase=3 rotate=(%warning.calculate_heading_with_map_rotate(%lua.SpeedCam_Direction, 0)) />
+										<SPRITE class="speedcamalert icon svg" z=21 />
+									</RADIO>	
+								</VBOX>
+							</SPRITE>
+			
+							<SPRITE class="editspeedcam_radio" onrelease='MODEL.lua.SpeedCam_Direction_type = 2'>
+								<VBOX box_align="stretch" flex=1>
+									<SPRITE class="radio svg" z=20 visible=(%lua.SpeedCam_Direction_type == 2) align="CENTER" box_align="stretch" flex=1 />
+									<SPACER flex=1 visible=(%lua.SpeedCam_Direction_type != 2) />
+									<RADIO class="list" iconphasesync=1 groupmodel="lua.SpeedCam_Direction_type" var=2 box_align="stretch" flex=2>	
+										<SPRITE class="speedcamdirection svg" z=20 phase=2 rotate=(%warning.calculate_heading_with_map_rotate(%lua.SpeedCam_Direction, 0)) />
+										<SPRITE class="speedcamalert icon svg" z=21 />
+									</RADIO>
+								</VBOX>
+							</SPRITE>
+							
+							<SPRITE class="editspeedcam_radio" onrelease='MODEL.lua.SpeedCam_Direction_type = 1'>						
+								<VBOX box_align="stretch" flex=1>
+									<SPRITE class="radio svg" z=20 visible=(%lua.SpeedCam_Direction_type == 1) align="CENTER" box_align="stretch" flex=1 />
+									<SPACER flex=1 visible=(%lua.SpeedCam_Direction_type != 1) />
+									<RADIO class="list" iconphasesync=1 groupmodel="lua.SpeedCam_Direction_type" var=1 box_align="stretch" flex=2>
+										<SPRITE class="speedcamdirection svg" z=20 phase=1 rotate=(%warning.calculate_heading_with_map_rotate(%lua.SpeedCam_Direction, 0)) />
+										<SPRITE class="speedcamalert icon svg" z=21 />
+									</RADIO>
+								</VBOX>	
+							</SPRITE>
+							
+							<SPRITE class="editspeedcam_radio last" onrelease='MODEL.lua.SpeedCam_Direction_type = 0'>
+								<VBOX box_align="stretch" flex=1>
+									<SPRITE class="radio svg" z=20 visible=(%lua.SpeedCam_Direction_type == 0) align="CENTER" box_align="stretch" flex=1 />
+									<SPACER flex=1 visible=(%lua.SpeedCam_Direction_type != 0) />
+									<RADIO class="list" iconphasesync=1 groupmodel="lua.SpeedCam_Direction_type" var=0 box_align="stretch" flex=2>
+										<SPRITE class="speedcamdirection svg" z=20 phase=0 rotate=(%warning.calculate_heading_with_map_rotate(%lua.SpeedCam_Direction, 0)) />
+										<SPRITE class="speedcamalert icon svg" z=21 />
+									</RADIO>
+								</VBOX>	
+							</SPRITE>						
+						</TABLE>
+					</DIV>
+				</VBOX>
+			</DIV>	
+		</DIV>	
+	</DIV>	
+</layer>
+
+<userlist lm_speedcam_localmenu text="str" onrelease="ui" enable="bool" visible="bool" real_index="int">
+	<view visibility_filter=visible />
+	<default text="" onrelease=undef enable=1 visible=1 real_index=0 >
+		<row text="Delete" onrelease=sc_DeleteSpeedcam visible=( %lua.managespeedcam ) />
+</userlist>
+
+<userlist lm_speedcam_footer text="str" onrelease="ui" enable="bool" isactionbutton="bool">
+	<default enable=1/>
+	<row text=( sc_SetSpeedCamTextFooterButton() ) onrelease=sc_SaveSpeedcam  isactionbutton=1 />
+</userlist>
+
+/*
+<data SpeedcamFields>
+	<property Length value=(observe(%other.trips[0].distance_total); Current_Event_Name == "ROUTEWARNING~TMC" ? sc_ReturnWarningEntry_length("ROUTEWARNING~TMC") : 0) />
+	<property Entry_length_elapsing value=(observe(%other.trips[0].distance_total); (Length - (%other.trips[0].distance_total - %lua.Startdistance_total))) />
+</data>
+*/
+
+<userlist lm_extendedSpeedCamList text="str" id="int" visual="bool" audio="int" visible="bool" speedlimit="bool" useroadspeedlimit="bool">
+	<implementation>
+		<property speedcam_visibility value=(%warning.speedcam.allowed_in_the_country && !sc_IsInHVACountry(%map.cursor.position)) />
+		<property speedcam_types value=0,1,2,3,4,5,7,11,17,23,24,26,27,30 />
+	</implementation>
+	
+	<view visibility_filter=visible/>
+	<default visible=1 speedlimit=true useroadspeedlimit=true audio=0 visual=0>
+	
+	<row text=(sc_GetSysEntry("speedcam_category:0", "activated_speech", "Speed Camera")) 			id=0 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(0)) visible=(in_set(0, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 0 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:1", "activated_speech", "Mobile Speed Camera")) 	id=1 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(1)) visible=(in_set(1, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 1 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:2", "activated_speech", "Built-in Speed Camera"))	id=2 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(2)) visible=(in_set(2, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 2 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:3", "activated_speech", "Average Speed Camera"))	id=3 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(3)) visible=(in_set(3, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 3 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:4", "activated_speech", "Red Light Camera"))		id=4 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(4)) visible=(in_set(4, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 4 )) : 1) />
+    <row text=(sc_GetSysEntry("speedcam_category:5", "activated_speech", "Multi Function Camera"))	id=5 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(5)) visible=(in_set(5, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 5 )) : 1) /> 
+	<row text=(sc_GetSysEntry("speedcam_category:6", "activated_speech", "Railway Crossing"))		id=6 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(6)) visible=(in_set(6, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 6 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:7", "activated_speech", "Bus Lane Camera"))		id=7 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(7)) visible=(in_set(7, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 7 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:8", "activated_speech", "High Accident Zone"))		id=8 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(8)) visible=(in_set(8, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 8 )) : 1) /> 
+	<row text=(sc_GetSysEntry("speedcam_category:9", "activated_speech", "School Zone"))			id=9 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(9)) visible=(in_set(9, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 9 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:10", "activated_speech", "Town Entry Point"))		id=10 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(10)) visible=(in_set(10, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 10 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:11", "activated_speech", "Red Light and Speed Camera")) id=11 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(11)) visible=(in_set(11, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 11 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:12", "activated_speech", "Toll Booth"))			id=12 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(12)) visible=(in_set(12, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 12 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:13", "activated_speech", "Hospital, Ambulance"))	id=13 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(13)) visible=(in_set(13, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 13 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:14", "activated_speech", "Fire Station"))			id=14 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(14)) visible=(in_set(14, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 14 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:15", "activated_speech", "Congestion Charge Zone"))	id=15 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(15)) visible=(in_set(15, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 15 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:16", "activated_speech", "Weight Control"))		id=16 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(16)) visible=(in_set(16, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 16 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:17", "activated_speech", "Fixed Mobile Camera"))	id=17 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(17)) visible=(in_set(17, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 17 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:18", "activated_speech", "Speed Breaker"))			id=18 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(18)) visible=(in_set(18, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 18 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:19", "activated_speech", "Bad Road Section"))		id=19 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(19)) visible=(in_set(19, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 19 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:20", "activated_speech", "Dangerous Turn"))		id=20 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(20)) visible=(in_set(20, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 20 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:21", "activated_speech", "Tunnel"))				id=21 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(21)) visible=(in_set(21, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 21 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:22", "activated_speech", "POI"))					id=22 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(22)) visible=(in_set(22, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 22 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:23", "activated_speech", "RPS Post"))				id=23 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(23)) visible=(in_set(23, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 23 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:24", "activated_speech", "Stop Control Camera")) 	id=24 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(24)) visible=(in_set(24, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 24 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:25", "activated_speech", "Highway Exit"))			id=25 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(25)) visible=(in_set(25, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 25 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:26", "activated_speech", "Speed Boards"))			id=26 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(26)) visible=(in_set(26, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 26 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:27", "activated_speech", "Dynamic Traffic Light"))	id=27 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(27)) visible=(in_set(27, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 27 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:28", "activated_speech", "Max Height"))			id=28 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(28)) visible=(in_set(28, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 28 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:29", "activated_speech", "Pedestrian Crossing"))	id=29 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(29)) visible=(in_set(29, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 29 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:30", "activated_speech", "SC Camera"))				id=30 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(30)) visible=(in_set(30, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 30 )) : 1) />
+	<row text=(sc_GetSysEntry("speedcam_category:31", "activated_speech", "Dangerous Area"))		id=31 useroadspeedlimit=(sc_SpeedcameraUseRoadSpeedLimit(31)) visible=(in_set(31, speedcam_types) ? (speedcam_visibility && %warning.speedcam.type_allowed_by_pos(%map.cursor.position, 31 )) : 1) />
+</userlist>
+
+<views alerttypes listmodel="ui.lm_extendedSpeedCamList" >
+	<field speedcam_types=0,1,2,3,4,5,7,11,17,23,24,26,27,30 />
+	<view speedcams filter=(in_set($1.id, views.speedcam_types)) />
+	<view alerts filter=(not in_set($1.id, views.speedcam_types)) />
+</views>
+
+<element_template et_EditSpeedcam_Type> ;!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	<RADIO class="listitem"  img="btn_speedcam.svg" resize_bmp=1 groupmodel="lua.SpeedCam_Type" var=%*.id onrelease=sc_SpeedcamSelectCameraType >
+		<SPRITE class="listitem speedcam svg" img="speedwarn_list.svg" phase=%*.id z=20 />
+	</RADIO>
+</element_template>
+
+<layer ui_EditSpeedcam_Type z=30>
+	<DIV class="list">
+		<SPRITE class=list_panel>
+		<LIST2 lstSpeedcamType class="list_control_cam" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.lm_extendedSpeedCamList" element_template="et_EditSpeedcam_Type" />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<userlist lm_SpeedLimitPopover text="str" onrelease="ui" enable="bool" type="str" min_text="str" max_text="wstr">
+	<implementation>
+		<property value_unit value=(%regional.units == 1 ? 160 : 161) />
+		<property value_speed value=(format(L"%{speed[%D%U]:*:*}", value_unit, 1, %regional.units)) />
+	</implementation>
+	
+	<default enable=1 type="" min_text="" />
+		<row text="Speed Limit" type="_speedcamscroll" min_text="Auto" max_text=(value_speed) />
+</userlist>																								
+
+<element_template et_Popover_speedcamscroll>
+	<VBOX class="popover fill">
+		<TEXT class="listitem title popoverscroll" text=%*.text />
+		<TEXT class="listitem popover_value" text=(sc_GetSpeedCamCatValue(%lua.SpeedCam_Type, "useroadspeedlimit") ? "Auto" : "Off" ) visible=(!%lua.SpeedCam_SpeedLimit) />
+		<SPEEDTEXT class="listitem popover_value" speed=(%lua.SpeedCam_SpeedLimit) visible=(%lua.SpeedCam_SpeedLimit) />
+		
+		<SPACER flex=0.5>
+		<HSMARTSCROLL class="scroll_popover" step=5 min=0 max=(%regional.units == 1 ? 160 : 100) value=( ui_EditSpeedcam.SpeedLimit ) onchange='sc_SpeedcamSpeedOnchange(SELF.prop.value)' />
+		<HBOX class="scroll_text" flex=1 box_align="stretch">
+			<TEXT class="listitem popoverminmax" text=%*.min_text />
+			<SPACER flex=1 />
+			<TEXT class="listitem popoverminmax" text=%*.max_text /> 
+		</HBOX>	
+	</VBOX>
+</element_template>
+
+<element_template et_ExtendedSpeedCamSettings>
+	<BUTTON class="listitem" onrelease='sc_AlertTypeFilter(MODEL.lua.AlertFilter())' >
+		<HBOX class="listitem">
+			<SPRITE class="listitem speedcam svg" z=20 img="speedwarn_list.svg" phase=(%*.id) />
+			<TEXT class="listitem icon speedcam_type" text=%*.text />
+		</HBOX>	
+	</BUTTON>
+</element_template>
+
+<layer ui_ProximityAlertsSettings z=41>
+	<DIV class="list">
+		<SPRITE class=list_panel>
+		<LIST2 class="list_control" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.alerttypes.speedcams" element_template="et_ExtendedSpeedCamSettings" visible=(%lua.AlertFilter == "speedcams") />
+			<LISTMODEL listmodel="ui.alerttypes.alerts" element_template="et_ExtendedSpeedCamSettings" visible=(%lua.AlertFilter == "alerts") />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<userlist lm_ExtendedSpeedCamSettings text="str" enable="bool" icon="str" phase="int" onrelease="ui" details="str" type="str" haspopover="bool">
+	<default enable=1 phase="" type="" />
+		<row text=(%ui.lm_extendedSpeedCamList[current].text) icon="speedwarn_list.svg" type="Subtitle" phase=(%ui.lm_extendedSpeedCamList[current].id) />
+		<row text="Warning Type" haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_SpeedCamVisualWarningType_popover")' details=(sc_GetSpeedCamVisualWarningType(%ui.lm_extendedSpeedCamList.[current].id, %{"warning.speedcam_visualtype_" + %ui.lm_extendedSpeedCamList.[current].id}, %{"warning.speedcam_soundtype_" + %ui.lm_extendedSpeedCamList.[current].id})) />
+		<row text="Audio Warning" haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_SpeedCamAudioWarningType_popover")'  details=(sc_GetSpeedCamAudioWarningType(%ui.lm_extendedSpeedCamList.[current].id, %{"warning.speedcam_soundtype_" + %ui.lm_extendedSpeedCamList.[current].id})) enable=( %{"warning.speedcam_soundtype_" + %ui.lm_extendedSpeedCamList.[current].id} ) />
+</userlist>
+
+<userlist lm_SpeedCamVisualWarningType_popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+		<row text="Disabled"		 onrelease='sc_SetSpeedCamVisualWarningType(false, false) sc_ClosePopover()' />
+		<row text="Visual"			 onrelease='sc_SetSpeedCamVisualWarningType(false, true) sc_ClosePopover()' />
+		<row text="Audio and Visual" onrelease='sc_SetSpeedCamVisualWarningType(true, true) sc_ClosePopover()' />
+</userlist>
+
+<userlist lm_SpeedCamAudioWarningType_popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+		<row text="Only When Speeding" onrelease='sc_SetSpeedCamAudioWarningType(1) sc_ClosePopover()' />
+		<row text="When Approaching"   onrelease='sc_SetSpeedCamAudioWarningType(2) sc_ClosePopover()' />
+</userlist>
+
+<userlist lm_clicked_SpeedCamList category="int" confidence="int" heading="int" heading_type="int" icon_phase="int" id="str" position="gcoor" service="int" speed_limit="int"/>
+
+<element_template et_SelectSpeedCam>
+	<BUTTON class="listitem" onrelease=sc_EditSpeedcamFromList>
+		<HBOX class="listitem">
+			<SPRITE class="listitem speedcam" img="speedwarn_list.svg" phase=%*.category />
+			<TEXT class="listitem icon" text=(sc_GetSpeedCamCatValue(%*.category, "text")) />
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_SelectSpeedcam z=41>
+	<DIV class="list">
+		<SPRITE class=list_panel />
+		<LIST2 class="list_control" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.lm_clicked_SpeedCamList" element_template="et_SelectSpeedCam" />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<userlist lm_dangerzonesettings text="str" isselected="str" onrelease="ui" details="wstr" type="str" enable="bool" haspopover="bool">
+	<default enable=1 type="" />
+	<row text="Dangerous zone (HVA)" isselected="warning.hva.dangerous_zone_enabled"  type="ChkOnOff" />
+	<row text="Sound alert" isselected="warning.hva.dangerous_zone_warn_type" enable=(%warning.hva.dangerous_zone_enabled) type="ChkOnOff" />
+	<row text="Pre-Alert Zone" details=( format( L"%{distance[%D %U]}", %lua.HVA_Max_Lockahead ) ) haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_dangerzonesettings_popover")' />
+</userlist>
+
+<userlist lm_dangerzonesettings_popover name="str" text="wstr" onrelease="ui" enable="bool" type="str" min="int" max="int" step="int" possiblevalues="str" valuemodel="str" min_text="wstr" max_text="wstr">
+	<default enable=1 type="" name="" min_text=( format( L"%{distance[%D %U]}", 0 ) ) max_text=( format( L"%{distance[%D %U]}", 1000 ) ) />
+	<row name="Pre-Alert Zone" text=( format( L"%{distance[%D %U]}", %lua.HVA_Max_Lockahead ) ) min=0 max=1000 step=1 possiblevalues=(%warning.hva.prealert_distance_options) onrelease='sc_HVA_Set_Prewarn_Alert_Distance(true)' type="Scroll" valuemodel="lua.HVA_Max_Lockahead" enable=(%warning.speedlimit_warning_visual) />
+</userlist>
+
+<layer ui_DangerZoneSettings z=35>
+	<DIV class="list">
+		<LIST2 class="list_control" SMOOTHSCROLLING >
+			<LISTMODEL listmodel="ui.lm_dangerzonesettings" element_template="et_List" TEMPLATE_TYPE_MODEL="*.type" />
+			<VSMARTSCROLL> 
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+;;;%ui.alerttypes.speedcams.size
+<userlist lm_alertpointsettings text="ui" onrelease="ui" enable="bool" isselected="str" type="str" details="str" haspopover="bool" visible="bool">
+	<view visibility_filter=visible />
+	<default onrelease=undef enable=1 haspopover=0 visible=1 />
+		<row	text="Alert Point Warnings" type="ChkOnOff" isselected="warning.speedcam_enabled" onrelease=sc_SetMsgBox />
+		<row	text="Alert Types" haspopover=1 onrelease='MODEL.lua.AlertFilter = "alerts" sc_ProximityAlertsSettings()' enable=(%warning.speedcam_enabled) />
+		<row	text=(sc_IsInHVACountry(%navigation.car.position) ? "Dangerous Zone" : "Speed Camera Types") haspopover=1 onrelease='MODEL.lua.AlertFilter = "speedcams" sc_btnSpeedCam_OnRelease()' enable=(%warning.speedcam_enabled) visible=(%warning.speedcam.allowed_in_the_country) />
+		<row	text="Show SpeedCam Speed Limit" type="ChkOnOff" isselected="lua.ShowCentralSpeedCamLimit" enable=(%warning.speedcam_enabled) />
+		<row 	text="Use TTS or Audio" haspopover=1 onrelease={invert(%warning.is_spoken)} details=(%warning.is_spoken ? (%regional.current_voice.is_tts ? "TTS" : "Audio is currently as TTS is Off") : (%lua.SCaudio_path == L"SC9999" ? "SC9999" : tostring(%lua.SCaudio_path))) enable=(%warning.speedcam_enabled) />
+		<row	text="Listen Test and Settings" onrelease=sc_SCSoundTTSSettings_OnRelease haspopover=1 enable=(%warning.speedcam_enabled) />
+</userlist>
+
+<element_template et_SelectSpeedcamForInfo>
+	<BUTTON class="listitem" onrelease=sc_ShowSpeedcamInfo>
+		<HBOX class="listitem">
+			<SPRITE class="listitem speedcam" img="speedwarn_list.svg" phase=%*.category />
+			<TEXT class="listitem icon" text=( sc_GetSpeedCamCatValue( %*.category, "text" ) ) />
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_SelectSpeedcamForInfo z=30>
+	<DIV class="list">
+		<SPRITE class=list_panel>
+
+		<LIST2 class="list_control" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="map.primary.clicked_speedcam_list" element_template="et_SelectSpeedcamForInfo" />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<element_template et_detailsinfo_speedcamtype>
+	
+	<HBOX class="listitem">
+		<SPRITE class="detailsinfo" img="speedwarn_list.svg" phase=%lua.SpeedCam_Type />
+		<TEXT class="listitem bd icon" text=(sc_GetSpeedCamName()) />
+	</HBOX>
+</element_template>
+
+<element_template et_detailsinfo_speedcaminfo>
+	<HBOX class="listitem">
+		<SPRITE class="detailsinfo" img="spr_speedcamalert.svg" >
+			<SPRITE class="detailsinfo" img="spr_speedcamdirection.svg" phase=%lua.SpeedCam_Direction_type rotate=(%warning.calculate_heading_with_map_rotate(%lua.SpeedCam_Direction, 0)) />
+		</SPRITE>
+		<BOX>
+			<TEXT class="detailsinfo speedcam" text=(sc_GetSpeedCamCatValue(%lua.SpeedCam_Type, "useroadspeedlimit") ? m_i18n("Auto") :  m_i18n("Off") ) visible=(!%lua.SpeedCam_SpeedLimit) />
+			<SPEEDTEXT class="detailsinfo" speed=(%lua.SpeedCam_SpeedLimit) visible=(%lua.SpeedCam_SpeedLimit) />
+		</BOX>
+	</HBOX>
+</element_template>
+
+<userlist lm_SpeedcamLocation type="str" visible="bool" coord="str" address="str" icon="str" name="str" country="str" state="str">
+	<view visibility_filter=visible />
+	<default visible=1 coord="" address="" />
+	<row type="_speedcamtype" />
+	<row type="_address" coord="lua.SpeedCam_Pos" address="map.cursor.address.long_format" country="my.map.selected_item.address.country" state="my.map.selected_item.address.state" />
+	<row type="_speedcaminfo" />
+</userlist>
+
+<layer ui_ShowSpeedcamInfo z=30>
+	<DIV class="list">
+		<SECTIONMARKER/>
+		
+		<LIST2 class="list_control details" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.lm_SpeedcamLocation" element_template="et_detailsinfo" template_type_model="*.type"/>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<views lm_hva_view listmodel="warning.alerts">
+	<view hva_alerts filter=($1.provider == lua.EIwsProviders.HVAAlert && $1.status != 0 && $1.status != 5) />
+</views>
+
+<define_element DANGERZONE alert_index=0>
+	<implementation>
+		<property hva_list value=(%ui.lm_hva_view.hva_alerts.size > OWNER.ALERT_INDEX ? ref(%ui.lm_hva_view.hva_alerts[OWNER.ALERT_INDEX]) : undef)>
+	</implementation>
+	
+	<BOX class="speedcam">
+		<SPRITE class="speedcam_icon fill" z=8 img="ico_speedcams.svg" phase=( !defined(hva_list) || in_set(hva_list->category, SpeedcamTypes.speedcams) ? 31 : hva_list->category ) />
+		<DISTTEXT class="speedcam_text" z=51 distance=(hva_list->remaining_distance // 0)>
+	</BOX>
+</define_element>
+
+;------speedcam TTS or Audio and Test and Settings--------
+<element_template et_ExtendedSpeedCamSettingsTTS>
+	<RADIO class="listitem" img="btn_speedcam.svg" resize_bmp=1 onrelease='sc_ReadoutSpeedcamInfo(); MODEL["*"]._list.setcurrent(index); sc_ExtendedSpeedCamSettings()' onlongclick=VW_SpeedCamsVisibilityAudibility>
+		<SPRITE class="listitem speedcam svg" img="speedwarn_list.svg" phase=%*.id z=20 />
+		<SPRITE  class="listitem icon svg" img=(%{"warning.speedcam_visualtype_" + %*.id} ? "ico_visibility_on.svg" : "ico_visibility_off.svg") align="left" valign="top" zoom=400 />
+		<SPRITE  class="listitem icon svg" img=(%{"warning.speedcam_soundtype_" + %*.id} ? "ico_sound.svg" : "ico_muteStatus.svg") align="right" valign="top" zoom=400 />
+	</RADIO>
+</element_template>
+
+<layer ui_ProximityAlertsSettingsTTS z=41>
+	<DIV class="list">
+		<SPRITE class=list_panel>
+		<LIST2 class="list_control_cam" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.lm_extendedSpeedCamList" element_template="et_ExtendedSpeedCamSettingsTTS" />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<layer ui_SpeedCamsVisibleAudibleEnableBox z=100001 >
+	<DIV class=full> 
+		<SPRITE class="messagebox_cover" />
+		<DIV class=messagebox> 
+			<SPRITE class="messagebox" />
+			<DIV class="messagebox_panel">
+				<TABLE col=1 row=7 top=0 bottom=0 left=0 right=0>
+					<VBOX class="listitem">
+						<SPRITE  class="listitem icon_list svg top" img="speedwarn_list.svg" phase=(%ui.lm_extendedSpeedCamList[current].id) >
+						<TEXT class="listitem bottom" align="center" text=(%ui.lm_extendedSpeedCamList[current].text) />
+					</VBOX>
+					<TEXT class="listitem" align="center" text="" visible=(!%lua.screen4x3 && %lua.IsLandscape) />
+					<DIALOGBUTTON class="dialog" text="Enable visibility & audibility" onrelease='gPrevAudio = 2; sc_SetSpeedCamVisualWarningType(true, true)' />
+					<CHECKBOX class="listitem chkonoff" iconspr=(%{"warning.speedcam_soundtype_" + %ui.lm_extendedSpeedCamList[current].id} ? "ico_sound.svg" : "ico_muteStatus.svg") 
+						text="Audibility" checked=(%{"warning.speedcam_soundtype_" + %ui.lm_extendedSpeedCamList[current].id}) 
+						changevalue={sc_SetSpeedCamVisualWarningType(invert(%{"warning.speedcam_soundtype_" + %ui.lm_extendedSpeedCamList[current].id}), true)} />
+					<CHECKBOX class="listitem chkonoff" iconspr=(%{"warning.speedcam_visualtype_" + %ui.lm_extendedSpeedCamList[current].id} ? "ico_visibility_on.svg" : "ico_visibility_off.svg") 
+						text="Visibility" checked=(%{"warning.speedcam_visualtype_" + %ui.lm_extendedSpeedCamList[current].id}) 
+						changevalue={sc_SetSpeedCamVisualWarningType(true, invert(%{"warning.speedcam_visualtype_" + %ui.lm_extendedSpeedCamList[current].id}))} />
+					<DIALOGBUTTON class="dialog" text="Disable visibility & audibility" onrelease='sc_SetSpeedCamVisualWarningType(false, false)' />
+					<DIALOGBUTTON class="dialog" text="Close" onrelease=sc_RemoveAllBoxes />
+				</TABLE>
+			</DIV>
+		</DIV>
+	</DIV>
+</layer>
+
+<userlist lm_SpeedCamsSoundTTS_footer text="str" onrelease="ui"  onlongclick="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+	<row   text="Invert 'Visual'. Long Click - 'Reset'" isactionbutton=1 onrelease=VW_SpeedCamsAudioInvert onlongclick=VW_SpeedCamsAudioReset />
+</userlist>

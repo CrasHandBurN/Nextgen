@@ -1,0 +1,18 @@
+/*---- VW  01.10.2018 ----*/
+@params {
+}
+
+TEXT.safe_mode {
+	left: 0; right: 0; top: 0%; bottom: 0; 
+	font: defaultbd; 
+	fontsize: 80; 
+	color: map_main_color; 
+	align:"CENTER"; 
+	valign:"CENTER"; 
+	paddingleft: 5%; 
+	paddingright: 5%;
+	wordwrap: (%lua.IsLandscape ? 4 : 6);
+}
+
+@import "~/common/ui/safe_mode_landscape.css" landscape;
+@import "~/common/ui/safe_mode_portrait.css" portrait;

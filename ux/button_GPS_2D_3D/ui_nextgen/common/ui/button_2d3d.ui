@@ -1,0 +1,117 @@
+;----------WANDEL™--------- 05.06.2021 ------------
+<dict MapSettingsMapModes min=0 max=2>
+	<list svg item="ico_Viewmode2D.svg" item="ico_Viewmode2DN.svg" item="ico_Viewmode3D.svg" />
+</dict>
+<dict MapSettingsViewModeIcon min=0 max=2>
+	<list svg item="ico_level_l.svg" item="ico_level_m.svg" item="ico_level_h.svg" />
+</dict>
+
+<modify ui_Cockpit>
+   	<insert into="IMPLEMENTATION"> 
+		<PROPERTY height_direction VALUE=(observe(%navigation.current_altitude); VW_Altitute_dir()) />
+	</insert>	
+
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON Button_2d3d CLASS="btn_map" 
+				ONRELEASE='sc_ChangedCockpitMapMode() sc_SetNavCarPos()'   
+				ONLONGCLICK={{if (%lua.vEasyViewMode < MapSettingsViewModes.max) {%lua.vEasyViewMode+=1} else {%lua.vEasyViewMode = 0}}; sc_Set_Presets()}  
+				VISIBLE=( %lua.Button2d3dInCockpit ) >
+	       	<SPRITE	CLASS="button map fill"/>
+			<SPRITE	CLASS="ari_2d3d svg" /> ;CockpitMapMode
+			<SPRITE	CLASS="current_level svg" /> ;ViewMode
+			<SPRITE	CLASS="gps_2d3d_status_ico svg" /> 
+			<TEXT	CLASS="gps_2d3d_status" />
+			<SPRITE	CLASS="gps_2d3d_height_ico svg" />
+			<TEXT	CLASS="gps_2d3d_height" />
+		</BUTTON>
+	</insert>
+
+	<insert into="#QuickMenuBtn"> 
+		<SPRITE	CLASS="gps_2d3d_status_ico svg" LEFT=10 VISIBLE=( !%lua.Button2d3dInCockpit ) /> 
+		<TEXT	CLASS="gps_2d3d_status" VISIBLE=( !%lua.Button2d3dInCockpit ) />
+		<SPRITE	CLASS="gps_2d3d_height_ico svg" BOTTOM=2 LEFT=7 VISIBLE=( !%lua.Button2d3dInCockpit ) />
+		<TEXT	CLASS="gps_2d3d_height" BOTTOM=0 VISIBLE=( !%lua.Button2d3dInCockpit ) />
+		<SPRITE	CLASS="gps_2d3d_height_ico svg" TOP=0 BOTTOM=0 LEFT=4 RIGHT=undef IMAGE_W=50 IMAGE_H=(PARENT.H) IMG=(height_direction) />
+	</insert>
+	
+	<modify element="#QuickMenuBtnFooter" ZOOM=( !%lua.Button2d3dInCockpit ? 65% : 100% ) />
+	<modify element="#QuickMenuBtnCompass" ZOOM=( !%lua.Button2d3dInCockpit ? 65% : 100% ) />
+	<modify element="#QuickMenuBtnDestarrow" ZOOM=( !%lua.Button2d3dInCockpit ? 70% : 100% )/>
+	
+	<insert last_child into="DIV.notify_list_ext TABLE.ari_ext">
+		<BUTTON AltitudeBTN CLASS="btn_map" ONRELEASE='sc_NextStateAnim( st_GpsStatus, "fade", 1, "" )'	ONLONGCLICK='VW_Altitute_dir() ui.ui_Cockpit.height_direction = ""' VISIBLE=( %lua.altitude_in_cockpit ) >
+			<SPRITE CLASS="button map fill" />
+			<SPRITE	CLASS="gps_2d3d_height_ico svg" TOP=1 BOTTOM=8 LEFT=2 IMAGE_W=30 IMAGE_H=(PARENT.H) />
+			<ALTITUDETEXT CLASS="listitem" W=undef H=undef LEFT=10 RIGHT=10 TOP=0 BOTTOM=0 FONT="defaultbd" FONTSIZE=30 Z=60 ALIGN="CENTER" VALIGN="CENTER" ALTITUDE=(%navigation.current_altitude) />
+			<SPRITE	CLASS="gps_2d3d_height_ico svg" TOP=2 BOTTOM=2 LEFT=21 IMAGE_W=50 IMAGE_H=(PARENT.H) IMG=(height_direction) />	
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify ui_MapHeader>
+	<insert last_child into="DIV.notify_list_ext TABLE.ari_ext">
+		<BUTTON CLASS="btn_map" ONRELEASE='sc_NextStateAnim( st_GpsStatus, "fade", 1, "" )'	VISIBLE=( %lua.IsPortrait ? 1 : %lua.screen4x3 ) > ; %lua.altitude_in_cockpit  (%screen.dpi >= 320) 
+			<SPRITE CLASS="button map fill" />
+			<SPRITE	CLASS="gps_2d3d_height_ico svg" TOP=1 BOTTOM=8 LEFT=2 IMAGE_W=30 IMAGE_H=(PARENT.H) />
+			<ALTITUDETEXT CLASS="listitem" W=undef H=undef LEFT=10 RIGHT=10 TOP=0 BOTTOM=0 FONT="defaultbd" FONTSIZE=30 Z=60 ALIGN="CENTER" VALIGN="CENTER" ALTITUDE=(%navigation.current_altitude) />
+			<SPRITE	CLASS="gps_2d3d_height_ico svg" TOP=2 BOTTOM=2 LEFT=23 IMAGE_W=50 IMAGE_H=(PARENT.H) IMG=(ui_Cockpit.height_direction) />
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify lm_MapVisualSettingsExtended>
+	<insert>
+		<row prio=2010 bmp="v_ico_altitud.svg" text="Show Altitude in Cockpit" type="ChkOnOff_Icon" isselected="lua.altitude_in_cockpit" />
+	</insert>	
+</modify>
+
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON CLASS="btn_map" 
+				ONRELEASE='ui.Button_2d3d.ONRELEASE()()' 
+				ONLONGCLICK='ui.Button_2d3d.ONLONGCLICK()()' 
+				VISIBLE=(%lua.Button2d3dInQuickMenu) >
+		
+	       	<SPRITE	CLASS="button map fill"/>
+			<SPRITE	CLASS="ari_2d3d svg" />
+			<SPRITE	CLASS="current_level svg" /> 
+			<SPRITE	CLASS="gps_2d3d_status_ico svg" />
+			<TEXT	CLASS="gps_2d3d_status" />
+			<SPRITE	CLASS="gps_2d3d_height_ico svg" />
+			<TEXT	CLASS="gps_2d3d_height" />
+		</BUTTON>
+	</insert>
+</modify>
+
+;===========left buttons inclusion=============
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=( %lua.Button2d3dInCockpit ) />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row	visible=( %lua.Button2d3dInQuickMenu) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="Button 2D3D" bmp=( MapSettingsMapModes.svg[%lua.CockpitMapMode] ) isselected="lua.Button2d3dInQuickMenu" />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="Button 2D3D" bmp=( MapSettingsMapModes.svg[%lua.CockpitMapMode] ) isselected="lua.Button2d3dInCockpit" />
+	</insert>
+</modify>
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=( MapSettingsMapModes.svg[%lua.CockpitMapMode] ) text=(translate("Viewmode")) onrelease=sc_ChangedCockpitMapMode />	
+		</insert>
+	</modify>
+<!end/>

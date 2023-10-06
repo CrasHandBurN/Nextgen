@@ -1,0 +1,41 @@
+; -- WANDEL™ -- 15.03.2023 -- 
+;---------------------------------------------------------------------------------------
+/* 
+<modify ui_Cockpit>
+	<modify element="#div_cockpit_datafields" ONRELEASE='Show_map_free_area("ui_TCMap")' ONLONGCLICK='Show_map_free_area("ui_TripInfoVW_mini")' />
+</modify>
+*/
+<layer TCMap_heading z=150>
+	<implementation>
+		<property heading_img value="ico_north.svg", "destination.svg", "spr_itinerary_arrow_start.svg" />
+	</implementation>
+	
+	<DIV class=cockpit >	
+		<SPRITE heading_img_label align="CENTER" img=(heading_img[%lua.Show_NorthUp_HeadUp]) />
+	</DIV>
+</layer>
+
+<layer ui_TCMap z=30 onshow=map_free_area_onshow onhide=map_free_area_onhide >
+	<DIV class=cockpit>
+		<USE_LAYER class="map_free_area" LAYER=(tcmap) LAYER_Z=12 >
+			<observer model="screen.current_orientation", "lua.Show_NorthUp_HeadUp" onchange=sc_ShowTCMap_reset start="NO_TRIGGER" />
+			<observer model="map.primary.rotate", "lua.Show_NorthUp_HeadUp" onchange=sc_ShowTCMap_rotate start="NO_TRIGGER" />
+			<observer value=(%lua.TCNextManeuverValid) onselect='killDelayed(gShowTCMap_ID); sc_ShowTCMap_reset_Maneuver()' ondeselect='sc_ShowTCMap_reset(); VW_CheckFitForTCMap()' start />
+			<observer model="ui.lm_splitpoi.list.size", "lua.wSplitScreenPOIReady"
+				onchange='
+						if MODEL.lua.wSplitScreenPOIReady() then 
+							MODEL.map.tcmap.show_pois = 2
+							sc_FillSmartPois_bySplitScreen()
+						else
+							MODEL.map.tcmap.show_pois = 1
+						end' start />
+			
+			;<SPRITE ShowTCMap_route TOP=4% BOTTOM=4% LEFT=4% RIGHT=4% /> ;for route on map
+
+			<SPRITE TOP=-1 BOTTOM=-1 LEFT=-1 RIGHT=-1 IMG="signpost_template_border.bmp" RESIZE_BMP=1 ALPHA=32 />
+			<BUTTON_ICON left=undef w=50 right=2% top=undef h=50 bottom=1%
+				onrelease=VW_tween
+				icon=(TCMap_heading.heading_img[%lua.Show_NorthUp_HeadUp]) zoom=60% />
+		</USE_LAYER>			
+	</DIV>
+</layer>

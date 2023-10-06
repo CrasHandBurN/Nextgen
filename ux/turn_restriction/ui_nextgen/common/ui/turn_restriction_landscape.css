@@ -1,0 +1,5 @@
+/*------- 05.12.2018 ---------TURN RESTRICTION----------VW----------*/
+
+SPRITE.turn_restr {
+	top: ((screen_h - svg_turnrestrictions_image_h)/2);
+}

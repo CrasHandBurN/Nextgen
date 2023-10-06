@@ -1,0 +1,151 @@
+;-------WANDEL™ 27.09.2020--------- 
+<observer obs_DescendancyCheck value=( %poi.struct_search.ready ) onselect=sc_ToChildIfDescendant />
+
+<userlist lm_helpnearby icon="str" text="str" engine="str" path="str" onrelease="ui" enable="bool" visible="bool">
+	<view visibility_filter=visible/>
+	<default visible=1 icon="" onrelease=sc_ShowHelpNearbyPOIs/>
+	<row text="Car Repair"     engine="help_carrepair"		path="AutomotiveCar_Service"					enable=( %{"poi.help_carrepair.list.size"} && %{"poi.help_carrepair.search_root"}>-1 )/>
+	<row text="Health"         engine="help_hospital"		path="Medical"									enable=( %{"poi.help_hospital.list.size"} && %{"poi.help_hospital.search_root"}>-1 )/>
+	<row text="Police"         engine="help_police"			path="CommunityPublic_ServicesPolice_Station"	enable=( %{"poi.help_police.list.size"} && %{"poi.help_police.search_root"}>-1 )/>
+	<row text="ATMs"           engine="help_atms"			path="FinanceCash_Dispenser"					enable=( %{"poi.help_atms.list.size"} && %{"poi.help_atms.search_root"}>-1 )					visible=(%lua.VehicleIsPedestrian)/>
+	<row text="Gas Stations"   engine="help_petrolstation"	path="Petrol_Station"							enable=( %{"poi.help_petrolstation.list.size"} && %{"poi.help_petrolstation.search_root"}>-1 )	visible=( !%lua.VehicleIsPedestrian )/>
+</userlist>
+
+
+<layer ui_PoiSearchCenter z=32 onshow={SELF.isVisible = true} onhide={SELF.isVisible = false}>
+	<implementation>
+		<property isVisible value = false />
+	</implementation>
+
+	<DIV class="list poisearchcenter" >
+		<BUTTON class="button_searcharea" onrelease=sc_SelectPoiSearchCenter>
+			<HBOX class="listitem">
+				<SPACER flex=1 />
+				<TEXT class="listitem" text=( %lua.PoiSearchCenterName ) /> 
+				<SPACER flex=1 />
+			</HBOX>
+		</BUTTON>
+	</DIV>
+</layer>
+
+<element_template et_CategoryView>
+	<CHECKBOX class="listitem chkonoff" text="Category View" onrelease=sc_SwitchcategoryView boolmodel="lua.StructSearchCategoryView" />
+</element_template>
+
+<layer ui_PoiSearch z=31 visible=( %lua.SelectedProviderType == lua.EProviderTypes.Onboard )>
+	<DIV class="list" >
+		<LIST2 lst_PoiSearch class="list_control" SMOOTHSCROLLING>
+			<SECTIONMARKER />
+			
+			<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_POI_Searching" visible=( %lua.PoiSearchList == "flat_search" ? !%poi.flat_search.ready || !%poi.struct_filter.ready : !%poi.struct_search.ready ) />
+			
+			<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_CategoryView" visible=( !inp_Input.VALUE && ( %lua.PoiSearchList == "struct_search" ? !%poi.struct_search.group_list.isempty : !%poi.flat_search.list.isempty ) ) />
+			
+			<LISTMODEL listmodel="poi.struct_search.group_list" element_template="et_POIGroupList" visible=( %lua.PoiSearchList == "struct_search" ) />
+			<LISTMODEL listmodel="poi.struct_search.poi_list" element_template="et_POIItemList" visible=( %lua.PoiSearchList == "struct_search" ) />
+			
+			<LISTMODEL listmodel="poi.struct_filter.group_list" element_template="et_POIGroupList" visible=( %lua.PoiSearchList == "flat_search" && inp_Input.VALUE ) />
+			
+			<LISTMODEL listmodel="poi.flat_search.list" element_template="et_POIItemList" visible=( %lua.PoiSearchList == "flat_search" ) />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+		
+		<EMPTYLISTTEXT text=( sprintf( translate(m_i18n( "No matching results: %s" )), %lua.PoiSearchCenterName ) ) visible=( %lua.PoiSearchList == "struct_search" ? ( %poi.struct_search.ready && !%poi.struct_search.group_list.size && !%poi.struct_search.poi_list.size ) : ( %poi.flat_search.ready && !%poi.flat_search.list.size && %poi.struct_filter.ready && !%poi.struct_filter.group_list.size ) )/>
+		
+		<layer>
+			<DIV class="list">
+				<SPRITE class="panel list input" />
+			</DIV>
+		</layer>
+		
+	</DIV>
+</layer>
+
+<layer ui_PoiAround z=30 visible=( %lua.SelectedProviderType == lua.EProviderTypes.Onboard )>
+	<DIV class="list">
+		<LIST2 lst_PoiAround class="list_control" SMOOTHSCROLLING>
+			<SECTIONMARKER />
+			<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_POI_Searching" visible=( !%poi[ States.CurrentState.poimodel ].ready ) />
+			<LISTMODEL listmodel=( %poi[ States.CurrentState.poimodel ].list ) element_template="et_POIItemList" />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+		
+		<EMPTYLISTTEXT visible=( %poi[ States.CurrentState.poimodel ].ready && !%poi[ States.CurrentState.poimodel ].list.size ) />
+		
+		<layer>
+			<DIV class="list">
+				<SPRITE class="panel list input" />
+			</DIV>
+		</layer>
+	</DIV>
+</layer>
+
+<userlist lm_PopoverPoiVisibilityArea ctext="str" text="ui" onrelease="ui" enable="bool">
+	<default enable=1 onrelease='VW_POIVisibilityChange(tonumber(MODEL["*"].ctext()))' />
+	<row ctext="Off" text="Off" onrelease='VW_POIVisibilityChange(0)' />
+	<row ctext="500" text=(sc_ShowDistanceTool(500)) />
+	<row ctext="1000" text=(sc_ShowDistanceTool(1000)) />
+	<row ctext="2000" text=(sc_ShowDistanceTool(2000)) />
+	<row ctext="15000" text=(sc_ShowDistanceTool(15000)) />
+	<row ctext="Own" text="Own" onrelease='
+		sc_ClosePopover()
+		sc_SetPopoverListAndOpen("ui.lm_VisibilityArea_popover")
+		VW_WaitVisibility_at()
+		' />
+</userlist>
+
+<userlist lm_VisibilityArea_popover name="str" text="wstr" onrelease="ui" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(0)) max_text=(sc_ShowDistanceTool(50000)) />
+	   <row name="Visibility Distance" text=(sc_ShowDistanceTool(%lua.visible_at)) type="Scroll" min=0 max=50000 step=50 valuemodel="lua.visible_at" />
+</userlist>
+
+<element_template et_PoiVisibilityList>
+	<implementation>
+		<property VisibilityMode value=(%*{%map.poi_visibility_array}.simple_visibility_mode) />
+	</implementation>
+	
+	<BUTTON class="listitem" onrelease='sc_PoiVisibilityToChild(); ui.inp_Input.value = L""' enable=%*.has_child />
+
+	<HBOX class="listitem">
+		<HBOX class="listitem poigroup_container">
+			<SPRITE class="listitem poi_visibility" z=103 align="left" iconindex=((VisibilityMode == 1 || VisibilityMode == 2) ? 2 : 4) iconmodel="*.icon" visible=(%*.has_child && !VW_isPoiBranded( %*.icon, 2 )) />
+			;<SPRITE class="listitem poi_branded" align="left" z=102 iconindex=((VisibilityMode == 1 || VisibilityMode == 2) ? 2 : 4) iconmodel="*.icon" visible=(%*.has_child && VW_isPoiBranded( %*.icon, 2 )) /> 
+
+			<SPRITE class="listitem" z=102 iconindex=(VisibilityMode == 2 ? 2 : 4) iconmodel="*.icon" visible=( !VW_isPoiBranded( %*.icon, 2 ) ) /> 
+			<SPRITE class="listitem poi_branded" z=102 iconindex=(VisibilityMode == 2 ? 2 : 4) iconmodel="*.icon" visible=( VW_isPoiBranded( %*.icon, 2 ) ) /> 
+					
+			<SPRITE class="listitem poi_visibility" z=101 align="right" iconindex=(VisibilityMode == 2 ? 2 : 4) iconmodel="*.icon" visible=(%*.has_child && !VW_isPoiBranded( %*.icon, 2 )) />
+			;<SPRITE class="listitem poi_branded" align="right" z=102 iconindex=(VisibilityMode == 2 ? 2 : 4) iconmodel="*.icon" visible=(%*.has_child && VW_isPoiBranded( %*.icon, 2 )) /> 
+		</HBOX>
+		<TEXT r2l_invert=1 class="listitem icon poicat" z=101 text=%*.name />
+	</HBOX>
+		
+	<BUTTON class="listitem" left=90% right=5% z=120 onrelease=sc_POIVisibilityChange visible=1 >
+		<SPRITE class="btn_map svg" img="ico_radio_with_separator.svg" phasename=(VisibilityMode == 1 || VisibilityMode == 2 ? "ON" : "OFF") /> 
+	</BUTTON>
+</element_template>
+
+<layer ui_PoiVisibilityList z=30>
+	<DIV class="list">
+		<SECTIONMARKER />
+		<LIST2 lst_PoiVis class="list_control" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.VW_AddPOI_filtered.filter" element_template="et_PoiVisibilityList" />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+		
+		<EMPTYLISTTEXT text=( sprintf( translate(m_i18n( "No matching results: %s" )), inp_Input.VALUE ) ) visible=( !%ui.VW_AddPOI_filtered.filter.size ) />
+		
+		<layer>
+			<DIV class="list">
+				<SPRITE class="panel list input" />
+			</DIV>
+		</layer>
+		
+	</DIV>
+</layer>

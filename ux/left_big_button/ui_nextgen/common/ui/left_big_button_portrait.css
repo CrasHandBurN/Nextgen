@@ -1,0 +1,27 @@
+DIV.cockpit DIV.left_side_free_area {
+	left: 0;
+	w:(cockpit_warning_w + current_speed_w);
+	h:( (cockpit_warning_w + current_speed_w) * (%ui.lm_N_buttons.size > 1 ? %lua.current_buttons : 1) );
+	bottom:( (%lua.CityShow ? 25 : 0) + (menu_button_h*2 + route_progress_h + route_progress_padding) + cockpit_margin + current_speed_h );
+	visible:( !%lua.DragMode && !(ui_PropLayer.JunctionViewVisible || ui_PropLayer.MiniJunctionViewVisible || ui_PropLayer.TunnelOverviewVisible) );
+}
+
+DIV.cockpit DIV.left_side_free_area>TABLE {
+	col: 1;
+	row: (%ui.lm_N_buttons.size > 1 ? %lua.current_buttons : 1);
+}
+
+DIV.left_big, BUTTON.left_big, BUTTON_ICON.left_big, USE_LAYER.left_big {
+	desired_h:(cockpit_warning_w + current_speed_w);
+	desired_w:(cockpit_warning_w + current_speed_w);
+}
+
+
+/* modify */
+DIV.driver_alert {
+	bottom:( (%lua.CityShow ? 25 : 0) + (menu_button_h*2 + route_progress_h + route_progress_padding) + cockpit_margin + current_speed_h + cockpit_margin + (%ui.lm_N_buttons.size ? (cockpit_warning_w + current_speed_w) * (%ui.lm_N_buttons.size > 1 ? %lua.current_buttons : 1) : 0) ); 
+}
+
+DIV.map_free_area, USE_LAYER.map_free_area {
+	bottom:( (%lua.CityShow ? 25 : 0) + (menu_button_h*2 + route_progress_h + route_progress_padding) + cockpit_margin + current_speed_h + cockpit_margin + (%ui.lm_N_buttons.size ? (cockpit_warning_w + current_speed_w) : 0) + (%ui.lm_N_buttons.size && !(%lua.DAEnabled && %ui.lm_alert_views.driver_alerts.size) ? 0 : (cockpit_margin + cockpit_warning_h)) );
+}

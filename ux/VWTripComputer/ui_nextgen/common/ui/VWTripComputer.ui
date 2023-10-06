@@ -1,0 +1,794 @@
+;--------------------------------------WANDEL™------------------------------------------
+<modify ui_Cockpit>   
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">    
+		<BUTTON_ICON ONRELEASE=sc_ShowTripComputerSidePanel VISIBLE=(%lua.ShowTripComputerSPBtn)
+			T_TEXT=(VW_Return_button_text(translate("Trip computer"), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate("Trip computer"), L"%s", 99))>
+			<COMPASS TOP=22% BOTTOM=22% LEFT=22% RIGHT=22% />
+		</BUTTON_ICON>
+	</insert>
+</modify>
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'VW Trip-Computer' Button" bmp="TripComputer.svg" isselected="lua.ShowTripComputerSPBtn" />
+	</insert>
+</modify>
+<modify lm_CockpitSideList>
+	<insert>
+		<row  visible=(%lua.ShowTripComputerSPBtn) />
+	</insert>
+</modify>
+;---------------- in QuickMenu ----------------------
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE=sc_ShowTripComputerSidePanel VISIBLE=(%lua.ShowTripComputerSPBtnQuick) 
+			T_TEXT=(VW_Return_button_text(translate("Trip computer"), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate("Trip computer"), L"%s", 99))>
+			<COMPASS TOP=22% BOTTOM=22% LEFT=22% RIGHT=22% />
+		</BUTTON_ICON>
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row  visible=(%lua.ShowTripComputerSPBtnQuick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'VW Trip-Computer' Button" bmp="TripComputer.svg" isselected="lua.ShowTripComputerSPBtnQuick" />
+	</insert>
+</modify>
+
+
+<data TestProp>
+	<property VW_zoom value=( (CSS.Param.map_messagebox_h - CSS.Param.notify_list_h) < CSS.Param.map_messagebox_w ) />
+</data>
+;=====================================Buttons============================================
+<userlist lm_VW_button icon="str" text="str" onrelease="ui" onlongclick="ui" enable="bool" visible="bool" >
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 onrelease=undef onlongclick=undef />
+
+	<row  icon="ico_compass.svg" text="Trip computer"
+		onlongclick='MSG_Table.line[1]="Trip computer"; ui.lm_VW_TripCompSettings_filtered.filter:refresh(); MSG_Table.layer = ui_TripCompSettingsVW; VW_TripComputerSwitch(); VW_TripComputerSwitch()'
+		onrelease='MSG_Table.line[1]="Trip computer"; MSG_Table.layer = ui_TripComputerVW; VW_TripComputerSwitch(); VW_TripComputerSwitch()' />
+	<row  icon="ico_gpsinfo.svg" text="GPS info"
+		onlongclick='MSG_Table.line[1]="GPS info"; ui.lm_VW_TripCompSettings_filtered.filter:refresh(); MSG_Table.layer = ui_TripCompSettingsVW; VW_TripComputerSwitch(); VW_TripComputerSwitch()'
+		onrelease='MSG_Table.line[1]="GPS info"; MSG_Table.layer = ui_GPSStatusVW; VW_TripComputerSwitch(); VW_TripComputerSwitch()'
+		enable=( %gps.connection_status < 4 ) />
+	<row  icon="ico_backtocar.svg" text="Back to car"
+		onlongclick='MSG_Table.line[1]="Back to car"; ui.lm_VW_TripCompSettings_filtered.filter:refresh(); MSG_Table.layer = ui_TripCompSettingsVW; VW_TripComputerSwitch(); VW_TripComputerSwitch()'
+		onrelease='MSG_Table.line[1]="Back to car"; MSG_Table.layer = ui_Point_on_mapVW; VW_TripComputerSwitch(); VW_TripComputerSwitch()'/>
+	<row  icon="globe.svg" text="Point on map" ;ico_VisualGuidance.svg
+		onlongclick='MSG_Table.line[1]="Point on map"; ui.lm_VW_TripCompSettings_filtered.filter:refresh(); MSG_Table.layer = ui_TripCompSettingsVW; VW_TripComputerSwitch(); VW_TripComputerSwitch()'
+		onrelease='MSG_Table.line[1]="Point on map"; MSG_Table.layer = ui_Point_on_mapVW; VW_TripComputerSwitch(); VW_TripComputerSwitch()' />
+	<row  icon="ico_TripInfo.svg" text="Trip info"
+		;onlongclick='MSG_Table.line[1]="Trip info"; ui.lm_VW_TripCompSettings_filtered.filter:refresh(); MSG_Table.layer = ui_TripCompSettingsVW; VW_TripComputerSwitch(); VW_TripComputerSwitch()'
+		onrelease='MSG_Table.line[1]="Trip info"; MSG_Table.layer = ui_TripInfoVW; VW_TripComputerSwitch(); VW_TripComputerSwitch()' />
+	<row  icon="set_icon.svg" text="Settings"
+		onrelease='MSG_Table.line[1]="Settings"; ui.lm_VW_TripCompSettings_filtered.filter:refresh(); MSG_Table.layer = ui_TripCompSettingsVW; VW_TripComputerSwitch(); VW_TripComputerSwitch()' />
+	<row  icon="ico_supportcenter.svg" text="Help"
+		onrelease='MSG_Table.line[1]="Help"; MSG_Table.layer = ui_TripCompHelpVW; VW_TripComputerSwitch(); VW_TripComputerSwitch()' />
+
+</userlist>
+
+<userlist lm_SetAddressLength_Popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 onrelease='MODEL.lua.AddressLength = MODEL["*"].text() sc_ClosePopover()' />
+	<row text="Long address" />
+	<row text="Short address" />
+	<row text="City" />
+	<row text="Address to read" />
+	<row text="Country" />
+</userlist>
+
+<userlist lm_SetTimeType_Popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 onrelease='MODEL.lua.TimeType = MODEL["*"].text() sc_ClosePopover()' />
+	<row text="Arrive" />
+	<row text="Time left" />
+</userlist>
+
+<element_template et_VW_button_list_icons >
+	<RADIO class="listitem btn_map" iconphasesync=1 groupmodel="lua.TripComputerStartBtn" var=%*.text onrelease=%*.onrelease onlongclick=%*.onlongclick visible=1 z=25>
+    	<SPRITE CLASS="button map fill"/>
+		<SPRITE class="btn_map svg" img=%*.icon zoom=( TestProp.VW_zoom ? 800 : 1000 ) />
+	</RADIO>
+</element_template>
+
+<layer ui_TripComputerButtonsVW z=32 >
+
+	<layer>
+		<DIV class=cockpit>
+			<DIV class=map_messagebox>	
+				<DIV class=VW_button visible=( lua.MSG_Table.line[1] == "Trip computer" || lua.MSG_Table.line[1] == "GPS info" || %lua.IsLandscape )>
+					<LIST2 class=VW_button>
+						<LISTMODEL element_template="et_VW_button_list_icons" listmodel="ui.lm_VW_button" />
+					</LIST2>
+				</DIV>
+			</DIV>
+		</DIV>
+	</layer>
+
+	<layer>
+		<DIV class=cockpit>
+			<DIV class=map_messagebox>	
+				<DIV class=VW_button_left visible=( lua.MSG_Table.line[1] != "Trip computer" && lua.MSG_Table.line[1] != "GPS info" && %lua.IsPortrait )>
+					<LIST2 class=VW_button_left REVERSED=0>
+						<LISTMODEL element_template="et_VW_button_list_icons" listmodel="ui.lm_VW_button" />
+					</LIST2>
+				</DIV>
+			</DIV>
+		</DIV>
+	</layer>
+
+	<layer>
+		<DIV class=cockpit>
+			<DIV class=map_messagebox>	
+				<DIV class=VW_button_right visible=( lua.MSG_Table.line[1] != "Trip computer" && lua.MSG_Table.line[1] != "GPS info" && %lua.IsPortrait )>
+					<LIST2 class=VW_button_right REVERSED=1>
+						<LISTMODEL element_template="et_VW_button_list_icons" listmodel="ui.lm_VW_button" />
+					</LIST2>
+				</DIV>
+			</DIV>
+		</DIV>
+	</layer>
+
+</layer>
+;----------------------------------------TripComputer----------------------------------
+<observer value=( %lua.MenuIsOpened || %lua.DragMode ) onchange=VW_ChangeTripComputerStatus START="NO_TRIGGER" />
+;;<observer value=( %lua.MenuIsOpened || %lua.DragMode ) onselect=sc_screen_msgbox_pause ondeselect=sc_screen_msgbox_resume START="NO_TRIGGER" />
+<observer value=( (%screen.msgbox.list.size > 1 || %screen.msgbox.list.size == 0) && !%lua.MenuIsOpened && !%lua.DragMode && st_Cockpit.isActive) 
+	onselect='doDelayed(1, VW_ChangeTripComputerStatus)'
+	START="NO_TRIGGER" />
+
+<layer ui_TripComputerVW z=30 onshow='ui_TripComputerButtonsVW:SHOW()' onhide='ui_TripComputerButtonsVW:HIDE()'>
+
+	<observer model="route.list.navigated.waypoints.list" onchange='UpdateSunSetSunriseList()' START />
+
+	<implementation>
+		<property via_pos value=( %route.list.navigated.waypoints.list.size > 2 ? (%lua.VIAOrDestination ? %route.list.navigated.waypoints.list[1].real_position : %route.list.navigated.waypoints.list[%route.list.navigated.waypoints.list.size - 1].real_position) : (%route.list.navigated.waypoints.list.size == 2 ? %route.list.navigated.waypoints.list[1].real_position : 0L) ) />
+		
+		<property address value=( observe(%lua.VIAOrDestination, %lua.AddressLength, %navigation.destination_name_short, %navigation.next_viapoint_name_short); VW_VIAOrDestinationAddress() ) />
+
+		<property sunrise_time	value=( observe(%oasis.sunset_sunrise.list, %lua.VIAOrDestination, %{"oasis.sunset_sunrise.list.@1.sunrise.valid"}); VW_SunriseSunset("sunrise") ) />
+		<property sunset_time 	value=( observe(%oasis.sunset_sunrise.list, %lua.VIAOrDestination, %{"oasis.sunset_sunrise.list.@1.sunset.valid"}); VW_SunriseSunset("sunset") ) />
+		
+		<property route_type_name value=(tostring(%route.list.navigated.settings.route_type // L"")) />
+	</implementation>
+	<DIV class=cockpit>
+		<DIV class=map_messagebox>
+			<DIV class=VW_logo z=21>
+				<SPRITE class="substrate" z=20 visible=(%lua.IsPortrait) />
+				<SPRITE class="VW_logo" z=21 /> 
+			</DIV>
+			;------------------------------------------limbo-----------------------------------------
+			<BUTTON class=VW_Main_button onrelease={invert(%lua.SpeedOrClock)} onlongclick=VW_SaySpeedOrClockInfo>
+				<SPRITE CLASS="button map fill" />
+				<DIV class=VW_computer>	
+					<COMPASS compass_TC left=0 right=0 top=0 bottom=0 >
+						<DIV class=VW_clock visible=(!%lua.SpeedOrClock) >								
+							<TEXT time_guard class="driving_time" z=30 text=( Plugin.isLoaded("take_a_break") ? VW_TimeGuard(%gps.blink) : Format_Timespan(%{"other.trips.@0"}.time_driving, lua.ETimespanFormat.HrMinRounded) ) 
+								fontsize=(compass_TC.distance_fontsize) 
+								visible=( (Plugin.isLoaded("take_a_break") ? (%lua.overtake_color ? %gps.blink : 1) : 1) && %navigation.has_route ) /> ;need function VW_TimeGuard()
+							<TEXT class="time_total" z=30 text=( Format_Timespan(%{"other.trips.@0"}.time_total, lua.ETimespanFormat.HrMinRounded) ) 
+								fontsize=(compass_TC.distance_fontsize) visible=( %navigation.has_route ) />			
+							;<TEXT class="time_total" z=30 text=( VW_InsertShield("yellow", Format_Timespan(%{"other.trips.@0"}.time_total, lua.ETimespanFormat.HrMinRounded)) )
+							;	fontsize=(compass_TC.distance_fontsize) visible=( %navigation.has_route ) />						
+						</DIV>
+					</COMPASS>
+					<DIV bottom=0 h=10% left=2 right=2 visible=(!%oasis.sunset_sunrise.list.isempty && %lua.IsLandscape && %route.list.navigated.waypoints.list.size) z=24>
+						<HBOX class="sunsetsunrise_time" align="left">
+							<SPRITE class="listitem icon_list svg" img="spr_sunrise.svg" />
+							<TEXT  class="listitem sunsetsunrise_time" text=(format(L"%{time:*}", sunrise_time, %regional.timeformat)) /> 
+						</HBOX>
+						<HBOX class="sunsetsunrise_time" align="right">
+							<SPRITE class="listitem icon_list svg" img="spr_sunset.svg" />
+							<TEXT  class="listitem sunsetsunrise_time" text=(format(L"%{time:*}", sunset_time, %regional.timeformat)) /> 
+						</HBOX>
+					</DIV>
+				</DIV>
+			</BUTTON>
+			
+			<DIV class=VW_info_details visible=( %navigation.has_route )>
+				<BUTTON class=VW_info_details onrelease={invert(%lua.VIAOrDestination)} onlongclick='sc_SetPopoverListAndOpen("ui.lm_SetTimeType_Popover", MODEL.lua.TimeType())' z=25>
+					<SPRITE CLASS="button map fill" />
+					<TABLE class=VW_info_details >
+						<SPRITE class=VW_info_details 
+							;;img=(%lua.VIAOrDestination && %route.list.navigated.waypoints.list.size > 2 ? "ico_stopover.svg" : "ico_destination.svg") 
+							img=(%lua.VIAOrDestination && %route.list.navigated.waypoints.list.size > 2 ? "ico_itinerary_waypoint_arrive.svg" : "ico_itinerary_destination_arrive.svg")
+							visible=(%lua.TimeType == "Arrive")>
+							<TEXT class=VW_info_details text=(%lua.TimeType) />
+							<TEXT class=VW_info_details align="right" paddingright=10
+								text=(sc_ShowDayTimeTool(%lua.VIAOrDestination ? %navigation.eta_at_waypoint : %navigation.eta_at_destination)) />
+						</SPRITE>
+						<SPRITE class=VW_info_details 
+							;;img=(%lua.VIAOrDestination && %route.list.navigated.waypoints.list.size > 2 ? "ico_stopover.svg" : "ico_destination.svg")
+							img=(%lua.VIAOrDestination && %route.list.navigated.waypoints.list.size > 2 ? "ico_itinerary_waypoint_time.svg" : "ico_itinerary_destination_time.svg")
+							visible=(%lua.TimeType == "Time left")>
+							<TEXT class=VW_info_details text=(%lua.TimeType) />
+							<TEXT class=VW_info_details align="right" paddingright=10
+								text=(sc_ShowTimeTool(%lua.VIAOrDestination ? %navigation.time_to_waypoint/1000 : %navigation.time_to_destination/1000)) />
+						</SPRITE>
+						<SPRITE class=VW_info_details 
+							;;img=(%lua.VIAOrDestination && %route.list.navigated.waypoints.list.size > 2 ? "ico_stopover.svg" : "ico_destination.svg")>
+							img=(%lua.VIAOrDestination && %route.list.navigated.waypoints.list.size > 2 ? "ico_itinerary_waypoint_distance.svg" :  "ico_itinerary_destination_distance.svg" ) >
+							<TEXT class=VW_info_details text="Distance" />
+							<TEXT class=VW_info_details align="right" paddingright=10
+								text=(sc_ShowDistanceTool(%lua.VIAOrDestination ? %navigation.distance_to_waypoint : %navigation.distance_to_destination)) />
+						</SPRITE>
+					</TABLE>
+				</BUTTON>
+			</DIV>
+
+			<DIV class=VW_info_address visible=( %navigation.has_route )>
+				<BUTTON class=VW_info_address onlongclick='sc_SetPopoverListAndOpen("ui.lm_SetAddressLength_Popover", MODEL.lua.AddressLength())' z=25
+					onrelease='sc_DiscoverySidePanelChange(
+							{
+								MODEL.sound.voice.format_street_name(ui.ui_TripComputerVW.address()),
+								{
+									ACTION = {
+										"TC-Destination",
+									},
+									POSITION = {
+										lat = tostring(MODEL.regional.unlocalize_gcoor(builtin.format("%{gcoor[%lat]}", ui.ui_TripComputerVW.via_pos()))),
+										lon = tostring(MODEL.regional.unlocalize_gcoor(builtin.format("%{gcoor[%lon]}", ui.ui_TripComputerVW.via_pos()))),
+										},
+									DISTANCE = (function() return MODEL.lua.VIAOrDestination() and MODEL.navigation.distance_to_waypoint() or MODEL.navigation.distance_to_destination() end)(),
+									VISIBLE = true,
+									ENABLE = true,
+								},
+								true, --have been not activated
+							}, "SRSEZoom", "SRSEDistanceToDestination_time_out", {discoverysidepanel, ui_weatherDSC, ui_Discovery_Zoom})'
+					>
+					<SPRITE CLASS="button map fill" />
+					<TEXT class=VW_info_address text=(address) />
+				</BUTTON>
+			</DIV>
+			
+			<SPRITE my_logo right=2% w=50 left=undef top=1% h=50 bottom=undef align="right" valign="top" img="MyLogo.svg" visible=(%lua.IsLandscape) z=30 >
+				<SPRITE class="button map fill" />
+			</SPRITE>
+			
+			<SPRITE class="listitem flag" left=2% w=50 right=undef top=1% h=50 bottom=undef img=(ui_Cockpit.country_flag) zoom=70% visible=(%lua.IsLandscape) z=30 />
+
+		</DIV>
+	</DIV>
+</layer>
+;============================================GPSStatus===============================================
+<layer ui_GPSStatusVW z=30  onshow='ui_TripComputerButtonsVW:SHOW()' onhide='ui_TripComputerButtonsVW:HIDE()'>
+
+	<observer model="gps.satellites" onchange=sc_GpsListGlonass START />
+	<implementation>
+		<property accuracy value=( %gps.valid ? %gps.accuracy : "NONE") />
+		<property utc_time value=(%gps.valid && %gps.time.valid ? (%other.format_time_dayperiod(%gps.time, (%regional.timeformat==2 ? 0 : 1), 1)) : "Unavailable") />
+	</implementation>
+	
+	<DIV class=cockpit>
+		<DIV class=map_messagebox>
+			;------------------------------------------GPS-----------------------------------------
+			<DIV class=VW_GPSStatus_bg >
+				<DIV class=VW_computer>	
+					<HBOX class=VW_compass >
+						<SPRITE class="GPSStatus container" z=3>
+							<DIV div_GPSStatus_sats class="GPSStatus_satellites" >
+								<LIST2 left=0 top=0 w=100% h=100% col=1 cellh=1 >
+									<LISTMODEL listmodel="ui.lm_GpsSatellites" element_template="et_GPSStatus" z=6 />
+									<LISTMODEL listmodel="ui.lm_GpsSatellitesGlonass" element_template="et_GPSStatus" z=6 />
+									<LISTMODEL listmodel="gps.sbas_satellites" element_template="et_GPSStatus" z=6 />
+								</LIST2>
+								<DIV class="GPSStatus_cardinal" >
+									<TEXT class="font_main color_inf_main gps_info" left=45% top=0%  w=10% h=10% padding=0 align="CENTER" valign="CENTER" z=4 text="GECOOR_N" />
+									<TEXT class="font_main color_inf_main gps_info" left=0%  top=45% w=10% h=10% padding=0 align="CENTER" valign="CENTER" z=4 text="GECOOR_W" />
+									<TEXT class="font_main color_inf_main gps_info" left=45% top=90% w=10% h=10% padding=0 align="CENTER" valign="CENTER" z=4 text="GECOOR_S" />
+									<TEXT class="font_main color_inf_main gps_info" left=90% top=45% w=10% h=10% padding=0 align="CENTER" valign="CENTER" z=4 text="GECOOR_E" />
+								</DIV>
+							</DIV>
+						</SPRITE>
+					</HBOX>								
+				</DIV>
+			</DIV>
+		
+			<layer>
+				<DIV class=cockpit>
+					<DIV class=map_messagebox>
+						<DIV class=VW_GPSStatus_bg z=2>
+							<SPRITE class="substrate" z=1 />
+							<HBOX class=VW_compass>
+								<SPRITE class="GPSStatus container">
+									<SPRITE class="GPSStatus_bg" zoom=990 onrelease='java:call("android.gps.open_location_settings_dialog"); sc_back_to_cockpit(); MODEL.sound.playchanneltest("ding", L"!button")' /> 
+								</SPRITE>
+							</HBOX>								
+						</DIV>
+					</DIV>
+				</DIV>
+			</layer>
+
+			<DIV class=VW_gps_graph visible=1>
+				<LIST2 class="GPSStatus_bars">
+					<LISTMODEL listmodel="ui.lm_GpsSatellites" element_template="et_GPSStatus_bar" />
+					<LISTMODEL listmodel="gps.sbas_satellites" element_template="et_GPSStatus_DGPS_bar" />
+					<LISTMODEL listmodel="ui.lm_emptygpsstatusbar" element_template="et_GPSStatus_empty" />
+				</LIST2>
+				
+				<LIST2 class="GPSStatus_bars glonass" visible=(%lua.ShowGlonass)>
+					<LISTMODEL listmodel="ui.lm_GpsSatellitesGlonass" element_template="et_GPSStatus_bar" />
+					<LISTMODEL listmodel="ui.lm_emptygpsstatusbar" element_template="et_GPSStatus_empty" />
+				</LIST2>
+				
+				<HBOX class="GPSStatus_satnum">
+					<SPRITE class="svg sats" img="sat.svg" zoom=700 />
+					<TEXT class="font_info color_inf_main top" align="RIGHT" text=(%lua.ShowGlonass ? m_i18n("GPS:") : m_i18n("Available Satellites:")) />
+					<TEXT class="font_info color_inf_main top" align="LEFT" text=(%lua.ShowGlonass ? %lua.SatellitesAvailable : %gps.satellites_in_view) />
+				</HBOX>
+				
+				<HBOX class="GPSStatus_satnum glonass" visible=(%lua.ShowGlonass)>
+					<SPRITE class="svg sats" img="sat_glonass.svg" zoom=700 />
+					<TEXT class="font_info color_inf_main top" align="RIGHT" text="GLONASS:" />
+					<TEXT class="font_info color_inf_main top" align="LEFT" text=(%lua.SatellitesAvailableGlonass) />
+				</HBOX>
+				/*
+				<DIV class="GPSStatus_information">
+					<VBOX>
+						<HBOX class="gps_status">
+							<TEXT class="font_info color_inf_main" paddingright=0 text="Accuracy:" />
+							<TEXT class="font_info color_inf_sec"  text=accuracy />
+						</HBOX>
+						<HBOX class="gps_status">
+							<TEXT class="font_info color_inf_main" text="GPS UTC Time:" />
+							<TEXT class="font_info color_inf_sec" text=utc_time />
+						</HBOX>
+					</VBOX>
+				</DIV>
+				*/
+			</DIV>
+			
+			<layer>
+				<DIV class=cockpit>
+					<DIV class=map_messagebox>
+						<BUTTON class=VW_gps_graph onrelease={invert(%lua.ShowGlonass)} visible=1>
+							<SPRITE CLASS="button map fill" />							
+						</BUTTON>
+					</DIV>
+				</DIV>
+			</layer>
+			
+			<SPRITE my_logo left=85% right=2% bottom=92% top=2% align="right" valign="top" img="MyLogo.svg" />
+				
+		</DIV>
+	</DIV>
+</layer>
+;=============================================Settings===============================================
+<layer ui_TripCompSettingsVW z=30  onshow='ui_TripComputerButtonsVW:SHOW()' onhide='ui_TripComputerButtonsVW:HIDE()'>
+	<DIV class=cockpit>
+		<DIV class=map_messagebox>
+			;------------------------------------------Settings-----------------------------------------
+			<DIV class=VW_listTripComp>
+				<SECTIONMARKER/>
+				<LIST2 class=list_control left=1% right=1% top=1% bottom=1% SMOOTHSCROLLING z=3>
+					<LISTMODEL listmodel="ui.lm_VW_TripCompSettings_filtered.filter" element_template="et_List" template_type_model="*.type">
+						<SEPARATOR insert_at=(0) element_template=et_Separator text="Trip computer" 
+							visible=(lua.MSG_Table.line[1] == "Settings" || lua.MSG_Table.line[1] == "Trip computer") />
+						<SEPARATOR insert_at=(lua.MSG_Table.line[1] == "Settings" ? 3 : 0) element_template=et_Separator text="GPS info" 
+							visible=(lua.MSG_Table.line[1] == "Settings" || lua.MSG_Table.line[1] == "GPS info") />
+						<SEPARATOR insert_at=(lua.MSG_Table.line[1] == "Settings" ? 5 : 0) element_template=et_Separator text="Back to car" 
+							visible=(lua.MSG_Table.line[1] == "Settings" || lua.MSG_Table.line[1] == "Back to car") />
+						<SEPARATOR insert_at=(lua.MSG_Table.line[1] == "Settings" ? 10 : 0) element_template=et_Separator text="Point on map" 
+							visible=(lua.MSG_Table.line[1] == "Settings" || lua.MSG_Table.line[1] == "Point on map") />
+					</LISTMODEL>
+					<VSMARTSCROLL>
+					<WHEEL>
+					<LISTCONTROL>
+				</LIST2>
+			</DIV>
+			
+			<layer>
+				<DIV class=cockpit>
+					<DIV class=map_messagebox>
+						<DIV class=VW_listTripComp>
+							<SPRITE CLASS="button map fill" />							
+						</DIV>
+					</DIV>
+				</DIV>
+			</layer>
+			
+		</DIV>
+	</DIV>
+</layer>
+
+<views lm_VW_TripCompSettings_filtered listmodel="ui.lm_VW_TripCompSettings" >
+	<view filter filter=(lua.MSG_Table.line[1] == "Settings" || lua.MSG_Table.line[1] == $1.owner) /> 
+</views>
+
+<userlist lm_VW_TripCompSettings owner="str" text="str" type="str" onrelease="ui" icon="str" onlongclick="ui" visible="bool" checked="bool" changevalue="ui" details="ui" dtooltip="str" haspopover="bool" isselected="str" enable="bool">	
+	<default visible=1 enable=1 type="" />
+	;------------------------Trip computer-------------------
+	<row	text="Time type" details=(%lua.TimeType) owner="Trip computer"
+		onrelease='sc_SetPopoverListAndOpen("ui.lm_SetTimeType_Popover", MODEL.lua.TimeType())' />
+	<row	text="Address type" details=(%lua.AddressLength) owner="Trip computer"
+		onrelease='sc_SetPopoverListAndOpen("ui.lm_SetAddressLength_Popover", MODEL.lua.AddressLength())' />
+	<row	text="Destination type" details=( %lua.VIAOrDestination ? "Waypoint" : "Destination" ) owner="Trip computer"
+		onrelease={invert(%lua.VIAOrDestination)} />
+	;---------------------------GPS info--------------------
+	<row	type="Chk" text="Show Glonass" isselected="lua.ShowGlonass" owner="GPS info" />
+	<row	type="ChkOnOff" text="GPS status" owner="GPS info" checked=(%gps.connection_status <= 3) onrelease='java:call("android.gps.open_location_settings_dialog"); sc_back_to_cockpit(); ui_TripCompSettingsVW:HIDE(); ui_TripCompSettingsVW:SHOW()' />
+	;---------------------------Back to car--------------------
+	<row	type="ChkOnOff" text="Home" owner="Back to car" checked=(%lua.Back_to_carPointIndex == 0)  changevalue='MODEL.lua.Back_to_carPointIndex = 0' />
+	<row	type="ChkOnOff" text="Work" owner="Back to car" checked=(%lua.Back_to_carPointIndex == 1) changevalue='MODEL.lua.Back_to_carPointIndex = 1' />
+	<row	type="ChkOnOff" text="Car" owner="Back to car" checked=(%lua.Back_to_carPointIndex == 2) changevalue='MODEL.lua.Back_to_carPointIndex = 2' />
+	<row	text="Define point now" owner="Back to car" onrelease=sc_ShowSavedLocationQuick />
+	;;<row	text="Select Vehicle" owner="Back to car" onrelease='uieffect:GRAB() NEXTSTATE( st_SettingVehicle, "fade", 1, "" )' details=(sc_GetVehicleTypeFiel(%mydata.vehicle_profile.selected_profile, "name")) visible=(%mydata.vehicle_profile.list.size > 1) />
+	<row	text="Select Vehicle" owner="Back to car" icon=(lua.EVehicleIcon[sc_GetVehicleTypeFiel(%mydata.vehicle_profile.selected_profile, "vehicle_type")])
+		onrelease='uieffect:GRAB() NEXTSTATE( st_SettingVehicle, "fade", 1, "" )' visible=(%mydata.vehicle_profile.list.size > 1) />
+	;---------------------------Point on map--------------------
+	<row	text="Orientation" details=(%ui.lm_Orientation_Popover[%lua.Show_NorthUp_HeadUp].text) owner="Point on map" onrelease='sc_SetPopoverListAndOpen("ui.lm_Orientation_Popover", ui.lm_Orientation_Popover[MODEL.lua.Show_NorthUp_HeadUp()].text())' />
+	<row	text="SplitScreen POI on map" type="ChkOnOff" owner="Point on map" isselected="lua.poi_around_for_TC" />
+</userlist>
+
+<userlist lm_Orientation_Popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 onrelease='MODEL.lua.Show_NorthUp_HeadUp = index; sc_ClosePopover()'/>
+	<row text="North Up" />
+	<row text="Destination Up" />
+	<row text="With rotation" />
+</userlist>
+;===============================================Help=================================================
+<layer ui_TripCompHelpVW z=30  onshow='ui_TripComputerButtonsVW:SHOW()' onhide='ui_TripComputerButtonsVW:HIDE()'>
+	<DIV class=cockpit>
+		<DIV class=map_messagebox>
+			<DIV class="VW_listTripComp">
+
+				<DIV class="list layerscroll" >
+					<SECTIONMARKER class="layerscroll" />
+					
+					<layer type="xhtml" z=30 class="TripComplayer_controlVW xhtml font_xhtml" filename="VW_TripComp_credits.xhtml" orientation="L2R" />
+
+					;<VSMARTSCROLL > ;class=layer_scroll>
+					<WHEEL class="xhtml">
+					<LAYERCONTROL>
+				</DIV>
+		
+			</DIV>	
+			<layer>
+				<DIV class=cockpit>
+					<DIV class=map_messagebox>
+						<DIV class=VW_listTripComp>
+							<SPRITE class="substrate" />							
+						</DIV>
+					</DIV>
+				</DIV>
+			</layer>
+			
+		</DIV>
+	</DIV>
+</layer>
+;=========================================Point_on_map & Back to car=====================================
+<layer ui_Point_on_mapVW z=30  
+	onshow='ui_TripComputerButtonsVW:SHOW(); VW_CheckFitForPOIOnMap(); sc_Point_on_mapSidePanel_show(); ui_VehicleTypeVW:SHOW(); ui_MapControlPointOnMapVW:SHOW()' 
+	onhide='ui_TripComputerButtonsVW:HIDE(); sc_Point_on_mapSidePanel_hide(); ui_VehicleTypeVW:HIDE(); ui_MapControlPointOnMapVW:HIDE()'>
+	
+	<observer model="screen.current_orientation", "lua.Show_NorthUp_HeadUp" onchange=sc_Point_on_mapSidePanel_replace START />
+	<observer model="map.primary.rotate", "lua.Show_NorthUp_HeadUp" onchange=sc_Point_on_mapSidePanel_rotate START />
+	<observer obs_TC_poi_around model="lua.poi_around_for_TC", "ui.lm_splitpoi.list.size", "lua.wSplitScreenPOIReady", "lua.gSidePanelPopupID"
+		onchange='
+				if MODEL.lua.poi_around_for_TC() and ui.ui_PropLayer.SplPoiListIsVisible() and MODEL.lua.wSplitScreenPOIReady() and MSG_Table.line[1] == "Point on map" and not MODEL.lua.gSidePanelPopupID() then 
+					MODEL.map.point_on_mapsidepanel.show_pois = 2
+					sc_FillSmartPois_bySplitScreen()
+				elseif MSG_Table.line[1] == "Point on map" then
+					MODEL.map.point_on_mapsidepanel.show_pois = 1
+				end' start />
+	
+	<DIV class=cockpit>
+		<DIV class=map_messagebox>
+			<DIV class=VW_listTripComp>
+				<SPRITE TripCompSidePanel_propertybox top=1% left=1% right=1% bottom=1% z=19 /> ;for map
+				<SPRITE TripCompSidePanel_route top=(%lua.IsLandscape ? 10% : 6%) bottom=(%lua.IsLandscape ? 10% : 6%) left=(%lua.IsLandscape ? 5% : 3%) right=(%lua.IsLandscape ? 5% : 3%) /> ;for route on map
+				<TABLE class=VW_TwoButton visible=(lua.MSG_Table.line[1] == "Back to car") z=20 >
+					<BUTTON class="btn_map" onrelease='sc_SetPopoverListAndOpen("ui.lm_AddBackToCarPoint_Popover")' >
+						<SPRITE CLASS="button map fill"/>
+						<SPRITE class="btn_map svg" img="AddCarPoint.svg" phasename=(VW_ReturnSavedCarPhase()) /> 
+					</BUTTON>
+					<BUTTON_ICON
+						onrelease=VW_GoToBackToCarPoint
+						onlongclick=VW_GoToBackToCarPointGoogle
+						icon="ico_backtocar.svg"
+						b_l_icon="ico_ISRAEL.svg" b_r_icon="ico_GoogleMaps.svg" />
+				</TABLE>
+			</DIV>
+			
+			<layer z=16>
+				<DIV class=cockpit>
+					<DIV class=map_messagebox>
+						<DIV class=VW_listTripComp>
+							<SPRITE class="substrate" />							
+						</DIV>
+					</DIV>
+				</DIV>
+			</layer>
+			
+		</DIV>
+	</DIV>
+</layer>
+
+<userlist lm_AddBackToCarPoint_Popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 onrelease='if MODEL["*"].text() == "To save" then 
+									VW_AddBackToCarPoint() 
+								end 
+								sc_ClosePopover()'/>
+	<row text="To save" />
+</userlist>
+
+<element_template et_VehicleListVW>
+	<RADIO class="listitem btn_map" iconphasesync=1 groupmodel="mydata.vehicle_profile.selected_profile" var=(index) 
+		onrelease='MODEL.mydata.vehicle_profile.list.setcurrent(index)
+			local vehicleProfile = MODEL.mydata.vehicle_profile.selected_profile()
+			local vehicleType = MODEL.mydata.vehicle_profile.list[MODEL.mydata.vehicle_profile.selected_profile()].vehicle_type()
+			if saved_VehicleProfile ~= vehicleProfile then
+				PERSISTENT.lastVehicleProfile = saved_VehicleProfile
+				if vehicleType == EVehicleType.Pedestrian then
+					PERSISTENT.vCockpitMapModeBeforePed = MODEL.lua.CockpitMapMode()
+					MODEL.lua.CockpitMapMode = eCockpitMapMode.Mode_2D
+					sc_SwitchCockpit2D_Headup()
+				elseif MODEL.mydata.vehicle_profile.list[saved_VehicleProfile].vehicle_type() == EVehicleType.Pedestrian then
+					MODEL.lua.CockpitMapMode = PERSISTENT.vCockpitMapModeBeforePed()
+					sc_SwitchCockpit3D()
+				end
+				hook_SetVehicle:trigger()
+			end
+			saved_VehicleProfile = MODEL.mydata.vehicle_profile.selected_profile()
+		'
+		visible=1 z=25>
+		<SPRITE CLASS="button map fill" />
+		<SPRITE class="btn_map svg" img=(lua.EVehicleIcon[%*.vehicle_type]) />
+	</RADIO>
+</element_template>
+
+<layer ui_VehicleTypeVW z=30 visible=( lua.MSG_Table.line[1] == "Back to car" ) 
+	onshow='saved_VehicleProfile = MODEL.mydata.vehicle_profile.selected_profile()' >
+	<DIV class=cockpit>
+		<DIV class=map_messagebox>
+			<DIV class=VW_listTripComp>
+				<SECTIONMARKER />
+				<LIST2 class=VW_l2vehicle SMOOTHSCROLLING STARTSELECTIONONSCREEN=1>
+					<LISTMODEL listmodel="mydata.vehicle_profile.list" element_template="et_VehicleListVW" />
+					<VSMARTSCROLL>
+					<WHEEL>
+					<LISTCONTROL>
+				</LIST2>
+			</DIV>
+		</DIV>
+	</DIV>
+</layer>
+
+<var vRoutecontrolDetails=0 permanent>
+<layer ui_MapControlPointOnMapVW z=30 > ; MODEL.sound.playchanneltest( "ding", L"lastcall")
+	<observer value=( %lua.routecontrolVisible && %ui.vRoutecontrolDetails ) onselect='ui_AvoidancesMenu:SHOW()' ondeselect='ui_AvoidancesMenu:HIDE()' START="NO_TRIGGER" />
+	<implementation>
+		<property routecontrolVisible value=( lua.MSG_Table.line[1] == "Point on map" && %lua.routecontrolVisible ) />
+		<property HasRoute value=(!%navigation.calculation_todo && %route.list.navigated.has_navigable_path) />
+		<property route_type_name value=(tostring(%route.list.navigated.settings.route_type // L"")) />
+		<property heading_img value="ico_north.svg", "destination.svg", "spr_itinerary_arrow_start.svg" />
+	</implementation>
+	<DIV class=cockpit>
+		<DIV class=map_messagebox>
+			<DIV class=VW_listTripComp>
+			
+				<HBOX  class="fill" paddingleft=0 paddingright=0 align="right" visible=(routecontrolVisible && %lua.IsLandscape && HasRoute)>
+					<BOX class="mapcontrol zoom">
+						<SPACER flex=1>
+						
+						<BUTTON_ICON class="btn_map routecontrol" onrelease=sc_AvoidancesMenu visible=(!vRoutecontrolDetails) 
+							onlongclick='ui.vRoutecontrolDetails = not vRoutecontrolDetails()' 
+							icon="ico_detour.svg" 
+							t_text=(VW_Return_button_text(translate("Detours & Alternatives"), L"%s", 1))
+							b_text=(VW_Return_button_text(translate("Detours & Alternatives"), L"%s", 99))
+							/> 
+						
+						<BUTTON_ICON class="btn_map routecontrol" onrelease=sc_RouteAlternatives visible=(!%lua.ptp_navigation && vRoutecontrolDetails) 
+							onlongclick='ui.vRoutecontrolDetails = not vRoutecontrolDetails()'
+							icon="ico_RouteAlternatives.svg" 
+							t_text=(VW_Return_button_text(translate("Alternative Routes"), L"%s", 1))
+							b_text=(VW_Return_button_text(translate("Alternative Routes"), L"%s", 99))							
+							/> 
+
+						<BUTTON_ICON class="btn_map routecontrol" onrelease=btn_AvoidSpecSections_Onrelease visible=(%lua.EnableAvoidSection && vRoutecontrolDetails) 
+							onlongclick='ui.vRoutecontrolDetails = not vRoutecontrolDetails()'
+							icon="ico_avoidSpecialSections.svg" 
+							t_text=(VW_Return_button_text(translate("Avoid Special Sections"), L"%s", 1))
+							b_text=(VW_Return_button_text(translate("Avoid Special Sections"), L"%s", 99))	
+							/> 
+
+						<BUTTON_ICON class="btn_map routecontrol" onrelease=btn_AvoidSpecRoad_Onrelease visible=(%lua.EnableAvoidRoad && vRoutecontrolDetails) 
+							onlongclick='ui.vRoutecontrolDetails = not vRoutecontrolDetails()'
+							icon="ico_avoidSpecificRoad.svg" 
+							t_text=(VW_Return_button_text(translate("Avoid Specific Road"), L"%s", 1))
+							b_text=(VW_Return_button_text(translate("Avoid Specific Road"), L"%s", 99))	
+							/> 
+
+						<BUTTON_ICON class="btn_map routecontrol" onrelease=btn_AvoidRouteAhead_Onrelease visible=(%navigation.has_route && vRoutecontrolDetails) 
+							onlongclick='ui.vRoutecontrolDetails = not vRoutecontrolDetails()'
+							icon="ico_avoidRoadAhead.svg" 
+							t_text=(VW_Return_button_text(translate("Avoid Route Ahead"), L"%s", 1))
+							b_text=(VW_Return_button_text(translate("Avoid Route Ahead"), L"%s", 99))	
+							/> 
+
+						<BUTTON_ICON class="btn_map routecontrol" onrelease=btn_RestoreOriginal_Onrelease visible=(%route.restrictions.has_avoids && vRoutecontrolDetails) 
+							onlongclick='ui.vRoutecontrolDetails = not vRoutecontrolDetails()'
+							icon="ico_restoreOriginalRoute.svg" 
+							t_text=(VW_Return_button_text(translate("Restore Original Route"), L"%s", 1))
+							b_text=(VW_Return_button_text(translate("Restore Original Route"), L"%s", 99))	
+							/> 
+		
+						<SPACER flex=1>
+					</BOX>
+				</HBOX>
+
+			
+				<HBOX  class="fill" paddingleft=0 paddingright=0 align="left" visible=(routecontrolVisible && %lua.IsLandscape && LuaJava.LuaJavaActive)>
+					<BOX class="mapcontrol zoom">
+						<SPACER flex=1>
+						
+						<BUTTON_ICON class="btn_map routecontrol" onrelease='sc_SetPopoverListAndOpen("ui.lm_QMapsObjects_Popover", MODEL.lua.QMapsObjects())'
+							onlongclick='ui.vRoutecontrolDetails = not vRoutecontrolDetails()'
+							icon=(google_maps_button_cockpit.ICON)
+							t_text=(VW_Return_button_text(translate("Google"), L"%s", 1))
+							b_text=(VW_Return_button_text(translate("Google"), L"%s", 99))
+							visible=(!vRoutecontrolDetails) />
+							
+						<BUTTON_ICON class="btn_map routecontrol" onrelease=VW_GoToDestinationByGoogle 
+							onlongclick='ui.vRoutecontrolDetails = not vRoutecontrolDetails()'
+							icon="ico_GoogleRoute.svg"
+							t_text=(VW_Return_button_text(translate("Google Route"), L"%s", 1))
+							b_text=(VW_Return_button_text(translate("Google Route"), L"%s", 99))
+							visible=(HasRoute && vRoutecontrolDetails) />
+							
+						<BUTTON_ICON class="btn_map routecontrol" onrelease='VW_ShowGoogleMapsObject("Current point")'
+							onlongclick='ui.vRoutecontrolDetails = not vRoutecontrolDetails()'
+							icon="ico_cursorhead_cursor.svg"
+							t_text=(VW_Return_button_text(translate("Current point"), L"%s", 1))
+							b_text=(VW_Return_button_text(translate("Current point"), L"%s", 99))
+							visible=(%navigation.car.position.valid && vRoutecontrolDetails) />
+							
+						<BUTTON_ICON class="btn_map routecontrol" onrelease='VW_ShowGoogleMapsObject("VIA point")'
+							onlongclick='ui.vRoutecontrolDetails = not vRoutecontrolDetails()'
+							icon="ico_via.svg"
+							t_text=(VW_Return_button_text(translate("VIA point"), L"%s", 1))
+							b_text=(VW_Return_button_text(translate("VIA point"), L"%s", 99))
+							visible=(%route.list.navigated.waypoints.list.size > 2 && vRoutecontrolDetails) />
+							
+						<BUTTON_ICON class="btn_map routecontrol" onrelease='VW_ShowGoogleMapsObject("Destination point")'
+							onlongclick='ui.vRoutecontrolDetails = not vRoutecontrolDetails()'
+							icon="ico_destination.svg"
+							t_text=(VW_Return_button_text(translate("Destination point"), L"%s", 1))
+							b_text=(VW_Return_button_text(translate("Destination point"), L"%s", 99))
+							visible=(HasRoute && vRoutecontrolDetails) />
+							
+						<BUTTON_ICON class="btn_map routecontrol" onrelease='VW_ShowGoogleMapsObject("TMC point", "geo", "roadmap")'
+							onlongclick='ui.vRoutecontrolDetails = not vRoutecontrolDetails()'
+							icon="ico_currenttraffic.svg"
+							t_text=(VW_Return_button_text(translate("TMC point"), L"%s", 1))
+							b_text=(VW_Return_button_text(translate("TMC point"), L"%s", 99))
+							visible=(sc_GetClosestEventData() != -1 && vRoutecontrolDetails) />
+		
+						<SPACER flex=1>
+					</BOX>
+				</HBOX>
+
+				<SPRITE class="zoomctrlTC">
+					<TEXT class="fill zoomctrlTC" text=( %lua.ZoomControlText ) />
+				</SPRITE>
+
+				<SPRITE my_logo right=2% w=50 left=undef top=1% h=50 bottom=undef align="right" valign="top" img="MyLogo.svg" visible=(lua.MSG_Table.line[1] == "Point on map") >
+					<SPRITE class="button map fill" />
+				</SPRITE>
+
+				<BUTTON_ICON left=2% w=50 right=undef top=1% h=50 bottom=undef 
+					onrelease=sc_RouteAlternatives
+					icon=(route_type_name + ".svg") zoom=60%
+					t_text=(VW_Return_button_text(translate(route_type_name), L"%s", 1))
+					b_text=(VW_Return_button_text(translate(route_type_name), L"%s", 99))
+					visible=(lua.MSG_Table.line[1] == "Point on map") >
+					<SPRITE class="btn_map icon svg" img="Active_Detour.svg" visible=(%route.restrictions.has_avoids) zoom=60% z=150 />
+				</BUTTON_ICON>
+				
+				<BUTTON_ICON left=2% w=50 right=undef top=undef h=50 bottom=1%
+					onrelease='sc_SetPopoverListAndOpen("ui.lm_Orientation_Popover", ui.lm_Orientation_Popover[MODEL.lua.Show_NorthUp_HeadUp()].text())'
+					icon=(heading_img[%lua.Show_NorthUp_HeadUp]) zoom=60%
+					visible=(lua.MSG_Table.line[1] == "Point on map") />
+				
+			</DIV>
+		</DIV>
+	</DIV>
+</layer>
+;=========================================Trip Info=====================================
+<layer ui_TripInfoVW z=30  onshow='ui_TripComputerButtonsVW:SHOW()' onhide='ui_TripComputerButtonsVW:HIDE()' >	
+	<DIV class=cockpit>
+		<DIV class=map_messagebox>
+			<DIV class=VW_listTripComp>
+				<DIV class="panel">
+					<BOX class="tripinfo">
+						
+						<HBOX class="tripinfo_start_end" orientation=(%lua.IsLandscape ? "vertical" : "horizontal")>
+							<BOX orientation="horizontal">
+								<TEXT	class="font_info  color_inf_main" align="CENTER" text="TRACK_TIME~Start:"  fixedwidthnumbers=1>
+								<HBOX>
+									<TEXT	class="font_main_large bd  color_inf_sec" left=0 top=0 right=0 bottom=0 align="CENTER" text=(format("%{date:*}", %{"other.trips.@0"}.start_time.date, %regional.dateformat) ) fixedwidthnumbers=1 visible=(sc_TripLogDate_ValidVW()) />
+									<TEXT	class="font_main_large bd  color_inf_sec" left=0 top=0 right=0 bottom=0 align="CENTER" text="-:--" visible=(!sc_TripLogDate_ValidVW()) />
+								</HBOX>
+								<TEXT	class="font_main_large bd  color_inf_sec" align="CENTER" text=( format(L"%{time:*}", %{"other.trips.@0"}.start_time.time, %regional.timeformat) )   fixedwidthnumbers=1 visible=(sc_TripLogDate_ValidVW()) />	
+							</BOX>
+							
+							<BOX orientation="horizontal">
+								<TEXT	class="font_info  color_inf_main" align="CENTER" text="TRACK_TIME~End:"  fixedwidthnumbers=1 />
+								<HBOX>
+									<TEXT	class="font_main_large bd  color_inf_sec"  left=0 top=0 right=0 bottom=0 align="CENTER" text=(format(L"%{date:*}", %{"other.trips.@0"}.end_time.date, %regional.dateformat) ) fixedwidthnumbers=1 visible=(sc_TripLogDate_ValidVW()) />
+									<TEXT	class="font_main_large bd  color_inf_sec"  left=0 top=0 right=0 bottom=0 align="CENTER" text="-:--" visible=( !sc_TripLogDate_ValidVW() ) />
+								</HBOX>
+								<TEXT	class="font_main_large bd  color_inf_sec"      align="CENTER" text=( format(L"%{time:*}", %{"other.trips.@0"}.end_time.time, %regional.timeformat) )   fixedwidthnumbers=1 visible=(sc_TripLogDate_ValidVW())>
+							</BOX>
+							
+						</HBOX>
+						
+						<LIST2 class="tripinfo" row=3 col=3>
+							<LISTMODEL listmodel="ui.lm_tripInfoVW" element_template="et_TripInfoVW" />
+						</LIST2>
+						
+					</BOX>
+				</DIV>
+			</DIV>
+			<layer z=16>
+				<DIV class=cockpit>
+					<DIV class=map_messagebox>
+						<DIV class=VW_listTripComp>
+							<SPRITE class="substrate" />							
+						</DIV>
+					</DIV>
+				</DIV>
+			</layer>			
+		</DIV>
+	</DIV>
+</layer>
+
+<userlist lm_tripInfoVW text="str" value="ui" type="str" bg_visible="bool">
+	<default type="" bg_visible=1 />
+	<row text="Avg. Speed" value=(%{"other.trips.@0"}.speed_total_avg) type="speed" />
+	<row DrivingAvgSpeed text="Driving Avg. Speed" value=(%{"other.trips.@0"}.speed_driving_avg) type="speed" />
+	<row text="Max. Speed" value=(%{"other.trips.@0"}.speed_max) type="speed" />
+
+
+	<row TotalTime text="Total Time" value=(format(L"%{timespan:1}",%{"other.trips.@0"}.time_total)) />
+	<row DrivingTime text="Driving Time" value=(format(L"%{timespan:1}",%{"other.trips.@0"}.time_driving)) />
+	<row StoppedTime text="Stopped Time" value=(format(L"%{timespan:1}",%{"other.trips.@0"}.time_stopped)) />
+
+
+	<row text="Total Distance" value=(%{"other.trips.@0"}.distance_total) type="distance"/>
+	<row MinAltitude text="Min. Altitude" value=(%{"other.trips.@0"}.min_elevation) type="altitude"/>
+	<row MaxAltitude text="Max. Altitude" value=(%{"other.trips.@0"}.max_elevation) type="altitude"/>
+</userlist>
+
+<element_template et_TripInfoVW>
+	<SPRITE class="panel tripinfo" />
+	<VBOX class="tripinfo_details">
+		<SPACER flex=1 />
+		<TEXT class="font_info textpadding_small color_inf_main" text=%*.text wordwrap=1 />
+		<SPACER flex=1 />
+		<SPEEDTEXT class="font_main_large bd color_inf_sec"   speed=%*.value visible=(%*.type == "speed") unitvisible=1 />
+		<TEXT      class="font_main_large bd color_inf_sec"   valign="CENTER" text=%*.value fixedwidthnumbers=1 visible=(%*.type == "") />
+		<DISTTEXT  class="font_main_large bd color_inf_sec"   distance=%*.value visible=(%*.type == "distance") />
+		<ALTITUDETEXT class="font_main_large bd color_inf_sec"   altitude=%*.value visible=(%*.type == "altitude") />
+		<SPACER flex=1 />
+	</VBOX>
+</element_template>
+
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp="ico_GoogleRoute.svg" text=(translate("Google Route")) onrelease=VW_GoToDestinationByGoogle enable=(LuaJava.LuaJavaActive && %navigation.has_route) />
+		</insert>
+	</modify>
+<!end/>
+
+<modify lm_myroutemenu>
+	<insert>
+		<row text="Google Route" onrelease=VW_GoToDestinationByGoogle enable=(LuaJava.LuaJavaActive) />
+	</insert>
+</modify>

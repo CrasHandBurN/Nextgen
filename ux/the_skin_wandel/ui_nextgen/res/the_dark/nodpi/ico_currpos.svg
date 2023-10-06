@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 17.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="120px"
+	 height="120px" viewBox="0 0 120 120" enable-background="new 0 0 120 120" xml:space="preserve">
+<g id="Layer_3" display="none">
+	<circle display="inline" opacity="0.5" fill="#DF1F26" cx="60" cy="60" r="60"/>
+	<rect x="6.5" y="6.5" display="inline" opacity="0.5" fill="#3B4FA1" width="107" height="107"/>
+</g>
+<g id="normal">
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#192C4A" points="59.895,85.634 59.897,22.012 19.077,107.652 	"/>
+	<g>
+		<path fill="#FFFFFF" d="M107.619,113.57L59.957,6.429c0,0-48.251,107.309-47.783,107.141c0.007-0.003,47.783-15.508,47.783-15.508
+			L107.619,113.57z"/>
+	</g>
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#33ACE3" points="100.671,107.702 59.957,15.536 59.957,81.586 	"/>
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#0074BE" points="59.957,81.586 59.957,15.536 19.243,107.702 	"/>
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#0074BE" points="59.957,93.564 100.671,107.702 59.957,81.586 	"/>
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#33ACE3" points="59.957,81.586 19.243,107.702 59.957,93.564 	"/>
+</g>
+<g id="active">
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#192C4A" points="59.895,85.634 59.897,22.012 19.077,107.652 	"/>
+	<g>
+		<path fill="#FFFFFF" d="M107.619,113.57L59.957,6.429c0,0-48.251,107.309-47.783,107.141c0.007-0.003,47.783-15.508,47.783-15.508
+			L107.619,113.57z"/>
+	</g>
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#33ACE3" points="100.671,107.702 59.957,15.536 59.957,81.586 	"/>
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#0074BE" points="59.957,81.586 59.957,15.536 19.243,107.702 	"/>
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#0074BE" points="59.957,93.564 100.671,107.702 59.957,81.586 	"/>
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#33ACE3" points="59.957,81.586 19.243,107.702 59.957,93.564 	"/>
+</g>
+<g id="disabled" opacity="0.2">
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#192C4A" points="59.895,85.634 59.897,22.012 19.077,107.652 	"/>
+	<g>
+		<path fill="#FFFFFF" d="M107.619,113.57L59.957,6.429c0,0-48.251,107.309-47.783,107.141c0.007-0.003,47.783-15.508,47.783-15.508
+			L107.619,113.57z"/>
+	</g>
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#33ACE3" points="100.671,107.702 59.957,15.536 59.957,81.586 	"/>
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#0074BE" points="59.957,81.586 59.957,15.536 19.243,107.702 	"/>
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#0074BE" points="59.957,93.564 100.671,107.702 59.957,81.586 	"/>
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#33ACE3" points="59.957,81.586 19.243,107.702 59.957,93.564 	"/>
+</g>
+</svg>

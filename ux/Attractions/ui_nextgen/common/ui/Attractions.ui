@@ -1,0 +1,121 @@
+<observer obs_Guide_Attractions value=(%gps.current_time) onchange=sc_Guide_Attractions />
+
+<observer obs_AttractionsSTART_STOP value=(%lua.Attraction_ON_OFF && %lua.SplPoiListIsVisible) onselect=sc_AttractionsSTART ondeselect=sc_AttractionsSTOP START="NO_TRIGGER" /> 
+
+<observer obs_wOnSplitScreenPOI_reset value=(%gps.current_time) onchange=sc_wOnSplitScreenPOI_reset />
+
+<observer obs_Rerouting_reset value=(%lua.wSplitScreenPOIOnRoute && %route.list.navigated.calculation_finished) onselect=sc_Attractions_Reset START="NO_TRIGGER" /> ;moved from poi_search
+
+<layer ui_MYwShowPoiPicture z=299  visible=(%lua.userpicturetoshow && %lua.Attraction_ON_OFF) >
+	<DIV class=MYPictures>
+		<BUTTON class=MYPictures onrelease='VW_StopoverOrNewRoute(); hook_StartRoutePlanning()' > ;hook_SelectPoiItem:trigger() no need
+			<PSPRITE class=MYPictures pictw=(PARENT.W) picth=(PARENT.H) zoomfrom="shrinkvisible" bmp=(lua.MYwCurrentPoiPicture) alpha=%lua.PictureTransparency />
+		</BUTTON>
+	</DIV>
+</layer>
+/* 01.03.2020
+<modify et_splitscreeninfo>
+	<modify element="#Small_Left_Button" ONLONGCLICK=(%lua.wSplitScreenPOIOnRoute ? undef : sc_AttractionPOIDelete) />
+	<modify element="#Long_Right_Button" ONLONGCLICK=(%lua.wSplitScreenPOIOnRoute ? undef : sc_toSayItsAttractionPOI) />
+</modify>
+*/
+;----------------------------setting---------------------------------
+<modify wSplitScreenPOISettingsList>
+	<insert>
+		<row  	text="Attractions settings" haspopover=1 onrelease=sc_Attractionset_OnRelease details=(%lua.Attraction_ON_OFF ? "Now 'On'" : "Now 'OFF'") />
+	</insert>
+</modify>
+	
+<modify lm_MapVisualSettings>
+	<insert after="default">
+		<row prio=920 text="Attractions" haspopover=1 onrelease=sc_Attractionset_OnRelease />
+	</insert>
+</modify>
+<userlist AttractionsSettings text="str" type="str" onrelease="ui" onlongclick="ui" visible="bool" boolmodel="str" icon="str" details="ui" dtooltip="str" haspopover="bool" isselected="str" enable="bool">	
+	<default visible=1 enable=(%lua.Attraction_ON_OFF)>
+	<view visibility_filter=visible/>
+	<row	text="Attractions" type="ChkOnOff" isselected="lua.Attraction_ON_OFF" enable=1 />
+	<row	text="To show Attractions place" type="ChkOnOff" isselected="lua.ShowAttractionsPlace" />
+	<row	text=("To say " + lua.TableRoute[1][1]) onrelease={sc_RotateOrdertosay(lua.TableRoute[1][1])} onlongclick={sc_PositionToZero(1)}	icon=(lua.TableRoute[1].bmp + ".svg") />
+	<row	text=("To say " + lua.TableRoute[2][1]) onrelease={sc_RotateOrdertosay(lua.TableRoute[2][1])} onlongclick={sc_PositionToZero(2)}	icon=(lua.TableRoute[2].bmp + ".svg") />
+	<row	text=("To say " + lua.TableRoute[3][1]) onrelease={sc_RotateOrdertosay(lua.TableRoute[3][1])} onlongclick={sc_PositionToZero(3)}	icon=(lua.TableRoute[3].bmp + ".svg") />
+	<row	text=("To say " + lua.TableRoute[4][1]) onrelease={sc_RotateOrdertosay(lua.TableRoute[4][1])} onlongclick={sc_PositionToZero(4)}	icon=(lua.TableRoute[4].bmp + ".svg") />
+	<row	type="ChkOnOff" text="To show userpicture" isselected="lua.userpicturetoshow" />
+	<row    text="Set Last Call Warning Time" details=(sc_ShowTimeTool(%lua.Attr_Last_warning)) onrelease='sc_SetPopoverListAndOpen("ui.lm_last_warning_popover")' />
+	<row  	text="Set Sound for Last Call Warning" details=(%lua.AudioAttractions) onrelease={%lua.SelectedAudioFile = %lua.AudioAttractions; sc_ScanAudioFiles()} />
+	<row	text="Split Screen Settings" onrelease='sc_NextStateAnim(st_wSplitScreenPOISettings, "fade", 1, "" )' />
+</userlist>
+
+<userlist lm_last_warning_popover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 visible=1 type="" name="" min_text=(sc_ShowTimeTool(10)) max_text=(sc_ShowTimeTool(60)) />
+   	<row name="Set Last Call Warning Time" text=(sc_ShowTimeTool(%lua.Attr_Last_warning)) type="Scroll" min=10 max=60 step=1 valuemodel="lua.Attr_Last_warning" />
+</userlist>
+
+<layer ui_Attractionsset z=35>
+	<DIV class=list>
+		<SPRITE class=list_panel />
+		<LIST2 class=list_control listmodel="ui.AttractionsSettings.list" element_template="et_List" template_type_model="*.type" SMOOTHSCROLLING>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+	
+<userlist lm_Attraction_Footer text="str" onrelease="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+	<row text="About" isactionbutton=1 onrelease='VW_Show_xhtmlQuest("Guide_Attractions_credits.xhtml", "About")' />
+</userlist>
+
+;-----------------------------------------show----------------------------------------
+<layer ui_Attractions z=50 visible=( ui_PropLayer.SidePanelVisible )>
+	<implementation>
+		<property splitpoi_icon_id value=( %ui.lm_splitpoi.list[0].icon_id // -1 ) /> 
+		;<property poi_distance value=(observe(%navigation.car.position); distance(%navigation.car.position, %ui.lm_splitpoi.list[0].position)) /> 
+	</implementation>
+	<DIV class=cockpit>
+		<DIV class=map_messagebox >
+			;<TEXT class="map_messagebox discovery_text" text=(builtin.format("%{distance:3}", poi_distance)) visible=(%gps.blink) />
+			<TEXT class="map_messagebox discovery_text" top=10% text=(%ui.lm_splitpoi.list[0].name) visible=(%gps.blink) /> 
+			;<SPRITE class="map_messagebox listitem flag" iconid=(%ui.lm_splitpoi.list[0].icon_id) iconindex=2 zoom=1100 /> 
+				
+			<SPRITE class="map_messagebox listitem flag" iconid=(splitpoi_icon_id) iconindex=2  
+				zoom=110% visible=(!VW_isPoiBranded(splitpoi_icon_id, 2)) />
+			<SPRITE class="map_messagebox listitem flag" iconid=(splitpoi_icon_id) iconindex=2  
+				zoom=110% visible=(VW_isPoiBranded(splitpoi_icon_id, 2)) />
+				
+			<SPRITE left=25% right=25% top=25% bottom=25% align="CENTER" valign="CENTER" iconid=(splitpoi_icon_id) iconindex=2  
+				zoom="ZOOMVISIBLE" visible=(%gps.blink && !VW_isPoiBranded(splitpoi_icon_id, 2)) />
+			<SPRITE left=25% right=25% top=25% bottom=25% align="CENTER" valign="CENTER" iconid=(splitpoi_icon_id) iconindex=2  
+				zoom="ZOOMVISIBLE" visible=(%gps.blink && VW_isPoiBranded(splitpoi_icon_id, 2)) />
+					
+			;<SPRITE left=25% right=25% top=25% bottom=25% align="CENTER" valign="CENTER" iconid=(%ui.lm_splitpoi.list[0].icon_id) iconindex=2  visible=(%gps.blink) />
+		</DIV>
+	</DIV>
+</layer>
+
+<layer ui_Attractions_GRAPH z=50 visible=( ui_PropLayer.SidePanelVisible )>
+	<implementation>
+		<property splitpoi_icon_id value=( %ui.lm_splitpoi.list[0].icon_id // -1 ) /> 
+		<property poi_distance value=(observe(%navigation.car.position); distance(%navigation.car.position, %ui.lm_splitpoi.list[0].position)) /> 
+	</implementation>
+	<DIV class=cockpit>
+		<DIV class=map_messagebox >
+			<TEXT class="map_messagebox discovery_text" top=10% text=(%ui.lm_splitpoi.list[0].name) visible=(%gps.blink) /> 
+			
+			<SPRITE class="map_messagebox listitem flag" iconid=(splitpoi_icon_id) iconindex=2  
+				zoom=110% visible=(!VW_isPoiBranded(splitpoi_icon_id, 2)) />
+			<SPRITE class="map_messagebox listitem flag" iconid=(splitpoi_icon_id) iconindex=2  
+				zoom=110% visible=(VW_isPoiBranded(splitpoi_icon_id, 2)) />
+				
+			<SPRITE left=25% right=25% top=25% bottom=25% align="CENTER" valign="CENTER" iconid=(splitpoi_icon_id) iconindex=2  
+				zoom="ZOOMVISIBLE" visible=(%gps.blink && !VW_isPoiBranded(splitpoi_icon_id, 2)) />
+			<SPRITE left=25% right=25% top=25% bottom=25% align="CENTER" valign="CENTER" iconid=(splitpoi_icon_id) iconindex=2  
+				zoom="ZOOMVISIBLE" visible=(%gps.blink && VW_isPoiBranded(splitpoi_icon_id, 2)) />
+				
+			<GRAPH class="graph_side_box" full=(lua.temp_value[2].DISTANCE) current=(poi_distance) visible=(lua.temp_value[2].DISTANCE > 100 && %ui.GraphEnable) />
+			;;<SPRITE left=25% right=25% top=25% bottom=25% align="CENTER" valign="CENTER" img="owl.svg"  visible=(%gps.blink) />
+		</DIV>
+	</DIV>
+</layer>

@@ -1,0 +1,99 @@
+<modify ui_Cockpit>           
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON RouteFromList ONRELEASE='sc_SetPopoverListAndOpen("ui.lm_MakeRouten_Popover")' 
+			;ONLONGCLICK='W_DefaultWebBrowser("http://4pna.com/showpost.php?p=533877&postcount=886")'
+			ONLONGCLICK='VW_Show_xhtmlQuest("i18n/Help/route_from_list/route_from_list_Help.xhtml", "route_from_list")'
+			;ONLONGCLICK='java:call("android.open_webpage", L"http://4pna.com/showpost.php?p=533877&postcount=886")'
+			VISIBLE=(%lua.RouteFromListCockpit && LuaJava.LuaJavaActive)
+			ICON="ico_route_from_list.svg" 
+			ZOOM=80%
+			C_R_ICON="Lua_Logo.svg"
+			T_TEXT=(VW_Return_button_text(translate("Route from list"), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate("Route from list"), L"%s", 99)) >
+		</BUTTON_ICON>
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=(%lua.RouteFromListCockpit && LuaJava.LuaJavaActive) />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="Route from list" bmp=(RouteFromList.ICON) isselected="lua.RouteFromListCockpit" />
+	</insert>
+</modify>
+;---- Quick Menu -----
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE='ui.RouteFromList.ONRELEASE()()' ONLONGCLICK='ui.RouteFromList.ONLONGCLICK()()' 
+			VISIBLE=(%lua.RouteFromListQuick && LuaJava.LuaJavaActive)
+			ICON=(RouteFromList.ICON) 
+			ZOOM=80%
+			C_R_ICON=(RouteFromList.C_R_ICON) 
+			T_TEXT=(RouteFromList.T_TEXT)
+			B_TEXT=(RouteFromList.B_TEXT) >
+		</BUTTON_ICON>
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=(%lua.RouteFromListQuick && LuaJava.LuaJavaActive) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="Route from list" bmp=(RouteFromList.ICON) isselected="lua.RouteFromListQuick" />
+	</insert>
+</modify>
+
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=(RouteFromList.ICON) text=(translate("Route from list")) onrelease='ui.RouteFromList.ONRELEASE()()' onlongclick='ui.RouteFromList.ONLONGCLICK()()' />
+		</insert>
+	</modify>
+<!end/>
+
+<modify lm_FindMenu onlongclick="ui">
+	<insert after=Coordinates>
+		<row text="Route from list" icon=(RouteFromList.ICON) onrelease='ui.RouteFromList.ONRELEASE()()' onlongclick='ui.RouteFromList.ONLONGCLICK()()' dtooltip="Only with route" /> 
+	</insert>
+</modify>
+
+<userlist lm_MakeRouten_Popover text="ui" onrelease="ui" enable="bool" visible="bool">
+	<default visible=1 enable=1 onrelease={VW_Check_Clipboard_for_list(); sc_ClosePopover()} />
+	<view visibility_filter=visible />
+	<row text="Route step by step" enable=(%lua.SDK_INT < 25) />
+	<row text="Route all at once" enable=(%lua.SDK_INT < 25) />
+	<row text=(translate("Route step by step") + L": " + sc_GetSysEntry("route", "route_file_name", L"route.txt")) />
+	<row text=(translate("Route all at once") + L": " + sc_GetSysEntry("route", "route_file_name", L"route.txt")) />
+</userlist>
+
+<layer ui_Send_Information z=5000  
+	onshow='doDelayed(200, function() ui_Send_Information:tween("ALPHA", 32, 0, 600, { on_complete = function() ui_Send_Information:HIDE() end} ) end)' >
+	<DIV class="cockpit">
+		<INFORMATION_PLATE right=(!%lua.IsPortrait ? 35% : 30%) left=(!%lua.IsPortrait ? 35% : 30%) top=(!%lua.IsPortrait ? 26% : 36%) h=150 
+			onrelease='ui_Send_Information:tween("ALPHA", 32, 0, 600, { on_complete = function() ui_Send_Information:HIDE() end} )'
+			text="Please define destinatiom!"
+			bg_index=2 />
+	</DIV>
+</layer>
+
+/*
+<modify ui_VisualTravelPlanner>           
+	<insert after="SPACER">
+		<BUTTON CLASS="btn_map travel_planner" ONRELEASE='sc_back_to_cockpit(); sc_SetPopoverListAndOpen("ui.lm_MakeRouten_Popover")'
+			VISIBLE=(%lua.screen4x3 || %lua.IsPortrait)
+			ONLONGCLICK='W_DefaultWebBrowser("http://4pna.com/showpost.php?p=533877&postcount=886")' >
+	 		<SPRITE CLASS="button map fill" />
+			<SPRITE CLASS="btn_map icon svg" IMG="ico_route_from_list.svg" />
+		</BUTTON>
+	</insert>
+</modify>
+*/

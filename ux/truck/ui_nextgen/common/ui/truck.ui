@@ -1,0 +1,145 @@
+<var vRestrictionListUpdated=0>
+<var vRestrictionsFromFindPathError=0>
+
+<event hook_RouteOverviewInit />
+
+<element_template et_RestrictionInProgress>
+	<SPRITE class="listitem info">
+		<VBOX class="listitem progress">
+			<TEXT class="listitem progress" text="Creating a list of restrictions. Please wait..." />
+			<SPRITE class="searchprogress wide" />
+		</VBOX>
+	</SPRITE>
+</element_template>
+
+<element_template et_RestrictionHeader>
+	<TEXT class="restriction_header" bottom=50% text=(%lua.TruckErrorText)>
+	<TEXT class="restriction_header" top=50% text="Consider the restrictions and leave the area!\nTake special care and continue at your own risk.">
+</element_template>
+
+<element_template et_RestrictionFooter>
+	<FOOTERBUTTON class="btn_footer wizard" text=%*.text onrelease=%*.onrelease enable=%*.enable>
+</element_template>
+
+<element_template et_RestrictionList>
+	<BUTTON class="listitem" onrelease=sc_ShowTruckWarning>
+		<HBOX class="listitem">
+			<HBOX class="listitem poi_container">
+				<SPRITE class="listitem svg" iconid=%*.icon_id visible=(%*.icon_id != -1) />
+				<SPRITE class="listitem svg" iconid=%*.icon_small_id visible=(%*.icon_small_id != -1) />
+			</HBOX>
+			<TEXT txt_RestrictionList class="listitem" text=(%*.text)>
+			<DISTTEXT class="listitem detour restriction" distance=(%*.length) visible=(%*.length > 0)>
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<element_template et_DummyRestrictionHeader>
+	<TEXT class="restriction_header" bottom=50% text="You are on a restricted route segment.">
+	<TEXT class="restriction_header" top=50% text="Consider the restrictions and leave the area!\nTake special care and continue at your own risk.">
+</element_template>
+
+<element_template et_DummyRestrictionList>
+	<BUTTON class="listitem" box_align="stretch" resize_bmp=1 flex=1>
+		<HBOX class="listitem" box_align="stretch" left=12>
+			<SPRITE class="listitem svg" r2l_invert=1 z=20 iconid=%*.icon>
+			<ROADSHIELDEDTEXT class="color_btn_main listitem" box_align="center" right=22% top=5% h=95% text=%*.reason>
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<userlist lm_RestrictionList_footer text="str" onrelease="ui" enable="bool" visible="bool">
+	<view visibility_filter=visible />
+	<default enable=1 visible=1/>
+	
+	<row text="Reject" onrelease=sc_RejectRestrictions enable=(vRestrictionListUpdated) visible=(vRestrictionsFromFindPathError)>
+	<row text="Accept" onrelease=sc_TruckRestrAccept enable=(vRestrictionListUpdated) visible=(vRestrictionsFromFindPathError)>
+</userlist>
+
+<views truckrestrictions listmodel="route.list.navigated.itiner.list" >
+    <view filter filter=(in_set($1.filter_type, lua.ERouteinfoFilterTypes.TRUCK))/>
+</views>
+
+<layer ui_RestrictionList z=41>
+	<OBSERVER obs_RestrictionsChangedAtWaypoint value=(%route.list.navigated.waypoints.list.size) onchange=sc_RestrictionListChangedAtWaypoint START="NO_TRIGGER">
+	
+	<OBSERVER value=(%route.list.navigated.calculation_finished) onselect=sc_RestrictionListChangedAtWaypoint START>
+	<OBSERVER obs_Truck_CheckEmpty model="navigation.restrictions","ui.truckrestrictions.filter" onchange=sc_CheckEmptyRestrictionList START>
+	
+	<DIV class="list restrictions">
+		<LIST2 class="list_control" SHOWSELECTION=1 SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_RestrictionInProgress" visible=(%navigation.has_route && !%route.list.navigated.calculation_finished)/>
+			<LISTMODEL element_template="et_RestrictionList" listmodel="ui.truckrestrictions.filter">
+				<SEPARATOR insert_at=0 element_template=et_RestrictionHeader cellh=25%>
+			</LISTMODEL>
+			<LISTMODEL element_template="et_DummyRestrictionList" listmodel="navigation.restrictions" visible=(%navigation.has_route && (!%route.list.navigated.calculation_finished || (!%ui.truckrestrictions.filter.size && %route.list.navigated.calculation_finished)))>
+				<SEPARATOR insert_at=0 element_template=et_DummyRestrictionHeader cellh=25%>
+			</LISTMODEL>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<layer ui_RestrictionList_footer z=42 visible=(vRestrictionsFromFindPathError)>
+	<DIV class="full">
+		<DIV class="footer">
+			<SECTIONMARKER class="footer"/>
+			<LIST2 lst_RestrictionFooterMenu class="list_footermenu truck">
+				<LISTMODEL element_template="et_RestrictionFooter" listmodel="ui.lm_RestrictionList_footer">
+			</LIST2>
+		</DIV>
+	</DIV>
+</layer>
+
+<element_template et_RestrictionIcons>
+
+	<TABLE tab_RestrictionIcons>
+		<HBOX class="restriction">
+			<SPRITE class="r2l map_messagebox svg truck" iconid=%*.icon/>	
+			<TEXT  txt_RestrictionIcons class="font_main bd color_inf_sec r2l" text=%*.reason/>
+		</HBOX>
+	</TABLE>
+
+</element_template>
+
+<layer ui_RestrictedMsg class="messagebox" onshow=sc_RestrictionOnShow onhide=sc_RestrictionOnHide>
+	<implementation>
+		<property listSize value=(%navigation.restrictions.size)>
+	</implementation>
+	
+	<DIV class="full">
+		<DIV class="messagebox_full">
+			<DIV class="messagebox_panel">
+				<LIST2 class="msgboxicons" >
+					<LISTMODEL listmodel="navigation.restrictions" element_template="et_RestrictionIcons" />
+				</LIST2>
+				<DIALOGBUTTON class="dialog 1_1" iconspr=(ui_MessageBox.showIcons ? %screen.msgbox.on_screen.button_icon_filename(1) : "" ) z=60 text=(%screen.msgbox.on_screen.button_caption(1)) onrelease='MODEL.screen.msgbox.on_screen.button_released(1)' rawkey=27>
+			</DIV>
+		</DIV>
+	</DIV>
+	
+	<layer>
+		<DIV class="full">
+			<SPRITE class="messagebox_cover">
+			<DIV class="messagebox_full">
+				<SPRITE class="messagebox restrictions">
+				<DIV class="messagebox_panel">
+					<TEXT @firstline class="messagebox_first_line" text=(%screen.msgbox.on_screen.title == "ApproachingHardRestriction" || %screen.msgbox.on_screen.title == "ApproachingSoftRestriction" ? translated_format(m_i18n("You may be approaching a dangerous situation in %s."), format(L"%{distance:3}",%navigation.restrictions_distance) ) : "You are on a restricted route segment.")>
+					<TEXT   class="messagebox_second_line" text=%screen.msgbox.on_screen.first_line>
+				</DIV>
+			</DIV>
+		</DIV>
+	</layer>
+</layer>
+;-----------settings-----------
+<userlist lm_Restrictions_turn_alarmSettings haspopover="bool" text="str" isselected="str" visible="bool" enable="bool" onrelease="ui" details="ui" type="str" dtooltip="str">
+	<view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1/>
+			<row text="Truck turn restriction alarm" isselected="lua.AudioRestrictions_turn_alarmOn" type="ChkOnOff" />
+			<row text="Choose Truck turn restriction Sound" haspopover=1
+				details=(%lua.OwnRestrictions_turn_alarm == L"" ? tostring(%lua.AudioRestrictions_turn_alarm) : %lua.OwnRestrictions_turn_alarm)
+				onrelease={%lua.SelectedAudioFile = %lua.AudioRestrictions_turn_alarm; %lua.SelectedOwnWarning = %lua.OwnRestrictions_turn_alarm; sc_ScanAudioFiles()}
+				enable=(%lua.AudioRestrictions_turn_alarmOn && !(%lua.MuteSoundWithTTS && %regional.current_voice.is_tts)) dtooltip="You have to Turn ON 'Over Speed Sound'." />
+</userlist>

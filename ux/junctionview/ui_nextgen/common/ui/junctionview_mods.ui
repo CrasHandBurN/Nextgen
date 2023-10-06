@@ -1,0 +1,46 @@
+<modify lm_NavigationMap bmp="str" dtooltip="str" details="ui">
+	<remove Signpost />
+	<insert after="default">
+		<row Signpost	prio=600 text="SignPost" icon="ico_signpost.svg"  onrelease='sc_NextStateAnim(st_SignPostSoundSettings, "fade", 1, "" )' 
+			details=((%lua.SignpostOn ? translate("On") : translate("Off")) + L" : " + (%lua.OwnWarningSignPost == L"" ? %lua.AudioSignPost : %lua.OwnWarningSignPost)) />
+		<row Laneinfo	prio=600 text="LaneInfo" icon="ico_laneinfo.svg"  onrelease='sc_NextStateAnim(st_LaneInfoSoundSettings, "fade", 1, "" )' 
+			details=((%lua.LaneinfoOn ? translate("On") : translate("Off")) + L" : " + (%lua.OwnWarningLaneInfo == L"" ? %lua.AudioLaneInfo : %lua.OwnWarningLaneInfo)) />
+		<row Junction	prio=700 text="Junction View" icon="ico_history_junction.svg"  onrelease='sc_NextStateAnim(st_JunctionViewSoundSettings, "fade", 1, "" )' enable=(%lua.SignpostOn) visible=(%navigation.junction_view_has_app_license) 
+			details=((%navigation.junction_view_on ? translate("On") : translate("Off")) + L" : " + (%lua.OwnWarningJunctionView == L"" ? %lua.AudioJunctionView : %lua.OwnWarningJunctionView)) />
+		<row Tunnel		prio=800 text="Tunnel View"   icon="ico_route_tunnel.svg" onrelease='sc_NextStateAnim(st_TunnelSoundSettings, "fade", 1, "" )' enable=(%lua.SignpostOn) visible=(%navigation.junction_view_has_app_license) 
+			details=((%navigation.tunnel_view.enabled ? translate("On") : translate("Off")) + L" : " + (%lua.OwnWarningTunnel == L"" ? %lua.AudioTunnel : %lua.OwnWarningTunnel)) />
+		<row MiniJunction prio=810 text="Mini Junction and Tunnel View" bmp="ico_minimize.svg" isselected="lua.MiniJunctionView" type="ChkOnOff_Icon" enable=(%lua.SignpostOn) visible=(%navigation.junction_view_has_app_license) />
+	</insert>
+</modify>
+
+<modify ui_PropLayer>
+	<modify MiniJunctionViewVisible VALUE=( %lua.MiniJunctionView && !%lua.VehicleIsPedestrian && %navigation.want_junctionview && %navigation.has_junctionview && !JunctionViewHiddenByUser && ( %lua.SignpostOn || %navigation.tunnel_view.overview.available ) ) />
+	<modify JunctionViewVisible VALUE=( !%lua.MiniJunctionView && !%lua.VehicleIsPedestrian && %navigation.want_junctionview && %navigation.has_junctionview && !JunctionViewHiddenByUser && ( %lua.SignpostOn || %navigation.tunnel_view.overview.available ) ) />
+	<modify TunnelOverviewVisible VALUE=( %navigation.want_junctionview && %navigation.tunnel_view.enabled && !JunctionViewHiddenByUser && %navigation.tunnel_view.overview.available && !%navigation.has_junctionview && sc_GetSysEntry( "navigation.tunnel_view", "fallback_at_complex_junction", 1 ) == 2 ) />
+</modify>
+
+<modify ui_Singpost>
+	<modify sprSignpost ONRELEASE='sc_SignPostLayerHide() hook_SignPostLayerHide:trigger() sc_HideJunctionView()'/>
+</modify>
+
+<userlist lm_JunctionViewSoundsettings haspopover="bool" text="str" isselected="str" visible="bool" enable="bool" onrelease="ui" details="ui" type="str" dtooltip="str">
+  <view visibility_filter=visible/>
+	<default onrelease=undef visible=1 enable=1/>
+		<row text="Junction View" isselected="navigation.junction_view_on" type="ChkOnOff" />
+		<row text="Choose Junction View Sound" haspopover=1 
+			details=(%lua.OwnWarningJunctionView == L"" ? %lua.AudioJunctionView : %lua.OwnWarningJunctionView) 
+			onrelease={%lua.SelectedAudioFile = %lua.AudioJunctionView; %lua.SelectedOwnWarning = %lua.OwnWarningJunctionView; sc_ScanAudioFiles()} 
+			enable=(%navigation.junction_view_on && !(%lua.MuteSoundWithTTS && %regional.current_voice.is_tts)) dtooltip="You have to Turn ON JunctionView Sound." />
+</userlist>
+
+<userlist lm_TunnelSoundsettings haspopover="bool" text="str" isselected="str" visible="bool" enable="bool" onrelease="ui" details="ui" type="str" dtooltip="str">
+  <view visibility_filter=visible/>
+	<default onrelease=undef visible=1 enable=1/>
+		<row text="Tunnel View" isselected="navigation.tunnel_view.enabled" type="ChkOnOff" />
+		<row text="Tunnel View Nightmode" isselected="lua.TunnelViewNightmode" type="ChkOnOff" />
+		<row text="Choose Tunnel View Sound" haspopover=1 
+			details=(%lua.OwnWarningTunnel == L"" ? %lua.AudioTunnel : %lua.OwnWarningTunnel) 
+			onrelease={%lua.SelectedAudioFile = %lua.AudioTunnel; %lua.SelectedOwnWarning = %lua.OwnWarningTunnel; sc_ScanAudioFiles()} 
+			enable=(%navigation.tunnel_view.enabled && !(%lua.MuteSoundWithTTS && %regional.current_voice.is_tts)) dtooltip="You have to Turn ON Tunnel Sound." />
+</userlist>
+

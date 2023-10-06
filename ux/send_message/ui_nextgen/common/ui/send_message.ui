@@ -1,0 +1,98 @@
+;---------------WANDEL™---12.12.2020------------------
+<modify ui_Cockpit>           
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON send_message_button_cockpit 
+			ONRELEASE=VW_SendMessage
+			ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_SendLocation_Popover", MODEL.lua.SendLocation(), "ctext")'
+			VISIBLE=(%lua.send_message_button_cockpit && LuaJava.LuaJavaActive) ZOOM=80%
+			ICON="ico_SendMessage.svg" 
+			T_TEXT=(VW_Return_button_text(translate(%lua.SendLocation), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate(%lua.SendLocation), L"%s", 99)) 
+			C_L_ICON=(%ui.lm_SendTypes_Popover.list[%lua.SendTypeIndex].img)
+			C_R_ICON=(%gps.blink ? %ui.lm_SendLocation_Popover.list[%lua.SendLocationIndex].img : "Lua_Logo.svg") >
+		</BUTTON_ICON>
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=(%lua.send_message_button_cockpit && LuaJava.LuaJavaActive) />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'Send Message' Button" bmp=(send_message_button_cockpit.ICON) isselected="lua.send_message_button_cockpit" />
+	</insert>
+</modify>
+;---- Quick Menu -----
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE='ui.send_message_button_cockpit.ONRELEASE()()' ONLONGCLICK='ui.send_message_button_cockpit.ONLONGCLICK()()' 
+			VISIBLE=(%lua.send_message_button_quick && LuaJava.LuaJavaActive) ZOOM=80%
+			ICON=(send_message_button_cockpit.ICON)
+			T_TEXT=(send_message_button_cockpit.T_TEXT)
+			B_TEXT=(send_message_button_cockpit.B_TEXT) 
+			C_L_ICON=(send_message_button_cockpit.C_L_ICON)
+			C_R_ICON=(send_message_button_cockpit.C_R_ICON) >
+		</BUTTON_ICON>
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=(%lua.send_message_button_quick && LuaJava.LuaJavaActive) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'Send Message' Button" bmp=(send_message_button_cockpit.ICON) isselected="lua.send_message_button_quick" />
+	</insert>
+</modify>
+
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=(send_message_button_cockpit.ICON) text=(translate("'Send Message' Button")) onrelease='ui.send_message_button_cockpit.ONRELEASE()()' onlongclick='ui.send_message_button_cockpit.ONLONGCLICK()()' enable=(LuaJava.LuaJavaActive) />
+		</insert>
+	</modify>
+<!end/>
+
+;=====================================================================================================
+<userlist lm_SendLocation_Popover ctext="str" text="ui" onrelease="ui" onlongclick="ui" enable="bool" img="str" type="str" >
+	<default enable=1 type="Icon" onrelease='MODEL.lua.SendLocation = MODEL["*"].ctext(); MODEL.lua.SendLocationIndex = index; sc_ClosePopover(); sc_SetPopoverListAndOpen("ui.lm_SendLocation_Popover", MODEL.lua.SendLocation())' />
+	<row text="Current point" ctext="Current point" img="ico_cursorhead_cursor.svg" />
+	<row text="VIA point" ctext="VIA point" img="ico_via.svg" />
+	<row text="Destination point" ctext="Destination point" img="ico_destination.svg" />
+	<row text="TMC point" ctext="TMC point" img="ico_currenttraffic.svg" /> ;%map.primary.cursor_icon
+	<row text=(%lua.MessengerContact_Name) ctext="" img="employee.svg" onrelease='sc_ClosePopover(); sc_NextStateAnim(st_send_messageContact, "fade", 1, "" )' />
+	<row text="Send by" ctext="Send by" img=(send_message_button_cockpit.C_L_ICON) onrelease='sc_ClosePopover(); sc_SetPopoverListAndOpen("ui.lm_SendTypes_Popover", MODEL.lua.SendType())' />
+	<row text="Send" ctext="Send" img=(send_message_button_cockpit.ICON) onrelease='ui.send_message_button_cockpit.ONRELEASE()()' />
+	;<row text="Help" ctext="Help" img="owl.svg" onrelease='' />
+</userlist>
+
+<userlist lm_SendTypes_Popover text="str" onrelease="ui" enable="bool" img="str" type="str">
+	<default enable=1 type="Icon" onrelease='MODEL.lua.ContactType = "Phone"; MODEL.lua.SendType = MODEL["*"].text(); MODEL.lua.SendTypeIndex = index; sc_ClosePopover()' />
+	<row text="Email" img="ico_Gmail.svg" onrelease='MODEL.lua.ContactType = "Email"; MODEL.lua.SendType = MODEL["*"].text(); MODEL.lua.SendTypeIndex = index; sc_ClosePopover()' />
+	<row text="SMS" img="ico_sms.svg" />
+	;<row text="Viber" img="ico_Viber.svg" />
+	;<row text="Skype" img="ico_Skype.svg" />
+	<row text="WhatsApp" img="ico_WhatsApp.svg" />
+	;<row text="Telegram" img="ico_Telegram.svg" />
+</userlist>
+
+<modify ui_Cockpit_DragMode>
+	<insert into="#DragModeCenter_buttons">
+		<BUTTON CLASS="btn_map inbox" ONRELEASE='VW_SendMessage(MODEL.my.map.selected_item.position())' ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_SendLocation_Popover", MODEL.lua.SendLocation(), "ctext")' 
+				VISIBLE=(LuaJava.LuaJavaActive) > 
+			<SPRITE CLASS="button map fill" />
+			<SPRITE CLASS="btn_map svg" IMG="ico_SendMessage.svg" />
+			<TEXT CLASS="BTN_top_text" TEXT=(VW_Return_button_text(translate(%lua.SendLocation), L"%s", 1)) />
+			<TEXT CLASS="BTN_bottom_text" TEXT=(VW_Return_button_text(translate(%lua.SendLocation), L"%s", 99)) />
+			<SPRITE LEFT=2% W=20% H=20% BOTTOM=40% Z=2 VALIGN="CENTER" ALIGN="CENTER" ZOOM="ZOOMVISIBLE" IMG=(%ui.lm_SendTypes_Popover.list[%lua.SendTypeIndex].img) />
+			<SPRITE RIGHT=2% W=20% H=20% BOTTOM=40% Z=2 VALIGN="CENTER" ALIGN="CENTER" ZOOM="ZOOMVISIBLE" IMG=(%ui.lm_SendLocation_Popover.list[%lua.SendLocationIndex].img) />	 
+		</BUTTON>
+	</insert>
+</modify>

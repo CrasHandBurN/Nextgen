@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 17.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="r3s_center" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="1600px" height="480px" viewBox="0 0 1600 480" enable-background="new 0 0 1600 480" xml:space="preserve">
+<g id="patch">
+	<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="1078.4634" y1="480.499" x2="1078.4634" y2="245.7656">
+		<stop  offset="0" style="stop-color:#181410"/>
+		<stop  offset="1" style="stop-color:#383630"/>
+	</linearGradient>
+	<path fill="url(#SVGID_1_)" d="M1289.399,479.562c-68.454-37.896-136.897-75.791-205.341-113.686
+		c-72.313-40.037-144.625-80.075-216.946-120.11h-1.035l-0.244,0.436c66.982,37.811,133.975,75.621,200.967,113.432
+		c71.344,40.267,142.688,80.534,214.021,120.802l0.114,0.064h10.156L1289.399,479.562z"/>
+	<linearGradient id="SVGID_2_" gradientUnits="userSpaceOnUse" x1="1189.0728" y1="480.499" x2="1189.0728" y2="245.7656">
+		<stop  offset="0" style="stop-color:#181410"/>
+		<stop  offset="1" style="stop-color:#383630"/>
+	</linearGradient>
+	<path fill="url(#SVGID_2_)" d="M1483.387,479.534c-95.498-37.866-190.986-75.732-286.474-113.599
+		c-101.011-40.057-202.023-80.115-303.044-120.17h-1.357l-0.185,0.464c94.109,37.839,188.229,75.678,282.349,113.518
+		c100.088,40.238,200.177,80.478,300.253,120.716l10.892,0.036L1483.387,479.534z"/>
+</g>
+<linearGradient id="road_1_" gradientUnits="userSpaceOnUse" x1="1172.6193" y1="479.999" x2="1172.6193" y2="245.7656">
+	<stop  offset="0" style="stop-color:#181410"/>
+	<stop  offset="1" style="stop-color:#383630"/>
+</linearGradient>
+<path id="road" fill="url(#road_1_)" d="M1479.158,479.999c-195.548-78.078-391.097-156.156-586.646-234.233H866.08
+	c139.678,78.077,279.355,156.155,419.033,234.233C1349.795,479.999,1414.476,479.999,1479.158,479.999z"/>
+<g id="line">
+	<path fill="#FFFFFF" stroke="#FFFFFF" stroke-width="0.2" stroke-miterlimit="10" d="M869.364,247.583h-0.063
+		c1.004,0.567,2.009,1.134,3.013,1.701h0.122C871.411,248.717,870.388,248.15,869.364,247.583z"/>
+	<path fill="#FFFFFF" stroke="#FFFFFF" stroke-width="0.2" stroke-miterlimit="10" d="M919.557,275.372h-1.022
+		c3.716,2.097,7.432,4.195,11.148,6.293h1.24C927.134,279.568,923.346,277.47,919.557,275.372z"/>
+	<path fill="#FFFFFF" stroke="#FFFFFF" stroke-width="0.2" stroke-miterlimit="10" d="M961.641,298.672h-1.827
+		c7.151,4.036,14.302,8.073,21.453,12.109h2.245C976.222,306.744,968.931,302.708,961.641,298.672z"/>
+	<path fill="#FFFFFF" stroke="#FFFFFF" stroke-width="0.2" stroke-miterlimit="10" d="M1051.412,350.372
+		c20.746,11.709,41.489,23.418,62.235,35.128h4.825c-21.148-11.709-42.3-23.418-63.448-35.128H1051.412z"/>
+	<path fill="#FFFFFF" stroke="#FFFFFF" stroke-width="0.2" stroke-miterlimit="10" d="M880.115,253.536h-0.268
+		c1.476,0.833,2.953,1.667,4.429,2.5h0.355C883.125,255.202,881.62,254.369,880.115,253.536z"/>
+	<path fill="#FFFFFF" stroke="#FFFFFF" stroke-width="0.2" stroke-miterlimit="10" d="M895.781,262.209h-0.568
+		c2.25,1.27,4.5,2.54,6.749,3.81h0.699C900.368,264.749,898.075,263.479,895.781,262.209z"/>
+	<path fill="#FFFFFF" stroke="#FFFFFF" stroke-width="0.2" stroke-miterlimit="10" d="M897.096,247.583h-0.063
+		c1.41,0.567,2.82,1.134,4.23,1.701h0.122C899.956,248.717,898.526,248.15,897.096,247.583z"/>
+	<path fill="#FFFFFF" stroke="#FFFFFF" stroke-width="0.2" stroke-miterlimit="10" d="M967.175,275.372h-1.022
+		c5.217,2.097,10.434,4.195,15.651,6.293h1.24C977.754,279.568,972.465,277.47,967.175,275.372z"/>
+	<path fill="#FFFFFF" stroke="#FFFFFF" stroke-width="0.2" stroke-miterlimit="10" d="M1025.932,298.672h-1.827
+		c10.039,4.036,20.079,8.073,30.118,12.109h2.245C1046.289,306.744,1036.11,302.708,1025.932,298.672z"/>
+	<path fill="#FFFFFF" stroke="#FFFFFF" stroke-width="0.2" stroke-miterlimit="10" d="M1152.698,350.372
+		c29.125,11.709,58.247,23.418,87.372,35.128h4.825c-29.527-11.709-59.057-23.418-88.585-35.128H1152.698z"/>
+	<path fill="#FFFFFF" stroke="#FFFFFF" stroke-width="0.2" stroke-miterlimit="10" d="M912.107,253.536h-0.268
+		c2.073,0.833,4.146,1.667,6.218,2.5h0.355C916.31,255.202,914.209,254.369,912.107,253.536z"/>
+	<path fill="#FFFFFF" stroke="#FFFFFF" stroke-width="0.2" stroke-miterlimit="10" d="M933.98,262.209h-0.568
+		c3.158,1.27,6.317,2.54,9.475,3.81h0.699C940.385,264.749,937.182,263.479,933.98,262.209z"/>
+</g>
+</svg>

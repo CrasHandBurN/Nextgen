@@ -1,0 +1,13 @@
+@params{
+	fontsize_winddirection:18;
+	teperaturetext_w:54;
+	svg_winddirection_w:80;
+	svg_winddirection_h:svg_winddirection_w;
+}
+
+
+
+
+@import "~/common/ui/weather_params_landscape.css" landscape;
+@import "~/common/ui/weather_params_portrait.css" portrait;
+

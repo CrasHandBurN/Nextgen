@@ -1,0 +1,35 @@
+/* ------- CURRENT MAP PROVIDER ICON -- VW -- 21.09.2018  ----- */
+
+BUTTON.provider.cockpit{
+	resize_bmp:1;
+	img:"";
+	left:cockpit_margin;
+	top:cockpit_margin;
+	h:35;
+	w:35;
+	z:450;
+	visible:(%lua.MapProviderInCockpit && (!%navigation.has_route || ui_Cockpit.detect_gps || ui_Cockpit.p2p_valid || ui_Cockpit.navigation_suspended));
+}
+
+BUTTON.btn_map.provider{
+	left:62%; 
+	right: 18%;
+	top:26%; 
+	bottom:54%;
+	z:64;
+	visible:(%lua.MapProviderInCockpit);
+}
+
+BUTTON.btn_map.provider.mini{
+	left:82%;
+	right:2%;
+	top:0;
+	bottom: 70%;
+	z:65;
+	visible:(%lua.MapProviderInCockpit);
+}
+
+SPRITE.map_provider{
+	left:0;right:0;top:0;bottom:0;align:"CENTER";valign:"CENTER";z:65;
+	iconid:(%other.contents.list[current].prov_icon_id);
+}

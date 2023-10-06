@@ -1,0 +1,2 @@
+import "~/common/ui/FontChanger.ui"
+import "~/common/ui/FontChanger.lua"

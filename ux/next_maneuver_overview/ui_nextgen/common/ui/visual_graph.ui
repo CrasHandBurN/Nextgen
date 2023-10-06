@@ -1,0 +1,29 @@
+;---------------WANDEL™---24.09.2023------------------
+<var GraphEnable = 0 permanent >
+
+<var Graph_dist_limit_temp = 500>
+<observer event="ITINER_NEXT_MANEUVER_CHANGED_EVENT"
+	onchange='
+		doDelayed(10, function()
+			if MODEL.navigation.distance_to_maneuver() < VW_right_distance() then 
+				ui.Graph_dist_limit_temp = MODEL.navigation.distance_to_maneuver() <= 10 and 10 or MODEL.navigation.distance_to_maneuver()
+			else
+				ui.Graph_dist_limit_temp = VW_right_distance()
+			end
+		end)
+	' 
+	start="NO_TRIGGER" />
+
+<modify ui_Cockpit>
+	<insert into="DIV.cockpit>DIV.fill>DIV.fill>DIV.roundabout">
+		<GRAPH Z=100 FULL=(%ui.Graph_dist_limit_temp) LEFT=0 RIGHT=0 TOP=0 BOTTOM=5% CURRENT=(%navigation.distance_to_maneuver) VISIBLE=(GraphEnable && %navigation.distance_to_maneuver.valid && %navigation.distance_to_maneuver <= VW_right_distance()) />
+	</insert>
+	
+	<insert into="DIV.cockpit>DIV.fill>DIV.fill>DIV.diricon">
+		<GRAPH Z=100 FULL=(%ui.Graph_dist_limit_temp) LEFT=0 RIGHT=0 TOP=0 BOTTOM=5% CURRENT=(%navigation.distance_to_maneuver) VISIBLE=(GraphEnable && %navigation.distance_to_maneuver.valid && %navigation.distance_to_maneuver <= VW_right_distance()) />
+	</insert>
+  
+	<insert into="DIV.cockpit>DIV.fill>DIV.fill>DIV.diricon_hwy">
+		<GRAPH Z=100 FULL=(%ui.Graph_dist_limit_temp) LEFT=0 RIGHT=0 TOP=0 BOTTOM=5% CURRENT=(%navigation.distance_to_maneuver) VISIBLE=(GraphEnable && %navigation.distance_to_maneuver.valid && %navigation.distance_to_maneuver <= VW_right_distance()) />
+	</insert>
+</modify>

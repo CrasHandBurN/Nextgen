@@ -1,0 +1,9 @@
+import "~/common/ui/TripComputerVW.css"
+import "~/common/ui/VWTripComputer.ui"
+import "~/common/ui/VWTripComputer.lua"
+import "~/common/ui/Point_on_map.lua"
+import "~/common/ui/BackToCar.lua"
+import "~/common/ui/TripComputerVW_mods.ui"
+
+import "~/common/ui/TCMap_FreeArea.ui"
+import "~/common/ui/TCMap_FreeArea.lua"

@@ -1,0 +1,225 @@
+<observer obs_destination value=(!%route.list.navigated.waypoints.start_is_user_selected && !%navigation.is_in_simulation && !%route.list.navigated.waypoints.has_isolated_waypoint && %route.list.navigated.waypoints.list.size == 2 && %route.list.navigated.recalculate_on_modify && %navigation.distance_to_destination < %lua.VW_distance_to_destination) onselect=sc_Dest_SpeedCheck_Start ondeselect=sc_Dest_SpeedCheck_Stop start />
+<observer obs_destination_speedcheck value=(%ui._up_time) onchange=sc_route_finished_Speedcheck />
+
+<layer ui_CheckDestination z=100 visible=( ui_PropLayer.SidePanelVisible )>
+	<DIV class=cockpit>
+		<DIV class=map_messagebox >
+			<SPRITE right=85% left=2% bottom=90% top=1% align="left" valign="top" img="ico_destination.svg" zoom=75% />	
+			<DIV class="dialog_buttons">
+				<DIALOGBUTTON class="dialog 2_1_1 mapmsgbox" text="Exit" onrelease=sc_DoExit >
+					<SPRITE class="button map fill" />
+				</DIALOGBUTTON>
+				<DIALOGBUTTON class="dialog 2_1_2 mapmsgbox" text="Delete Route" onrelease='sc_DeleteRouteKeepStart(true)' > 
+	       			<SPRITE class="button map fill" />
+				</DIALOGBUTTON>
+				<DIALOGBUTTON class="dialog 1_1_1 mapmsgbox" text="Close" onrelease=sc_HideDiscoverySidePopup > 
+	       			<SPRITE class="button map fill" />
+				</DIALOGBUTTON>
+			</DIV>
+		</DIV>
+	</DIV>
+</layer>
+
+;---show destination
+<!if condition=(Plugin.isLoaded("labs"))>
+	<modify lm_ExtraSettingsList>
+		<insert>
+			<row text="'Show Destination' Settings" icon="destination.svg" haspopover=1 onrelease='sc_NextStateAnim(st_ShowRouteDestinationSettings, "fade", 1, "" )' />
+		</insert>
+	</modify>
+<!end>
+<modify lm_aRouteWarningsSettings>
+	<insert>
+		<row text="'Show Destination' Settings" haspopover=1 onrelease='sc_NextStateAnim(st_ShowRouteDestinationSettings, "fade", 1, "" )' />
+	</insert>
+</modify>
+
+<userlist lm_ShowRouteDestinationSettingsList text="ui" onrelease="ui" onlongclick="ui" enable="bool" type="str" visible="bool" boolmodel="str" details="ui" dtooltip="str" haspopover="bool" isselected="str">	
+	<view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 onrelease=undef />
+	<row	text="'Show Destination' Button in Cockpit" type="ChkOnOff" isselected="lua.ShowDestinationBtn" />
+	<row	text="'Show Destination' Button in QuickMenu" type="ChkOnOff" isselected="lua.ShowDestinationBtnQuick" />
+	<row    text="Show Destination point on route start" type="ChkOnOff" isselected="lua.SRStartEnable" />
+	<row    text="Show Destination point near finish" type="ChkOnOff" isselected="lua.SRSEndEnable" />
+	<row    text="Near distance to show" haspopover=1 details=(sc_ShowDistanceTool(%lua.SRSEDistanceToDestination)) onrelease='sc_SetPopoverListAndOpen( "ui.lm_Distance_To_ShowDestination_popover" )' />
+	<row    text="'Show Destination' zoom" details=(sc_ShowDistanceTool(%lua.SRSEZoom)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_SRSEZoom_popover" )' />
+	<row    text="'Show Destination' time" details=(sc_ShowTimeTool(%lua.SRSEDistanceToDestination_time_out)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_SRSEDistanceToDestination_time_out" )' />
+</userlist>
+
+<userlist lm_Distance_To_ShowDestination_popover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(350)) max_text=(sc_ShowDistanceTool(5000)) />
+	   <row name="Near distance to show" text=(sc_ShowDistanceTool(%lua.SRSEDistanceToDestination)) type="Scroll" min=350 max=5000 step=10 valuemodel="lua.SRSEDistanceToDestination" />
+</userlist>
+
+<userlist lm_SRSEZoom_popover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(60)) max_text=(sc_ShowDistanceTool(1000)) />
+	   <row name="'Show Destination' zoom" text=(sc_ShowDistanceTool(%lua.SRSEZoom)) type="Scroll" min=60 max=1000 step=10 valuemodel="lua.SRSEZoom" />
+</userlist>
+
+<userlist lm_SRSEDistanceToDestination_time_out name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowTimeTool(5)) max_text=(sc_ShowTimeTool(30)) />
+	   <row name="'Show Destination' time" text=(sc_ShowTimeTool(%lua.SRSEDistanceToDestination_time_out)) type="Scroll" min=5 max=30 step=1 valuemodel="lua.SRSEDistanceToDestination_time_out" />
+</userlist>
+;------------------------------------------------------------------------------------
+<modify ui_Cockpit>   
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON ShowDestinationBtn ONRELEASE='
+			gDestination_City = VW_AddressByGCOOR(MODEL.route.list.navigated.waypoints.list[MODEL.route.list.navigated.waypoints.list.lastindex()].strapped_position(), "city")
+			sc_DiscoverySidePanelChange(
+				{
+					MODEL.sound.voice.format_street_name(MODEL.route.list.navigated.waypoints.list[MODEL.route.list.navigated.waypoints.list.lastindex()].longname()),
+					{
+						ACTION = {
+							"ShowDestination",
+						},
+						POSITION = {
+							lat = tostring(MODEL.regional.unlocalize_gcoor(builtin.format("%{gcoor[%lat]}", MODEL.route.list.navigated.waypoints.list[MODEL.route.list.navigated.waypoints.list.lastindex()].strapped_position()))),
+							lon = tostring(MODEL.regional.unlocalize_gcoor(builtin.format("%{gcoor[%lon]}", MODEL.route.list.navigated.waypoints.list[MODEL.route.list.navigated.waypoints.list.lastindex()].strapped_position()))),
+							},
+						DISTANCE = MODEL.navigation.distance_to_destination(),
+						VISIBLE = true,
+						ENABLE = true,
+					},
+					true, --have been not activated
+				}, "SRSEZoom", "SRSEDistanceToDestination_time_out", {discoverysidepanel, ui_ShowDestination, ui_weatherDSC, ui_Discovery_Zoom})
+				'
+			ONLONGCLICK='sc_NextStateAnim(st_ShowRouteDestinationSettings, "fade", 1, "" )' 
+			VISIBLE=(%lua.ShowDestinationBtn && %navigation.has_route)
+			ICON="destination.svg" 
+			T_TEXT=(VW_Return_button_text(translate("Destination"), L"%s", 1)) 
+			B_TEXT=(VW_Return_button_text(translate("Destination"), L"%s", 99)) />
+	</insert>
+</modify>
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row	text="'Show Destination' Button" bmp="destination.svg" isselected="lua.ShowDestinationBtn" />
+	</insert>
+</modify>
+<modify lm_CockpitSideList>
+	<insert>
+		<row  visible=(%lua.ShowDestinationBtn && %navigation.has_route) />
+	</insert>
+</modify>
+;-------------------------------In Quick Menu------------------------------------------------------
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ShowDestinationBtnQuick 
+			ONRELEASE='ui.ShowDestinationBtn.ONRELEASE()()'
+			ONLONGCLICK='ui.ShowDestinationBtn.ONLONGCLICK()()' 
+			VISIBLE=(%lua.ShowDestinationBtnQuick && %navigation.has_route)
+			ICON="destination.svg"
+			T_TEXT=(VW_Return_button_text(translate("Destination"), L"%s", 1)) 
+			B_TEXT=(VW_Return_button_text(translate("Destination"), L"%s", 99))	/>
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row  visible=(%lua.ShowDestinationBtnQuick && %navigation.has_route) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row	text="'Show Destination' Button" bmp="destination.svg" isselected="lua.ShowDestinationBtnQuick" />
+	</insert>
+</modify>
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp="destination.svg" text=(translate("Destination")) 
+				onrelease='ui.ShowDestinationBtn.ONRELEASE()()' 
+				onlongclick='ui.ShowDestinationBtn.ONLONGCLICK()()'
+				enable=(%navigation.has_route) />
+		</insert>
+	</modify>
+<!end/>
+
+<layer ui_ShowDestination z=100 visible=( ui_PropLayer.SidePanelVisible )
+	onshow='
+		UpdateSunSetSunriseList()
+	--[[
+		if ui.ui_ShowDestination.parking_ad_enabled() then
+			--if not MODEL.navigation.parking_ad.navigated_as_parkingpreview() then
+				MODEL.map.discoverysidepanel.route_model = "parking_ad_route"
+			--end
+			gParkingAccepted = false
+			--sc_SelectParkingPoiOnMap()
+				local gcTL1, gcBR1 = MODEL.route.list.navigated.get_bounding_box()
+				--if not MODEL.navigation.parking_ad.navigated_as_parkingpreview() then
+					--gcTL1, gcBR1 = MODEL.route.list.parking_ad_route.get_bounding_box()
+				--end
+				sc_Fit_To_Screen(gcTL1, gcBR1, "discoverysidepanel")
+			--ui.Counter.Text = SELF.title
+			--ui.Counter.Listmodel = "navigation.parking_ad.list"
+			MODEL.poi.resultpoi.clear()
+			for item, index in ModelList_iter(MODEL.navigation.parking_ad.list) do
+				MODEL.poi.resultpoi.add_poi_by_id(item.provider_id(), item.id())
+			end
+		--VW_Debugger(MODEL.poi.resultpoi.count())
+			local topLeft, bottomRight = MODEL.navigation.car.position(), MODEL.navigation.car.position()
+			if MODEL.poi.resultpoi.count() then
+				topLeft, bottomRight = MODEL.poi.resultpoi.get_boundingbox()
+			end
+			sc_Fit_To_Screen(topLeft, bottomRight, "discoverysidepanel")
+			--ui_Header.title = ui.Counter.TextAndCountOfMax
+		end
+	]]--
+	'
+	onhide='
+	--[[
+		MODEL.map.primary.route_model = "" 
+		MODEL.navigation.parking_ad.exit_selection(gParkingAccepted)
+	]]--
+		'>
+	<implementation>
+		<property parking_ad_enabled value=(%navigation.parking_ad_enabled && %{"navigation.parking_ad.visible"} && !vParkingMessageVisible) />
+		
+		<property sunrise_time	value=( observe(%oasis.sunset_sunrise.list, %{"oasis.sunset_sunrise.list.@1.sunrise.valid"}); %{"oasis.sunset_sunrise.list.@" + %route.list.navigated.waypoints.list.lastindex + ".sunrise.time"} ) />
+		<property sunset_time 	value=( observe(%oasis.sunset_sunrise.list, %{"oasis.sunset_sunrise.list.@1.sunset.valid"}); %{"oasis.sunset_sunrise.list.@" + %route.list.navigated.waypoints.list.lastindex + ".sunset.time"} ) />
+
+	</implementation>
+	
+	<DIV class=cockpit>
+		<DIV class=map_messagebox >
+		
+			<DIV left=12% right=15% bottom=90% top=2% >
+				<HBOX class="sunsetsunrise_time" align="left">
+					<SPRITE class="listitem icon_list svg" img="spr_sunrise.svg" />
+					<TEXT  class="listitem sunsetsunrise_time" text=(format(L"%{time:*}", sunrise_time, %regional.timeformat)) /> 
+				</HBOX>
+				<HBOX class="sunsetsunrise_time" align="right">
+					<SPRITE class="listitem icon_list svg" img="spr_sunset.svg" />
+					<TEXT class="listitem sunsetsunrise_time" text=(format(L"%{time:*}", sunset_time, %regional.timeformat)) /> 
+				</HBOX>
+			</DIV>
+			
+			;<SPRITE right=85% left=2% bottom=90% top=2% align="right" valign="top" iconid=%navigation.direction_icon phasename=%lua.direction_icon_phasename
+			;				visible=( %navigation.direction_icon.valid && %route.list.navigated.has_navigable_path)  />
+			<SPRITE right=85% left=2% bottom=90% top=1% align="left" valign="top" img="destination.svg" zoom=75% />	
+
+			<DIV class="dialog_buttons" >
+				<DIALOGBUTTON class="dialog 2_1_1 mapmsgbox" onrelease=sc_ArrivedAtParking text="Arrive" visible=(parking_ad_enabled)>
+					<SPRITE class="button map fill" />
+				</DIALOGBUTTON>
+				<DIALOGBUTTON class="dialog 2_1_2 mapmsgbox" onrelease=sc_NotArrivedAtParking text="Parking" visible=(parking_ad_enabled)> 
+					<SPRITE class="button map fill" />
+				</DIALOGBUTTON>
+				<DIALOGBUTTON class="dialog 1_1_1 mapmsgbox" onrelease=sc_HideDiscoverySidePopup text="Close" visible=(!LuaJava.LuaJavaActive)> 
+					<SPRITE class="button map fill" />
+				</DIALOGBUTTON>
+				<DIALOGBUTTON class="dialog 2_2_1 mapmsgbox" text="Google Map" 
+					;onrelease='VW_GoogleMaps("google.streetview:cbll=" .. string.gsub(tostring(MODEL.route.list.navigated.waypoints.list[MODEL.route.list.navigated.waypoints.list.lastindex()].strapped_position()), "longitude = (-?%d+.%d+), latitude = (-?%d+.%d+)", "%2,%1"))' visible=(LuaJava.LuaJavaActive) > 
+					onrelease='VW_GoogleMaps("https://www.google.com/maps/search/?api=1&map_action=map&query=" .. string.gsub(tostring(MODEL.route.list.navigated.waypoints.list[MODEL.route.list.navigated.waypoints.list.lastindex()].strapped_position()), "longitude = (-?%d+.%d+), latitude = (-?%d+.%d+)", "%2,%1"))' visible=(LuaJava.LuaJavaActive) >
+					<SPRITE class="button map fill" />
+				</DIALOGBUTTON>
+				<DIALOGBUTTON class="dialog 2_2_2 mapmsgbox" text=(lua.gDestination_City) 
+					;onrelease='VW_GoogleMaps("https://www.google.com/maps/search/?api=1&map_action=map&query=" .. string.gsub(tostring(MODEL.route.list.navigated.waypoints.list[MODEL.route.list.navigated.waypoints.list.lastindex()].strapped_position()), "longitude = (-?%d+.%d+), latitude = (-?%d+.%d+)", "%2,%1"))' visible=(LuaJava.LuaJavaActive) > 
+					onrelease='java:call("android.open_webpage", L"https://" .. towstring(string.sub(MODEL.navigation.car.current_country(), 2, 3)) .. L".wikipedia.org/wiki/Special:Search?search=" .. gDestination_City)' visible=(LuaJava.LuaJavaActive) >
+					<SPRITE class="button map fill" />
+				</DIALOGBUTTON>
+			</DIV>
+		</DIV>
+	</DIV>
+</layer>

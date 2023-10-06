@@ -1,0 +1,3 @@
+import "~/common/ui/DeleteWaypoi.css"
+import "~/common/ui/DeleteWaypoi.lua"
+import "~/common/ui/DeleteWaypoi.ui"

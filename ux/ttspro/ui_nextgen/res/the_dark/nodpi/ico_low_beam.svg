@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 17.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="120px" height="120px" viewBox="0 0 120 120" enable-background="new 0 0 120 120" xml:space="preserve">
+<g id="normal">
+	<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="60" y1="119" x2="60" y2="1">
+		<stop offset="0" style="stop-color:#B1BCAC"/>
+		<stop offset="0" style="stop-color:#C8D0C1"/>
+		<stop offset="0" style="stop-color:#A8B9AC"/>
+		<stop offset="0.1804" style="stop-color:#B7C5BA"/>
+		<stop offset="0.6" style="stop-color:#DBE1DC"/>
+		<stop offset="1" style="stop-color:#F8FAF0"/>
+		<stop offset="1" style="stop-color:#F3F5F4"/>
+		<stop offset="1" style="stop-color:#FFFFFF"/>
+		<stop offset="1" style="stop-color:#EFF2E7"/>
+	</linearGradient>
+	<path fill="url(#SVGID_1_)" d="M1,93c0,14.359,11.641,26,26,26h66c14.359,0,26-11.641,26-26V27c0-14.359-11.641-26-26-26H27
+	C12.641,1,1,12.641,1,27V93z"/>
+	<g>
+		<path fill="#010002" d="M75.766,33.278c0.58-1.555,2.309-2.353,3.854-1.773l25.916,9.56c1.555,0.573,2.349,2.299,1.779,3.851
+		c-0.453,1.209-1.596,1.963-2.819,1.963c-0.342,0-0.697-0.06-1.035-0.19l-25.916-9.56C75.991,36.556,75.199,34.83,75.766,33.278z
+		M47.266,26.153C27.174,30.283,12.5,43.19,12.5,58.498c0,15.304,14.677,28.215,34.766,32.344V26.153z M105.533,65.245
+		l-25.913-9.56c-1.545-0.576-3.278,0.219-3.854,1.776c-0.573,1.555,0.219,3.278,1.779,3.851l25.919,9.56
+		c0.335,0.13,0.687,0.19,1.032,0.19c1.219,0,2.365-0.75,2.815-1.963C107.882,67.541,107.087,65.815,105.533,65.245z M61.032,33.332
+		v-8.575c-3.708,0-7.302,0.317-10.766,0.861v65.758c3.468,0.548,7.058,0.861,10.766,0.861V83.66
+		c5.007-0.805,8.974-11.745,8.974-25.165C70.006,45.08,66.038,34.136,61.032,33.332z M105.533,89.426L79.62,79.863
+		c-1.545-0.576-3.278,0.219-3.854,1.779c-0.573,1.555,0.219,3.278,1.779,3.851l25.919,9.563c0.335,0.124,0.687,0.187,1.032,0.187
+		c1.219,0,2.365-0.747,2.815-1.963C107.882,91.728,107.087,90.002,105.533,89.426z"/>
+	</g>
+</g>
+<g id="active"><use xlink:href="#normal"/>
+</g>
+<g id="disabled" opacity=".2"><use xlink:href="#normal"/>
+</g>
+</svg>

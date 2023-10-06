@@ -1,0 +1,120 @@
+
+
+
+
+@params {
+	
+	btn_main_color:	#ffffff;		btn_main_color2: #ffffff;		btn_main_color3: #fff200;
+	btn_sec_color:#ffffff;			btn_sec_color2:#ffffff;			btn_sec_color3:#fff200;	
+	inf_main_color:#ffffff;			inf_main_color2:#ffffff;										
+	inf_sec_color:#ffffff;			inf_sec_color2:#ffffff;		
+
+	route_info_color:#ffffff;		route_info_color2:#ffffff;	
+	route_info_sec_color:#ec3e3e;		route_info_sec_color2:#ec3e3e;
+	
+	chk_radio_color:#ffffff;		chk_radio_color2:#ffffff;
+	
+	map_main_color:#ffffff;			map_main_color2:#ffffff;
+	current_street_color: #ffffff;
+	current_street_color_night : #ffffff;
+	housenumber_color: #ffffff;
+	housenumber_color_night: #ffffff;
+	
+	footer_color:	#ffffff;		footer_color2:#ffffff;
+	title_color:	#ffffff;
+	separator_color:	#ffffff;
+	error_separator_color: #000000;
+	action_color:	#ffffff;		action_color2:#ffffff;
+
+	simspeed_color: #ffffff;
+	
+	xhtml_color: #ffffff;
+	
+	
+	keyboard_color:#000000;		keyboard_color2:#ffffff;
+	keyboard_alt_color:#ffffff;
+	keyboard_panel_grad:	"horizontal", #ff666666, 0.0, #ff727272, 0.50, #ff5c5c5c, 1.0;
+	color_key_popup:#000000;
+		
+	exitnum_color:#ffffff;
+	exitnum_sec_color:#ffffff;
+	
+	empty_color: #999999;
+	inputfield_focus_color: #ffffff;
+	inputfield_bg_grad:		"horizontal", #ff101010, 0.0, #ff303030, 0.50, #ff101010, 1.0;	
+
+	
+	
+	background_grad: 		"vertical", #ff212121, 0.0, #ff323232, 0.3, #ff272727,1.0;
+	background_header_grad: "vertical", #ff000000, 0.0, #ff000000, 0.9, #ffff5918, 0.91, #ffff5918, 1.0;	        
+	background_footer_grad: #ff000000;                                                                              
+	background_list_grad:	"vertical", #ff212121, 0.0, #ff323232, 0.3, #ff272727,1.0;
+	panel_grad: 			"vertical", #ff212121, 0.0, #ff323232, 0.3, #ff272727,1.0;
+	panel_map_grad: 		"vertical", #ff212121, 0.0, #ff323232, 0.3, #ff272727,1.0;
+	panel_mapheader_grad:	"vertical", #ff212121, 0.0, #ff323232, 0.3, #ff272727,1.0;
+	panel_mapheader_grad_focus:	#ff304f89;
+	panel_map_datafields_grad: #ff363636;
+	panel_list_grad:		#ff000000;
+	background_map_grad: 	#ff000000;
+	background_localmenu_grad:	"vertical", #ff2e1b20, 0.0, #ff2e1b20, 0.17, #ff251515, 0.71, #ff3a3034, 1.0;
+	listitem_separator_grad:#ff000000;
+	msgbox_grad: 			"vertical", #ff0f0808, 0.0, #ff100808, 0.09, #ff251515, 0.71, #f03a3034, 1.0;
+	background_tripcomputer_grad: #ff030303;
+	whereami_currentstreet_grad: #32000000;
+	quickbar_grad:			#ff000000;
+	legend_grad:			#ff000000;
+	tripinfo_panel_grad: 	#40000000;
+	quickbarbg_grad:		#ff000000;
+	
+	hwy_element_header_grad: "vertical", #00ffffff, 0.0, #60ffffff, 1.0;
+	
+	listitem_route: #ffea6809;
+	listitem_route_dest: "vertical", #00000000, 0.0, #00000000, 0.5, #ffea6809, 0.51, #ffea6809, 1.0;
+	listitem_route_dest_travelplanner: "vertical", #ff522810, 0.0, #ff522810, 0.5, #ffea6809, 0.51, #ffea6809, 1.0;
+	listitem_route_start: "vertical", #ffea6809, 0.0, #ffea6809, 0.5, #00000000, 0.51, #00000000, 1.0;
+	listitem_separator_route: #ffea6809;
+	listitem_separator_route_dest: "vertical", #00000000, 0.0, #00000000, 0.5, #ff522810, 0.51, #ff522810, 1.0; 
+	
+	separator_line_legend:	#ff352629;
+	
+	notification_feedback_grad: #ff2c2c2c;
+	notification_grad:			#ffaa0f0f;
+	notification_area_textcolor:	#ffffff;
+	
+	connected_error_color: #e6f7d91e;
+	
+	tmcdelay_color:#f3df0f;	
+	traffic_station_color: #66f04b;
+	
+	signpost_bg_color: #ff000000;
+
+	overspeed_color:#ff0000;
+	
+	countryflag_bg_color:#00000000;
+	
+	tunnelview_textcolor: #ffffff;
+	
+	headertime_textcolor: #ffffff;
+	
+	avoiddist_textcolor: #ffffff;
+	
+	
+	linechart_color: #ff7519;
+	areachart_color: #281818;
+	grid_x_color: #423839;
+	grid_y_color: #423839;
+	scale_numbers_x_color: #ffffff;
+	scale_numbers_y_color: #ffffff;
+	selection_line_color: #FFFFFF;
+	selection_text_x_color: #ff7519;
+	selection_text_y_color: #ff7519;
+/* mod */
+	glow_color:#181c21;
+	speed_color:#ffffff;
+	overspeedtol_color:#ffcc00;
+	color_overspeedtol:#000000;
+	color_overspeed:#ffffff;
+}
+
+SPRITE.quickbar_icon.local_search { iconindex: 1 }
+SPRITE.providericon{	phasename:"default_dark" }

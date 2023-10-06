@@ -1,0 +1,120 @@
+<modify ui_Cockpit>           
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON Tolerance_button 
+			ONRELEASE='VW_SayTolerance(); ONRELEASE=sc_CountryInfo_SelectCurrentCountry()'
+			ONLONGCLICK=sc_SpeedWarningSettings
+			VISIBLE=(%lua.Tolerance_buttonCockpit)
+			;ICON="ico_tolerance.svg" 
+			;ZOOM=80%
+			T_TEXT=(VW_Return_button_text(translate("Tolerance"), L"%s", 1))
+			B_TEXT=(%warning.speedwarn_alt_toltype ? sc_ShowSpeedTool(%navigation.car.is_incity ? %warning.speedwarn_alt_tolerance : %warning.speedwarn_tolerance) : (sprintf( "%d%%", (%navigation.car.is_incity ? %warning.speedwarn_alt_tolerance : %warning.speedwarn_tolerance)))) >
+			<SPRITE CLASS="listitem flag" Z=41 IMG=(ui_Cockpit.country_flag) ZOOM=80% />
+		</BUTTON_ICON>
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=(%lua.Tolerance_buttonCockpit) />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'Country Speed Tolerance' Button" bmp="ico_tolerance.svg" isselected="lua.Tolerance_buttonCockpit" />
+	</insert>
+</modify>
+;---- Quick Menu -----
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON 
+			ONRELEASE='ui.Tolerance_button.ONRELEASE()()' 
+			ONLONGCLICK='ui.Tolerance_button.ONLONGCLICK()()' 
+			VISIBLE=(%lua.Tolerance_buttonQuick)
+			;ICON=(Tolerance_button.ICON) 
+			;ZOOM=80%
+			T_TEXT=(Tolerance_button.T_TEXT)
+			B_TEXT=(Tolerance_button.B_TEXT) >
+			<SPRITE CLASS="listitem flag" Z=41 IMG=(ui_Cockpit.country_flag) ZOOM=80% />
+		</BUTTON_ICON>
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=(%lua.Tolerance_buttonQuick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'Country Speed Tolerance' Button" bmp="ico_tolerance.svg" isselected="lua.Tolerance_buttonQuick" />
+	</insert>
+</modify>
+
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp="ico_tolerance.svg" text=(translate("Country Speed Tolerance")) onrelease='ui.Tolerance_button.ONRELEASE()()' />
+		</insert>
+	</modify>
+<!end/>
+
+<userlist lm_Tolerance country="str" tol_value="int" alt_toltype="bool" enable="bool" visible="bool" >
+	<default enable=1 visible=1 alt_toltype=1 />
+	<view visibility_filter=visible />
+	<row    country="_UKR" tol_value=20 /> ;21
+	<row    country="_RUS" tol_value=20 /> ;21
+	<row    country="_AUT" tol_value=3 /> ;4
+	<row    country="_ALB" tol_value=0 /> ;-
+	<row    country="_AND" tol_value=5 /> ;6
+	<row    country="_BLR" tol_value=10 /> ;11
+	<row    country="_BEL" tol_value=5 /> ;6 
+	<row    country="_BGR" tol_value=3 /> ;4 
+	<row    country="_BIH" tol_value=10 /> ;11 
+	<row    country="_HUN" tol_value=3 /> ;4 
+	<row    country="_GER" tol_value=3 /> ;4 
+	<row    country="_GRC" tol_value=3 /> ;4 
+	<row    country="_DEN" tol_value=8 /> ;9 
+	<row    country="_ESP" tol_value=7 /> ;8 
+	<row    country="_ITA" tol_value=5 /> ;6 
+	<row    country="_LAT" tol_value=10 /> ;11 
+	<row    country="_LIT" tol_value=10 /> ;11 
+	<row    country="_LIE" tol_value=3 /> ;4 
+	<row    country="_LUX" tol_value=3 /> ;4 
+	<row    country="_MKD" tol_value=1 /> ;2 
+	<row    country="_MDA" tol_value=9 /> ;10 
+	<row    country="_NED" tol_value=6 /> ;7 
+	<row    country="_NOR" tol_value=3 /> ;4 
+	<row    country="_POL" tol_value=10 /> ;11 
+	<row    country="_POR" tol_value=19 /> ;20 
+	<row    country="_ROM" tol_value=9 /> ;10 
+	<row    country="_SRB" tol_value=0 /> ;1 
+	<row    country="_MNE" tol_value=0 /> ;1 
+	<row    country="_SVK" tol_value=3 /> ;4 
+	<row    country="_SLO" tol_value=5 /> ;6 
+	<row    country="_TUR" tol_value=109 alt_toltype=0 /> ;10% !!!!!!!!!!!!!!
+	<row    country="_FIN" tol_value=9 /> ;10 
+	<row    country="_FRA" tol_value=5 /> ;6 
+	<row    country="_HRV" tol_value=10 /> ;11 
+	<row    country="_CZE" tol_value=3 /> ;4 
+	<row    country="_SUI" tol_value=3 /> ;4 
+	<row    country="_SWE" tol_value=3 /> ;4 
+	<row    country="_EST" tol_value=6 /> ;7
+</userlist>
+
+<modify lm_SpeedWarnings>
+	<modify Speed_Tolerance enable=(%warning.speedlimit_warning_visual && %lua.Tolerance_Saved_Country == "") dtooltip="Automatic tolerance is working" />
+	<modify Outside_Town_Percent enable=(%warning.speedlimit_warning_visual && !%warning.speedwarn_toltype && %lua.Tolerance_Saved_Country == "") dtooltip="Automatic tolerance is working" />
+	<modify Within_Towns_Percent enable=(%warning.speedlimit_warning_visual && !%warning.speedwarn_toltype && %lua.Tolerance_Saved_Country == "") dtooltip="Automatic tolerance is working" />
+	<modify Outside_Town_Fixed enable=(%warning.speedlimit_warning_visual && %warning.speedwarn_toltype && %lua.Tolerance_Saved_Country == "") dtooltip="Automatic tolerance is working" />
+	<modify Within_Towns_Fixed enable=(%warning.speedlimit_warning_visual && %warning.speedwarn_toltype && %lua.Tolerance_Saved_Country == "") dtooltip="Automatic tolerance is working" />
+	<insert after=Within_Towns_Fixed>
+		<row text="Country Speed Tolerance Dependencies" type="ChkOnOff" isselected="lua.Country_Speed_Tolerance" enable=(%ui.lm_OtherLocation[0].position != lua.nilGCOOR) dtooltip="Please define \"Home\"" />
+		<row text="Restore to \"Home\"" haspopover=1 onrelease=VW_RestoreHomeCountryAlert enable=(%lua.Country_Speed_Tolerance) />		
+	</insert>	
+</modify>
+
+<observer Country_Speed_Tolerance value=(%lua.Country_Speed_Tolerance) ondeselect=VW_RestoreHomeCountry onchange=VW_NewToleranceSet start="NO_TRIGGER" />
+;<observer HomeGuard model="ui.lm_OtherLocation[0].position", "lua.Country_Speed_Tolerance" onchange=VW_NewToleranceSet start="NO_TRIGGER" />

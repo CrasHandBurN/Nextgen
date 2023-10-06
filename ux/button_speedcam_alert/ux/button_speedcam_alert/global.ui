@@ -1,0 +1,2 @@
+import "~/common/ui/button_speedcam_alert.ui"
+import "~/common/ui/button_speedcam_alert.lua"

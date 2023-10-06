@@ -1,0 +1,3 @@
+import "~/common/ui/battery_in_menu.css"
+import "~/common/ui/battery_in_menu.lua"
+import "~/common/ui/battery_in_menu.ui"

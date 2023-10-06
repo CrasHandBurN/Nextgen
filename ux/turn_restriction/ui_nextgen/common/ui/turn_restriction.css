@@ -1,0 +1,21 @@
+/*------- 20.08.2020 ---------TURN RESTRICTION---------WANDEL™----------*/
+@params {
+	svg_turnrestrictions_image_w: 150;
+	svg_turnrestrictions_image_h: 150;
+}
+
+SPRITE.turn_restr {
+	img: "turnrestrictions.svg"; 	
+	valign:"CENTER"; 
+	z: 5000;
+	phase: %navigation.turn_restriction_icon; 
+	image_w: svg_turnrestrictions_image_w; 
+	image_h: svg_turnrestrictions_image_h;
+	w: svg_turnrestrictions_image_w; 
+	h: svg_turnrestrictions_image_h;
+	
+	left:(width * %map.primary.car_posx / 100 - svg_turnrestrictions_image_w/2);
+}
+
+@import "~/common/ui/turn_restriction_landscape.css" landscape;
+@import "~/common/ui/turn_restriction_portrait.css" portrait;

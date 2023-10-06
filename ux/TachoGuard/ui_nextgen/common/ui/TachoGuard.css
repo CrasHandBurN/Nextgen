@@ -1,0 +1,81 @@
+/* tachograph */
+HBOX.tacho {
+	align:"left";
+	top:0; bottom:0; left:0; right:0;
+	paddingleft:3; paddingright:3; paddingtop:4; paddingbottom:4;
+}
+
+TEXT.tacho {
+	glowtype:1; 
+	glowsize:3;
+	/*glowsize:(%lua.aCockpitTransparency > 8 ? 0 : 3);*/
+}
+
+GRAPH.delay {
+	full:(%lua.POA_Delay * 1000);
+	current:(%lua.POACurrent_Delay);
+	visible:(%lua.POAorResting);
+	align:"center";
+	valign:"center";
+	top:5%; bottom:5%; left:97%; right:0;
+}
+
+GRAPH.rest {
+	full:(%lua.max_break_time); /*45 min*/
+	current:(%lua.max_break_time - ui_Cockpit.resting_time);
+	visible:(!%lua.POAorResting && ui_Cockpit.NO_running);
+	align:"center";
+	valign:"center";
+	top:5%; bottom:5%; left:97%; right:0;
+}
+/*elements*/
+SPRITE.driving {
+	desired_w:(ui_Cockpit.driving_time * PARENT.W / ui_Cockpit.BaseTimePeriod);
+	img:#ff0000FF;
+	resize_bmp:1;
+}
+GRAPH.driving {
+	full:(ui_Cockpit.BaseTimePeriod);
+	current:(ui_Cockpit.driving_time);
+	invert_r:0;
+	orientation:"horizontal";
+}
+
+SPRITE.poa {
+	desired_w:(ui_Cockpit.POA_time * PARENT.W / ui_Cockpit.BaseTimePeriod);
+	img:#ffFFA500;
+	resize_bmp:1;
+}
+GRAPH.poa {
+	full:(ui_Cockpit.BaseTimePeriod);
+	current:(ui_Cockpit.POA_time);
+	invert_r:0;
+	orientation:"horizontal";
+}
+
+SPRITE.resting {
+	desired_w:(ui_Cockpit.resting_time * PARENT.W / ui_Cockpit.BaseTimePeriod);
+	img:#ff008000;
+	resize_bmp:1;
+}
+GRAPH.resting {
+	full:(ui_Cockpit.BaseTimePeriod);
+	current:(ui_Cockpit.resting_time);
+	invert_r:0;
+	orientation:"horizontal";
+}
+
+SPRITE.working {
+	desired_w:(ui_Cockpit.working_time * PARENT.W / ui_Cockpit.BaseTimePeriod);
+	img:#ffFFD700;
+	resize_bmp:1;
+}
+GRAPH.working {
+	full:(ui_Cockpit.BaseTimePeriod);
+	current:(ui_Cockpit.working_time);
+	invert_r:0;
+	orientation:"horizontal";
+}
+
+@import "~/common/ui/TachoGuard_landscape.css" landscape;
+@import "~/common/ui/TachoGuard_portrait.css" portrait;

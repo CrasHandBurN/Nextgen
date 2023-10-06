@@ -1,0 +1,79 @@
+;******************WANDEL™**************
+/*
+<modify lm_MainMenu>
+	<insert before=Information>
+		<row text="Plugin selector" icon="socket.svg" onrelease=VW_st_Plugin_selector_onrelease />
+	</insert>
+</modify>
+*/
+<modify lm_QuickMenu>
+	<insert>
+		<row icon="socket.svg" onrelease=VW_st_Plugin_selector_onrelease />
+	</insert>
+</modify>
+
+<userlist lm_Plugin_List text="str" visible="bool" enable="bool" >
+	<default visible=1 enable=1 />
+</userlist>
+
+<views lm_Plugin_List_filtered listmodel="ui.lm_Plugin_List" >
+	<view filter filter=(!$1.visible) /> 
+</views>
+
+<userlist lm_Plugin_selector_footer text="str" onrelease="ui"  onlongclick="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+	<row   text="Invert 'Enable'. Long Click - 'Reset'"   onrelease=sc_UXInvertVisible onlongclick=sc_UXResetVisible />
+</userlist>
+
+<userlist lm_LocalMenuPlugin_selector text="ui" onrelease="ui" enable="bool">
+	<default enable=1 visible=1 />
+	<row text="Mark Speedcam group" onrelease=VW_Mark_Speedcam_group />
+	<row text="Mark Junction group" onrelease=VW_Mark_Junction_group />
+	<row text="Mark Button group" onrelease=VW_Mark_Button_group />
+	<row text="Mark VR group" onrelease=VW_Mark_VR_group />
+	<row text="Mark Track&Trip group" onrelease=VW_Mark_TrackAndTrip_group />
+	<row text="Mark LuaJava group" onrelease=VW_Mark_LuaJava_group />
+	
+	<row text="Make minimal set" onrelease=VW_Make_minimal_set />
+	
+	<row text="Sort by Name" onrelease='ui.lm_Plugin_List:sort("text")' />
+	<row text="Sort by Availability" onrelease='ui.lm_Plugin_List:sort("visible")' />
+	<row text=(%ui.lm_Plugin_List_filtered.filter.size ? VW_InsertShield("yellow", translate("Unload")) : VW_InsertShield("blue", translate("Restart"))) onrelease='sc_back_to_cockpit() sc_Restart()' />
+</userlist>
+
+<element_template et_Plugin_List>
+	<implementation>
+		<property Text value=(observe(%*.visible); VW_UX_Plugin_view(%*.text)) />
+	</implementation>
+	<CHECKBOX class="listitem chkonoff" text=(Text) boolmodel="*.visible" />
+</element_template>
+
+<layer ui_Plugin_List z=300>
+	<DIV class=list>
+		<SPRITE class=list_panel />
+		;;<TEXT class="listitem" top=2% text=(VW_InsertShield("blue", translate("On")) + VW_InsertShield("yellow", translate("Off"))) />
+		<LIST2 class=list_control SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.lm_Plugin_List" element_template="et_Plugin_List" />
+			<VSMARTSCROLL>
+			<WHEEL>
+		</LIST2>
+		<EMPTYLISTTEXT text="Please wait..." visible=( !%oasis.files.list.size ) />
+	</DIV>
+</layer>
+;------------------------------------------------------------------------------------
+<modify ui_Cockpit>   
+	<insert last_child into="#CockpitBTNTable"> 
+		<BUTTON_ICON ONRELEASE=VW_st_Plugin_selector_onrelease
+			ONLONGCLICK=VW_st_Plugin_selector_onrelease
+			VISIBLE=(%lua.unloaded_plugins_count)
+			ICON="socket.svg" ZOOM=90%
+			T_TEXT="Unloaded"
+			B_TEXT=(%lua.unloaded_plugins_count) />
+	</insert>
+</modify>
+<modify lm_CockpitSideList>
+	<insert>
+		<row  visible=(%lua.unloaded_plugins_count) />
+	</insert>
+</modify>

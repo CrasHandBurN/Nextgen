@@ -1,0 +1,41 @@
+;---------------WANDEL™---16.01.2018------------------
+<modify ui_Cockpit>
+	<modify element="BUTTON[ONLONGCLICK=sc_RemoveWaypointPopup]" ONLONGCLICK=sc_RemoveStopover_NEW />
+</modify>
+
+<element_template et_ListBtNa >
+	<BUTTON class="listitem" onrelease=(index > 0 ? sc_RemoveStopover_index : undef) onlongclick=(index > 0 ? VW_RemoveAllPOIUpToGPSPlace : undef) >
+		<SPRITE class="button map fill" />
+		<VBOX class="listitem" left=3%>
+			<TEXT  class="listitem top font_info textpadding_small color_inf_main" wordwrap=1 align=(index == 0 ? "CENTER" : "LEFT") font=(index == 0 ? "tahomabd" : undef)
+				text=(index == 0 ? "Click to remove VIA" : %*.longname) /> 
+			<TEXT  class="listitem bottom font_info textpadding_small color_inf_main" wordwrap=1 align=(index == 0 ? "CENTER" : "LEFT") font=(index == 0 ? "tahomabd" : undef)
+				text=(index == 0 ? "Long Click to remove all above" : (VW_view_itiner("distance") + L" : " + VW_view_itiner("time"))) />
+		</VBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_wMapSidePanel_Waypoints z=1000 visible=(!%lua.DragMode && !%lua.MenuIsOpened)>
+	<DIV class="cockpit">
+		<DIV class="map_messagebox">
+			<LIST2 class="panel_waypoints" SMOOTHSCROLLING>
+				<LISTMODEL listmodel="route.list.navigated.waypoints.list" element_template="et_ListBtNa" />
+				<VSMARTSCROLL>
+				<WHEEL>
+				<LISTCONTROL>
+			</LIST2>
+		</DIV>
+	</DIV>
+	<LAYER>
+		<DIV class="cockpit">
+			<DIV class="map_messagebox">
+				<SPRITE class="panel map background" alpha=(%lua.gSidePanelPopupID ? 32 : %lua.aCockpitTransparency) />
+				<DIV class="dialog_buttons">
+					<DIALOGBUTTON class="dialog 1_1 mapmsgbox" text="Close" img="" onrelease=VW_RemoveWaypointsPopupID>
+						<SPRITE class="button map fill" />
+					</DIALOGBUTTON>
+				</DIV>
+			</DIV>
+		</DIV>
+	</LAYER>
+</layer>

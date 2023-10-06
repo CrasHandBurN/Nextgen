@@ -1,0 +1,66 @@
+;-------------------------------------WANDEL™-------------------------------------
+<var GBindex = 0 permanent />
+
+<userlist lm_functions_Popover text="str" cindex="int" onrelease="ui" enable="bool" img="str" type="str" >
+	<default enable=1 type="Icon" onrelease='ui.GBindex = index; sc_ClosePopover(); sc_SetPopoverListAndOpen("ui.lm_functions_Popover", ui.ui_Cockpit.GBFunction())' />
+</userlist>
+
+<modify ui_Cockpit >
+	<insert into="IMPLEMENTATION">
+		<PROPERTY GBFunctionS VALUE=( csplit(sc_GetSysEntry("garbage", "function", "sc_ShowRouteOverView()"), ";%s?") ) />
+		<PROPERTY GBFunction VALUE=( GBFunctionS[GBindex + 1] ) />
+		
+		<PROPERTY GBonrelease VALUE=( 'doDelayed(1, ui.ui_Cockpit.GBFunction())' ) />
+		
+		<PROPERTY GBiconS VALUE=( csplit(sc_GetSysEntry("garbage", "icon", "ico_routeinformation.svg"), "[;,]%s?") ) />
+		<PROPERTY GBicon VALUE=( GBiconS[GBindex + 1] ) />
+		
+		<PROPERTY GBvisible VALUE=1 />
+		<PROPERTY GBt_text VALUE=( VW_Return_button_text(translate(VW_GetQVName(GBicon)), L"%s", 1)) />
+		<PROPERTY GBb_text VALUE=( VW_Return_button_text(translate(VW_GetQVName(GBicon)), L"%s", 99)) />
+	</insert>
+
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON GBmark ONRELEASE=GBonrelease
+			ONLONGCLICK='lm_functions_Popover_Builder(); sc_SetPopoverListAndOpen("ui.lm_functions_Popover", GBindex(), "cindex")'
+			ICON=GBicon 
+			T_TEXT=GBt_text 
+			B_TEXT=GBb_text
+			VISIBLE=(%lua.GBmarkCockpit) ZOOM=80% />
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row  visible=(%lua.GBmarkCockpit) />
+	</insert>
+</modify>
+
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'Garbage' Button" bmp=(GBmark.ICON) isselected="lua.GBmarkCockpit" />
+	</insert>
+</modify>
+;---- Quick Menu -----
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE='ui.GBmark.ONRELEASE()()' ONLONGCLICK='ui.GBmark.ONLONGCLICK()()' 
+			ICON=(GBmark.ICON)
+			T_TEXT=(GBmark.T_TEXT)
+			B_TEXT=(GBmark.B_TEXT) 
+			VISIBLE=(%lua.GBmarQuick) ZOOM=80% />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=(%lua.GBmarQuick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'Garbage' Button" bmp=(GBmark.ICON) isselected="lua.GBmarQuick" />
+	</insert>
+</modify>

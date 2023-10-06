@@ -1,0 +1,3 @@
+import "~/common/ui/debugger.lua"
+import "~/common/ui/debugger.css"
+import "~/common/ui/debugger.ui"

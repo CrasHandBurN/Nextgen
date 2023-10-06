@@ -1,0 +1,165 @@
+;---------------------- WANDEL™ 09.04.2023 ----------------
+<modify ui_PropLayer>
+	<modify ShowSpeedCamera VALUE=(!%lua.VehicleIsPedestrian && %navigation.curr_speedcam.category.valid && %{"warning.speedcam_visualtype_" + %navigation.curr_speedcam.category} && !%navigation.is_in_simulation && !%lua.DragMode && %gps.connection_status != 4 && %lua.Speedcam_FirstClick) />
+	<modify SpeedCameraSpeedLimit VALUE=(%navigation.curr_speedcam.speed_limit // 0) />
+	<modify show_hva VALUE=(!%lua.VehicleIsPedestrian && %ui.lm_hva_view.hva_alerts.size != 0 && sc_IsInHVACountry(%navigation.car.position) && %warning.hva.dangerous_zone_enabled && !%navigation.is_in_simulation && !%lua.DragMode && %gps.connection_status != 4 && %lua.Speedcam_FirstClick) />
+</modify>
+
+<modify lm_DA_freeAtTheMoment>
+	<insert>
+		<row curr_speedcam visible=( %gps.blink && %navigation.curr_speedcam.speed_limit.valid && %navigation.curr_speedcam.speed_limit && ui_PropLayer.ShowSpeedCamera && %lua.ShowCentralSpeedCamLimit && (%navigation.car.current_speed // 1) > sc_GetToleranceSpeed(%navigation.curr_speedcam.speed_limit) ) />
+	</insert>
+</modify>
+
+<modify ui_Cockpit>
+	; there is used sc_GetToleranceSpeed to warm
+	<insert last_child into=box_DA_freeAtTheMoment>
+		<BUTTON BOX_ALIGN="stretch" DESIRED_W=(CSS.Param.cockpit_da_warning_w) 
+			VISIBLE=(%gps.blink && %navigation.curr_speedcam.speed_limit.valid && %navigation.curr_speedcam.speed_limit && ui_PropLayer.ShowSpeedCamera && %lua.ShowCentralSpeedCamLimit && (%navigation.car.current_speed // 1) > sc_GetToleranceSpeed(%navigation.curr_speedcam.speed_limit)) >
+			<SPRITE CLASS="speedlimit" TOP=0 BOTTOM=0 LEFT=0 RIGHT=0 BOX_ALIGN="center" VALIGN="center" ALIGN="center" ZOOM=122% >
+				<TEXT CLASS="speedlimit" LEFT=0 RIGHT=0 VALIGN="center" ALIGN="center" FONTSIZE=(sc_GetToleranceSpeed(%navigation.curr_speedcam.speed_limit) > 99 ? 35 : 45)
+					TEXT=(format(L"%{speed[%D]:*}", sc_GetToleranceSpeed(%navigation.curr_speedcam.speed_limit),1)) />
+			</SPRITE>
+		</BUTTON>			
+	</insert>
+
+	<insert after="SPRITE.speedlimit_bg">
+		<SPRITE CLASS="speedcam_bg" OPAQUE=1 VISIBLE=( ui_PropLayer.ShowSpeedCamera ) 
+			ONRELEASE='MODEL.sound.playchanneltest("ding", L"!button"); sc_ToggleSpeedcamSound()'
+			ONLONGCLICK='MODEL.sound.playchanneltest("ding", L"!button"); VW_HideCountrySpeedCams()' />
+	</insert>
+
+	<insert into="BOX.speedlimit_container>BOX.speedlimit" >
+		<BOX CLASS="speedcam" VISIBLE=( ui_PropLayer.ShowSpeedCamera && !ui_PropLayer.show_hva ) >
+ 			<SPRITE speedcam_icon CLASS="speedcam_icon" IMG="ico_speedcams.svg" PHASE=%navigation.curr_speedcam.category VISIBLE=(%navigation.curr_speedcam.speed_limit.valid || %navigation.curr_speedcam.distance) />
+ 			<SPEEDTEXT CLASS="speedcam_text" Z=51 SPEED=(%navigation.curr_speedcam.avg_speed) VISIBLE=(%navigation.curr_speedcam.avg_speed.valid) />
+ 			<DISTTEXT CLASS="speedcam_text" Z=51 DISTANCE=(%navigation.curr_speedcam.distance) VISIBLE=(%navigation.curr_speedcam.distance.valid) />
+ 		</BOX>
+		<DANGERZONE ALERT_INDEX=0 VISIBLE=( !ui_PropLayer.ShowSpeedCamera && ui_PropLayer.show_hva ) />		
+	</insert>	
+</modify>
+
+<modify lm_LocalMenuCockpit >
+	<insert after=show_cursor_position>
+		<row text="Add alert points" onrelease=sc_AddSpeedcam visible=(%warning.speedcam_enabled && !%map.primary.clicked_speedcam_list.size) />
+		<row text="Edit alert points" onrelease=sc_EditSelector visible=(%map.primary.clicked_speedcam_list.size) />
+	</insert>
+</modify>
+
+<modify lm_WarningsSettings>
+	<insert after="default">
+		<row prio=200 text="Alert Points" icon="ico_speedcams_menu.svg"  onrelease=sc_AlertPointSettings />
+	</insert>
+</modify>
+/*
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp="ico_delspeedcam.svg" text=(translate("Hide Country SpeedCams")) onrelease=VW_HideCountrySpeedCams
+				enable=(sc_GetSysEntry("speedcam", "speedcam_types", "0,1,2,3,4,5,7,11,17,23,24,26,27,30") != sc_GetSysEntry("speedcam.disabled_countries", %other.get_country_by_position(%navigation.car.position), "")) />
+		</insert>
+	</modify>
+<!end/>
+*/
+
+;--speedcam mod--
+<modify lm_alertpointsettings>
+	<insert>
+		<row text="'Show Speedcam' Settings" haspopover=1 onrelease='sc_NextStateAnim(st_ShowSpeedcamSettings, "fade", 1, "" )' />
+	</insert>
+</modify>
+
+<userlist lm_ShowSpeedcamSettingsList text="ui" onrelease="ui" onlongclick="ui" enable="bool" type="str" visible="bool" boolmodel="str" details="ui" dtooltip="str" haspopover="bool" isselected="str">	
+	<view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 onrelease=undef />
+	<row    text="Show Big Left Speedcam Sign" type="ChkOnOff" isselected="lua.ShowLeftSideSpeedcam" visible=(Plugin.isLoaded("left_big_button")) />	
+	<row    text="Show Speedcam point" type="ChkOnOff" isselected="lua.ShowSpeedcamPointMap" />
+	<row    text="'Show SpeedCam' zoom" details=(sc_ShowDistanceTool(%lua.ShowSpeedcamZoom)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_ShowSpeedcamZoom_popover" )' />
+	<row    text="'Show SpeedCam' time" details=(sc_ShowTimeTool(%lua.ShowSpeedcam_time_out)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_ShowSpeedcam_time_out" )' />
+	
+	;<row	text="Alert Points"  onrelease=sc_AlertPointSettings details="To Alert Points" />
+</userlist>
+
+<userlist lm_ShowSpeedcamZoom_popover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(60)) max_text=(sc_ShowDistanceTool(1000)) />
+	   <row name="'Show SpeedCam' zoom" text=(sc_ShowDistanceTool(%lua.ShowSpeedcamZoom)) type="Scroll" min=60 max=1000 step=10 valuemodel="lua.ShowSpeedcamZoom" />
+</userlist>
+
+<userlist lm_ShowSpeedcam_time_out name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowTimeTool(5)) max_text=(sc_ShowTimeTool(30)) />
+	   <row name="'Show SpeedCam' time" text=(sc_ShowTimeTool(%lua.ShowSpeedcam_time_out)) type="Scroll" min=5 max=30 step=1 valuemodel="lua.ShowSpeedcam_time_out" />
+</userlist>
+;------------------------------------------------------------------------------------
+<var Graph_speedcam_category_start = 100>
+<observer value=(%navigation.curr_speedcam.category.valid) onselect='
+		doDelayed(5, function()
+			if MODEL.navigation.curr_speedcam.distance() < 100 then 
+				ui.Graph_speedcam_category_start = 100
+			else
+				ui.Graph_speedcam_category_start = MODEL.navigation.curr_speedcam.distance()
+			end
+		end)
+	' start="NO_TRIGGER" />
+	
+<modify ui_Cockpit>   
+	<insert last_child into="#CockpitBTNTable">    
+		<BUTTON CLASS="btn_map" ONRELEASE='sc_DiscoverySidePanelChange(
+			{
+				sc_GetSysEntry("speedcam_category:" .. tostring(MODEL.navigation.curr_speedcam.category()), "activated_speech", ""),
+				{
+					ACTION = {
+						"ShowSpeedCam",
+					},
+					POSITION = {
+						lat = tostring(MODEL.regional.unlocalize_gcoor(builtin.format("%{gcoor[%lat]}", MODEL.navigation.curr_speedcam.position()))),
+						lon = tostring(MODEL.regional.unlocalize_gcoor(builtin.format("%{gcoor[%lon]}", MODEL.navigation.curr_speedcam.position()))),
+						},
+					DISTANCE = MODEL.navigation.curr_speedcam.distance(),
+					VISIBLE = true,
+					ENABLE = true,
+				},
+				true, --have been not activated
+			}, "ShowSpeedcamZoom", "ShowSpeedcam_time_out", {discoverysidepanel, ui_Discovery_Zoom, ui_zoomctr, ui_ShowSpeedCam})'
+				ONLONGCLICK='sc_NextStateAnim(st_ShowSpeedcamSettings, "fade", 1, "" )' 
+				VISIBLE=(%navigation.curr_speedcam.category.valid) >
+			<SPRITE CLASS="button map fill" />
+			<SPRITE CLASS="listitem flag" IMG=(%gps.blink ? "ico_speedcams.svg" : "warning-icon.svg") PHASE=%navigation.curr_speedcam.category /> 
+
+			<SPEEDTEXT CLASS="BTN_bottom_text" UNITVISIBLE=1 SPEED=(%navigation.curr_speedcam.avg_speed) VISIBLE=(%navigation.curr_speedcam.avg_speed.valid) />
+			<DISTTEXT CLASS="BTN_bottom_text" DISTANCE=(%navigation.curr_speedcam.distance) VISIBLE=(%navigation.curr_speedcam.distance.valid) />
+			<GRAPH CLASS="graph_btn" FULL=(Graph_speedcam_category_start) CURRENT=(%navigation.curr_speedcam.distance) />
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row  visible=(%navigation.curr_speedcam.category.valid) />
+	</insert>
+</modify>
+
+<layer ui_ShowSpeedCam z=50 visible=( ui_PropLayer.SidePanelVisible )>
+	<DIV class=cockpit>
+		<DIV class=map_messagebox >
+			<SPRITE left=20% right=20% top=20% bottom=20% align="CENTER" valign="CENTER" img=(%gps.blink ? "ico_speedcams.svg" : "") phase=%navigation.curr_speedcam.category visible=(%gps.blink) />
+		</DIV>
+	</DIV>
+</layer>
+;--new modification
+<modify ui_Cockpit_DragMode>
+	<insert into="#DragModeRight_buttons">
+		<BUTTON CLASS="btn_map inbox" ONRELEASE='sc_AddSpeedcam(); sc_NextStateAnim(st_EditSpeedcam_Type, "fade", 1, "")' VISIBLE=(%warning.speedcam_enabled && %map.primary.clicked_speedcam_list.size == 0 && !%lua.IsDemoMode) >
+       		<SPRITE CLASS="button map fill" />
+			<SPRITE CLASS="btn_map svg" IMG="ico_addspeedcam.svg" />
+		</BUTTON>
+		<BUTTON CLASS="btn_map inbox" ONRELEASE=sc_EditSpeedcam VISIBLE=(%map.primary.clicked_speedcam_list.size != 0  && !%lua.IsDemoMode) >
+       		<SPRITE CLASS="button map fill" />		
+			<SPRITE CLASS="btn_map svg" IMG="ico_editspeedcam.svg" />
+		</BUTTON>
+		<BUTTON CLASS="btn_map inbox" ONRELEASE=sc_DeleteSpeedcam VISIBLE=(%map.primary.clicked_speedcam_list.size != 0  && !%lua.IsDemoMode) >
+       		<SPRITE CLASS="button map fill" />
+			<SPRITE CLASS="btn_map svg" IMG="ico_delspeedcam.svg" />
+		</BUTTON>
+	</insert>
+</modify>

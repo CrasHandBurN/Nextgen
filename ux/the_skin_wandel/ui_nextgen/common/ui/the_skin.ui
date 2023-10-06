@@ -1,0 +1,434 @@
+;******************WANDEL™ 04.01.2020**************
+<!ENABLE OVERRIDE>
+	<define_element TIMETEXT textmodel_time time formatmodel fontsize=10 font align="CENTER" glowtype=0 glowsize=0 paddingleft paddingright orientation>
+		<implementation>
+			<property time value=(OWNER.TIME // ( OWNER.TEXTMODEL_TIME ? %{OWNER.TEXTMODEL_TIME} : -1 ) )>
+			<property paddingleft value=( OWNER.PADDINGLEFT // CSS.Param.text_padding )>
+			<property paddingright value=( OWNER.PADDINGRIGHT // CSS.Param.text_padding )>
+		</implementation>
+		<BOX class="value_unit">
+			<TEXT  class="value_unit value" text=(format(L"%{time[%T]}",time)) visible=(type(OWNER.FORMATMODEL) == "nil") />
+			<TEXT  class="value_unit"       text=(format(L"%{time[%P]}",time)) visible=(type(OWNER.FORMATMODEL) == "nil") />
+			<TEXT  class="value_unit value" text=(format(L"%{time:*}",time, %{(type(OWNER.FORMATMODEL) == "string" ? OWNER.FORMATMODEL : "regional.timeformat")})) visible=(type(OWNER.FORMATMODEL) == "string") />
+			<TEXT  class="value_unit value" text=(format(L"%{time:*}",time, OWNER.FORMATMODEL)) visible=(type(OWNER.FORMATMODEL) == "number") />
+		</BOX>
+	</define_element>
+
+	<define_element SPEEDTEXT textmodel_speed speed fontsize=10 font align="CENTER" mode=1 glowtype=0 glowsize=0 paddingleft=0 paddingright=0 orientation unitvisible>
+		<implementation>
+			<property unit value=(OWNER.UNITVISIBLE // (States.CurrentState == st_Cockpit && %lua.SpeedUnitsInCockpit))>
+			<property speed value=(OWNER.SPEED // ( OWNER.TEXTMODEL_SPEED ? %{OWNER.TEXTMODEL_SPEED} : -1 ) )>
+			<property text_padding value=0>
+			<property paddingleft value=( OWNER.PADDINGLEFT // CSS.Param.text_padding )>
+			<property paddingright value=( OWNER.PADDINGRIGHT // CSS.Param.text_padding )>
+		</implementation>
+		<BOX class="value_unit">
+			<TEXT  class="value_unit value" text=(format(L"%{speed[%D]:*}", speed, OWNER.MODE)) />
+			<TEXT  class="value_unit"		text=(format(L"%{speed[%U]:*}", speed, OWNER.MODE)) visible=(unit) />
+		</BOX>
+	</define_element>
+
+	<userlist lm_SpeedWarnings text="ui" onrelease="ui" enable="bool" isselected="str" type="str" details="ui" dtooltip="str" haspopover="bool"  visible="bool">
+		<view visibility_filter=visible />
+		<default onrelease=undef enable=1 haspopover=0 visible=1 dtooltip="" />
+			<row text="Warn When Speeding" haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_SpeedWarnings_Visual_popover")' details=(sc_SetSpeedWarningText(%warning.speedlimit_warning_voice, %warning.speedlimit_warning_visual)) />
+			<row text="Speed Limit always visible" isselected="lua.speedWarningAlwaysVisibleChk" type="ChkOnOff" enable=(%warning.speedlimit_warning_visual) />
+			<row text="Speed Always Visible" type="ChkOnOff" isselected="lua.show_speed_in_cockpit" />
+			<row text="Speed Units in Cockpit" type="ChkOnOff" isselected="lua.SpeedUnitsInCockpit" enable=(%lua.show_speed_in_cockpit) />
+			<row text="Speed Limit Deviation in Cockpit" type="ChkOnOff" isselected="lua.speedlimitpercent" />
+			<row Speed_Tolerance text="Speed Tolerance" haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_SpeedWarningsPopoverArTolerance")' enable=(%warning.speedlimit_warning_visual) details=(%ui.lm_SpeedWarningsPopoverArTolerance.list[%warning.speedwarn_alt_toltype].text) />
+			<row Outside_Town_Percent text=(translated_format("Outside Towns: %d%% of the Speed Limit", %warning.speedwarn_tolerance)) haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_SpeedWarningsPopoverRural")' enable=(%warning.speedlimit_warning_visual && !%warning.speedwarn_toltype) visible=(!%warning.speedwarn_toltype) />
+			<row Within_Towns_Percent text=(translated_format("Within Towns: %d%% of the Speed Limit", %warning.speedwarn_alt_tolerance)) haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_SpeedWarningsPopoverUrban")' enable=(%warning.speedlimit_warning_visual && !%warning.speedwarn_toltype) visible=(!%warning.speedwarn_toltype) />
+			<row Outside_Town_Fixed text=(translated_format("Warn out-of-city when speed is over ") + sc_ShowSpeedTool(%warning.speedwarn_tolerance) + translated_format(" above limit") ) haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_SpeedWarningsPopoverRuralAdd")' enable=(%warning.speedlimit_warning_visual && %warning.speedwarn_toltype) visible=(%warning.speedwarn_toltype) />
+			<row Within_Towns_Fixed text=(translated_format("Warn in city when speed is over ") + sc_ShowSpeedTool(%warning.speedwarn_alt_tolerance) + translated_format(" above limit") ) haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_SpeedWarningsPopoverUrbanAdd")' enable=(%warning.speedlimit_warning_visual && %warning.speedwarn_toltype) visible=(%warning.speedwarn_toltype) />
+	</userlist>
+
+	<userlist lm_SpeedWarningsPopoverRural enable="bool" name="str" text="wstr" onrelease="ui" type="str" min="int" max="int" step="int" valuemodel="str" min_text="str" max_text="str">
+		<default enable=1 type="" name="" min_text="70%" max_text="130%"/>
+			<row name="Outside Towns" text=(sprintf( "%d%%", %warning.speedwarn_tolerance) ) type="Scroll" min=70 max=130 step=5 valuemodel="warning.speedwarn_tolerance" 
+				onrelease='MODEL.lua.speedwarn_tolerancePercent = MODEL.warning.speedwarn_tolerance()' />
+	</userlist>
+
+	<userlist lm_SpeedWarningsPopoverUrban enable="bool" name="str" text="wstr" onrelease="ui" type="str" min="int" max="int" step="int" valuemodel="str" min_text="str" max_text="str">
+		<default enable=1 type="" name="" min_text="70%" max_text="130%"/>
+			<row name="Within Towns" text=(sprintf( "%d%%", %warning.speedwarn_alt_tolerance) ) type="Scroll" min=70 max=130 step=5 valuemodel="warning.speedwarn_alt_tolerance" 
+				onrelease='MODEL.lua.speedwarn_alt_tolerancePercent = MODEL.warning.speedwarn_alt_tolerance()' />
+	</userlist>
+
+	<layer ui_RouteOverview z=30>
+		<implementation>
+			<property CountDownInterrupted value=0/>
+			<property DoCountDown value=( !%route.list.navigated.waypoints.has_isolated_waypoint && %navigation.has_route && %lua.RoutePlan && !CountDownInterrupted )/>
+		</implementation>	
+
+		<observer value=(%route.list.navigated.calculation_finished) onselect='doDelayed(30, sc_RouteOverviewCalcFinished)' START />
+		<observer value=( %ui._idle_time == 0 && !lua.gTmpResetIdleTime ) onselect='ui_RouteOverview.prop.CountDownInterrupted = true' start="no_trigger" />
+		<observer value=( %ui._idle_time ) onchange=sc_CheckGoToStatus start="no_trigger" />
+		
+		<DIV class="mapmain">
+			<SPRITE fitbox_routemenu class="fitbox routemenu">
+			<DIV class="route_overview_header" visible=0>
+				<SPRITE class="panel map">
+				<HBOX class="fill" >
+					<SPRITE img="ico_destination.svg" phasename="normal">
+					<TEXT class="route_summary_text" text=(%navigation.destination_name_long)>
+				</HBOX>
+			</DIV>
+			<DIV class="route_overview_summary">
+				<SECTIONMARKER class="route_overview_summary"/>
+				
+				<VBOX class="fill">
+					<SPACER class="route_overview_warningicons">  
+					<TABLE COMPACT=1 row=1 col=1 flex=1 box_align="stretch"> 
+						<LIST2 lstIP_WarningList class="list_control route_summary_icons" visible=( !%route.list.navigated.calculating && %ui.routeicons_filtered.filter.size )>
+							<LISTMODEL element_template="et_warning_list_icos" listmodel="ui.routeicons_filtered.filter" />
+						</LIST2>
+						<SPRITE class="searchprogress wide" box_align="stretch" flex=1  align="CENTER" z=300 visible=( %route.list.navigated.calculating ) />
+						<EMPTYLISTTEXT class="routewarnings" text="no warnings" visible=(!%ui.routeicons_filtered.filter.size && !%route.list.navigated.calculating)/>
+					</TABLE>		
+					<BOX class="route_overview_buttons">
+						<BUTTON class="btn_main route_overview_buttons" onrelease=sc_showRouteWarnings enable=(!%lua.ptp_navigation && !%navigation.calculation_todo && %route.list.navigated.has_navigable_path)>
+							<TEXT class="route_overview_buttons fill" text="Route Info" />
+						</BUTTON>
+						<BUTTON class="btn_main route_overview_buttons" onrelease=sc_RouteAlternatives enable=(!%lua.ptp_navigation && !%navigation.calculation_todo && %route.list.navigated.has_navigable_path)>
+							<TEXT class="route_overview_buttons fill" text="Alternatives" />
+						</BUTTON>
+					</BOX>
+					<BOX box_overview_dest_info class="route_overview_destination">
+						<HBOX class="route_overview_destination" visible=(%navigation.distance_total.valid)>
+							<SPRITE class="route_summary distance svg">
+							<DISTTEXT class="route_summary_text" distance=(%navigation.distance_total)>
+						</HBOX>
+						
+						<HBOX class="route_overview_destination">
+							<SPRITE class="route_summary time svg">
+							<TIMESPANTEXT class="route_summary_text" timespan=(%route.list.navigated.time) formatmodel=5>
+						</HBOX>
+					</BOX>
+				</VBOX>
+				<layer>
+					<DIV class="mapmain">
+						<DIV class="route_overview_summary">
+							<SPRITE class="panel map">
+						</DIV>
+					</DIV>
+				</layer>	
+			</DIV>
+
+		</DIV>	
+	</layer>
+	
+	<layer ui_ShowPoiInfo z=30>
+		<DIV class="list layerscroll">
+			<SECTIONMARKER class="layerscroll"/>
+			<LIST2 lst_poicontact class="list_control details" SMOOTHSCROLLING>
+				<LISTMODEL listmodel="ui.lm_poiinfo" element_template="et_detailsinfo" template_type_model="*.type"/>
+				<LISTMODEL lsm_PhoneWeb listmodel="ui.lm_poiinfoPhoneWeb" element_template="et_detailsinfo" template_type_model="*.type"/>
+				<VSMARTSCROLL>
+				<WHEEL>
+				<LISTCONTROL>
+			</LIST2>
+		</DIV>
+		
+		<DIV class="list richpoiinfo">
+			<DIV class="provider" visible=(%my.poi.current.xhtml.valid || (%my.poi.current.address.ext && %my.poi.current.provider_id != lua.gUserPOI_Provider) || (%exists:my.poi.current.ext_haspicture && %my.poi.current.ext_haspicture))>
+				<TABLE class="provider">
+					<BUTTON class="fill btn_main" onrelease=sc_showRichPoiInfo visible=(%my.poi.current.xhtml.valid)>
+						<SPRITE spr_providerlogo class="providericon" iconmodel="my.poi.current.provider_icon" iconindex=3 visible=(%my.poi.current.provider_icon != -1)/>
+						<SPRITE class="providericon" img="ico_info.svg" visible=(%my.poi.current.provider_icon == -1)>
+					</BUTTON>
+					<BUTTON btn_extinfo class="fill btn_main" z=15 onrelease=sc_ShowPOIInfo_to_xhtml visible=(%my.poi.current.address.ext)>
+						<SPRITE class="providericon" img="ico_info.svg">
+					</BUTTON>
+					<BUTTON picture_extinfo class="fill btn_main" z=15 onrelease='ui_PicturePoiShow:SHOW()' visible=(%exists:my.poi.current.ext_haspicture && %my.poi.current.ext_haspicture)>
+						<SPRITE class="providericon" img="ico_picturenavigation.svg">
+					</BUTTON>					
+				</TABLE>
+			</DIV>
+		</DIV>
+	</layer>
+<!DISABLE OVERRIDE>
+
+<layer ui_PicturePoiShow z=500>
+	<DIV class=fill z=500>
+		<BUTTON class="fill" z=500 onrelease='ui_PicturePoiShow:HIDE()'>
+			<PSPRITE class="fill" z=500 pictw=( PARENT.W - CSS.Param.picture_margin ) picth=( PARENT.H - CSS.Param.picture_margin ) align="CENTER" valign="CENTER" zoomfrom="shrinkvisible" bmp=( sc_getPoiPicture( %my.poi.current.ext_picturefilepath, %my.poi.current.ext_picturefilename ) ) />
+		</BUTTON>
+	</DIV>
+</layer>
+
+<define_element FOOTERBUTTON_COUNT iconspr="" iconimg="" text="" resize_bmp=0 font="" onrelease=undef bmp="" img="" img_focus="" onlongclick=undef dtooltip="" vrcapable=0 deffocus usefocus rawkey=0 paddingleft=0 paddingright=0 preserve_aspect_ratio=1>
+	<BUTTON class="footerbutton" dtooltip=(OWNER.DTOOLTIP) vrcapable=(OWNER.VRCAPABLE) rawkey=(OWNER.RAWKEY)>
+		<HBOX class="footerbutton">
+			<SPRITE class="footerbutton icon" visible=(OWNER.ICONSPR)>
+			<SPRITE class="footerbutton icon svg" visible=(OWNER.ICONIMG)>
+			<TEXT class="footerbutton" visible=(OWNER.TEXT)>
+		</HBOX>
+		
+		<HBOX class="countdown_container">
+			<SPRITE class="background countdown">
+				<SPRITE class="background countdown inside" />
+			</SPRITE>
+		</HBOX>
+	</BUTTON>
+</define_element>
+
+<element_template et_FooterMenu_cntdwn text="" enable=1 isactionbutton=0 >
+	<FOOTERBUTTON_COUNT class="btn_footer middle" text=TEXT onrelease=ONRELEASE enable=ENABLE>
+</element_template>
+
+<userlist lm_SpeedWarningsPopoverArTolerance text="str" onrelease="ui" enable="bool">
+	<default text enable=1 />
+		<row text="Percentage" onrelease='
+			if MODEL.warning.speedwarn_alt_toltype() then
+				MODEL.warning.speedwarn_alt_tolerance = MODEL.lua.speedwarn_alt_tolerancePercent()
+				MODEL.warning.speedwarn_tolerance = MODEL.lua.speedwarn_tolerancePercent()
+			end
+			MODEL.warning.speedwarn_alt_toltype = false
+			MODEL.warning.speedwarn_toltype = MODEL.warning.speedwarn_alt_toltype()
+			sc_ClosePopover()' />
+		<row text="Fixed" onrelease='
+			if not MODEL.warning.speedwarn_alt_toltype() then
+				MODEL.warning.speedwarn_alt_tolerance = MODEL.lua.speedwarn_alt_toleranceFixed()
+				MODEL.warning.speedwarn_tolerance = MODEL.lua.speedwarn_toleranceFixed()
+			end
+			MODEL.warning.speedwarn_alt_toltype = true
+			MODEL.warning.speedwarn_toltype = MODEL.warning.speedwarn_alt_toltype()
+			sc_ClosePopover()' />
+</userlist>
+
+<userlist lm_SpeedWarningsPopoverRuralAdd enable="bool" name="str" text="wstr" onrelease="ui" type="str" min="int" max="int" step="int" valuemodel="str" min_text="str" max_text="str">
+	<default text enable=1 type="" name="" min_text="-20" max_text="30" />
+		<row  name="Outside Towns" text=( sc_ShowSpeedTool(%warning.speedwarn_tolerance) ) type="Scroll" min=-20 max=30 step=1 valuemodel="warning.speedwarn_tolerance" 
+			onrelease='MODEL.lua.speedwarn_toleranceFixed = MODEL.warning.speedwarn_tolerance()' />
+</userlist>
+
+<userlist lm_SpeedWarningsPopoverUrbanAdd enable="bool" name="str" text="wstr" onrelease="ui" type="str" min="int" max="int" step="int" valuemodel="str" min_text="str" max_text="str">
+	<default text enable=1 type="" name="" min_text="-20" max_text="30" />
+		<row  name="Within Towns" text=( sc_ShowSpeedTool(%warning.speedwarn_alt_tolerance) ) type="Scroll" min=-20 max=30 step=1 valuemodel="warning.speedwarn_alt_tolerance" 
+			onrelease='MODEL.lua.speedwarn_alt_toleranceFixed = MODEL.warning.speedwarn_alt_tolerance()' />
+</userlist>
+
+<userlist lm_MapVisualSettingsExtended prio="int" text="ui" icon="str" bmp="str" isselected="str" onrelease="ui" enable="bool" type="str" visible="bool" details="ui" checked="ui" >
+	<view visibility_filter=visible sort_by="prio" />
+	<default prio=100 text="" details=""  enable=1 visible=1 type=""/>
+		<row prio=0 text="QuickMenu Settings" icon="ico_footer_menu.svg" 
+			onrelease='sc_NextStateAnim(st_VQuickMenuSettings, "fade", 1, "" )' />
+		<row prio=2 text="Cockpit Colors Settings" icon="ico_colors.svg" 
+			onrelease='sc_NextStateAnim(st_CockpitColorsSettings, "fade", 1, "" )' />
+		<row prio=3 text="Cockpit Transparency Settings" icon="ico_transparency.svg"
+			onrelease='sc_NextStateAnim(st_aCockpitTransparencySettings, "fade", 1, "" )' />
+		<row prio=4 text="Mini Diricon Settings" icon="ico_mini_diricon.svg"
+			onrelease='sc_NextStateAnim(st_aCockpitMiniDiriconSettings, "fade", 1, "" )' />
+		<row prio=6 text="Information with Route" icon="ico_route_info.svg"
+			onrelease='sc_NextStateAnim(st_aRouteWarningsSettings, "fade", 1, "" )' />
+		<row prio=1991 text="Cockpit Buttons Type:" 
+			icon="btn_map.svg"
+			details=(%lua.CockpitButtonsType ? "Square" : "With rounded corners")
+			onrelease='MODEL.lua.CockpitButtonsType = not MODEL.lua.CockpitButtonsType() sc_Restart()' />
+</userlist>
+
+<userlist lm_CockpitTransparencyTimer_Popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+		<row text="constantly"  onrelease='MODEL.lua.CockpitTransparencyTimer = 0 	sc_ClosePopover()' /> 
+		<row text="timer"   	onrelease='MODEL.lua.CockpitTransparencyTimer = 1 sc_ClosePopover()' />
+</userlist>
+
+<userlist lm_SetCockpitTransparencyTimer_Popover enable="bool" name="str" text="wstr" onrelease="ui" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowTimeTool(1)) max_text=(sc_ShowTimeTool(120)) />
+		<row  name="Cockpit Transparency Timer" text=(sc_ShowTimeTool(%lua.SetCockpitTransparencyTimer)) type="Scroll" min=1 max=120 step=2 valuemodel="lua.SetCockpitTransparencyTimer" />
+</userlist>
+
+<userlist lm_SetDiriconColor_Popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+		<row text="orange"  	onrelease='MODEL.lua.direction_icon_phasename = "orange" 	sc_ClosePopover()' />
+		<row text="black_white"	onrelease='MODEL.lua.direction_icon_phasename = "black_white" 	sc_ClosePopover()' />
+		<row text="kia" 		onrelease='MODEL.lua.direction_icon_phasename = "kia" 		sc_ClosePopover()' /> 
+		<row text="red" 		onrelease='MODEL.lua.direction_icon_phasename = "red" 		sc_ClosePopover()' />
+		<row text="blue" 		onrelease='MODEL.lua.direction_icon_phasename = "blue" 		sc_ClosePopover()' />
+		<row text="green"		onrelease='MODEL.lua.direction_icon_phasename = "green" 	sc_ClosePopover()' />
+</userlist>
+
+<userlist lm_SetSecDiriconColor_Popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+		<row text="orange"  	onrelease='MODEL.lua.secondary_direction_icon_phasename = "orange" 	sc_ClosePopover()' /> 
+		<row text="black_white"	onrelease='MODEL.lua.secondary_direction_icon_phasename = "black_white" sc_ClosePopover()' />
+		<row text="kia" 		onrelease='MODEL.lua.secondary_direction_icon_phasename = "kia" 	sc_ClosePopover()' />
+		<row text="red" 		onrelease='MODEL.lua.secondary_direction_icon_phasename = "red" 	sc_ClosePopover()' />
+		<row text="blue" 		onrelease='MODEL.lua.secondary_direction_icon_phasename = "blue" 	sc_ClosePopover()' />
+		<row text="green"		onrelease='MODEL.lua.secondary_direction_icon_phasename = "green" 	sc_ClosePopover()' />
+</userlist>
+
+<userlist lm_ColorCockpitInterface_Popover text="str" onrelease="ui" visible="bool" enable="bool">
+	<view visibility_filter=visible />
+		<default enable=1 visible=1 />
+		<row text=(lua.ColorCockpitInterface_Table[lua.SkinInterfaceColor.RED][2])		onrelease='MODEL.lua.aColorCockpitInterface_Set = SkinInterfaceColor.RED sc_ClosePopover()  doDelayed(1, sc_Restart )' 		visible=(%lua.RED) />
+		<row text=(lua.ColorCockpitInterface_Table[lua.SkinInterfaceColor.BLUE][2])		onrelease='MODEL.lua.aColorCockpitInterface_Set = SkinInterfaceColor.BLUE sc_ClosePopover()  doDelayed(1, sc_Restart )' 	visible=(%lua.BLUE) />
+		<row text=(lua.ColorCockpitInterface_Table[lua.SkinInterfaceColor.GREEN][2])	onrelease='MODEL.lua.aColorCockpitInterface_Set = SkinInterfaceColor.GREEN sc_ClosePopover()  doDelayed(1, sc_Restart )' 	visible=(%lua.GREEN) />  
+		<row text=(lua.ColorCockpitInterface_Table[lua.SkinInterfaceColor.BW][2])		onrelease='MODEL.lua.aColorCockpitInterface_Set = SkinInterfaceColor.BW sc_ClosePopover()  doDelayed(1, sc_Restart )'		visible=(%lua.BW) />  
+		<row text=(lua.ColorCockpitInterface_Table[lua.SkinInterfaceColor.GOLD][2]) 	onrelease='MODEL.lua.aColorCockpitInterface_Set = SkinInterfaceColor.GOLD sc_ClosePopover()  doDelayed(1, sc_Restart )'		visible=(%lua.GOLD) />  
+		<row text=(lua.ColorCockpitInterface_Table[lua.SkinInterfaceColor.DEFAULT][2])	onrelease='MODEL.lua.aColorCockpitInterface_Set = SkinInterfaceColor.DEFAULT sc_ClosePopover()  doDelayed(1, sc_Restart )' />  
+</userlist>
+
+<layer ui_aVersionInformation z=500000 onshow={doDelayed(%lua.SkinVersionShowTime, "ui_aVersionInformation:HIDE(); MODEL.lua.SkinVersionShowTime = 0")} visible=(%lua.SkinVersionShowTime)>
+	<DIV class="full" >
+		<SPRITE left=(-10) top=(-10) bottom=(-10) right=(-10) resize_bmp=1 img="btn_map.bmp#3" alpha=25 
+			onrelease='ui_aVersionInformation:tween("Y", 0, -ui.ui_aVersionInformation.H, 300, { on_complete = function() ui_aVersionInformation:HIDE(); MODEL.lua.SkinVersionShowTime = 0 end})' /> 
+	</DIV>
+	<DIV class="main">
+		;<SPRITE class="logo svg" visible=(%lua.aColorCockpitInterface_Set == lua.SkinInterfaceColor.DEFAULT) />
+		;<SPRITE class="logo svg" img=(%lua.aColorCockpitInterface_Set == lua.SkinInterfaceColor.GOLD ? "horseshoe.svg" : "MyLogo.svg") 
+		<SPRITE class="logo svg" img="Ukrainian_Armed_Forces.svg" top=0 bottom=70% zoom=90% />
+		;<SPRITE class="logo svg" img="ico_100pc.svg" top=0 bottom=70% visible=(%lua.aColorCockpitInterface_Set != lua.SkinInterfaceColor.DEFAULT)  zoom=90% />
+		<TEXT class="font_main bd color_inf_main" left=10% right=10% top=(%lua.IsPortrait ? 30% : 30%)  align="CENTER" 
+			text=(%lua.aSkinVersionTXT) />
+		<TEXT class="font_main bd color_inf_main" left=10% right=10% top=(%lua.IsPortrait ? 40% : 40%) align="CENTER" 
+			text=(L"version " + %lua.aSkinVersionNo + L" | " + %lua.aSkinVersionDate) />
+		;<TEXT class="font_main bd color_inf_main" left=10% right=10% top=(%lua.IsPortrait ? 50% : 55%) align="CENTER" 
+		;	text="Thanks to everyone who provided and assists in the development of the skin." />
+		<TEXT class="font_main bd color_inf_main" left=10% right=10% top=(%lua.IsPortrait ? 70% : 75%) align="CENTER" 
+			text=(sc_translate_VoiceOrLang("Total plugins loaded: %s", %lua.Loaded_Plugins)) />
+		<TEXT class="font_main bd color_inf_main" left=10% right=10% top=(%lua.IsPortrait ? 80% : 85%) align="CENTER" 
+			text=("@ " + lua.ColorCockpitInterface_Table[%lua.aColorCockpitInterface_Set][2]) />
+	</DIV>
+</layer>
+
+<userlist lm_DistanceMiniDir_popover enable="bool" name="str" text="wstr" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=( sc_ShowDistanceTool(100) ) max_text=( sc_ShowDistanceTool(5000) ) />
+	  	<row name="Mini Maneuver visibility distance"  text=( sc_ShowDistanceTool(%lua.VDistMini_Maneuver) ) type="Scroll" min=100 max=5000 step=10 valuemodel="lua.VDistMini_Maneuver" />
+</userlist>
+
+<var Button_Transparency = 0 > 
+<userlist lm_MapVisualSettingsPopoverTransparency enable="bool" name="str" text="ui" onrelease="ui" type="str" min="int" max="int" step="int" valuemodel="str" min_text="str" max_text="str" onchange="ui">
+	<default enable=1 type="" name="" min_text="0%" max_text="100%" />
+		<row  name="Buttons transparency" text=(tostring(%ui.Button_Transparency) + "%")
+ 			type="Scroll" min=0 max=100 step=1 valuemodel="ui.Button_Transparency" onchange='MODEL.lua.aCockpitTransparency = 32 * (100 - ui.Button_Transparency) / 100' />
+</userlist>
+
+<var NightFilter_Transparency = 0 > 
+<userlist lm_MapVisualSettingsCockpitNightFilterPopoverTransparency enable="bool" name="str" text="ui" onrelease="ui" type="str" min="int" max="int" step="int" valuemodel="str" min_text="str" max_text="str" onchange="ui">
+	<default enable=1 type="" name="" min_text="0%" max_text="100%" />
+		<row  name="Cockpit Night transparency" text=(tostring(%ui.NightFilter_Transparency) + "%")
+			type="Scroll" min=0 max=100 step=1 valuemodel="ui.NightFilter_Transparency" onchange='MODEL.lua.aCockpitNightFilterTransparency = 32 * (100 - ui.NightFilter_Transparency) / 100' />
+</userlist>
+
+<userlist lm_SetQuickMenuIcon_Popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+		<row text="Menu Icon"	onrelease='MODEL.lua.aSetQuickMenuIcon = 0 sc_ClosePopover()' />
+		<row text="Compass"		onrelease='MODEL.lua.aSetQuickMenuIcon = 1 sc_ClosePopover()' />
+		<row text="Direction"	onrelease='MODEL.lua.aSetQuickMenuIcon = 2 sc_ClosePopover()' />
+		<row text="Compass & Direction"	onrelease='MODEL.lua.aSetQuickMenuIcon = 3 sc_ClosePopover()' />
+</userlist>
+
+<userlist lm_VQuickMenuSettings prio="int" text="str" isselected="str" onrelease="ui" enable="bool" type="str" visible="bool" details="ui" checked="ui" changevalue="ui" haspopover="bool" >
+	<default onrelease=undef visible=1 enable=1 prio=1 />
+		<row text="Quick Menu" type="ChkOnOff" isselected="lua.arQuickMenuEnable" />
+		<row text="Auto Close QuickMenu" type="ChkOnOff" isselected="lua.arQuickMenuAutoClose" enable=(%lua.arQuickMenuEnable) />
+		<row text="Quick Menu Icon"  haspopover=1 
+			onrelease='sc_SetPopoverListAndOpen("ui.lm_SetQuickMenuIcon_Popover")' 
+			details=(%ui.lm_SetQuickMenuIcon_Popover.list[%lua.aSetQuickMenuIcon].text) enable=(%lua.arQuickMenuEnable) />
+		<row text="QuickMenu Buttons" haspopover=1 onrelease='sc_NextStateAnim(st_VQuickMenuButtons, "fade", 1, "" )' enable=(%lua.arQuickMenuEnable) 
+			details=(%ui.lm_QuickSideList.list.size) />
+		<row text="Cockpit Buttons" haspopover=1 onrelease='sc_NextStateAnim(st_VCockpitMenuButtons, "fade", 1, "" )' 
+			details=(%ui.lm_CockpitSideList.list.size) />
+</userlist>
+
+<userlist lm_SignPostSoundsettings haspopover="bool" text="str" isselected="str" visible="bool" enable="bool" onrelease="ui" details="ui" type="str" dtooltip="str">
+	<view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 />
+		<row text="SignPost" isselected="lua.SignpostOn" type="ChkOnOff" />
+		<row text="Choose Sound SignPost" haspopover=1 
+			details=(%lua.OwnWarningSignPost == L"" ? %lua.AudioSignPost : %lua.OwnWarningSignPost) 
+			onrelease={%lua.SelectedAudioFile = %lua.AudioSignPost; %lua.SelectedOwnWarning = %lua.OwnWarningSignPost; sc_ScanAudioFiles()} 
+			enable=(%lua.SignpostOn && !(%lua.MuteSoundWithTTS && %regional.current_voice.is_tts)) dtooltip="You have to Turn ON SignPost Sound." />
+</userlist>
+
+<var LaneInfoSize = 1000 permanent> 
+<userlist lm_LaneInfoSoundsettings haspopover="bool" text="str" isselected="str" visible="bool" enable="bool" onrelease="ui" details="ui" type="str" dtooltip="str">
+  <view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 />
+		<row text="LaneInfo" isselected="lua.LaneinfoOn" type="ChkOnOff" />
+		<row text="LaneInfo Sound" haspopover=1 
+			details=(%lua.OwnWarningLaneInfo == L"" ? %lua.AudioLaneInfo : %lua.OwnWarningLaneInfo) 
+			onrelease={%lua.SelectedAudioFile = %lua.AudioLaneInfo; %lua.SelectedOwnWarning = %lua.OwnWarningLaneInfo; sc_ScanAudioFiles()} 
+			enable=(%lua.LaneinfoOn && !(%lua.MuteSoundWithTTS && %regional.current_voice.is_tts)) dtooltip="You have to Turn ON LaneInfo Sound." />
+		<row text="LaneInfo Color" haspopover=1 details=(VW_LaneInfo_details()) onrelease='sc_SetPopoverListAndOpen("ui.lm_LaneInfoColor_Popover", VW_LaneInfo_Popover())' />
+		<row text="Lane Info Size"  haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_LaneInfoSize_Popover")' details=(tostring(%ui.LaneInfoSize / 10) + "%") enable=(%lua.LaneinfoOn) />
+</userlist>
+
+<userlist lm_LaneInfoSize_Popover enable="bool" name="str" text="wstr" onrelease="ui" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text="100%" max_text="200%" />
+		<row name="Lane Info Size" text=(tostring(%ui.LaneInfoSize / 10) + "%") type="Scroll" min=1000 max=2000 step=100 valuemodel="ui.LaneInfoSize" />
+</userlist>
+
+<observer value=(%lua.aColorCockpitInterface_Set) onchange='if MODEL.lua.Follow_Skin_color() then MODEL.lua.LaneInfo_Type = MODEL.lua.aColorCockpitInterface_Set() end' start="NO_TRIGGER" />  
+<userlist lm_LaneInfoColor_Popover text="str" onrelease="ui" visible="bool" enable="bool">
+	<view visibility_filter=visible />
+		<default enable=1 visible=1 onrelease='MODEL.lua.Follow_Skin_color = 0; MODEL.lua.LaneInfo_Type = SkinInterfaceColor[MODEL["*"].text():upper()]; sc_ClosePopover(); doDelayed(1, sc_Restart )' />
+		<row text="default" /> 
+		<row text="red" />
+		<row text="blue" />
+		<row text="green" />  
+		<row text="bw"	/>  
+		<row text="gold" />  
+		<row text="Skin color" onrelease='MODEL.lua.Follow_Skin_color = MODEL.lua.aColorCockpitInterface_Set(); MODEL.lua.LaneInfo_Type = MODEL.lua.aColorCockpitInterface_Set() sc_ClosePopover() doDelayed(1, sc_Restart )' />  		
+</userlist>
+
+<userlist lm_CockpitColorsSettings prio="int" text="str" isselected="str" onrelease="ui" enable="bool" type="str" visible="bool" details="ui" haspopover="bool" >
+	<view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 />
+		<row prio=1 text="Color Cockpit Interface" haspopover=1  onrelease='sc_SetPopoverListAndOpen("ui.lm_ColorCockpitInterface_Popover")' details=(sc_SetColorCockpitInterface()) />
+		<row prio=2 text="Diricon color" haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_SetDiriconColor_Popover")' details=(%lua.direction_icon_phasename) />
+		<row prio=3 text="Secondary Diricon color" haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_SetSecDiriconColor_Popover")' details=(%lua.secondary_direction_icon_phasename) />
+		<row prio=4 text="Cockpit Colored Icons" haspopover=1 details=(%lua.aColorIconsEnable ? "color" : "default") onrelease='sc_SetPopoverListAndOpen("ui.lm_SetCockpitColorIcons_Popover")' />
+</userlist>
+
+<userlist lm_SetCockpitColorIcons_Popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+		<row text="default"	onrelease='MODEL.lua.aColorIconsEnable = 0 sc_ClosePopover() doDelayed(5, sc_Restart )' />
+		<row text="color"	onrelease='MODEL.lua.aColorIconsEnable = 1 sc_ClosePopover() doDelayed(5, sc_Restart )' />
+</userlist>
+
+<userlist lm_aCockpitTransparencySettings prio="int" text="str" isselected="str" onrelease="ui" enable="bool" type="str" visible="bool" details="ui" haspopover="bool" >
+	<default onrelease=undef visible=1 enable=1 />
+		<row prio=1 text="Cockpit Transparency" haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_CockpitTransparencyTimer_Popover")' details=(translated_format(m_i18n(!%lua.CockpitTransparencyTimer ? "constantly" : "timer" ) ) ) />
+		<row prio=2 text="Set Cockpit Transparency"  details=(tostring((32 - %lua.aCockpitTransparency) * 100 / 32) + "%") haspopover=1 onrelease='ui.Button_Transparency = (32 - MODEL.lua.aCockpitTransparency()) * 100 / 32; sc_SetPopoverListAndOpen("ui.lm_MapVisualSettingsPopoverTransparency")' />
+		<row prio=3 text="Cockpit Transparency Timer" details=( sc_ShowTimeTool(%lua.SetCockpitTransparencyTimer ) ) haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_SetCockpitTransparencyTimer_Popover")' enable=(%lua.CockpitTransparencyTimer) />
+		<row prio=4 text="Cockpit Night Filter" details=(tostring((32 - %lua.aCockpitNightFilterTransparency) * 100 / 32) + "%") haspopover=1 onrelease='ui.NightFilter_Transparency = (32 - MODEL.lua.aCockpitNightFilterTransparency()) * 100 / 32; sc_SetPopoverListAndOpen("ui.lm_MapVisualSettingsCockpitNightFilterPopoverTransparency")' />
+</userlist>
+
+<userlist lm_aCockpitMiniDiriconSettings prio="int" text="str" isselected="str" onrelease="ui" enable="bool" type="str" visible="bool" details="ui" haspopover="bool" dtooltip="str">
+	<default onrelease=undef visible=1 enable=1 />
+		<row prio=1 text="Secondary Maneuver always visible" type="ChkOnOff" isselected="lua.SecondaryManeuverAlwaysVisible" />
+		<row prio=2 text="Always MiniDiricon when Side Panel opened"  isselected="lua.MiniDiricon_with_SplScreen" type="ChkOnOff" />
+		<row prio=3 text="Enabling condition for miniDiricon" type="ChkOnOff" isselected="lua.enable_mini_diricon" />
+		<row prio=4 text="Mini Maneuver visibility distance" details=( sc_ShowDistanceTool(%lua.VDistMini_Maneuver) ) 
+			dtooltip="'Enabling condition for miniDiricon' deactivates 'Secondary Maneuver always visible' and activates 'Mini Maneuver visibility distance'"
+			haspopover=1  onrelease='sc_SetPopoverListAndOpen("ui.lm_DistanceMiniDir_popover")' enable=(%lua.enable_mini_diricon) />
+</userlist>
+
+<userlist lm_aRouteWarningsSettings prio="int" text="str" isselected="str" onrelease="ui" enable="bool" type="str" visible="bool" details="ui" haspopover="bool" >
+	<default onrelease=undef visible=1 enable=1 prio=99 />
+	<view visibility_filter=visible sort_by="prio" />
+		<row prio=1 text="Show City Name" haspopover=1 details=(%ui.lm_Town_popover.list[%lua.CityShow].text) onrelease='sc_SetPopoverListAndOpen("ui.lm_Town_popover")' /> ;need to refresh
+		<row prio=2 text="If Active Route - Message on Start" isselected="lua.IfAreActiveRoute" type="ChkOnOff" />
+</userlist>
+
+<userlist lm_Town_popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+		<row text="Off" onrelease='MODEL.lua.CityShow = 0 sc_ClosePopover()' />
+		<row text="City Name" onrelease='MODEL.lua.CityShow = 1 sc_ClosePopover()' />
+		<row text="City & Zip Code" onrelease='MODEL.lua.CityShow = 2 sc_ClosePopover()' />
+</userlist>
+
+<layer ui_SecondManeuver z=100 visible=( ui_PropLayer.SidePanelVisible )>
+	<DIV class=cockpit>
+		<DIV class=map_messagebox >
+			<TEXT class="map_messagebox discovery_text" align="CENTER" 
+				text=( builtin.format("%{distance:3}", %navigation.distance_to_maneuver + %navigation.second_maneuver_distance_diff) + L" | " + builtin.format("%{distance:3}", %navigation.second_maneuver_distance_diff) ) 
+				visible=(%gps.blink) />	
+			<SPRITE right=85% left=2% bottom=90% top=1% align="left" valign="top" iconmodel="navigation.secondary_direction_icon" /> ;phasename=%lua.secondary_direction_icon_phasename
+		</DIV>
+	</DIV>
+</layer>
+; ------------- updated  WANDEL™ --- 27.06.2023 -------

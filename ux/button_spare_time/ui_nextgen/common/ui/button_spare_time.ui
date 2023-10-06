@@ -1,0 +1,65 @@
+;--------------------------------WANDEL™--------------------------------
+<observer value=(%gps.blink) onselect=VW_CheckSPARETIME start="NO_TRIGGER" />
+<observer value=(%{"other.trips.@0"}.distance_total) ondeselect=
+	'
+	MODEL.lua.Last_TimeToDestination = MODEL.navigation.time_to_destination()
+	MODEL.lua.Last_DistanceToDestination = MODEL.navigation.distance_to_destination()
+
+	MODEL.lua.NewRoute_TimeToDestination = MODEL.navigation.time_to_destination()
+	MODEL.lua.NewRoute_DistanceToDestination = MODEL.navigation.distance_to_destination()
+	' 
+	start="NO_TRIGGER" />
+
+<var SpareTimeDistance = 0 />
+<userlist lm_SpareTimeBtn_Popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 onrelease='MODEL.lua.VW_SPARETIME_Type = MODEL["*"].text() sc_ClosePopover()' />
+	<row text="From very beginning" />
+	<row text="Only on way" />
+	;<row text="Show Recalculate info" onrelease='VW_Show_Recalculate_info() sc_ClosePopover()' />
+	<row text="Reset" onrelease='MODEL.other.trips[0].reset() sc_ClosePopover()' />
+</userlist>
+
+<var SimpleTimeBTNCockpit = 0 permanent />
+<var SimpleTimeFormat = 0 permanent />
+<var SimpleTimeColor = 0 permanent />
+<modify ui_Cockpit>
+	<insert into="IMPLEMENTATION"> 
+		<PROPERTY font_color VALUE=#FFD700, #bd1711, #7bb0ac, #8438d9, #000000, #FFFFFF />
+	</insert>
+	<insert last_child into="DIV.notify_list_ext TABLE.ari_ext">
+		<BUTTON AriveTimeBTN CLASS="btn_map" 
+			ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_SpareTimeBtn_Popover", MODEL.lua.VW_SPARETIME_Type())'
+			ONRELEASE={SpareTimeDistance = !SpareTimeDistance}
+			VISIBLE=(%lua.spare_time_in_cockpit && %navigation.has_route && !navigation_suspended)>
+			<SPRITE CLASS="panel map arrive" Z=10 POSITION="absolute" VISIBLE=(!SpareTimeDistance) >
+			<TIMESPANTEXT CLASS="arrive_plan" TIMESPAN=(%lua.LatenessTime) FORMATMODEL=7 />
+			</SPRITE>
+			<SPRITE CLASS="panel map arrive" Z=10 IMG=(%lua.LatenessDistance > 0 ? "btn_arrive_plan_red.bmp" : "btn_arrive_plan_green.bmp") VISIBLE=(SpareTimeDistance) >
+				<DISTTEXT CLASS="arrive_plan" DISTANCE=(%lua.LatenessDistance) MODE=7 />
+			</SPRITE>
+		</BUTTON>
+
+		<BUTTON SimpleTimeBTN CLASS="btn_map" 
+			ONLONGCLICK='ui.SimpleTimeColor = (SimpleTimeColor() + 1) % 6'
+			ONRELEASE='ui.SimpleTimeFormat = (SimpleTimeFormat() + 1) % 4' 
+			VISIBLE=(SimpleTimeBTNCockpit) >
+			<SPRITE CLASS="panel map arrive" Z=10 POSITION="absolute" IMG="btn_map.bmp#3" >
+				<TEXT class="simple_clock" />
+			</SPRITE>
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify lm_MapVisualSettingsExtended>
+	<insert>
+		<row  prio=2010 bmp="ico_spare_time.svg" text="Arrival time tracking" type="ChkOnOff_Icon" isselected="lua.spare_time_in_cockpit" /> ;ico_timeto.svg
+		<row  prio=2011 bmp="ico_big_clock.svg" text="Simple digital clock" type="ChkOnOff_Icon" isselected="ui.SimpleTimeBTNCockpit" />
+	</insert>	
+</modify>
+
+<modify lm_aRouteWarningsSettings>
+	<insert>
+		<row prio=3 text="Show Recalculate info" isselected="lua.Show_Recalculate_info" type="ChkOnOff" />
+		<row prio=4 text="Arrival time tracking" isselected="lua.spare_time_in_cockpit" type="ChkOnOff" />
+	</insert>	
+</modify>

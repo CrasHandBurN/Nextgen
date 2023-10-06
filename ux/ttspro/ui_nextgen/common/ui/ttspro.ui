@@ -1,0 +1,289 @@
+/*
+<observer event="BATTERY_LOW_EVENT" onchange=hook_BatteryLow start="NO_TRIGGER">
+<observer event="BATTERY_CRITICAL_EVENT" onchange=hook_BatteryCritical start="NO_TRIGGER">
+<observer event="SHUTDOWN_BY_CRITICAL_BATTERY_EVENT" onchange=sc_ShutdownOnCriticalBattery start="NO_TRIGGER">
+<observer event="POWER_ON_AC_EVENT" onchange=sc_OnAC start="NO_TRIGGER">
+<observer event="POWER_ON_BATTERY_EVENT" onchange='sc_OnBattery()' start="NO_TRIGGER">
+<observer value=(%power.shutdown_in_progress) onchange=sc_ShutdownInProgressChange start="NO_TRIGGER">
+*/
+;-------------WANDEL™---new release 16.08.2020------------
+<event hook_Route_calculation_finished />
+<event hook_Remaining_tunnel_length />
+<event hook_Street_changed />
+<event hook_City_changed />
+<event hook_TownDistrict_changed />
+<event hook_ExitSTATE />
+<event hook_HeadlightsOn />
+<event hook_nearest_town />
+<event hook_next_crossing />
+<event hook_Low_BeamOn />
+<event hook_Welcome />
+;;<event hook_sunset_sunrise_time />
+
+<observer value=(%route.list.navigated.calculation_finished && %route.list.navigated.has_navigable_path) onselect='hook_Route_calculation_finished:trigger()' START="NO_TRIGGER" />
+<observer value=(%navigation.remaining_tunnel_length.valid) onselect='hook_Remaining_tunnel_length:trigger()' start="NO_TRIGGER" />
+
+<observer obs_hook_Street_changed value=(%navigation.car.current_street) onchange='hook_Street_changed:trigger()' />
+<observer obs_hook_TownDistrict_changed model="navigation.car.current_street", "navigation.car.address.zip" onchange='if MODEL.navigation.car.is_incity() then hook_TownDistrict_changed:trigger() end' />
+
+<observer obs_hook_City_changed value=(%navigation.car.address.city) onchange='hook_City_changed:trigger()' /> 
+<observer obs_HeadlightsOn value=(%navigation.car.position.valid && !%navigation.car.is_incity) onselect='hook_HeadlightsOn:trigger()' /> ;; && %navigation.is_in_simulation
+<observer model="navigation.car.near_city_cos"
+	onchange='if not MODEL.navigation.car.is_incity() and MODEL.navigation.car.near_city_cos.valid() and MODEL.lua.ShowNearestTownEnable() then 
+		hook_nearest_town:trigger() 
+	elseif temp_value[2].ACTION[1] == "Nearest Town" then
+		sc_HideDiscoverySidePopup()
+	end'
+	start="NO_TRIGGER" /> 
+<observer value=(%navigation.has_route ? %navigation.next_crossroad_with_shield : 0) onchange='hook_next_crossing:trigger()' start="NO_TRIGGER" />  ;%exists:navigation.next_crossroad_with_shield
+
+<observer obs_Low_BeamOn value=(%navigation.car.is_on_highway || %screen.nightmode || %navigation.remaining_tunnel_length.valid) 
+	onselect='hook_Low_BeamOn:trigger()' ondeselect='if MODEL.lua.hook_Low_BeamOn() then VW_LongTextToSay(sc_translate_VoiceOrLang("Low Beam can be off!")) end' /> 
+/*
+<observer value=(%oasis.sunset_sunrise.list && %lua.hook_sunset_sunrise_time && %{"oasis.sunset_sunrise.list.@" + %route.list.navigated.waypoints.list.lastindex + ".sunset.time.valid"}) 
+	onselect='UpdateSunSetSunriseList(); hook_sunset_sunrise_time:trigger()' ondeselect='if MODEL.lua.hook_sunset_sunrise_time() then VW_LongTextToSay(sc_translate_VoiceOrLang("Sunset sunrise!")) end' 
+	start="NO_TRIGGER" /> 
+*/
+;Its was done to avoid several problems
+<modify ui_Cockpit>   
+	<insert>    
+		<OBSERVER obs_toleranceoverspeed VALUE=(ui_Cockpit.AdvancedSpeedLimitPhase == 2 && %lua.ToleranceOverspeedVoice) ONSELECT=sc_ToleranceOverspeedVoice_change START="NO_TRIGGER" />
+		<OBSERVER obs_wspeedmode VALUE=(%lua.SpeedLimitValue) ONCHANGE=sc_wspeedmode_change START="NO_TRIGGER" />  
+	</insert>
+</modify>
+
+<observer obs_DueToCarNearCity value=(%navigation.has_route && %navigation.car.near_city_cos.valid && !%navigation.car.in_city && %navigation.car.near_city) 
+	onselect=VW_CarNearCityNegotiation ondeselect=VW_CarNearCity
+	start="NO_TRIGGER" />
+<observer obs_DueToCarInCity model="navigation.car.is_incity" onchange=VW_CarInCity_change />
+<observer obs_DueToRouteChange value=(%route.list.navigated.calculation_finished && %route.list.navigated.has_navigable_path && %lua.pwion == 2 && %lua.tts_by_Wiman) onselect=sc_wi_wReadOutDestinationInfo_Start start="NO_TRIGGER" />
+<observer obs_DueToTimeChange value=(%gps.current_time) onchange=sc_DueToTimeChange START="NO_TRIGGER">
+<observer obs_DueToDistanceChange value=(%navigation.distance_to_destination) onchange=sc_DueToDistanceChange start="NO_TRIGGER" />
+
+<userlist lm_tts_settings prio="int" text="str" haspopover="bool" type="str" isselected="str" enable="bool" visible="bool" onrelease="ui" onrelease_extra="ui" >
+	<view visibility_filter=visible />
+	<default prio=99 type="SetChkOnOff_Icon" visible=1 isselected="" onrelease=undef onrelease_extra=undef enable=(%regional.current_voice.is_tts) />
+	
+	<row prio=1 text="TTS by wiman" isselected="lua.tts_by_Wiman" onrelease_extra=sc_tts_wi_Settings />
+	
+	<row prio=2 text="Read roadside information:Attractions" isselected="lua.Attraction_ON_OFF" onrelease_extra=sc_Attractionset_OnRelease visible=(Plugin.isLoaded("attractions")) />
+	<row prio=2 text="Read roadside information:Attractions" onrelease_extra='sc_InfoMessageBox("To use please load \'Attractions\'")' type="QuestChkOnOff_Icon" visible=(!Plugin.isLoaded("attractions")) />
+
+	<row prio=16 text="Announce System Messages" type="ChkOnOff" isselected="ui.vReadOutSystemMessages" />
+	
+	<row text="Read Out Speed Limit Increasing" isselected="lua.wSLTTSVoice" onrelease_extra=sc_wSecondPhraseTTSSL_play type="PlayChkOnOff_Icon" />
+	<row text="Read Out Tolerance Overspeed" isselected="lua.ToleranceOverspeedVoice" onrelease_extra=sc_ToleranceOverspeedVoice_change type="PlayChkOnOff_Icon" />
+	
+	<row text="Read Out \"In City\"" isselected="lua.CarInCity" onrelease_extra='sc_NextStateAnim(st_ShowInCitySettings, "fade", 1, "" )' type="SetChkOnOff_Icon" />
+	<row text="Read Out \"Out of City\"" isselected="lua.CarOutofCity" onrelease_extra='sc_NextStateAnim(st_ShowOutofCitySettings, "fade", 1, "" )' type="SetChkOnOff_Icon" />	
+</userlist>
+;---tts by WANDEL™ like Wiman---------------------
+<userlist WittswiSettingsList haspopover="bool" prio="int" text="str" bmp="str" iconphase="int" bitvalue="int" isselected="str" model="str"  visible="bool" enable="bool" onrelease="ui" details="ui" type="str">
+	<view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 />
+	<row text="Read Out Destination/Waypoint Info" haspopover=1 details=(%lua.ChangeWaypointDestination ? "Destination" : "Waypoint") onrelease={invert(%lua.ChangeWaypointDestination)} />
+	<row text="Create your own information to read" haspopover=1 onrelease='sc_NextStateAnim(st_tts_currinfo, "fade", 1, "" )' />
+	<row text="Repeat due to" details=(%lua.pwion == 0 ? "Elapsed Time" : (%lua.pwion == 1 ? "Elapsed Distance" : "Route Changing")) onrelease=VW_sc_MOD3 />
+	<row text="Elapsed Time" haspopover=1 details=(sc_ShowTimeTool(%lua.VW_TimeToRepeate)) onrelease='sc_SetPopoverListAndOpen("ui.lm_Repeateverytime_popover")' enable=(%lua.pwion == 0) />
+	<row text="Elapsed Distance" haspopover=1 details=(sc_ShowDistanceTool(%lua.VW_DistanceToRepeate)) onrelease='sc_SetPopoverListAndOpen("ui.lm_Repeateverydist_popover")' enable=(%lua.pwion == 1) />
+</userlist>
+
+<userlist lm_Repeateverytime_popover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowTimeTool(60)) max_text=(sc_ShowTimeTool(3600))/>
+	   <row name="Repeat Time" text=(sc_ShowTimeTool(%lua.VW_TimeToRepeate)) type="Scroll" min=60 max=3600 step=60 valuemodel="lua.VW_TimeToRepeate" />
+</userlist>
+<userlist lm_Repeateverydist_popover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(1000)) max_text=(sc_ShowDistanceTool(50000))/>
+	   <row name="Repeat Distance" text=(sc_ShowDistanceTool(%lua.VW_DistanceToRepeate)) type="Scroll" min=1000 max=50000 step=1000 valuemodel="lua.VW_DistanceToRepeate" />
+</userlist>
+
+<layer ui_tts_currinfo z=160>
+	<DIV class="main">
+  		<BUTTON class="btn_main" left=0 top=0 w=100% h=100% onrelease='sc_NextStateAnim(st_tts_infolist, "fade", 1, "")'>
+			<SPRITE class="icon svg" left=5% right=2% align="CENTER" valign="CENTER" top=25% bottom=25% img="enter.svg" visible=(!%lua.wiindex) />
+			<TEXT class="font_main color_inf_main" left=5% right=2% align="LEFT" valign="CENTER" top=10% bottom=74% wordwrap=2 text=(sc_dotext(%lua.pchangeINfoa)) visible=(%lua.wiindex >= 1) />
+			<TEXT class="font_main color_inf_main" left=5% right=2% align="LEFT" valign="CENTER" top=26% bottom=58% wordwrap=2 text=(sc_dotext(%lua.pchangeINfob)) visible=(%lua.wiindex >= 2) />
+			<TEXT class="font_main color_inf_main" left=5% right=2% align="LEFT" valign="CENTER" top=42% bottom=42% wordwrap=2 text=(sc_dotext(%lua.pchangeINfoc)) visible=(%lua.wiindex >= 3) />
+			<TEXT class="font_main color_inf_main" left=5% right=2% align="LEFT" valign="CENTER" top=58% bottom=26% wordwrap=2 text=(sc_dotext(%lua.pchangeINfod)) visible=(%lua.wiindex >= 4) />
+			<TEXT class="font_main color_inf_main" left=5% right=2% align="LEFT" valign="CENTER" top=74% bottom=10% wordwrap=2 text=(sc_dotext(%lua.pchangeINfoe)) visible=(%lua.wiindex == 5) />		
+			<SPRITE class="icon svg" left=92% right=1% align="CENTER" valign="CENTER" top=85% bottom=2% img="ico_info.svg" onrelease='VW_Show_xhtmlQuest("TenCommandmentstrueiGOists.xhtml", "Ten Commandments for true iGOists")' visible=(!%lua.wiindex) />
+		</BUTTON>
+	</DIV>
+</layer>
+
+<userlist lm_currinfo_footer text="str" onrelease="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+	<row text="Test" isactionbutton=1 onrelease='sc_wi_wReadOutDestinationInfo_Start()' />
+</userlist>
+
+<userlist WittswiSettingsListsecond text="str" bmp="str" onrelease="ui" type="str" enable="bool" visible="bool" type="str" checked="bool" changevalue="ui">
+	<view visibility_filter=visible/>
+	<default onrelease=undef model="" bmp="" type="ChkOnOff_Icon" checked=0 changevalue=undef visible=1 enable=1 />
+	<row bmp=(tostring(lua.pchangeINfo[1]) + ".svg") text=(sc_dotext(1)) onrelease='sc_infoDo(1); sc_back(); sc_NextStateAnim(st_tts_infolist, "fade", 1, "" )' checked=(lua.pchangeINfo[1] != "") />
+	<row bmp=(tostring(lua.pchangeINfo[2]) + ".svg") text=(sc_dotext(2)) onrelease='sc_infoDo(2); sc_back(); sc_NextStateAnim(st_tts_infolist, "fade", 1, "" )' checked=(lua.pchangeINfo[2] != "") />	
+	<row bmp=(tostring(lua.pchangeINfo[3]) + ".svg") text=(sc_dotext(3)) onrelease='sc_infoDo(3); sc_back(); sc_NextStateAnim(st_tts_infolist, "fade", 1, "" )' checked=(lua.pchangeINfo[3] != "") />		  	
+	<row bmp=(tostring(lua.pchangeINfo[4]) + ".svg") text=(sc_dotext(4)) onrelease='sc_infoDo(4); sc_back(); sc_NextStateAnim(st_tts_infolist, "fade", 1, "" )' checked=(lua.pchangeINfo[4] != "") />		  		
+	<row bmp=(tostring(lua.pchangeINfo[5]) + ".svg") text=(sc_dotext(5)) onrelease='sc_infoDo(5); sc_back(); sc_NextStateAnim(st_tts_infolist, "fade", 1, "" )' checked=(lua.pchangeINfo[5] != "") />		  		
+	<row bmp=(tostring(lua.pchangeINfo[6]) + ".svg") text=(sc_dotext(6)) onrelease='sc_infoDo(6); sc_back(); sc_NextStateAnim(st_tts_infolist, "fade", 1, "" )' checked=(lua.pchangeINfo[6] != "") />
+	<row bmp=(tostring(lua.pchangeINfo[7]) + ".svg") text=(sc_dotext(7)) onrelease='sc_infoDo(7); sc_back(); sc_NextStateAnim(st_tts_infolist, "fade", 1, "" )' checked=(lua.pchangeINfo[7] != "") />
+	<row bmp=(tostring(lua.pchangeINfo[8]) + ".svg") text=(sc_dotext(8)) onrelease='sc_infoDo(8); sc_back(); sc_NextStateAnim(st_tts_infolist, "fade", 1, "" )' checked=(lua.pchangeINfo[8] != "") />
+	<row bmp=(tostring(lua.pchangeINfo[9]) + ".svg") text=(sc_dotext(9)) onrelease='sc_infoDo(9); sc_back(); sc_NextStateAnim(st_tts_infolist, "fade", 1, "" )' checked=(lua.pchangeINfo[9] != "") />
+	<row bmp=(tostring(lua.pchangeINfo[10]) + ".svg") text=(sc_dotext(10)) onrelease='sc_infoDo(10); sc_back(); sc_NextStateAnim(st_tts_infolist, "fade", 1, "" )' checked=(lua.pchangeINfo[10] != "") />
+	<row bmp=(tostring(lua.pchangeINfo[11]) + ".svg") text=(sc_dotext(11)) onrelease='sc_infoDo(11); sc_back(); sc_NextStateAnim(st_tts_infolist, "fade", 1, "" )' checked=(lua.pchangeINfo[11] != "") />
+</userlist>
+
+<userlist lm_infolist_footer text="str" onrelease="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+	<row text="Reset" isactionbutton=1 onrelease='sc_reset_info(); sc_back(); sc_NextStateAnim(st_tts_infolist, "fade", 1, "" )' />
+</userlist>
+
+<modify ui_Cockpit>   
+	<insert last_child into="#CockpitBTNTable">    
+		<BUTTON CLASS="btn_map" ONRELEASE='MODEL.lua.daylight_been = not MODEL.lua.daylight_been() sc_Voice_TTS(sc_translate_VoiceOrLang("I hope the daytime running lights are on."))'
+				VISIBLE=(%lua.hook_HeadlightsOn && !%navigation.car.is_incity && VW_DayLightCondition(%gps.blink)) >
+			<SPRITE CLASS="button map fill" />
+			<SPRITE CLASS="listitem flag" IMG=(%gps.blink ? "icon_countryinfo_smallicons.svg" : "warning-icon.svg") PHASE=3 /> 
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row  visible=(%lua.hook_HeadlightsOn && !%navigation.car.is_incity && VW_DayLightCondition(%gps.blink)) />
+	</insert>
+</modify>
+;------------------------------------------------------------------------------------
+<userlist lm_ReadOutStartInfoSettingList text="ui" onrelease="ui" onlongclick="ui" enable="bool" type="str" visible="bool" boolmodel="str" details="ui" dtooltip="str" haspopover="bool" isselected="str">	
+	<view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 onrelease=undef />
+	<row    text="Define Own Welcome text" details=(%lua.TTSWelcome)  haspopover=1 
+		onrelease='st_TTSPro_own_warning.ttsownwarning = "TTSWelcome"; sc_NextStateAnim(st_TTSPro_own_warning, "fade", 1, "" )' />
+	<row    text="Read out Today Info" type="ChkOnOff" isselected="lua.TTSPro_Today_Info" />
+</userlist>
+
+<userlist lm_ReadOutStartInfo_footer text="str" onrelease="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+	<row text="Test" isactionbutton=1 onrelease=sc_wReadOutStartInfo />
+</userlist>
+
+<userlist lm_ShowNearestTownSettingsList icon="str" text="ui" onrelease="ui" onlongclick="ui" enable="bool" type="str" visible="bool" boolmodel="str" details="ui" dtooltip="str" haspopover="bool" isselected="str">	
+	<view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 onrelease=undef />
+	<row    icon="ico_announce.svg" text="Test" haspopover=1 onrelease='sc_Voice_TTS(sc_translate_VoiceOrLang("The nearest town %s", sc_translate_VoiceOrLang("New Vasuky")) .. L" " .. sc_translate_VoiceOrLang("Right %s", sc_wVoiceFormat_search_distance(10000)) .. L".")' />
+	<row    text="'Show Nearest Town' point" type="ChkOnOff" isselected="lua.ShowNearestTownEnable" />
+	<row    text="'Show Nearest Town' zoom" details=(sc_ShowDistanceTool(%lua.ShowNearestTownZoom)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_ShowNearestTownZoom_popover" )' />
+	<row    text="'Show Nearest Town' time" details=(sc_ShowTimeTool(%lua.ShowNearestTown_time_out)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_ShowNearestTown_time_out" )' />
+</userlist>
+
+<userlist lm_ShowNearestTownZoom_popover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(60)) max_text=(sc_ShowDistanceTool(1000)) />
+	   <row name="'Show Nearest Town' zoom" text=(sc_ShowDistanceTool(%lua.ShowNearestTownZoom)) type="Scroll" min=60 max=1000 step=10 valuemodel="lua.ShowNearestTownZoom" />
+</userlist>
+
+<userlist lm_ShowNearestTown_time_out name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowTimeTool(5)) max_text=(sc_ShowTimeTool(30)) />
+	   <row name="'Show Nearest Town' time" text=(sc_ShowTimeTool(%lua.ShowNearestTown_time_out)) type="Scroll" min=5 max=30 step=1 valuemodel="lua.ShowNearestTown_time_out" />
+</userlist>
+;---------------------------------In/Out City--------------------------------------
+<userlist lm_ShowInCitySettingsList text="str" onrelease="ui" onlongclick="ui" enable="bool" type="str" visible="bool" boolmodel="str" details="ui" dtooltip="str" haspopover="bool" isselected="str">	
+	<view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 onrelease=undef type="" />
+	<row    text="Read Out \"In City\" Voice" type="ChkOnOff" isselected="lua.ReadOutInCityVoice" />
+	<row    text="Read Out \"In City\" Message" type="ChkOnOff" isselected="lua.ReadOutInCityMessage" />
+
+	<row    text="Permanent \"City Info\" in Cockpit" haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_City_inCockpit_Popover")' 
+			details=(%ui.lm_City_inCockpit_Popover.list[%lua.CarInCity_inCockpit].text) />
+</userlist>
+
+<userlist lm_ShowOutofCitySettingsList text="str" onrelease="ui" onlongclick="ui" enable="bool" type="str" visible="bool" boolmodel="str" details="ui" dtooltip="str" haspopover="bool" isselected="str">	
+	<view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 onrelease=undef />
+	<row    text="Read Out \"Out of City\" Voice" type="ChkOnOff" isselected="lua.ReadOutOutofCityVoice" />
+	<row    text="Read Out \"Out of City\" Message" type="ChkOnOff" isselected="lua.ReadOutOutofCityMessage" />
+</userlist>
+;------------------------------------------------------------------------------------
+<layer ui_TTSProNearestTown z=50 visible=( ui_PropLayer.SidePanelVisible )>
+	<implementation>
+		<property nearest_dir value=(direction(%navigation.car.position, %navigation.car.near_city_cos, %navigation.car.heading, true)) />
+		<property nearest_dist value=(builtin.format("%{distance:3}", distance(%navigation.car.position, %navigation.car.near_city_cos))) />		
+	</implementation>
+
+	<DIV class="cockpit">
+		<DIV class="map_messagebox" > 
+			<HBOX class="nearest_info" > ;left=0 right=0 top=2% bottom=90% paddingleft=3% paddingright=3% align="center" valign="center" >
+				<SPRITE class="listitem flag" img="visit.svg" rotate=(-nearest_dir) zoom=80% />  ;img="spr_whereami_arrow.svg"
+				<TEXT class="map_messagebox discovery_text" text=(lua.temp_value[1] + L" " + nearest_dist) /> 
+			</HBOX>
+			<DIV class="dialog_buttons">
+				<DIALOGBUTTON class="dialog 2_1_1 mapmsgbox" onrelease='MODEL.my.map.select_gcoor(MODEL.navigation.car.near_city_cos(), temp_value[1]); VW_StopoverOrNewRoute(); hook_StartRoutePlanning()' 
+					text=(%lua.IsPortrait ? undef : "Add Waypoint")> 
+					<SPRITE class="button map fill" />
+					<SPRITE class="listitem svg" img=(%lua.IsPortrait ? "ico_addStopover.svg" : undef) zoom=80% />
+				</DIALOGBUTTON>
+				<DIALOGBUTTON class="dialog 2_1_2 mapmsgbox" onrelease=VW_FindPOI text=(%lua.IsPortrait ? undef : lua.temp_value[1])> 
+					<SPRITE class="button map fill" />
+					<SPRITE class="listitem svg" img=(%lua.IsPortrait ? "visit.svg" : undef) zoom=80% />
+				</DIALOGBUTTON>
+				<DIALOGBUTTON class="dialog 1_1_1 mapmsgbox" onrelease=sc_HideDiscoverySidePopup text=(%lua.IsPortrait ? undef : "Close")>
+	       			<SPRITE class="button map fill" />
+					<SPRITE class="listitem svg" img=(%lua.IsPortrait ? "ico_cancel.svg" : undef) zoom=90% />
+				</DIALOGBUTTON>
+			</DIV>
+		</DIV>
+	</DIV>
+</layer>
+
+<modify ui_Cockpit>   
+	<insert last_child into="#CockpitBTNTable">    
+		<BUTTON CLASS="btn_map" ONRELEASE='hook_nearest_town:trigger()' ONLONGCLICK='sc_NextStateAnim(st_ShowNearestTownSettings, "fade", 1, "" )'
+				VISIBLE=(%lua.hook_nearest_town && !%navigation.car.is_incity && %navigation.car.near_city_cos.valid) >
+			<SPRITE CLASS="button map fill" />
+			<TEXT CLASS="BTN_top_text" TEXT=(VW_NearestTownName(%navigation.car.near_city_cos)) />  
+			<SPRITE CLASS="listitem flag" IMG="visit.svg" ROTATE=(-direction(%navigation.car.position, %navigation.car.near_city_cos, %navigation.car.heading, true)) /> 
+			<TEXT CLASS="BTN_bottom_text" TEXT=(builtin.format("%{distance:3}", distance(%navigation.car.position, %navigation.car.near_city_cos))) />
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row  visible=(%lua.hook_nearest_town && !%navigation.car.is_incity && %navigation.car.near_city_cos.valid) />
+	</insert>
+</modify>
+
+;-----------------notification view WANDEL™--------------------
+<var Notification_bg_index = 0 /> ;default blue
+<var Notification_saved_text = L"" /> ;own text
+<layer ui_ON_Send_Notification z=5000 visible=(%lua.hook_Send_Notification && %warning.notification.notification_area.size > 0 && st_Cockpit.isActive && !%lua.MenuIsOpened && !%lua.DragMode) 
+	onshow='
+		if MODEL.lua.SayNotificationSummary() then 
+			VW_LongTextToSay(sc_GetNotificationAreaText()) 
+		else 
+			MODEL.sound.playchanneltest("ding", MODEL.lua.AudioShowNotification()) 
+		end' 
+		onhide='if sc_GetNotificationAreaText() == Notification_saved_text() then ui.Notification_bg_index = 0 ui.Notification_saved_text = L"" end'>
+		
+	<implementation>
+		<property Notification_text value=(sc_GetNotificationAreaText(%warning.notification.notification_area)) />
+	</implementation>
+
+	<DIV class="cockpit">
+		<INFORMATION_PLATE right=(!%lua.IsPortrait ? 35% : 30%) left=(!%lua.IsPortrait ? 35% : 30%) top=(!%lua.IsPortrait ? 26% : 36%) h=150 
+			onrelease='ui_ON_Send_Notification:tween("ALPHA", 32, 0, 600, { on_complete = function() ui_ON_Send_Notification:HIDE() end} )'
+			text=(Notification_text)
+			bg_index=(Notification_saved_text == Notification_text ? Notification_bg_index : 0)
+			visible=(%lua.ShowNotificationSummary) />
+	</DIV>
+</layer>
+
+<userlist lm_wReadOutNotificationInfoList icon="str" text="ui" onrelease="ui" onlongclick="ui" enable="bool" type="str" visible="bool" boolmodel="str" details="ui" dtooltip="str" haspopover="bool" isselected="str">	
+	<view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 onrelease=undef />
+	<row    text="Say Notifications Summary" type="ChkOnOff" isselected="lua.SayNotificationSummary" />
+	<row    text="Show Notifications Summay" type="ChkOnOff" isselected="lua.ShowNotificationSummary" />
+	<row  	text="Set Sound for Show Notifications Warning" details=(%lua.AudioShowNotification) onrelease={%lua.SelectedAudioFile = %lua.AudioShowNotification; sc_ScanAudioFiles()} haspopover=1 />
+</userlist>
+

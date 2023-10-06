@@ -1,0 +1,168 @@
+;---------------WANDEL™---16.09.2021----------------
+<var Panel_Type = 0 permanent >
+
+<layer ui_screen_saver z=3 visible=( !%lua.DragMode && (%lua.screen_saver_mode && ( (Maneuver_dependency ? !%lua.SSNextManeuverValid : 1) && (Place_dependency ? !%navigation.car.is_incity : 1) && (Speed_dependency && %navigation.car.current_speed.valid ? %navigation.car.current_speed <= sc_GetToleranceSpeed(%lua.SpeedLimitValue) : 1) ) ) ) >
+	<implementation>
+		<property speed_overspeed  value=( %lua.SpeedLimitValue && %navigation.car.current_speed.valid && %navigation.car.current_speed > %lua.SpeedLimitValue ) />
+	</implementation>
+	<DIV class="cockpit" >
+		<BUTTON left=0 right=0 top=0 bottom=0 
+			onrelease='ui.Panel_Type = (Panel_Type() + 1) % 3' onlongclick='if Panel_Type() == 2 then VW_tween() end' >
+			
+			<SPRITE class="panel map" visible=(Panel_Type == 0 || (Panel_Type == 1 && %lua.PicturePath == L"")) />
+			
+			<PSPRITE left=0 right=0 top=0 bottom=0 pictw=( CSS.Param.width ) picth=( CSS.Param.height ) align="CENTER" valign="CENTER" zoom="zoomvisible" bmp=( %lua.PicturePath ) 
+				visible=(Panel_Type == 1 && %lua.PicturePath != L"") />
+			
+			<USE_LAYER class="ss_tcmap" LAYER=(tcmap) LAYER_Z=3 visible=(Panel_Type == 2) > ; this is kind of panel. It is not a free area place
+				<observer model="screen.current_orientation", "lua.Show_NorthUp_HeadUp" onchange=sc_ShowTCMap_reset start="NO_TRIGGER" />
+				<observer model="map.primary.rotate", "lua.Show_NorthUp_HeadUp" onchange=sc_ShowTCMap_rotate start="NO_TRIGGER" />
+				<observer value=(%lua.TCNextManeuverValid) onselect='killDelayed(gShowTCMap_ID); sc_ShowTCMap_reset_Maneuver()' ondeselect='sc_ShowTCMap_reset(); VW_CheckFitForTCMap()' start />
+				<observer model="ui.lm_splitpoi.list.size", "lua.wSplitScreenPOIReady"
+					onchange='
+							if MODEL.lua.wSplitScreenPOIReady() then 
+								MODEL.map.tcmap.show_pois = 2
+								sc_FillSmartPois_bySplitScreen()
+							else
+								MODEL.map.tcmap.show_pois = 1
+							end' start />
+			</USE_LAYER>
+			
+			<DIV left=0 right=0 top=0 bottom=0 visible=( %navigation.direction_icon.valid && %route.list.navigated.has_navigable_path ) >
+				<SPRITE class="ss_diricon" align="CENTER" valign="CENTER" r2l_invert=0 attach_sprite_provider=("other.roundabout_icons.attach_sprite_provider(roundabout_icons_" + %lua.direction_icon_phasename + ".ini,0)") visible=(%navigation.exit_icon.valid && Panel_Type < 2) >
+					<TEXT class="roundabout" text=(%navigation.exit_id + 1) />
+				</SPRITE>
+				<SPRITE class="ss_diricon" align="CENTER" valign="CENTER" iconid=%navigation.direction_icon phasename=%lua.direction_icon_phasename zoom="zoomvisible" visible=(!%navigation.exit_icon.valid && Panel_Type < 2) />
+				;<GRAPH class="ss_graph" orientation="horizontal" full=(%ui.Graph_dist_limit_temp) current=(%navigation.distance_to_maneuver) visible=(GraphEnable && %navigation.distance_to_maneuver.valid && %navigation.distance_to_maneuver <= VW_right_distance()) />
+			</DIV>
+		</BUTTON>
+	</DIV>
+</layer>
+
+<modify ui_Cockpit>
+	<modify element="#buttons_TCMap" 
+		ONRELEASE=(%lua.screen_saver_mode ? VW_tween : 'Show_map_free_area("ui_TCMap")') 
+		ICON=(%lua.screen_saver_mode ? TCMap_heading.heading_img[%lua.Show_NorthUp_HeadUp] : "ico_north.svg") 
+		ENABLE=(%lua.screen_saver_mode && Panel_Type != 2 ? 0 : 1) />
+</modify>
+
+<var Speed_dependency = 0 permanent />
+<var Place_dependency = 0 permanent />
+<var Maneuver_dependency = 0 permanent />
+<userlist lm_ScreenSaverConditionSettings text="ui" type="str" haspopover="bool" isselected="str" visible="bool" enable="bool" onrelease="ui" details="ui" >
+	<view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 />
+		<row    text="Speed dependency" type="ChkOnOff" isselected="ui.Speed_dependency" />
+		<row 	text="City dependency" type="ChkOnOff" isselected="ui.Place_dependency" />
+		<row 	text="Maneuver dependency" type="ChkOnOff" isselected="ui.Maneuver_dependency" />
+</userlist>
+;--------------------------------
+<userlist lm_ScreenserverSettings text="str" type="str" isselected="str" haspopover="bool" enable="bool" visible="bool" onrelease="ui" onrelease_extra="ui" details="ui" >
+	<view visibility_filter=visible />
+	<default type="" visible=1 enable=1 isselected="" onrelease=undef onreleaseplay=undef />
+
+	<row text="Screen Saver" isselected="lua.screen_saver_mode" onrelease_extra='sc_NextStateAnim(st_screen_saver_conditions_Settings, "fade", 1, "")' type="SetChkOnOff_Icon" />
+	<row text="User Pictures Viewer" haspopover=1 onrelease=sc_Go_UserPictureList details=(%lua.PicturePath) /> 
+	<row text="Help" haspopover=1 onrelease='VW_Show_xhtmlQuest("i18n/Help/screen_saver/screen_saver_Help.xhtml", "screen_saver")' /> 
+	
+</userlist>
+;--------------------------------
+<modify ui_Cockpit>           
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON ScreenSaverButtonCockpit 
+			ONRELEASE={Hide_map_free_area(); %lua.screen_saver_mode = !%lua.screen_saver_mode}
+			ONLONGCLICK='sc_NextStateAnim(st_screen_saver_Settings, "fade", 1, "" )'
+			VISIBLE=(%lua.ScreenSaverButtonCockpit)
+			ICON=(%lua.screen_saver_mode && %gps.blink ? "ico_screenserver_red.svg" : "ico_screenserver.svg")
+			ZOOM=80%
+			T_TEXT=(VW_Return_button_text(translate("Screen Saver"), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate("Screen Saver"), L"%s", 99)) >
+		</BUTTON_ICON>
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=(%lua.ScreenSaverButtonCockpit) />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="Screen Saver" bmp=(ScreenSaverButtonCockpit.ICON) isselected="lua.ScreenSaverButtonCockpit" />
+	</insert>
+</modify>
+;---- Quick Menu -----
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE='ui.ScreenSaverButtonCockpit.ONRELEASE()()' ONLONGCLICK='ui.ScreenSaverButtonCockpit.ONLONGCLICK()()' 
+			VISIBLE=(%lua.ScreenSaverButtonQuick)
+			ICON=(ScreenSaverButtonCockpit.ICON) 
+			ZOOM=80%
+			T_TEXT=(ScreenSaverButtonCockpit.T_TEXT)
+			B_TEXT=(ScreenSaverButtonCockpit.B_TEXT) >
+		</BUTTON_ICON>
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=(%lua.ScreenSaverButtonQuick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="Screen Saver" bmp=(ScreenSaverButtonCockpit.ICON) isselected="lua.ScreenSaverButtonQuick" />
+	</insert>
+</modify>
+
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=(ScreenSaverButtonCockpit.ICON) text=(translate("Screen Saver")) onrelease='ui.ScreenSaverButtonCockpit.ONRELEASE()()' />
+		</insert>
+	</modify>
+<!end/>
+
+<!if condition=(Plugin.isLoaded("labs"))>
+	<modify lm_ExtraSettingsList>
+		<insert>
+			<row text="Screen Saver" icon=(ScreenSaverButtonCockpit.ICON) haspopover=1 onrelease='sc_NextStateAnim(st_screen_saver_Settings, "fade", 1, "" )' />
+		</insert>
+	</modify>
+<!end>
+
+<element_template et_UserPicture>
+	<BUTTON class="listitem" onrelease='VW_Folder_OnRelease()' onlongclick='MODEL.lua.PicturePath = L""' >
+		<PSPRITE class="fill" z=100 pictw=( PARENT.W - CSS.Param.picture_margin ) picth=( PARENT.H - CSS.Param.picture_margin ) align="CENTER" valign="CENTER" zoomfrom="shrinkvisible" bmp=( %*.frootpath ) visible=(!%*.isdir) />
+		<TEXT   class="font_sec" left=0 top=0 h=100% w=100% align="CENTER" wordwrap=2 textmodel_wstr="*.display_name"  visible=(%*.isdir) />
+	</BUTTON>
+</element_template>
+
+<layer ui_UserPicture z=30>
+	<DIV class="list picturepoi">
+		<LIST2 class="list_picture" SMOOTHSCROLLING>
+			<SECTIONMARKER class="picturepoi" />
+			<LISTMODEL listmodel="oasis.files.list" element_template="et_UserPicture" />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+		
+		<EMPTYLISTTEXT visible=( !%oasis.files.list.size ) />
+
+	</DIV>
+</layer>
+
+<userlist lm_updir_footer text="str" onrelease="ui" onlongclick="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+		<row text="Folder Up" onrelease=VW_Files_Prev onlongclick='sc_ScanGivenFolder(MODEL.lua.MainPictureFolder(), L"fcategory:0;fcategory:4")' />
+</userlist>
+
+<userlist lm_LocalMenuScreen_saver text="ui" onrelease="ui" enable="bool">
+	<default enable=1 visible=1 />
+	<row text="Plain panel" onrelease='MODEL.lua.PicturePath = L""' />
+</userlist>

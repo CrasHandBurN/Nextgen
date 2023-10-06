@@ -1,0 +1,20 @@
+; --  Compass WANDEL™-- 27.12.2018 -- 
+<modify ui_Cockpit>   
+	<insert into="DIV.cockpit">
+		<LAYER Z=101 VISIBLE=(%lua.rmAdditionallyZoom && st_Cockpit.isActive && !%lua.MenuIsOpened && !%lua.DragMode)>
+			<SPRITE CLASS="btn_zoom_out" ONCLICK='MODEL.map.primary.zoom_start(-1); VW_Restore_GlobalZoom_byTime()' ONRELEASE='MODEL.map.primary.zoom_stop()' ONMOUSELEAVE='MODEL.map.primary.zoom_stop()' >
+				<SPRITE CLASS="btn_zoom_out_ico" />
+			</SPRITE>
+			<SPRITE CLASS="btn_zoom_center" ONRELEASE='sc_SetGlobalZoomFollow(1)' >
+				<SPRITE CLASS="btn_zoom_center_ico" />
+			</SPRITE>
+			<SPRITE CLASS="btn_zoom_in" ONCLICK='MODEL.map.primary.zoom_start(1); VW_Restore_GlobalZoom_byTime()' ONRELEASE='MODEL.map.primary.zoom_stop()' ONMOUSELEAVE='MODEL.map.primary.zoom_stop()' >
+				<SPRITE CLASS="btn_zoom_in_ico" />
+			</SPRITE>
+			<SPRITE CLASS="btn_overview" ONRELEASE='MODEL.my.map.select_gcoor(MODEL.navigation.car.position()); VW_StopoverOrNewRoute(); hook_ShowPointOnMap:trigger()' 
+				ONLONGCLICK='MODEL.lua.rmAdditionallyZoom = 0; MODEL.sound.playchanneltest("ding", L"!button")'>
+				<SPRITE CLASS="btn_overview_ico" />
+			</SPRITE>
+		</LAYER>
+	</insert>
+</modify>

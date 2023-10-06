@@ -1,0 +1,26 @@
+TEXT.debugger_listitem {
+	r2l_invert: 0;
+	left: 0;  
+	right: 0; 
+	top: 0; 
+	bottom: 0;
+	align: "LEFT"; 
+	valign: "CENTER"; 
+	font: "6622";
+	fontsize: (screen_h * 3 / 100);
+	color: map_main_color;
+	wordwrap:2;
+
+}
+
+BUTTON.Overmap_Snapshot_Btn  {
+	left: 0; top: 0;
+	h: mapcontrol_button_h; 
+	w: mapcontrol_button_w; 
+}
+
+HSMARTSCROLL.scroll.BtnH { max: (screen_w - mapcontrol_button_w) ;}	
+VSMARTSCROLL.scroll.BtnV { r2l_invert:1; img:"scrollprogress_bg_spr.bmp"; sprind:"hscrollcar_spr.bmp#3"; SLIDER_ABOVE_FRAME:; sprprbar:"scrollprogress_spr.bmp#2"; valign:"center"; align:"center"; resize_bmp: "cardinal_only"; min:1; max: (screen_h - mapcontrol_button_h) ; set:1; z:100; dragable:1; }
+
+@import "~/common/ui/debugger_landscape.css" landscape;
+@import "~/common/ui/debugger_portrait.css" portrait;

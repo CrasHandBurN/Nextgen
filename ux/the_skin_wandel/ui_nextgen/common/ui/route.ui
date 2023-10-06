@@ -1,0 +1,606 @@
+<var vItinerFilter=4>
+<var vTMCShown=0>
+
+<userlist lm_myroutemenu text="str" onrelease="ui" enable="bool">
+	<default enable=1>
+		
+		<row text="Route Preferences" onrelease=sc_RouteSettings>
+		<row text="Itinerary"  onrelease=sc_ShowRouteItiner enable=(!%lua.ptp_navigation)/>
+		<row text="Save Route"  onrelease=sc_SaveRouteToMyData enable=(%route.list.navigated.waypoints.list.size > 1)>
+		<row text="Places Along Route" onrelease=sc_ShowPOIsAlongRoute enable=(!%lua.ptp_navigation && %route.list.navigated.waypoints.list.size <= 5)>
+		<row text="Simulation" onrelease=sc_Simulate_NavigatedRoute enable=(!%lua.ptp_navigation && !%navigation.calculation_todo && %route.list.navigated.has_navigable_path)>
+</userlist>
+
+
+<userlist lm_localmenu_Itinerary text="str" onrelease="ui" selected="bool" type="str">
+	<row    text="Normal"      onrelease='sc_SetItinerDetailedMode( "normal" )' selected=(%route.list.navigated.itiner.detailmode == "normal") type="Selection">
+	<row    text="Detailed Instructions"    onrelease='sc_SetItinerDetailedMode( "verbose" )' selected=(%route.list.navigated.itiner.detailmode == "verbose") type="Selection">
+	<row    text="Road List"   onrelease='sc_SetItinerDetailedMode( "road" )' selected=(%route.list.navigated.itiner.detailmode == "road") type="Selection">
+</userlist>
+
+
+<userlist lm_myroutefootermenu text="wstr" onrelease="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=0/>
+	<view visibility_filter=visible />
+	<row StartNav text=(sc_SetGoNavCountdown( %ui._idle_time, ui_RouteOverview.DoCountDown )) isactionbutton=1 onrelease='sc_GO_onrelease() hook_ManualGo:trigger()' enable=(!%route.list.navigated.waypoints.has_isolated_waypoint && %navigation.has_route) visible=(%lua.RoutePlan)/>
+</userlist>
+
+<userlist lm_RouteItinerMap_footer text="str" onrelease="ui" enable="bool" visible="bool">
+	<default enable=1 />
+	<view visibility_filter=visible />
+	<row Avoid text="Avoid" onrelease=sc_TryToAvoidItinerEntry enable=( %route.list.navigated.itiner.list[current].avoidable) visible=(!in_set(%route.list.navigated.itiner.list[current].filter_type, lua.ERouteinfoFilterTypes.VIA) && !vTMCShown && ( %route.list.navigated.itiner.list.index != %route.list.navigated.itiner.list.size - 1 || %route.list.navigated.itiner.detailmode == "road" ) )/>
+</userlist>
+
+<userlist lm_RouteMethod_footer text="str" onrelease="ui" isactionbutton="bool">
+	<row text="Select" isactionbutton=1 onrelease='States.CurrentState.UseSelectedRoute = true sc_back()' />
+</userlist>
+
+<userlist lm_ItinerListWarning icon_id="int" icon_small_id="int" length="int" distance="int" distance_visible="bool" text_enc="wstr" uid="int" origidx="int" occidx="int" type="str" phase="int" avoidable="bool">
+	<view sort_by_distance sort_by="distance" />
+	<view tmc sort_by="distance" visibility_filter=(_.type == "tmc") />
+</userlist>
+
+<userlist lm_FooterTravelPlanner text="str" onrelease="ui" visible="bool" isactionbutton="bool">
+	<view visibility_filter=visible>
+	<row text="Calculate Route" isactionbutton=1 onrelease=sc_GetDirections visible=( %route.list.navigated.waypoints.list.size > 1 )/>
+	<row text="Continue Without Route" isactionbutton=1 onrelease=sc_GetDirections_NoRoute visible=( %route.list.navigated.waypoints.list.size < 2 )/>
+</userlist>
+
+<userlist lm_LocalMenuTravelPlanner text="str" onrelease="ui" enable="bool">
+	<row text="Delete All" onrelease=sc_DeleteAllInTravelPlanner enable=( %navigation.has_route )/>
+	<row text="Optimize Waypoints" onrelease=sc_OptimizeWaypoints_OnRelease enable=( !%lua.waypointsOptimized && %route.list.navigated.waypoints.list.size > 3 )/>
+	<row text="Optimize Route" onrelease=sc_OptimizeRoute_OnRelease enable=(!%lua.routeOptimized && %route.list.navigated.waypoints.list.size > 2 )/>
+</userlist>
+
+<userlist lm_PopoverTravelPlanner text="str" onrelease="ui" enable="bool" visible="bool">
+	<view visibility_filter=visible>
+	<default enable=1 visible=1/>
+	<row movedown text="Move Up" onrelease=sc_MoveDownWp enable=( %route.list.navigated.waypoints.start_is_user_selected ? %route.list.navigated.waypoints.move_down.valid && %route.list.navigated.waypoints.list.index : %route.list.navigated.waypoints.move_down.valid ) visible=( %route.list.navigated.waypoints.list.index != 0 )/>
+	<row moveup text="Move Down" onrelease=sc_MoveUpWp enable=( %route.list.navigated.waypoints.start_is_user_selected ? %route.list.navigated.waypoints.move_up.valid && %route.list.navigated.waypoints.list.index != 1 : %route.list.navigated.waypoints.move_up.valid ) visible=( %route.list.navigated.waypoints.list.index != 0 )/>
+	<row delete text=( %route.list.navigated.waypoints.list.index ? m_i18n("Delete") : ("Delete Start Point") ) onrelease='sc_ClosePopover() sc_DeleteItemFromTravelPlanner()' visible=( %route.list.navigated.waypoints.list.index != 0 || %route.list.navigated.waypoints.start_is_user_selected )/>
+	<row text=( %route.list.navigated.waypoints.list.index ? m_i18n("Change") : ( %route.list.navigated.waypoints.start_is_user_selected ? m_i18n("Change Start Point") : m_i18n("Set Start Point") )) onrelease='sc_ClosePopover() sc_ChangeItemInTravelPlanner()'/>
+	<row text="Show on Map" onrelease=sc_ShowWaypointFromTravelPlanner/>
+</userlist>
+
+
+
+
+
+<layer ui_Calculate z=30>
+	<DIV class="main">
+		<DIV class="panel">
+			<BOX class="calculate">
+				<SPACER flex=1 />
+				<TEXT class="calculate" text="Calculating Route..."/>
+				<SPRITE class="calculate" >
+					<SPRITE class="calculate_progress" />
+				</SPRITE>
+				<SPACER flex=1 />
+			</BOX>
+		</DIV>
+	</DIV>
+</layer>
+
+
+
+
+
+<element_template et_TravelPlanner text="">
+	<BUTTON class="listitem travelplanner" onrelease='MODEL.route.list.navigated.waypoints.list.index = index; sc_OpenPopover() ;MODEL.lua.LastWaypointIndex = -1' >
+		<HBOX class="listitem travelplanner">
+			<DIV class="listitem travelplanner destination" visible=(index && index == %route.list.navigated.waypoints.list.lastindex) >
+				<HBOX class="listitem route" >
+					<SPRITE class="listitem route" />
+				</HBOX>
+				<SPRITE class="listitem icon" visible=(index) />
+			</DIV>
+			<DIV class="listitem travelplanner via" visible=(index && index != %route.list.navigated.waypoints.list.lastindex) >
+				<HBOX class="listitem route" >
+					<SPRITE class="listitem route" />
+				</HBOX>
+				<SPRITE class="listitem icon" />
+			</DIV>
+			<DIV class="listitem travelplanner start" visible=(!index) >
+				<HBOX class="listitem route" >
+					<SPRITE class="listitem route" />
+				</HBOX>
+				<SPRITE class="listitem icon" />
+			</DIV>
+
+			<TEXT class="listitem travelplanner" text=TEXT />
+			<SPRITE class="listitem icon popover" />
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<element_template et_TravelPlannerInsertPoints>
+	<BUTTON class="separator travelplanner" onrelease=sc_SelectItemForTravelPlanner>
+		<HBOX class="separator travelplanner">
+			<DIV class="separator travelplanner">
+				<HBOX class="listitem route">
+					<SPRITE class="separator route" />
+				</HBOX>
+				<SPRITE class="separator icon" />
+			</DIV>
+			<TEXT class="separator travelplanner" text=( INSERT_AT == 0 ? ( %route.list.navigated.waypoints.list.size > 1 ? m_i18n( "Final Destination" ) : m_i18n( "Destination" ) ) : m_i18n( "Insert Waypoint" ) ) />
+			<SPRITE class="listitem icon add" />
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_TravelPlanner z=30>
+	<observer value=(%route.list.navigated.waypoints.list.size) onchange='MODEL.lua.LastWaypointIndex = -1' START>
+	<DIV class="list">
+		<SECTIONMARKER/>
+		<LIST2 lst_TravelPlanner class="list_control travelplanner" SMOOTHSCROLLING>
+			<LISTMODEL listmodel=( %route.list.navigated.waypoints.list.size == 0 ? "ui.lm_Dummy" : "route.list.navigated.waypoints.list" ) element_template="et_TravelPlanner" text=( !index ? sc_SetStartPointText( %route.list.navigated.waypoints.start_is_user_selected ) : %*.longname ) reversed=1>
+				<SEPARATOR class="travelplanner" insert_at=( sc_GetTravelPlannerInsertPoints( %route.list.navigated.waypoints.list.size ) ) element_template=et_TravelPlannerInsertPoints visible=( States.CurrentState.showAddButton )/>
+			</LISTMODEL>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+
+
+
+<element_template et_QuickBarRouteWarnings>
+	
+	<DIV class="fill"> 
+		<BUTTON class="listitem quickbar" onrelease='hook_QuickBarOnrelease:trigger( function() MODEL["*"].onrelease()() end )' enable=(%*.enable // 1)>
+			<DIV class="fill">
+				<HBOX class="listitem quickbar route" >
+					<VBOX class="listitem">
+						<SPRITE class="quickbar_icon" img=( %*.img // "" ) phase=( %*.iconphase // 0) visible=( %*.img != "" )/>
+						<TEXT class="listitem fill" align="CENTER" text=%*.text visible=( %*.img == "" )/> 
+					</VBOX>
+				</HBOX>
+				<SPRITE class="quickbar_selection fill">
+			</DIV>
+		</BUTTON>
+	</DIV>
+</element_template>
+
+<element_template et_QuickBarRouteWarnings_qbp>
+	<BUTTON class="listitem qbp" onrelease='hook_QuickBarOnrelease:trigger( function() MODEL["*"].onrelease()() end )' enable=(%*.enable // 1)>
+		<HBOX class="listitem qbp">
+			<SPRITE class="listitem qbp" img=( %*.img // "" ) phase=( %*.iconphase // 0)>
+			<TEXT class="listitem qbp" text=%*.text>
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<element_template et_itiner_list>
+	<BUTTON class="listitem"  onrelease=sc_RouteItinerList_OnRelease>
+		<HBOX class="listitem">
+			<SPRITE  class="listitem icon_list svg" iconid=%*.icon_small_id visible=(%*.icon_small_id != -1)>
+			<SPRITE  class="listitem icon_list svg" iconid=%*.icon_id iconindex=0 visible=(%*.icon_small_id == -1)>
+			<ROADSHIELDEDTEXT class="color_btn_main listitem itiner" textmodel_wstr="*.text_enc">
+			<SPACER flex=1>
+			<DISTTEXT class="listitem value color_btn_main itiner" distance=(%route.list.navigated.itiner.detailmode == "road" ? %*.length : %*.remaining_length) >
+		</HBOX>			
+	</BUTTON>
+</element_template>
+
+
+<layer ui_RouteItiner z=41>
+	<DIV class="list shrinked">
+		<SECTIONMARKER>
+		<LIST2 lst_RouteItiner class="list_control"  SHOWSELECTION=1 SMOOTHSCROLLING>
+			<LISTMODEL listmodel="route.list.navigated.itiner.list" element_template="et_itiner_list">
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<element_template et_warning_list_icos>
+	<SPRITE class="warninglist svg" img=(%*.img)>
+</element_template>
+
+<layer ui_MapOverviewOnRoute z=30>
+	<DIV class="mapmain">
+		<SPRITE fitbox_MapOverviewOnRoute class="fitbox">
+	</DIV>	
+</layer>
+		
+<layer ui_RouteOverview z=30>
+	<implementation>
+		<property CountDownInterrupted value=0/>
+		<property DoCountDown value=( !%route.list.navigated.waypoints.has_isolated_waypoint && %navigation.has_route && %lua.RoutePlan && !CountDownInterrupted )/>
+	</implementation>
+		
+	<observer value=(%route.list.navigated.calculation_finished) onselect=sc_RouteOverviewCalcFinished START>
+	<observer value=( %ui._idle_time == 0 && !lua.gTmpResetIdleTime ) onselect='ui_RouteOverview.prop.CountDownInterrupted = true' start="no_trigger"/>
+	<observer value=( %ui._idle_time ) onchange=sc_CheckGoToStatus start="no_trigger"/>
+	
+	<DIV class="mapmain">
+	
+		<SPRITE fitbox_routemenu class="fitbox routemenu">
+		
+		<DIV class="route_overview_header" visible=0>
+			<SPRITE class="panel map">
+			<HBOX class="fill" >
+				<SPRITE img="ico_destination.svg" phasename="normal">
+				<TEXT class="route_summary_text" text=(%navigation.destination_name_long)>
+			</HBOX>
+		</DIV>
+		
+		<DIV class="route_overview_summary">
+			<SECTIONMARKER class="route_overview_summary"/>
+			
+			<VBOX class="fill">
+				<SPACER class="route_overview_warningicons">  
+				<TABLE COMPACT=1 row=1 col=1 flex=1 box_align="stretch"> 
+					<LIST2 lstIP_WarningList class="list_control route_summary_icons" visible=( !%route.list.navigated.calculating && %ui.routeicons_filtered.filter.size )>
+						<LISTMODEL element_template="et_warning_list_icos" listmodel="ui.routeicons_filtered.filter" />
+					</LIST2>
+					<SPRITE class="searchprogress wide" box_align="stretch" flex=1  align="CENTER" z=300 visible=( %route.list.navigated.calculating ) />
+					<EMPTYLISTTEXT class="routewarnings" text="no warnings" visible=(!%ui.routeicons_filtered.filter.size && !%route.list.navigated.calculating)/>
+				</TABLE>
+				
+				<BOX class="route_overview_buttons">
+					<BUTTON class="btn_main route_overview_buttons" onrelease=sc_showRouteWarnings enable=(!%lua.ptp_navigation && !%navigation.calculation_todo && %route.list.navigated.has_navigable_path)>
+						<TEXT class="route_overview_buttons fill" text="Route Info" />
+					</BUTTON>
+					<BUTTON class="btn_main route_overview_buttons" onrelease=sc_RouteAlternatives enable=(!%lua.ptp_navigation && !%navigation.calculation_todo && %route.list.navigated.has_navigable_path)>
+						<TEXT class="route_overview_buttons fill" text="Alternatives" />
+					</BUTTON>
+				</BOX>
+
+				<BOX box_overview_dest_info class="route_overview_destination">
+					<HBOX class="route_overview_destination" visible=(%navigation.distance_total.valid)>
+						<SPRITE class="route_summary distance svg">
+						<DISTTEXT class="route_summary_text" distance=(%navigation.distance_total)>
+					</HBOX>
+					
+					<HBOX class="route_overview_destination">
+						<SPRITE class="route_summary time svg">
+						<TIMESPANTEXT class="route_summary_text" timespan=(%route.list.navigated.time) formatmodel=5>
+					</HBOX>
+				</BOX>
+			</VBOX>
+	
+			<layer>
+				<DIV class="mapmain">
+					<DIV class="route_overview_summary">
+						<SPRITE class="panel map">
+					</DIV>
+				</DIV>
+			</layer>	
+		</DIV>
+
+	</DIV>	
+</layer>
+
+<views routeinfolist_filtered listmodel="route.list.navigated.itiner.list" >
+    <field filtered_types=(lua.ERouteinfoFilterTypes.ALL)/>
+    <view filter filter=(in_set($1.filter_type, views.filtered_types) || in_set($1.filter_type, lua.ERouteinfoFilterTypes.VIA))/>
+</views>
+
+<userlist lm_routesummary_warnings img="str" idx="ui" onrelease="ui" enable="bool" visible="bool" text="str">
+	<view visibility_filter=visible />
+	<default enable=(!%route.list.navigated.calculating) visible=0 onrelease='gRouteFilterIndex = index MODEL["*"]._list.setcurrent(index) sc_SetWarningTypeFilter(MODEL["*"].idx())'/>
+	<row img="" text="All" idx=(lua.ERouteinfoFilterTypes.ALL) visible=1 enable=(!%route.list.navigated.calculating)/>
+	<row img="ico_route_timedomain.svg"  idx=(lua.ERouteinfoFilterTypes.TMC) visible=(%traffic.events.significant_events.size) text="ROUTEWARNING~TMC"> 
+	
+	<row img=(sc_GetIcon("routewarning_highway")) 				idx=(lua.ERouteinfoFilterTypes.HIGHWAY)     text="ROUTEWARNING~HIGHWAY">
+	<row img=(sc_GetIcon("routewarning_carpool")) 				idx=(lua.ERouteinfoFilterTypes.CARPOOL)     text="ROUTEWARNING~CARPOOL">
+	<row img=(sc_GetIcon("routewarning_toll_all")) 				idx=(lua.ERouteinfoFilterTypes.PAYMENT)     text="ROUTEWARNING~PAYMENT">
+	<row img=(sc_GetIcon("routewarning_dirt_road")) 			idx=(lua.ERouteinfoFilterTypes.DIRT)        text="ROUTEWARNING~DIRT">
+	<row img=(sc_GetIcon("routewarning_four_wd")) 				idx=(lua.ERouteinfoFilterTypes.FOURWD)      text="ROUTEWARNING~FOURWD">
+	<row img=(sc_GetIcon("routewarning_border_cross")) 			idx=(lua.ERouteinfoFilterTypes.BORDER)      text="ROUTEWARNING~BORDER">
+	<row img=(sc_GetIcon("routewarning_restricted_road")) 		idx=(lua.ERouteinfoFilterTypes.RESTRICTED)  text="ROUTEWARNING~RESTRICTED">
+	<row img=(sc_GetIcon("routewarning_ferry")) 				idx=(lua.ERouteinfoFilterTypes.FERRY)       text="ROUTEWARNING~FERRY">
+	<row img=(sc_GetIcon("routewarning_railway_ferry")) 		idx=(lua.ERouteinfoFilterTypes.RAILFERRY)   text="ROUTEWARNING~RAILFERRY">
+	<row img=(sc_GetIcon("routewarning_long_tunnel")) 			idx=(lua.ERouteinfoFilterTypes.LONG_TUNNEL) text="ROUTEWARNING~LONG_TUNNEL">
+	<row img=(sc_GetIcon("routewarning_truck_restriction")) 	idx=(lua.ERouteinfoFilterTypes.TRUCK)       text="ROUTEWARNING~TRUCK">
+</userlist>
+
+<views routeicons_filtered listmodel="ui.lm_routesummary_warnings">
+	<view filter filter=($1.idx != lua.ERouteinfoFilterTypes.VIA && $1.idx != lua.ERouteinfoFilterTypes.ALL) />
+</views>
+
+<data StopoverValues>
+	<property Destination value=3008,3047,3048 />
+	<property Via value=3020,3049,3050 />
+</data>
+
+<element_template et_routeinfo distance length=0 time=0 text="" icon_id=-1 icon_small_id=-1 type="" onrelease>
+	<implementation>
+		<property DestinationVisibility value=(in_set(%*.filter_type // undef, StopoverValues.Destination)) />
+		<property ViaVisibility value=(in_set(%*.filter_type // undef, StopoverValues.Via)) />
+		
+		<property TMCVisibility value=(TYPE == "tmc")/> 
+		<property Avoidable value=%*.avoidable/>
+		
+	</implementation>
+
+	<HBOX class="listitem routeinfo">
+		<HBOX class="itinerarywarnings">
+			<VBOX class="itinerarywarnings distance">
+				<DISTTEXT class="listitem value color_btn_main itinerarywarnings" distance=DISTANCE>
+				<SPRITE class="scaleline">
+			</VBOX>
+			
+			<DIV class="listitem itinerarywarnings destination" visible=(DestinationVisibility) >
+				<HBOX class="listitem route">
+					<SPRITE class="listitem route" />
+				</HBOX>
+				<SPRITE class="listitem icon" />
+			</DIV>
+			
+			<DIV class="listitem itinerarywarnings via" visible=(!DestinationVisibility) >
+				<HBOX class="listitem route">
+					<SPRITE class="listitem route" />
+				</HBOX>
+				<SPRITE class="listitem icon" visible=(ViaVisibility) />
+			</DIV>
+		</HBOX>
+		
+		<BUTTON class="listitem itinerarywarnings" onrelease=ONRELEASE >
+			<HBOX class="listitem" box_align="stretch" left=12>
+				<SPRITE  class="listitem icon_list svg" iconid=ICON_ID visible=(ICON_ID != -1)>
+				<SPRITE  class="listitem icon_list svg" iconid=ICON_SMALL_ID visible=(ICON_SMALL_ID != -1)>
+				
+				<VBOX class="listitem routeinfo">
+					<ROADSHIELDEDTEXT class="listitem routeinfo" text=TEXT>
+					<TEXT class="listitem bottom routeinfo color_btn_error" text="Cannot be avoided!" visible=(!TMCVisibility && !DestinationVisibility && !ViaVisibility && !Avoidable)>
+				</VBOX>
+				
+				<SPACER flex=1>
+				<BOX class="routeinfo value">
+					<DISTTEXT class="listitem value routeinfo" distance=LENGTH visible=(LENGTH > 0 && !(DestinationVisibility || ViaVisibility))>
+
+					<TEXT class="listitem value routeinfo" text="at:" visible=(TIME > 0 && (DestinationVisibility || ViaVisibility ) || (!TMCVisibility && LENGTH == 0))>
+					<TIMETEXT class="valuetext"	time=TIME visible=(TIME > 0 && (DestinationVisibility || ViaVisibility ) || (!TMCVisibility && LENGTH == 0)) >
+
+					<TEXT class="listitem value routeinfo" text="Delay:" visible=(TMCVisibility && TIME > 0)>
+					<TIMESPANTEXT class="valuetext"	timespan=TIME 	text="+"	visible=(TMCVisibility && TIME > 0) formatmodel=5>
+				</BOX>
+			</HBOX>			
+		</BUTTON>
+	</HBOX>	
+</element_template>
+
+<element_template et_routeinfo_lastitem>
+	<HBOX class="listitem routeinfo r2l"  visible=(!%navigation.calculation_todo && %route.list.navigated.itiner.list.size)>
+		<HBOX class="itinerarywarnings">
+			<DIV class="listitem itinerarywarnings start" >
+				<HBOX class="listitem route">
+					<SPRITE class="listitem route" />
+				</HBOX>
+				<SPRITE class="listitem icon" />
+			</DIV>
+		</HBOX>
+		<BOX class="itinerarywarnings avoid_restore">
+			<TEXT flex=1 class="itinerarywarnings info" text="Your route contains avoided sections" visible=(%route.restrictions.has_avoids && !%navigation.calculation_todo && %route.list.navigated.has_navigable_path)>
+			<BUTTON class="itinerarywarnings" box_align="stretch" resize_bmp=1 onrelease=btn_RestoreOriginal_Onrelease visible=(%route.restrictions.has_avoids && !%navigation.calculation_todo && %route.list.navigated.has_navigable_path)>
+				<TEXT class="itinerarywarnings fill" text="Restore Original Route"/> 
+			</BUTTON>
+		</BOX>
+	</HBOX>		
+</element_template>
+
+<layer ui_RouteInfo z=30>
+	
+	<observer value=(%route.list.navigated.calculation_finished) onselect=sc_RouteInfoCalcFinished ondeselect=sc_RouteInfoReCalc START="NO_TRIGGER">
+	<DIV class="list">
+		<SECTIONMARKER/>
+	    <LIST2 lst_RouteWarnings class="list_control" SMOOTHSCROLLING KEEPSELECTIONONSCREEN=1 REVERSED visible=(!%route.list.navigated.calculating && %route.list.navigated.itiner.list.size)>
+			<LISTMODEL class="routewarning" listmodel="ui.lm_Dummy" element_template="et_routeinfo_lastitem" />	
+			<MERGE_LISTS MERGE_BY=min,(_.distance)>
+				<LISTMODEL class="routewarning" merge_by=min,(_.remaining_length) listmodel="ui.routeinfolist_filtered.filter" element_template="et_routeinfo" text=(%*.text_enc) distance=(%*.remaining_length) length=(%*.entry_length) icon_id=(%*.icon_id) icon_small_id=(%*.icon_small_id) time=(%*.arrival_time) onrelease=sc_ShowWarning />
+				<LISTMODEL class="routewarning" listmodel="traffic.events.significant_events" element_template="et_routeinfo" type="tmc" text=(%*.description) distance=(%*.distance) time=(%*.delay) icon_id=(%*.icon_id) onrelease=sc_ShowTMC visible=(vItinerFilter == lua.ERouteInfoListMode.ALL || vItinerFilter == lua.ERouteInfoListMode.TMC) />
+			</MERGE_LISTS>
+	        <VSMARTSCROLL> 
+	        <WHEEL>
+			<LISTCONTROL>
+        </LIST2>
+        
+		<SPRITE class="searchprogress wide" left=0 top=0 right=0 bottom=0 z=300 visible=( %route.list.navigated.calculating ) />
+    </DIV>   
+</layer>
+
+
+
+
+
+
+<userlist lm_DestinationMenu text="ui" onrelease="ui" enable="bool" icon="str" visible="bool">
+	<view visibility_filter=visible />
+	<default enable=1 visible=1/>
+	<row text="Show route summary" icon="ico_routesummary.svg" onrelease='sc_NextStateAnim( st_TripInfo, "fade", 1, "" )'>
+	<row nearby text="Places Nearby" icon="ico_placesnearby.svg" onrelease='MODEL.my.map.select_address(MODEL.navigation.car.position()) sc_ShowPoiAround( st_PoiAround_Cockpit, "around_cursor" )'>
+	<row text=(lua.gShowExitAtDestination == 1 ? m_i18n("Turn Off") : m_i18n("Suspend")) icon="ico_exit.svg" onrelease='sc_Exit(gShowExitAtDestination)' visible=(lua.gShowExitAtDestination)/>
+</userlist>
+
+<userlist lm_DestinationMenu_footer text="str" enable="bool" onrelease="ui">
+	<row text="I have arrived" onrelease='sc_DeleteRoute() CLEARTOSTATE(st_Cockpit)' enable=(%navigation.has_route) >
+</userlist>
+
+
+
+
+
+<layer ui_TripInfo z=35>
+	<implementation>
+		<property IsDestinationMenu value=(st_DestinationMenu.isEntered)>
+	</implementation>
+
+	
+		
+	
+	<DIV class="main">
+		<DIV class="panel">
+			<BOX class="tripinfo">
+				
+			
+				<HBOX class="tripinfo_start_end">
+					<BOX>
+						<TEXT	class="font_info  color_inf_main" align="CENTER" text="TRACK_TIME~Start:"  fixedwidthnumbers=1>
+						<HBOX>
+							<TEXT	class="font_main_large bd  color_inf_sec" left=0 top=0 right=0 bottom=0 align="CENTER" text=(format("%{date:*}", %{States.CurrentState.tripmodel}.start_time.date, %regional.dateformat) ) fixedwidthnumbers=1 visible=(sc_TripLogDate_Valid(%gps.connection_status) )>
+							<TEXT	class="font_main_large bd  color_inf_sec" left=0 top=0 right=0 bottom=0 align="CENTER" text="-:--" visible=( !sc_TripLogDate_Valid(%gps.connection_status) )>
+						</HBOX>
+						<TEXT	class="font_main_large bd  color_inf_sec" align="CENTER" text=(format(L"%{time:*}", %{States.CurrentState.tripmodel}.start_time.time, %regional.timeformat) )   fixedwidthnumbers=1 visible=( sc_TripLogDate_Valid(%gps.connection_status) )>	
+					</BOX>
+					
+					<BOX>
+						<TEXT	class="font_info  color_inf_main" align="CENTER" text="TRACK_TIME~End:"  fixedwidthnumbers=1>
+						<HBOX>
+							<TEXT	class="font_main_large bd  color_inf_sec"  left=0 top=0 right=0 bottom=0 align="CENTER" text=(format(L"%{date:*}", %{States.CurrentState.tripmodel}.end_time.date, %regional.dateformat) ) fixedwidthnumbers=1 visible=(sc_TripLogDate_Valid(%gps.connection_status) )>
+							<TEXT	class="font_main_large bd  color_inf_sec"  left=0 top=0 right=0 bottom=0 align="CENTER" text="-:--" visible=( !sc_TripLogDate_Valid(%gps.connection_status) )>
+						</HBOX>
+						<TEXT	class="font_main_large bd  color_inf_sec"      align="CENTER" text=(format(L"%{time:*}", %{States.CurrentState.tripmodel}.end_time.time, %regional.timeformat) )   fixedwidthnumbers=1 visible=( sc_TripLogDate_Valid(%gps.connection_status) )>
+					</BOX>
+					
+				</HBOX>
+				
+				<LIST2 class="tripinfo" row=3 col=3>
+					<LISTMODEL listmodel="ui.lm_tripInfo" element_template="et_TripInfo"/>
+				</LIST2>
+				
+				
+			</BOX>
+		</DIV>
+	</DIV>
+</layer>
+
+<userlist lm_tripInfo text="str" value="ui" type="str" bg_visible="bool">
+	<default type="" bg_visible=1/>
+	<row text="Avg. Speed" value=(%{States.CurrentState.tripmodel}.speed_total_avg) type="speed"/>
+	<row DrivingAvgSpeed text="Driving Avg. Speed" value=(%{States.CurrentState.tripmodel}.speed_driving_avg) type="speed"/>
+	<row text="Max. Speed" value=(%{States.CurrentState.tripmodel}.speed_max) type="speed"/>
+
+
+	<row TotalTime text="Total Time" value=(format(L"%{timespan:1}",%{States.CurrentState.tripmodel}.time_total))/>
+	<row DrivingTime text="Driving Time" value=(format(L"%{timespan:1}",%{States.CurrentState.tripmodel}.time_driving))/>
+	<row StoppedTime text="Stopped Time" value=(format(L"%{timespan:1}",%{States.CurrentState.tripmodel}.time_stopped))/>
+
+
+	<row text="Total Distance" value=(%{States.CurrentState.tripmodel}.distance_total) type="distance"/>
+	<row MinAltitude text="Min. Altitude" value=(%{States.CurrentState.tripmodel}.min_elevation) type="altitude"/>
+	<row MaxAltitude text="Max. Altitude" value=(%{States.CurrentState.tripmodel}.max_elevation) type="altitude"/>
+</userlist>
+
+<element_template et_TripInfo>
+	<SPRITE class="panel tripinfo">
+	<VBOX class="tripinfo_details">
+		<SPACER flex=1/>
+		<TEXT class="font_info textpadding_small color_inf_main" text=%*.text>
+		<SPACER flex=1/>
+		<SPEEDTEXT class="font_main_large bd color_inf_sec"   speed=%*.value visible=(%*.type == "speed")>
+		<TEXT      class="font_main_large bd color_inf_sec"   valign="CENTER" text=%*.value fixedwidthnumbers=1 visible=(%*.type == "")>
+		<DISTTEXT  class="font_main_large bd color_inf_sec"   distance=%*.value visible=(%*.type == "distance")>
+		<ALTITUDETEXT class="font_main_large bd color_inf_sec"   altitude=%*.value visible=(%*.type == "altitude")>
+		<SPACER flex=1/>
+	</VBOX>
+	
+</element_template>
+
+<userlist lm_localmenu_tripinfo text="str" onrelease="ui" enable="bool" visible="bool">
+	<view visibility_filter=visible />
+	<default text="" onrelease=undef enable=1 visible=1 >
+		<row text="Save trip" onrelease='sc_SaveTripLogAtDestination()' visible=( %other.device.platform != lua.EDevicePlatform.IOS )/>
+</userlist>
+
+
+<userlist lm_RouteMethod text="wstr"/>
+
+<userlist lm_RouteMethod_More text="str" onrelease="ui">
+	<row text="More Results"   onrelease=sc_RouteMethod_MoreAlternativeRoutes >
+</userlist>
+
+
+<element_template et_RouteMethod>
+	<implementation>
+		<property showData value=(%["route.list.multiplan" + (index + 1) + ".valid"] && !%["route.list.multiplan" + (index + 1) + ".has_calculation_todo"])>
+		<property dist     value=(%["route.list.multiplan" + (index + 1) + ".distance"])>
+		<property time     value=(sc_GetAlternativeTime(index + 1, %["route.list.multiplan" + (index + 1) + ".time"]) )>
+	</implementation>
+
+	
+	
+	<RADIO class="routemethod"	flex=1 groupmodel="lua.alternativeModes" var=(index+1) onrelease=sc_RouteMethod_DrawSelectedAlternative>
+		<HBOX class="listitem routemethod" flex=1>
+			<SPRITE class="routemethod routecolor">
+			<HBOX class="routemethod container" flex=1 >	
+				<SPRITE class="radio routemethod svg" z=10>
+				<VBOX class="routemethod" flex=4>
+					<TEXT class="listitem routemethod" text=(%*.text) FLEX=1>
+					<HBOX class="routemethod" FLEX=1 visible=(showData)>
+						<TIMESPANTEXT     class="listitem routemethod" timespan=(time) formatmodel=5>
+						<SPACER class="routemethod" />
+						<DISTTEXT class="listitem routemethod" distance=(dist)>
+					</HBOX>
+					<HBOX class="box_searchprogress routemethod" FLEX=1 visible=(!showData)>
+						<SPRITE class="searchprogress wide" FLEX=1>
+					</HBOX>
+				</VBOX>
+			</HBOX>
+		</HBOX>
+	</RADIO>
+</element_template>
+
+<element_template et_RouteMethod_More>
+	<BUTTON class="btn_main routemethod" onrelease=%*.onrelease >
+		<TEXT class="listitem routemethod" z=12 text=%*.text />
+	</BUTTON>
+</element_template>
+
+
+<layer ui_RouteMethod z=41>
+	<DIV class="main"> 
+		<DIV class="sidepanel routemethod"> 
+			<SECTIONMARKER class="routemethod">
+			
+			<TEXT   class="list_header side" text="Alternative Routes">
+			<LIST2 lst_rmethod class="list_control routemethod" z=20002 SMOOTHSCROLLING>
+				<LISTMODEL listmodel="ui.lm_RouteMethod.list"		element_template="et_RouteMethod">
+				<LISTMODEL listmodel="ui.lm_RouteMethod_More.list"  element_template="et_RouteMethod_More" visible=(%lua.gotMoreAlternatives)>
+				<VSMARTSCROLL>
+				<WHEEL>
+				<LISTCONTROL>
+			</LIST2>
+			<layer>
+				<DIV class="main"> 
+					<DIV class="sidepanel routemethod"> 
+						<SPRITE class="panel map">
+					</DIV>
+				</DIV>
+			</layer>
+		</DIV>
+	</DIV>
+	<DIV class="full">
+		<SPRITE fitbox_routemethod class="fitbox routemethod">
+	</DIV>
+</layer>
+
+
+<layer ui_SavedRoutesList z=30>
+	<DIV class="list">
+		<SECTIONMARKER>
+		<LIST2 class="list_control" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="mydata.routes.list" element_template="et_TemplateList" text=%*.name onrelease=sc_SelectSavedRoute haspopover=(%lua.EditMode)/>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<userlist lm_SavedRoutesPopover text="str" onrelease="ui">
+	<row text="Rename" onrelease=sc_RenameSavedRoute/>
+	<row text="Delete" onrelease=sc_DeleteSavedRoute_msg/>
+</userlist>
+
+<userlist lm_SavedRoutesList_localmenu text="str" onrelease="ui" enable="bool" visible="bool">
+  <view visibility_filter=visible />
+  <default text="" visible=1>
+	<row text="Edit" onrelease='MODEL.lua.EditMode = true' enable=(%mydata.routes.list.size) visible=(!%lua.EditMode) />
+	<row text="Delete All" onrelease=sc_DeleteAllSavedRoute_msg enable=1 visible=(%lua.EditMode) />
+</userlist>

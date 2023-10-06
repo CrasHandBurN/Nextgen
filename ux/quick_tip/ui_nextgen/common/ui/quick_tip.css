@@ -1,0 +1,32 @@
+@params {
+	VW_QuickMenu_col:%lua.QuickMenu_col;
+	VW_PositionBySide:%lua.PositionBySide;
+	short_panel_box_row:(screen_h/notify_list_w);
+	short_panel_box_col:(screen_w/notify_list_h);
+}
+DIV.cockpit DIV.short_panel_box {
+	left:(VW_PositionBySide == "right" ? (screen_w - VW_QuickMenu_col*notify_list_w) : margin_left);
+	right:(VW_PositionBySide == "left" ? (screen_w - VW_QuickMenu_col*notify_list_w) : margin_right); 
+	top:(VW_PositionBySide == "bottom" ? (screen_h - VW_QuickMenu_col*notify_list_h) : margin_top);
+	bottom:(VW_PositionBySide == "top" ? (screen_h - VW_QuickMenu_col*notify_list_h) : margin_bottom);
+}
+/*(%lua.IsLandscape && ui_PropLayer.ShowRouteProgress ? route_progress_bg_w : 0)*/
+DIV.cockpit DIV.short_panel_box LIST2.panel_quickbutton {
+	left:0;
+	right:0; 
+	top:0;
+	bottom:0;
+	align:VW_PositionBySide;
+	valign:"CENTER";
+	row:(VW_PositionBySide == "top" || VW_PositionBySide == "bottom" ? VW_QuickMenu_col : short_panel_box_row);
+	col:(VW_PositionBySide == "top" || VW_PositionBySide == "bottom" ? short_panel_box_col : VW_QuickMenu_col);
+}
+
+DIV.full LIST2.quicksettings_panel {
+	left:30%;
+	right:30%; 
+	top:30%;
+	bottom:30%;
+	align:"CENTER";
+	valign:"CENTER";
+}

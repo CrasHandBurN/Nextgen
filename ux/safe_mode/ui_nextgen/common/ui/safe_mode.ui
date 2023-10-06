@@ -1,0 +1,76 @@
+;---- WANDEL™ 01.10.2020 ----;
+<var SafeModeAlert=0 />
+<observer model="lua.SafeMode_speed", "lua.PopoverOpened" onchange='if not MODEL.lua.PopoverOpened() then MODEL.lua.SafeMode_speed_temp = MODEL.lua.SafeMode_speed() end' start="no_trigger" />
+<modify ui_Cockpit>
+	<insert into="DIV.cockpit" > 
+		<LAYER Z=99999 VISIBLE=(%lua.SafeMode_speed_temp && (%navigation.car.current_speed // 1) > %lua.SafeMode_speed_temp) >
+			<DIV CLASS="fill" >
+				<BUTTON LEFT=0 RIGHT=0 TOP=0 BOTTOM=0 Z=99999
+					ONRELEASE='sc_Voice_TTS(sc_translate_VoiceOrLang("Screen in Safe Mode. Speed %s. Long click to leave safe mode.", sc_ShowSpeedTool(MODEL.navigation.car.current_speed() or 1)));
+						sc_InfoNotification(sc_translate_VoiceOrLang("Screen in Safe Mode. Speed %s. Long click to leave safe mode.", sc_ShowSpeedTool(MODEL.navigation.car.current_speed() or 1)))' 
+					ONLONGCLICK='ui.SafeModeAlert = 0; MODEL.lua.SafeMode_speed_temp = 0; doDelayed(50*15, "sc_ClosePopover(true); sc_back_to_cockpit(); MODEL.lua.SafeMode_speed_temp = MODEL.lua.SafeMode_speed()")' 
+					ONCLICK='ui.SafeModeAlert = 1; doDelayed(500, "ui.SafeModeAlert = 0")' />
+					;;<TEXT CLASS="safe_mode" TEXT=(sc_translate_VoiceOrLang("Screen in Safe Mode. \nSpeed %s. \nLong click to leave safe mode.", sc_ShowSpeedTool(%navigation.car.current_speed // 1))) VISIBLE=(%ui.SafeModeAlert) />
+			</DIV>
+		</LAYER>
+		<LAYER ui_safe_mode_button Z=100000 VISIBLE=(SafeModeAlert) >
+			<DIV CLASS="fill" >
+				<TABLE CLASS="safe_mode_button" ONLONGCLICK='ui.SafeModeAlert = 0; MODEL.lua.SafeMode_speed_temp = 0; doDelayed(50*15, "sc_ClosePopover(true); sc_back_to_cockpit(); MODEL.lua.SafeMode_speed_temp = MODEL.lua.SafeMode_speed()")'>
+					<BUTTON CLASS="btn_map" ONRELEASE=(%ui.lm_QuickBattonList_filtered.filter[0].onrelease // undef) ONLONGCLICK=(%ui.lm_QuickBattonList_filtered.filter[0].onlongclick // undef) VISIBLE=(%ui.lm_QuickBattonList_filtered.filter.size > 0) >
+						<SPRITE CLASS="button map fill" />
+						<HBOX LEFT=0 RIGHT=0 TOP=0 BOTTOM=0>
+							<SPRITE CLASS="btn_map icon svg" IMAGE_W=(PARENT.W*0.8) IMAGE_H=(PARENT.H*0.8) IMG=(%ui.lm_QuickBattonList_filtered.filter[0].bmp // "") PHASENAME=(%ui.lm_QuickBattonList_filtered.filter[0].phasename // "") />
+						</HBOX>
+					</BUTTON>
+					<BUTTON CLASS="btn_map" ONRELEASE=(%ui.lm_QuickBattonList_filtered.filter[1].onrelease // undef) ONLONGCLICK=(%ui.lm_QuickBattonList_filtered.filter[1].onlongclick // undef) VISIBLE=(%ui.lm_QuickBattonList_filtered.filter.size > 1) >
+						<SPRITE CLASS="button map fill" />
+						<HBOX LEFT=0 RIGHT=0 TOP=0 BOTTOM=0>
+							<SPRITE CLASS="btn_map icon svg" IMAGE_W=(PARENT.W*0.8) IMAGE_H=(PARENT.H*0.8) IMG=(%ui.lm_QuickBattonList_filtered.filter[1].bmp // "") PHASENAME=(%ui.lm_QuickBattonList_filtered.filter[1].phasename // "") />
+						</HBOX>
+					</BUTTON>
+					<BUTTON CLASS="btn_map" ONRELEASE=(%ui.lm_QuickBattonList_filtered.filter[2].onrelease // undef) ONLONGCLICK=(%ui.lm_QuickBattonList_filtered.filter[2].onlongclick // undef) VISIBLE=(%ui.lm_QuickBattonList_filtered.filter.size > 2) >
+						<SPRITE CLASS="button map fill" />
+						<HBOX LEFT=0 RIGHT=0 TOP=0 BOTTOM=0>
+							<SPRITE CLASS="btn_map icon svg" IMAGE_W=(PARENT.W*0.8) IMAGE_H=(PARENT.H*0.8) IMG=(%ui.lm_QuickBattonList_filtered.filter[2].bmp // "") PHASENAME=(%ui.lm_QuickBattonList_filtered.filter[2].phasename // "") />
+						</HBOX>
+					</BUTTON>
+					<BUTTON CLASS="btn_map" ONRELEASE=(%ui.lm_QuickBattonList_filtered.filter[3].onrelease // undef) ONLONGCLICK=(%ui.lm_QuickBattonList_filtered.filter[3].onlongclick // undef) VISIBLE=(%ui.lm_QuickBattonList_filtered.filter.size > 3) >
+						<SPRITE CLASS="button map fill" />
+						<HBOX LEFT=0 RIGHT=0 TOP=0 BOTTOM=0>
+							<SPRITE CLASS="btn_map icon svg" IMAGE_W=(PARENT.W*0.8) IMAGE_H=(PARENT.H*0.8) IMG=(%ui.lm_QuickBattonList_filtered.filter[3].bmp // "") PHASENAME=(%ui.lm_QuickBattonList_filtered.filter[3].phasename // "") />
+						</HBOX>
+					</BUTTON>
+					<BUTTON CLASS="btn_map" ONRELEASE=(%ui.lm_QuickBattonList_filtered.filter[4].onrelease // undef) ONLONGCLICK=(%ui.lm_QuickBattonList_filtered.filter[4].onlongclick // undef) VISIBLE=(%ui.lm_QuickBattonList_filtered.filter.size > 4) >
+						<SPRITE CLASS="button map fill" />
+						<HBOX LEFT=0 RIGHT=0 TOP=0 BOTTOM=0>
+							<SPRITE CLASS="btn_map icon svg" IMAGE_W=(PARENT.W*0.8) IMAGE_H=(PARENT.H*0.8) IMG=(%ui.lm_QuickBattonList_filtered.filter[4].bmp // "") PHASENAME=(%ui.lm_QuickBattonList_filtered.filter[4].phasename // "") />
+						</HBOX>
+					</BUTTON>
+					<BUTTON CLASS="btn_map" ONRELEASE=(%ui.lm_QuickBattonList_filtered.filter[5].onrelease // undef) ONLONGCLICK=(%ui.lm_QuickBattonList_filtered.filter[5].onlongclick // undef) VISIBLE=(%ui.lm_QuickBattonList_filtered.filter.size > 5) >
+						<SPRITE CLASS="button map fill" />
+						<HBOX LEFT=0 RIGHT=0 TOP=0 BOTTOM=0>
+							<SPRITE CLASS="btn_map icon svg" IMAGE_W=(PARENT.W*0.8) IMAGE_H=(PARENT.H*0.8) IMG=(%ui.lm_QuickBattonList_filtered.filter[5].bmp // "") PHASENAME=(%ui.lm_QuickBattonList_filtered.filter[5].phasename // "") />
+						</HBOX>
+					</BUTTON>
+				</TABLE>
+			</DIV>
+		</LAYER>
+	</insert>
+</modify>
+/*
+<modify lm_MainMenu >
+	<insert before=Information>
+		<row	text="Safe Mode" icon="ico_safe_mode.svg" onrelease='sc_SetPopoverListAndOpen( "ui.lm_save_mode_popover" )' />
+	</insert>
+</modify>
+*/
+<modify lm_QuickMenu>
+	<insert>
+		<row icon="ico_safe_mode.svg" onrelease='sc_SetPopoverListAndOpen( "ui.lm_save_mode_popover" )' />
+	</insert>
+</modify>
+
+<userlist lm_save_mode_popover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text="off" max_text=(sc_ShowSpeedTool(250)) />
+	   <row name="Safe Mode" text=(%lua.SafeMode_speed ? sc_ShowSpeedTool(%lua.SafeMode_speed) : translate("off")) type="Scroll" min=0 max=250 step=10 valuemodel="lua.SafeMode_speed" />
+</userlist>

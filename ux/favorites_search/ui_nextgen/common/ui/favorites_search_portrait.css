@@ -1,0 +1,12 @@
+BUTTON.button_savedhome{
+	left: 0; right: 66%; 
+} 
+
+BUTTON.button_savedwork{
+	left: 33%; right: 33%; 
+} 
+
+BUTTON.button_savedother{
+	left: 66%; right: 0; 
+} 
+

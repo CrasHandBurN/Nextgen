@@ -1,0 +1,20 @@
+GRAPH.ss_graph {
+	left:23%;
+	right:23%; 
+	top:47%; 
+	bottom:35%;
+}
+
+.ss_diricon {
+	w: 34%;
+	h: 20%;
+	left: (observe(%map.primary.car_posx); ((%map.primary.car_posx - 17) * screen_w / 100) - 50);
+	top: (ui_Cockpit.MapPopupOnscreen ? 45% : 30%);
+}
+
+.ss_tcmap {
+	left:0;
+	right:0;
+	top: (ui_Cockpit.MapPopupOnscreen ? map_messagebox_h : 0);
+	bottom:0;
+}

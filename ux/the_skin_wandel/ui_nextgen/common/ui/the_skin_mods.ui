@@ -1,0 +1,320 @@
+<data LuaJava>
+	<property LuaJavaActive value=(Plugin.isLoaded("luajava") && (%lua.ApplicationLabel // "") != "") />
+</data>
+
+<modify lm_Settings>
+	<insert>
+		<row MapdisplayExt prio=1 text="Skin Settings" icon="ico_settings.svg" onrelease=sc_MapVisualSettingsExtended />
+		;<row Units prio=501 text="Units and Formats" icon="ico_unitsformats.svg" onrelease='sc_NextStateAnim(st_RegionalSettings_Units, "fade", 1, "")'/>
+	</insert>
+</modify>
+
+<modify lm_DisplayButtons haspopover="bool" icon="str">
+	<remove Menu_Animations /> ;руйнує діалог
+	<remove Day_Skin_Theme />
+	<remove Night_Skin_Theme />
+	<insert>
+		<row Day_Skin_Theme text="Day Skin Theme" haspopover=1 icon="ico_day_theme.svg" onrelease='sc_SettingVisualSkin(false)' />
+		<row Night_Skin_Theme text="Night Skin Theme" haspopover=1 icon="ico_night_theme.svg" onrelease='sc_SettingVisualSkin(true)' />
+	</insert>
+</modify>
+
+<!if condition=(Plugin.isLoaded("hwydrive"))>
+	<modify ui_HighwayInfo>
+		<remove element="SPRITE.panel.map.background" />
+		<insert into="DIV.cockpit>LAYER>DIV.cockpit>DIV.map_messagebox">
+			<SPRITE CLASS="panel map background" ONRELEASE=sc_CloseHwyPanel OVERMAPLAYER>
+				<SPRITE CLASS="hwy_msgbox_background svg" />
+			</SPRITE>
+		</insert>
+	</modify>
+
+	<modify et_highwayinfo>
+		<remove element="BOX.hwy_container>TEXT.color_inf_sec.r2l" />
+		<insert into="BOX.hwy_container" after="BUTTON.panel.map.fill">
+			<SPRITE CLASS="hwy_element_header" VISIBLE=(%*.id == 0)>
+				<TEXT txtHWInfoTxt  CLASS="color_inf_sec r2l" Z=10 TEXT="Next" VISIBLE=(%*.id == 0) />
+			</SPRITE>
+			<SPACER FLEX=1 VISIBLE=(%*.id == 0) />
+		</insert>
+
+		<insert into="BOX.hwy_container" after="HBOX.hwy_element">
+			<SPACER FLEX=1 VISIBLE=(%*.id == 0) />
+		</insert>	
+	</modify>
+<!end/>
+
+<!if condition=(Plugin.isLoaded("tmc"))>
+	<modify ui_MapHeader_TMC>
+		<insert first_child into="HBOX.mapheader_value.disttext">
+			<SPRITE CLASS="avoid distance svg" VISIBLE=(mapheader_tmc_distance // 0) />
+		</insert>
+		
+		<insert first_child into="HBOX.mapheader_value.timespantext">
+			<SPRITE CLASS="avoid delay svg" VISIBLE=(mapheader_tmc_timespan // 0) />
+		</insert>
+	</modify>
+<!end/>
+
+<modify ui_MapHeader_Avoid>
+	<insert into="HBOX.mapheader.avoid_distance" after="BUTTON.mapheader.btn_next.avoid.fill">
+		<SPRITE CLASS="mapheader avoid_bg" />
+	</insert>					
+
+	<remove element="BOX.mapheader.avoid>BOX.mapheader.value" />
+	<insert into="BOX.mapheader.avoid" after="SPRITE.mapheader.searchprogress.wide">
+		<BOX CLASS="mapheader value avoid" VISIBLE=(%route.list.temporary.calculation_finished)>
+			<HBOX CLASS="avoid mapheader value" VISIBLE=(%route.list.temporary.spare_distance && !%lua.AvoidChanging)>
+				<SPRITE CLASS="avoid length svg" />
+				<TEXT CLASS="avoid mapheader value" TEXT=(sc_FormatSpareDistance(%route.list.temporary.spare_distance, false, true)) />				
+			</HBOX>
+			
+			<HBOX CLASS="avoid mapheader value" VISIBLE=(%route.list.temporary.spare_time && !%lua.AvoidChanging)>
+				<SPRITE CLASS="avoid delay svg" />
+				<TEXT CLASS="avoid mapheader value" TEXT=(sc_FormatSpareTime(%route.list.temporary.spare_time, false, true)) />				
+			</HBOX>
+		</BOX>
+	</insert>
+</modify>
+
+<modify ui_MapHeader>
+	<remove element="DIV.mapheader>HBOX.mapheader_container>BOX.mapheader>BOX.mapheader.value>DISTTEXT" />
+	<remove element="DIV.mapheader>HBOX.mapheader_container>BOX.mapheader>BOX.mapheader.value>TIMESPANTEXT" />
+	<insert into="DIV.mapheader>HBOX.mapheader_container>BOX.mapheader>BOX.mapheader.value">
+		<HBOX CLASS="mapheader value icon" VISIBLE=( ui_MapHeader_prop.mapheader_text_distance // 0 ) >
+			<SPRITE CLASS="avoid length svg" />
+			<DISTTEXT CLASS="mapheader" DISTANCE=( ui_MapHeader_prop.mapheader_text_distance // undef ) />
+		</HBOX>
+		<HBOX CLASS="mapheader value icon" VISIBLE=( ui_MapHeader_prop.mapheader_text_timespan // 0 )>
+			<SPRITE CLASS="avoid delay svg" />		
+			<TIMESPANTEXT CLASS="mapheader" TIMESPAN=( ui_MapHeader_prop.mapheader_text_timespan // undef ) />
+		</HBOX>
+	</insert>
+</modify>
+
+ <modify lm_tripInfo>
+	<modify TotalTime bg_visible=0 />
+	<modify DrivingTime bg_visible=0 />
+	<modify StoppedTime bg_visible=0 />
+ </modify>
+
+<modify ui_FooterMenu>
+	<modify element="LIST2>LISTMODEL" TEMPLATE_TYPE_MODEL="*.type" />
+</modify>
+
+<modify lm_myroutefootermenu type="str">
+	<modify StartNav text=(%route.list.navigated.waypoints.start_is_user_selected ? translate(m_i18n( "Navigation View" )) : translate(m_i18n( "Start Navigation" ))) type="_cntdwn" />
+</modify>
+
+<modify et_routeinfo>
+	<insert first_child into="BUTTON.itinerarywarnings>HBOX.listitem>BOX.routeinfo.value">
+		<SPRITE CLASS="svg routeinfo distance" VISIBLE=(LENGTH > 0 && !(DestinationVisibility || ViaVisibility)) />
+		<SPRITE CLASS="svg routeinfo time" VISIBLE=(TIME > 0 && (DestinationVisibility || ViaVisibility ) || (!TMCVisibility && LENGTH == 0)) />
+		<SPRITE CLASS="svg routeinfo delay" VISIBLE=(TMCVisibility && TIME > 0) />
+	</insert>
+</modify>
+
+<modify lm_FindMenu>
+	<insert before=Coordinates>
+		;<row text="Cursor Location" icon="ico_cursorhead_place.svg" onrelease='sc_NextStateAnim(st_PointOnMap, "fade", 1, "")' />
+		<row text="Find on Map" icon="ico_findonmap.svg" onrelease='sc_NextStateAnim(st_PointOnMap, "fade", 1, "" )' />
+	</insert>
+</modify>
+
+<modify lm_SoundSettings>
+	<insert> 
+		<row prio=600 text="Mute All Alert Sounds with TTS" type="ChkOnOff" isselected="lua.MuteSoundWithTTS" onrelease='doDelayed(10, sc_voice_lang)' enable=(%regional.current_voice.is_tts) />		
+		<row prio=800 text="Say Road Names in Native Language Area"  haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_mapinfo_in_mother_country_popover")'  details=(lua.ESoundVoiceAnnounceMapinfoInMotherCountryUnits[%sound.voice.announce_mapinfo_in_mother_country]) enable=(%regional.current_voice.is_tts) />	
+		<row prio=900 text="Say Road Names in Foreign Language Area" haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_mapinfo_in_foreign_country_popover")' details=(lua.ESoundVoiceAnnounceMapinfoInForeignCountryUnits[%sound.voice.announce_mapinfo_in_foreign_country]) enable=(%regional.current_voice.is_tts) />
+		<row prio=1000 text="Early Indication of Manouevers" isselected="sound.voice.drive_sentence_without_force" type="ChkOnOff" />
+		<row prio=1100 text="Verbosity Level" haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_Verbose_settings_popover")' enable=(%sound.voice.verbosity_level_setting_supported) details=(lua.EVerbosityLevel[%sound.voice.verbosity_level]) /> 
+		<row prio=1301 text="City announce" type="ChkOnOff" isselected="sound.voice.city_announce_allowed" visible=(%exists:sound.voice.city_announce_allowed) />
+		<row prio=1302 text="District announce" type="ChkOnOff" isselected="sound.voice.district_announce_allowed" visible=(%exists:sound.voice.district_announce_allowed) />
+		<row prio=1303 text="Announce \"Welcome Home\"" type="ChkOnOff" isselected="sound.voice.announce_welcome_home" visible=(%exists:sound.voice.announce_welcome_home) />
+		<row prio=1304 text="Announce NNG natural guidance" type="ChkOnOff" isselected="sound.voice.announce_nng_natural_guidance" visible=(%exists:sound.voice.announce_nng_natural_guidance) />
+	</insert>
+</modify>
+
+<userlist lm_mapinfo_in_mother_country_popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+	<row text="Numbers and Names"	onrelease='MODEL.sound.voice.announce_mapinfo_in_mother_country = 2 sc_ClosePopover()' />
+	<row text="Numbers Only"		onrelease='MODEL.sound.voice.announce_mapinfo_in_mother_country = 1 sc_ClosePopover()' />
+	<row text="Just Manoeuvres"		onrelease='MODEL.sound.voice.announce_mapinfo_in_mother_country = 0 sc_ClosePopover()' />
+</userlist>
+
+<userlist lm_mapinfo_in_foreign_country_popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+	<row text="Numbers and Names"	onrelease='MODEL.sound.voice.announce_mapinfo_in_foreign_country = 2 sc_ClosePopover()' />
+	<row text="Numbers Only"		onrelease='MODEL.sound.voice.announce_mapinfo_in_foreign_country = 1 sc_ClosePopover()' />
+	<row text="Just Manoeuvres"		onrelease='MODEL.sound.voice.announce_mapinfo_in_foreign_country = 0 sc_ClosePopover()' />
+</userlist>
+
+
+<userlist lm_Verbose_settings_popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+	<row text="Minimal" onrelease='MODEL.sound.voice.verbosity_level = 2 sc_ClosePopover()' />
+	<row text="Medium"  onrelease='MODEL.sound.voice.verbosity_level = 1 sc_ClosePopover()' />
+	<row text="Verbose" onrelease='MODEL.sound.voice.verbosity_level = 0 sc_ClosePopover()' />
+</userlist>
+
+<modify ui_ListInput>
+	<modify element="DIV > BUTTON.button_input" ONRELEASE='sc_openKeyboard( nil, 1)' />
+</modify>
+
+<modify ui_Input_UTMGeoCoord>
+	<modify element="BUTTON[ONRELEASE=sc_Input_GeoCoord_Switch_easting] SPRITE" ONRELEASE='ui.inp_GeoCoord_easting.value = L"" sc_Input_GeoCoord_Switch_easting()' />
+	<modify element="BUTTON[ONRELEASE=sc_Input_GeoCoord_Switch_northing] SPRITE" ONRELEASE='ui.inp_GeoCoord_northing.value = L"" sc_Input_GeoCoord_Switch_northing()' />
+</modify>
+
+<modify lm_NavigationMap haspopover="bool">
+	<remove Mapdisplay />
+	<remove Datafields />
+	<remove HwyFacility />
+	<insert after="default">
+		<row Mapdisplay prio=0 text="Map Appearance" haspopover=1 onrelease=sc_MapVisualSettings />
+		<row Datafields prio=200 text="Data Fields" haspopover=1 onrelease=sc_showDatafields />
+		<row HwyFacility prio=450 text="Services Displayed" haspopover=1 onrelease=sc_GoToHighwaySettings enable=(%other.highway_drive.enabled) />
+	</insert>
+</modify>
+
+<modify lm_MainMenu>
+	<remove RemoveWaypoint />
+	<insert before=TravelPlanner>
+		<row RemoveWaypoint text="Delete Route" icon="ico_deleteroute.svg" onrelease=sc_RemoveWaypointPopup route=1 visible=( %navigation.has_route ) />
+	</insert>
+</modify>
+
+<modify lm_MapVisualSettings>
+	<insert after="default">
+		<row prio=905 text="Enable Motrex-kia POI Icons" haspopover=1  details=(%lua.MotrexKiaPOIIcons ? "motrex-kia poi" : "default") 
+			onrelease='MODEL.lua.MotrexKiaPOIIcons = not MODEL.lua.MotrexKiaPOIIcons(); doDelayed(1, sc_Restart )' visible=(%lua.motrex_kia_poi) />
+	</insert>
+</modify>
+
+<modify lm_WarningsSettings icon="str">
+	<modify element="default" icon="ico_speed_menu.svg" />
+	<insert after="default">
+		<row prio=600 text="SignPost" icon="ico_signpost.svg"  onrelease='sc_NextStateAnim(st_SignPostSoundSettings, "fade", 1, "" )' />
+		<row prio=600 text="LaneInfo" icon="ico_laneinfo.svg"  onrelease='sc_NextStateAnim(st_LaneInfoSoundSettings, "fade", 1, "" )' />
+	</insert>
+</modify>
+
+<modify ui_Header>
+	<modify element="DIV.header LAYER DIV.header HBOX.header BUTTON.header SPRITE.header.icon.svg" IMG="ico_capture.svg" />
+</modify>
+
+<modify ui_Menu>
+	<insert into="LAYER DIV.menu_button BUTTON.mainmenu.fill">
+		<SPRITE CLASS="background fill" />
+	</insert>	
+</modify>
+
+<modify lm_MainMenu>
+	<insert before=TravelPlanner>
+		<row  text="Simulation" icon="ico_player_play.svg" onrelease='sc_ShowRouteOverView(false) sc_Simulate_NavigatedRoute(true)' route=1 visible=(!%lua.ptp_navigation && !%navigation.calculation_todo && %route.list.navigated.has_navigable_path) />
+	</insert>
+</modify>
+
+<modify lm_RouteMenuOptions>
+	<insert after="default">
+		<row prio=400 text="Scenic" setting=L"SCENIC" />
+		<row prio=500 text="MostHwy" setting=L"MOST_FREEWAYS" />
+		<row prio=600 text="LeastHwy" setting=L"LEAST_FREEWAYS" />
+		<row prio=700 text="Twisty" setting=L"TWISTY" />
+	</insert>
+</modify>/*-------------------------------------------------------------------------------------------*/
+/*------- Mod by WANDEL™ - 12.06.2023  -------*/
+/*-------------------------------------------------------------------------------------------*/
+;--------
+<layer ui_RouteItiner_mini z=30 onshow='Show_map_free_area("ui_RouteItiner_mini") map_free_area_onshow()' onhide='map_free_area_onhide()' >	
+	<DIV class=cockpit>
+		<DIV class="map_free_area">
+			<DIV class="panel">
+				;<DIV class="list shrinked">
+					<SECTIONMARKER />
+					<LIST2 class="list_control" top=0 bottom=0 left=0 right=0 SHOWSELECTION=1 SMOOTHSCROLLING>
+						<LISTMODEL listmodel="route.list.navigated.itiner.list" element_template="et_itiner_list">
+						
+						<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_TemplateList" text="-------------Menu-------------" onrelease=undef />
+						<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_TemplateList" text=(%route.list.navigated.itiner.detailmode == "normal" ? VW_InsertShield("blue", translate("Normal"), %gps.blink) : "Normal") onrelease='sc_SetItinerDetailedMode( "normal" )' />
+						<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_TemplateList" text=(%route.list.navigated.itiner.detailmode == "verbose" ? VW_InsertShield("blue", translate("Detailed Instructions"), %gps.blink) : "Detailed Instructions") onrelease='sc_SetItinerDetailedMode( "verbose" )' />
+						<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_TemplateList" text=(%route.list.navigated.itiner.detailmode == "road" ? VW_InsertShield("blue", translate("Road List"), %gps.blink) : "Road List") onrelease='sc_SetItinerDetailedMode( "road" )' />
+						<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_TemplateList" text="Close" onrelease='ui_RouteItiner_mini:HIDE()' />
+						;<row    text="Normal"      onrelease='sc_SetItinerDetailedMode( "normal" )' selected=(%route.list.navigated.itiner.detailmode == "normal") type="Selection">
+						;<row    text="Detailed Instructions"    onrelease='sc_SetItinerDetailedMode( "verbose" )' selected=(%route.list.navigated.itiner.detailmode == "verbose") type="Selection">
+						;<row    text="Road List"   onrelease='sc_SetItinerDetailedMode( "road" )' selected=(%route.list.navigated.itiner.detailmode == "road") type="Selection">
+
+						<VSMARTSCROLL>
+						<WHEEL>
+						<LISTCONTROL>
+					</LIST2>
+				;</DIV>
+			</DIV>
+			<layer z=16>
+				<DIV class=cockpit>
+					<DIV class="map_free_area">
+						<SPRITE class="substrate" />	
+					</DIV>
+				</DIV>
+			</layer>
+		</DIV>
+	</DIV>
+</layer>
+
+<var Itinerary_MiniCockpit = 0 permanent />
+<var Itinerary_MiniQuick = 0 permanent />
+<modify ui_Cockpit>           
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON Itinerary_Mini ONRELEASE='Show_map_free_area("ui_RouteItiner_mini")'
+			VISIBLE=(Itinerary_MiniCockpit && %navigation.has_route)
+			ICON="ico_itinerary_destination_arrive.svg"
+			ZOOM=80%
+			T_TEXT=(VW_Return_button_text(translate("Itinerary"), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate("Itinerary"), L"%s", 99)) />
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=(Itinerary_MiniCockpit && %navigation.has_route) />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'Itinerary Mini' Button" bmp=(Itinerary_Mini.ICON) isselected="ui.Itinerary_MiniCockpit" />
+	</insert>
+</modify>
+;---- Quick Menu -----
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE='ui.Itinerary_Mini.ONRELEASE()()' ONLONGCLICK='ui.Itinerary_Mini.ONLONGCLICK()()' 
+			VISIBLE=(Itinerary_MiniQuick && %navigation.has_route)
+			ICON=(Itinerary_Mini.ICON) ZOOM=80%
+			T_TEXT=(Itinerary_Mini.T_TEXT)
+			B_TEXT=(Itinerary_Mini.B_TEXT) />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=(Itinerary_MiniQuick && %navigation.has_route) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'Itinerary Mini' Button" bmp=(Itinerary_Mini.ICON) isselected="ui.Itinerary_MiniQuick" />
+	</insert>
+</modify>
+
+/*
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=(Itinerary_Mini.ICON) text=(translate("Itinerary")) onrelease='ui.Itinerary_Mini.ONRELEASE()()' enable=(%navigation.has_route) />
+		</insert>
+	</modify>
+<!end/>
+*/

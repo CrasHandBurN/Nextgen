@@ -1,0 +1,5 @@
+SPRITE.MyHolyday {
+	left: (ui_Cockpit.show_mini_diricon ? diricon_hwy_w : 0);
+	right: ( %lua.ShowTimeInTitle ? headerclock_w : 0);
+	top:0; bottom:0;
+}

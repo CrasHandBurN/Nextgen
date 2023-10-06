@@ -1,0 +1,27 @@
+DISTTEXT.left_speedcam, SPEEDTEXT.left_speedcam{
+	left: 0; right: 0;
+	top: 80%; bottom: 5%; 
+	w:undef;
+	h:undef;
+	z: 20; 
+	align: "CENTER"; 
+	valign: "CENTER";
+	fontsize:(%lua.IsLandscape ? 40 : 36);
+	color: (%lua.aCockpitTransparency > 8 ? (ui_Cockpit.AdvancedSpeedLimitPhase == 2 ? color_overspeed : (ui_Cockpit.AdvancedSpeedLimitPhase == 1 ? color_overspeedtol : speed_color)) : (ui_Cockpit.AdvancedSpeedLimitPhase == 2 ? overspeed_color : (ui_Cockpit.AdvancedSpeedLimitPhase == 1 ? overspeedtol_color : speed_color)));
+	glowtype: 1;
+	glowsize: (%lua.aCockpitTransparency > 8 ? 0 : 3);
+}
+
+USE_LAYER.left_big>DISTTEXT.detour_to_poi, USE_LAYER.left_big>DISTTEXT.distance_to_poi{
+	glowtype: 1;
+	glowsize: 3;
+}
+
+DIV.cockpit DIV.left_side_free_area>TABLE {
+	R2L: 1; COMPACT: 1; FILL_VERTICAL: 1; 
+	row:1; col:1;
+	right:0; bottom:0; top:0; left:0;
+}
+
+@import "~/common/ui/left_big_button_landscape.css" landscape;
+@import "~/common/ui/left_big_button_portrait.css" portrait;

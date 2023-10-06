@@ -1,0 +1,623 @@
+;============================================compass============================================
+<define_element COMPASS heraldry >
+	<implementation>
+		<property via_pos value=( %route.list.navigated.waypoints.list.size > 2 ? (%lua.VIAOrDestination ? %route.list.navigated.waypoints.list[1].real_position : %route.list.navigated.waypoints.list[%route.list.navigated.waypoints.list.size - 1].real_position) : (%route.list.navigated.waypoints.list.size == 2 ? %route.list.navigated.waypoints.list[1].real_position : 0L) ) />
+		<property via_dir value=(%navigation.has_route ? direction(%navigation.car.position, via_pos, %navigation.car.heading) : 0.0) />
+
+		<property speed	value=( observe(%navigation.car.current_speed); VW_ArrowAngle((%navigation.car.current_speed // 1), "300.0") ) />
+		<property limit	value=( observe(%lua.SpeedLimitValue); VW_ArrowAngle(%lua.SpeedLimitValue, "300.0") ) />
+
+		<property hour	value=( observe(%gps.current_time); VW_ArrowAngle_time("hour", "12.0") ) />
+		<property min	value=( observe(%gps.current_time); VW_ArrowAngle_time("min", "60.0") ) />
+		<property sec	value=( observe(%gps.current_time); VW_ArrowAngle_time("sec", "60.0") ) />
+		<property eta	value=( observe(%navigation.eta_at_waypoint); VW_ArrowAngle_eta() ) />
+
+		<property address value=( observe(%lua.VIAOrDestination, %lua.AddressLength, %navigation.destination_name_short, %navigation.next_viapoint_name_short); VW_VIAOrDestinationAddress() ) />
+		
+		<property image_size value=( observe(%gps.blink); (TC_speedometer.W > TC_speedometer.H ? TC_speedometer.H : TC_speedometer.W) ) />
+		<property distance_fontsize	value=( image_size/20 ) />
+	</implementation>
+	;------------------------------------------limbo-----------------------------------------
+	<DIV top=0 bottom=0 left=0 right=0>	
+		<DIV class=VW_compass>
+			<SPRITE class=VW_compass img="compass.svg" phasename="back" z=20 />
+			<SPRITE class=VW_compass img="compass.svg" phasename="limbo" z=21 rotate=( %map.primary.rotate * 360.0 / 4096.0 ) />
+
+			<SPRITE left=42% right=42% top=32% bottom=52% align="center" valign="center" zoom=60% img="MyLogo.svg" z=21 visible=(OWNER.HERALDRY // 0) />
+			<SPRITE left=42% right=42% top=52% bottom=32% align="center" valign="center" zoom=(%navigation.car.current_country == "_UKR" ? 90% : 60%) img=(%navigation.car.current_country == "_UKR" ? "Arms_of_Ukraine.svg" : ui_Cockpit.country_flag) z=21 visible=(OWNER.HERALDRY // 0) />
+
+			<SPRITE class=VW_compass img="compass.svg" phasename="cross" z=22 />
+			<SPRITE class=VW_compass img="compass.svg" phasename="arrow" z=23 rotate=( -via_dir * 360.0 / 4096.0 ) />
+		</DIV>
+		<DIV class=VW_speedometer visible=(%lua.SpeedOrClock) z=24>
+			<SPRITE TC_speedometer class=VW_speedometer img="speedometer.svg" phasename="limbo" z=20 >
+				<SPEEDTEXT left=0 w=100% top=30% h=8% unitvisible=1 speed=(%{"other.trips.@0"}.speed_total_avg) fontsize=(distance_fontsize) visible=( %navigation.has_route ) z=24 />
+				<TEXT class="distance_total" text=( VW_distanceND(%{"other.trips.@0"}.distance_total) ) top=(image_size*69/100) fontsize=(distance_fontsize) visible=( %navigation.has_route ) z=24 />
+			</SPRITE>
+			<SPRITE class=VW_speedometer img="speedometer.svg" phasename="limit" rotate=(-limit) z=21 visible=(%gps.blink) />
+			<SPRITE class=VW_speedometer img="speedometer.svg" phase=(ui_Cockpit.AdvancedSpeedLimitPhase) rotate=(-speed) z=22 />
+		</DIV>
+		<DIV class=VW_clock visible=(!%lua.SpeedOrClock) z=24>								
+			<SPRITE class=VW_clock img="clock.svg" phasename="limbo" z=20 />
+			<SPRITE class=VW_clock img="clock.svg" phasename="eta" z=21		rotate=(-eta) visible=(%gps.blink) />
+			<SPRITE class=VW_clock img="clock.svg" phasename="hour" z=22	rotate=(-hour) />
+			<SPRITE class=VW_clock img="clock.svg" phasename="min" z=23 	rotate=(-min) />
+			<SPRITE class=VW_clock img="clock.svg" phasename="sec" z=24		rotate=(-sec) />
+		</DIV>
+	</DIV>
+</define_element>
+
+;=========================================Trip Info Mini & Micro=====================================
+<var is_map_free_area_busy=0 />
+
+<var SAVED_enable_mini_diricon=0 />
+<var SAVED_VDistMini_Maneuver=0 />
+
+<var SAVED_ui_name="" />
+
+<layer ui_map_free_area_dimension >
+	<DIV class=cockpit>
+		<DIV map_free_area_dimension class="map_free_area" />
+	</DIV>
+</layer>
+
+<layer ui_TripInfoVW_mini z=30 onshow=map_free_area_onshow onhide=map_free_area_onhide >	
+	<DIV class=cockpit>
+		<DIV class="map_free_area">
+			<DIV class="panel">
+				<BUTTON top=0 bottom=0 left=0 right=0 onrelease=Hide_map_free_area onlongclick='Show_map_free_area("ui_TripInfoVW_micro")' >
+					;<SPRITE CLASS="button map fill" /> ;no no no!!!!!
+					<BOX class="tripinfo">
+							
+						<HBOX class="tripinfo_start_end" orientation="vertical" > ;;(%lua.IsLandscape ? "vertical" : "horizontal")
+							<BOX orientation="horizontal">
+								<TEXT	class="font_info  color_inf_main" align="CENTER" text="TRACK_TIME~Start:"  fixedwidthnumbers=1>
+								<HBOX>
+									<TEXT	class="font_main_large bd  color_inf_sec" left=0 top=0 right=0 bottom=0 align="CENTER" text=(format("%{date:*}", %{"other.trips.@0"}.start_time.date, %regional.dateformat) ) fixedwidthnumbers=1 visible=(sc_TripLogDate_ValidVW()) />
+									<TEXT	class="font_main_large bd  color_inf_sec" left=0 top=0 right=0 bottom=0 align="CENTER" text="-:--" visible=(!sc_TripLogDate_ValidVW()) />
+								</HBOX>
+								<TEXT	class="font_main_large bd  color_inf_sec" align="CENTER" text=( format(L"%{time:*}", %{"other.trips.@0"}.start_time.time, %regional.timeformat) )   fixedwidthnumbers=1 visible=(sc_TripLogDate_ValidVW()) />	
+							</BOX>
+								
+							<BOX orientation="horizontal">
+								<TEXT	class="font_info  color_inf_main" align="CENTER" text="TRACK_TIME~End:"  fixedwidthnumbers=1 />
+								<HBOX>
+									<TEXT	class="font_main_large bd  color_inf_sec"  left=0 top=0 right=0 bottom=0 align="CENTER" text=(format(L"%{date:*}", %{"other.trips.@0"}.end_time.date, %regional.dateformat) ) fixedwidthnumbers=1 visible=(sc_TripLogDate_ValidVW()) />
+									<TEXT	class="font_main_large bd  color_inf_sec"  left=0 top=0 right=0 bottom=0 align="CENTER" text="-:--" visible=( !sc_TripLogDate_ValidVW() ) />
+								</HBOX>
+								<TEXT	class="font_main_large bd  color_inf_sec"      align="CENTER" text=( format(L"%{time:*}", %{"other.trips.@0"}.end_time.time, %regional.timeformat) )   fixedwidthnumbers=1 visible=(sc_TripLogDate_ValidVW()) />
+							</BOX>
+								
+						</HBOX>
+							
+						<LIST2 class="tripinfo" row=3 col=3>
+							<LISTMODEL listmodel="ui.lm_tripInfoVW" element_template="et_TripInfoVW_mini" />
+						</LIST2>
+					
+					</BOX>
+				</BUTTON>
+			</DIV>
+			<layer z=16>
+				<DIV class=cockpit>
+					<DIV class="map_free_area">
+						<SPRITE class="substrate" />	
+					</DIV>
+				</DIV>
+			</layer>
+		</DIV>
+	</DIV>
+</layer>
+
+<layer ui_TripInfoVW_micro z=30 onshow='map_free_area_onshow(); Next_Row_lm_tripInfoVW()' onhide='map_free_area_onhide(); killDelayed(Next_Row_lm_tripInfoVW_ID)' >	
+	<DIV class=cockpit>
+		<DIV class="map_free_area" H=(%lua.IsLandscape ? map_free_area_dimension.H/3 : map_free_area_dimension.H/3)> ;!!!! because of 
+			<DIV class="panel">
+				<BUTTON top=0 bottom=0 left=0 right=0 onrelease=Hide_map_free_area >
+					;<SPRITE CLASS="button map fill" /> ;no no no!!!!!
+					<BOX class="tripinfo">
+						
+						<LIST2 class="tripinfo" row=1 col=3 keepselectiononscreen=1 > ;SHOWSELECTION=1 STARTSELECTIONONSCREEN=1 keepselectiononscreen=1 SMOOTHSCROLLING
+							<LISTMODEL listmodel="ui.lm_tripInfoVW" element_template="et_TripInfoVW_mini" selectable=1 />
+						</LIST2>
+					
+					</BOX>
+				</BUTTON>
+			</DIV>
+			<layer z=16>
+				<DIV class=cockpit>
+					<DIV class="map_free_area" H=(%lua.IsLandscape ? map_free_area_dimension.H/3 : map_free_area_dimension.H/3)> ;!!!! because of 
+						<SPRITE class="substrate" />	
+					</DIV>
+				</DIV>
+			</layer>
+		</DIV>
+	</DIV>
+</layer>
+
+<element_template et_TripInfoVW_mini>
+	<VBOX class="tripinfo_details">
+		<SPACER flex=1 />
+		<TEXT class="font_info textpadding_small color_inf_main" text=%*.text wordwrap=1 />
+		<SPACER flex=1 />
+		<SPEEDTEXT class="font_main_large bd color_inf_sec"   speed=%*.value visible=(%*.type == "speed") unitvisible=1 />
+		<TEXT      class="font_main_large bd color_inf_sec"   valign="CENTER" text=%*.value fixedwidthnumbers=1 visible=(%*.type == "") />
+		<DISTTEXT  class="font_main_large bd color_inf_sec"   distance=%*.value visible=(%*.type == "distance") />
+		<ALTITUDETEXT class="font_main_large bd color_inf_sec" altitude=%*.value visible=(%*.type == "altitude") />
+		<SPACER flex=1 />
+	</VBOX>
+</element_template>
+;=======================================================================================================================
+<modify ui_Cockpit>
+	<modify element="TABLE.ari_ext" VISIBLE=(!%ui.is_map_free_area_busy) />
+	<modify element="#div_DA_freeAtTheMoment" VISIBLE=((%lua.IsPortrait ? !%ui.is_map_free_area_busy : 1) && ui_PropLayer.DA_freeAtTheMoment) />
+
+	<modify element="DIV.cockpit DIV.roundabout" VISIBLE=(!%ui.is_map_free_area_busy && roundabout_show) />	
+	<modify element="DIV.cockpit>DIV.fill>DIV.fill>DIV.diricon" VISIBLE=(!%ui.is_map_free_area_busy && show_diricon) />
+	<modify element="DIV.cockpit DIV.secondary_diricon" VISIBLE=(!%ui.is_map_free_area_busy && show_sec_diricon) />
+	<modify element="DIV.cockpit DIV.diricon.p2p" VISIBLE=(!%ui.is_map_free_area_busy && p2p_show) />
+</modify>
+
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp="TripComputer.svg" text=(translate("Trip Computer")) onrelease=sc_ShowTripComputerSidePanel />
+			<row  bmp="ico_TripInfo.svg" text=(translate("Trip info mini")) onrelease='Show_map_free_area("ui_TripInfoVW_mini")' onlongclick='Show_map_free_area("ui_TripInfoVW_micro")' />	
+			<row  bmp="AddCarPoint.svg" phasename=(VW_ReturnSavedCarPhase()) text=(translate("Save position")) onrelease='sc_SetPopoverListAndOpen("ui.lm_AddBackToCarPoint_Popover")' />
+			<row  bmp="ico_backtocar.svg" text=(translate("Back to car")) onrelease=VW_GoToBackToCarPoint onlongclick=VW_GoToBackToCarPointGoogle />
+		</insert>
+	</modify>
+<!end/>
+
+;special
+<var buttons_TCMapCockpit = 0 permanent />
+<var buttons_TCMapQuick = 0 permanent />
+<modify ui_Cockpit>           
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON buttons_TCMap ONRELEASE='Show_map_free_area("ui_TCMap")'
+			ONLONGCLICK=undef
+			VISIBLE=(buttons_TCMapCockpit)
+			ICON="ico_north.svg"
+			ZOOM=80%
+			T_TEXT=(VW_Return_button_text(translate("TC Map"), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate("TC Map"), L"%s", 99)) />
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=(buttons_TCMapCockpit) />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'TC Map' Button" bmp=(buttons_TCMap.ICON) isselected="ui.buttons_TCMapCockpit" />
+	</insert>
+</modify>
+;---- Quick Menu -----
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE='ui.buttons_TCMap.ONRELEASE()()' ONLONGCLICK='ui.buttons_TCMap.ONLONGCLICK()()' 
+			VISIBLE=(buttons_TCMapQuick)
+			ICON=(buttons_TCMap.ICON) ZOOM=80%
+			T_TEXT=(buttons_TCMap.T_TEXT)
+			B_TEXT=(buttons_TCMap.B_TEXT) />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=(buttons_TCMapQuick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'TC Map' Button" bmp=(buttons_TCMap.ICON) isselected="ui.buttons_TCMapQuick" />
+	</insert>
+</modify>
+
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=(buttons_TCMap.ICON) text=(translate("TC Map")) onrelease='ui.buttons_TCMap.ONRELEASE()()' />
+		</insert>
+	</modify>
+<!end/>
+
+;---extra buttons---
+<userlist lm_FromBeginningOrCurrent_Popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 onrelease='MODEL.lua.FromBeginningOrCurrent = MODEL["*"].text() sc_ClosePopover()' />
+	<row text="From very beginning" />
+	<row text="From current position" />
+</userlist>
+
+<userlist lm_buttons_extra_TC text="str" icon="str" onrelease="ui" onlongclick="ui" details="ui" dtooltip="str" visible="bool" enable="bool">	
+	<default visible=1 enable=1 onrelease=undef onlongclick=undef />
+	<view visibility_filter=visible />
+	<row text="TripInfo mini"	icon="ico_TripInfo.svg"			onrelease='Show_map_free_area("ui_TripInfoVW_mini")' onlongclick='Show_map_free_area("ui_TripInfoVW_micro")' />
+	<row text="Google Route"	icon="ico_GoogleRoute.svg"		onrelease='VW_GoToDestinationByGoogle()' onlongclick='sc_SetPopoverListAndOpen("ui.lm_FromBeginningOrCurrent_Popover", MODEL.lua.FromBeginningOrCurrent())' enable=(%navigation.has_route) /> ;;onlongclick=VW_GoToDestinationByGoogleIf
+	<row text="Save position"	icon="AddCarPoint.svg"			onrelease='sc_SetPopoverListAndOpen("ui.lm_AddBackToCarPoint_Popover")' />
+	<row text="Back to car"		icon="ico_backtocar.svg"		onrelease=VW_GoToBackToCarPoint onlongclick=VW_GoToBackToCarPointGoogle />
+	<row text="Capture Screen"	icon="ico_capture.svg"			onrelease='sc_CaptureScreen(true)' />
+</userlist>
+
+<!if condition=(%ui.lm_buttons_extra_TC.list.size > 0)>
+	<var buttons_extra_TC0Cockpit = 0 permanent />
+	<modify ui_Cockpit>           
+		<insert first_child after="BUTTON" into="#CockpitBTNTable">
+			<BUTTON_ICON buttons_extra_TC0
+				ONRELEASE=(%ui.lm_buttons_extra_TC.list[0].onrelease)
+				ONLONGCLICK=(%ui.lm_buttons_extra_TC.list[0].onlongclick)
+				VISIBLE=(buttons_extra_TC0Cockpit)
+				ICON=(%ui.lm_buttons_extra_TC.list[0].icon)
+				ZOOM=80%
+				T_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra_TC.list[0].text), L"%s", 1))
+				B_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra_TC.list[0].text), L"%s", 99)) />
+		</insert>
+	</modify>
+
+	<modify lm_CockpitSideList>
+		<insert>
+			<row 	visible=(buttons_extra_TC0Cockpit) />
+		</insert>
+	</modify>
+
+	<modify lm_VCockpitMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra_TC.list[0].text) bmp=(buttons_extra_TC0.ICON) isselected="ui.buttons_extra_TC0Cockpit" />
+		</insert>
+	</modify>
+
+	<var buttons_extra_TC0Quick = 0 permanent />
+	;---- Quick Menu -----
+	<modify ui_SideList>           
+		<insert first_child after="BUTTON" into="TABLE">
+			<BUTTON_ICON ONRELEASE='ui.buttons_extra_TC0.ONRELEASE()()' ONLONGCLICK='ui.buttons_extra_TC0.ONLONGCLICK()()' 
+				VISIBLE=(buttons_extra_TC0Quick)
+				ICON=(buttons_extra_TC0.ICON) 
+				ZOOM=80%
+				T_TEXT=(buttons_extra_TC0.T_TEXT)
+				B_TEXT=(buttons_extra_TC0.B_TEXT) />
+		</insert>
+	</modify>
+
+	<modify lm_QuickSideList>
+		<insert>
+			<row 	visible=(buttons_extra_TC0Quick) />
+		</insert>
+	</modify>
+
+	<modify lm_VQuickMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra_TC.list[0].text) bmp=(buttons_extra_TC0.ICON) isselected="ui.buttons_extra_TC0Quick" />
+		</insert>
+	</modify>
+	/*
+	;---insert into QuickTip---
+	<!if condition=(Plugin.isLoaded("quick_tip"))>
+		<modify lm_QuickBattonList>
+			<insert>
+				<row  text=(translate(%ui.lm_buttons_extra_TC.list[0].text)) bmp=(buttons_extra_TC0.ICON) onrelease='ui.buttons_extra_TC0.ONRELEASE()()' />
+			</insert>
+		</modify>
+	<!end/>
+	*/
+<!end/>
+
+<!if condition=(%ui.lm_buttons_extra_TC.list.size > 1)>
+	<var buttons_extra_TC1Cockpit = 0 permanent />
+	<modify ui_Cockpit>           
+		<insert first_child after="BUTTON" into="#CockpitBTNTable">
+			<BUTTON_ICON buttons_extra_TC1
+				ONRELEASE=(%ui.lm_buttons_extra_TC.list[1].onrelease)
+				ONLONGCLICK=(%ui.lm_buttons_extra_TC.list[1].onlongclick)
+				VISIBLE=(buttons_extra_TC1Cockpit && %ui.lm_buttons_extra_TC.list[1].enable)
+				ICON=(%ui.lm_buttons_extra_TC.list[1].icon)
+				ZOOM=80%
+				T_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra_TC.list[1].text), L"%s", 1))
+				B_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra_TC.list[1].text), L"%s", 99)) />
+		</insert>
+	</modify>
+
+	<modify lm_CockpitSideList>
+		<insert>
+			<row 	visible=(buttons_extra_TC1Cockpit && %ui.lm_buttons_extra_TC.list[1].enable) />
+		</insert>
+	</modify>
+
+	<modify lm_VCockpitMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra_TC.list[1].text) bmp=(buttons_extra_TC1.ICON) isselected="ui.buttons_extra_TC1Cockpit" />
+		</insert>
+	</modify>
+
+	<var buttons_extra_TC1Quick = 0 permanent />
+	;---- Quick Menu -----
+	<modify ui_SideList>           
+		<insert first_child after="BUTTON" into="TABLE">
+			<BUTTON_ICON ONRELEASE='ui.buttons_extra_TC1.ONRELEASE()()' ONLONGCLICK='ui.buttons_extra_TC1.ONLONGCLICK()()' 
+				VISIBLE=(buttons_extra_TC1Quick && %ui.lm_buttons_extra_TC.list[1].enable)
+				ICON=(buttons_extra_TC1.ICON) 
+				ZOOM=80%
+				T_TEXT=(buttons_extra_TC1.T_TEXT)
+				B_TEXT=(buttons_extra_TC1.B_TEXT) />
+		</insert>
+	</modify>
+
+	<modify lm_QuickSideList>
+		<insert>
+			<row 	visible=(buttons_extra_TC1Quick && %ui.lm_buttons_extra_TC.list[1].enable) />
+		</insert>
+	</modify>
+
+	<modify lm_VQuickMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra_TC.list[1].text) bmp=(buttons_extra_TC1.ICON) isselected="ui.buttons_extra_TC1Quick" />
+		</insert>
+	</modify>
+	/*
+	;---insert into QuickTip---
+	<!if condition=(Plugin.isLoaded("quick_tip"))>
+		<modify lm_QuickBattonList>
+			<insert>
+				<row  text=(translate(%ui.lm_buttons_extra_TC.list[1].text)) bmp=(buttons_extra_TC1.ICON) onrelease='ui.buttons_extra_TC1.ONRELEASE()()' />
+			</insert>
+		</modify>
+	<!end/>
+	*/
+<!end/>
+
+<!if condition=(%ui.lm_buttons_extra_TC.list.size > 2)>
+	<var buttons_extra_TC2Cockpit = 0 permanent />
+	<modify ui_Cockpit>           
+		<insert first_child after="BUTTON" into="#CockpitBTNTable">
+			<BUTTON_ICON buttons_extra_TC2
+				ONRELEASE=(%ui.lm_buttons_extra_TC.list[2].onrelease)
+				ONLONGCLICK=(%ui.lm_buttons_extra_TC.list[2].onlongclick)
+				VISIBLE=(buttons_extra_TC2Cockpit)
+				ICON=(%ui.lm_buttons_extra_TC.list[2].icon)
+				ZOOM=80%
+				T_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra_TC.list[2].text), L"%s", 1))
+				B_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra_TC.list[2].text), L"%s", 99)) />
+		</insert>
+	</modify>
+
+	<modify lm_CockpitSideList>
+		<insert>
+			<row 	visible=(buttons_extra_TC2Cockpit) />
+		</insert>
+	</modify>
+
+	<modify lm_VCockpitMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra_TC.list[2].text) bmp=(buttons_extra_TC2.ICON) isselected="ui.buttons_extra_TC2Cockpit" />
+		</insert>
+	</modify>
+
+	<var buttons_extra_TC2Quick = 0 permanent />
+	;---- Quick Menu -----
+	<modify ui_SideList>           
+		<insert first_child after="BUTTON" into="TABLE">
+			<BUTTON_ICON ONRELEASE='ui.buttons_extra_TC2.ONRELEASE()()' ONLONGCLICK='ui.buttons_extra_TC2.ONLONGCLICK()()' 
+				VISIBLE=(buttons_extra_TC2Quick)
+				ICON=(buttons_extra_TC2.ICON) 
+				ZOOM=80%
+				T_TEXT=(buttons_extra_TC2.T_TEXT)
+				B_TEXT=(buttons_extra_TC2.B_TEXT) />
+		</insert>
+	</modify>
+
+	<modify lm_QuickSideList>
+		<insert>
+			<row 	visible=(buttons_extra_TC2Quick) />
+		</insert>
+	</modify>
+
+	<modify lm_VQuickMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra_TC.list[2].text) bmp=(buttons_extra_TC2.ICON) isselected="ui.buttons_extra_TC2Quick" />
+		</insert>
+	</modify>
+	/*
+	;---insert into QuickTip---
+	<!if condition=(Plugin.isLoaded("quick_tip"))>
+		<modify lm_QuickBattonList>
+			<insert>
+				<row  text=(translate(%ui.lm_buttons_extra_TC.list[2].text)) bmp=(buttons_extra_TC2.ICON) onrelease='ui.buttons_extra_TC2.ONRELEASE()()' />
+			</insert>
+		</modify>
+	<!end/>
+	*/
+<!end/>
+
+<!if condition=(%ui.lm_buttons_extra_TC.list.size > 3)>
+	<var buttons_extra_TC3Cockpit = 0 permanent />
+	<modify ui_Cockpit>           
+		<insert first_child after="BUTTON" into="#CockpitBTNTable">
+			<BUTTON_ICON buttons_extra_TC3
+				ONRELEASE=(%ui.lm_buttons_extra_TC.list[3].onrelease)
+				ONLONGCLICK=(%ui.lm_buttons_extra_TC.list[3].onlongclick)
+				VISIBLE=(buttons_extra_TC3Cockpit)
+				ICON=(%ui.lm_buttons_extra_TC.list[3].icon)
+				ZOOM=80%
+				T_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra_TC.list[3].text), L"%s", 1))
+				B_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra_TC.list[3].text), L"%s", 99)) />
+		</insert>
+	</modify>
+
+	<modify lm_CockpitSideList>
+		<insert>
+			<row 	visible=(buttons_extra_TC3Cockpit) />
+		</insert>
+	</modify>
+
+	<modify lm_VCockpitMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra_TC.list[3].text) bmp=(buttons_extra_TC3.ICON) isselected="ui.buttons_extra_TC3Cockpit" />
+		</insert>
+	</modify>
+
+	<var buttons_extra_TC3Quick = 0 permanent />
+	;---- Quick Menu -----
+	<modify ui_SideList>           
+		<insert first_child after="BUTTON" into="TABLE">
+			<BUTTON_ICON ONRELEASE='ui.buttons_extra_TC3.ONRELEASE()()' ONLONGCLICK='ui.buttons_extra_TC3.ONLONGCLICK()()' 
+				VISIBLE=(buttons_extra_TC3Quick)
+				ICON=(buttons_extra_TC3.ICON) 
+				ZOOM=80%
+				T_TEXT=(buttons_extra_TC3.T_TEXT)
+				B_TEXT=(buttons_extra_TC3.B_TEXT) />
+		</insert>
+	</modify>
+
+	<modify lm_QuickSideList>
+		<insert>
+			<row 	visible=(buttons_extra_TC3Quick) />
+		</insert>
+	</modify>
+
+	<modify lm_VQuickMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra_TC.list[3].text) bmp=(buttons_extra_TC3.ICON) isselected="ui.buttons_extra_TC3Quick" />
+		</insert>
+	</modify>
+	/*
+	;---insert into QuickTip---
+	<!if condition=(Plugin.isLoaded("quick_tip"))>
+		<modify lm_QuickBattonList>
+			<insert>
+				<row  text=(translate(%ui.lm_buttons_extra_TC.list[3].text)) bmp=(buttons_extra_TC3.ICON) onrelease='ui.buttons_extra_TC3.ONRELEASE()()' />
+			</insert>
+		</modify>
+	<!end/>
+	*/
+<!end/>
+
+<!if condition=(%ui.lm_buttons_extra_TC.list.size > 4)>
+	<var buttons_extra_TC4Cockpit = 0 permanent />
+	<modify ui_Cockpit>           
+		<insert first_child after="BUTTON" into="#CockpitBTNTable">
+			<BUTTON_ICON buttons_extra_TC4
+				ONRELEASE=(%ui.lm_buttons_extra_TC.list[4].onrelease)
+				ONLONGCLICK=(%ui.lm_buttons_extra_TC.list[4].onlongclick)
+				VISIBLE=(buttons_extra_TC4Cockpit)
+				ICON=(%ui.lm_buttons_extra_TC.list[4].icon)
+				ZOOM=80%
+				T_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra_TC.list[4].text), L"%s", 1))
+				B_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra_TC.list[4].text), L"%s", 99)) />
+		</insert>
+	</modify>
+
+	<modify lm_CockpitSideList>
+		<insert>
+			<row 	visible=(buttons_extra_TC4Cockpit) />
+		</insert>
+	</modify>
+
+	<modify lm_VCockpitMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra_TC.list[4].text) bmp=(buttons_extra_TC4.ICON) isselected="ui.buttons_extra_TC4Cockpit" />
+		</insert>
+	</modify>
+
+	<var buttons_extra_TC4Quick = 0 permanent />
+	;---- Quick Menu -----
+	<modify ui_SideList>           
+		<insert first_child after="BUTTON" into="TABLE">
+			<BUTTON_ICON ONRELEASE='ui.buttons_extra_TC4.ONRELEASE()()' ONLONGCLICK='ui.buttons_extra_TC4.ONLONGCLICK()()' 
+				VISIBLE=(buttons_extra_TC4Quick)
+				ICON=(buttons_extra_TC4.ICON) 
+				ZOOM=80%
+				T_TEXT=(buttons_extra_TC4.T_TEXT)
+				B_TEXT=(buttons_extra_TC4.B_TEXT) />
+		</insert>
+	</modify>
+
+	<modify lm_QuickSideList>
+		<insert>
+			<row 	visible=(buttons_extra_TC4Quick) />
+		</insert>
+	</modify>
+
+	<modify lm_VQuickMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra_TC.list[4].text) bmp=(buttons_extra_TC4.ICON) isselected="ui.buttons_extra_TC4Quick" />
+		</insert>
+	</modify>
+	/*
+	;---insert into QuickTip---
+	<!if condition=(Plugin.isLoaded("quick_tip"))>
+		<modify lm_QuickBattonList>
+			<insert>
+				<row  text=(translate(%ui.lm_buttons_extra_TC.list[4].text)) bmp=(buttons_extra_TC4.ICON) onrelease='ui.buttons_extra_TC4.ONRELEASE()()' />
+			</insert>
+		</modify>
+	<!end/>
+	*/
+<!end/>
+
+<!if condition=(%ui.lm_buttons_extra_TC.list.size > 5)>
+	<var buttons_extra_TC5Cockpit = 0 permanent />
+	<modify ui_Cockpit>           
+		<insert first_child after="BUTTON" into="#CockpitBTNTable">
+			<BUTTON_ICON buttons_extra_TC5
+				ONRELEASE=(%ui.lm_buttons_extra_TC.list[5].onrelease)
+				ONLONGCLICK=(%ui.lm_buttons_extra_TC.list[5].onlongclick)
+				VISIBLE=(buttons_extra_TC5Cockpit)
+				ICON=(%ui.lm_buttons_extra_TC.list[5].icon)
+				ZOOM=80%
+				T_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra_TC.list[5].text), L"%s", 1))
+				B_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra_TC.list[5].text), L"%s", 99)) />
+		</insert>
+	</modify>
+
+	<modify lm_CockpitSideList>
+		<insert>
+			<row 	visible=(buttons_extra_TC5Cockpit) />
+		</insert>
+	</modify>
+
+	<modify lm_VCockpitMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra_TC.list[5].text) bmp=(buttons_extra_TC5.ICON) isselected="ui.buttons_extra_TC5Cockpit" />
+		</insert>
+	</modify>
+
+	<var buttons_extra_TC5Quick = 0 permanent />
+	;---- Quick Menu -----
+	<modify ui_SideList>           
+		<insert first_child after="BUTTON" into="TABLE">
+			<BUTTON_ICON ONRELEASE='ui.buttons_extra_TC5.ONRELEASE()()' ONLONGCLICK='ui.buttons_extra_TC5.ONLONGCLICK()()' 
+				VISIBLE=(buttons_extra_TC5Quick)
+				ICON=(buttons_extra_TC5.ICON) 
+				ZOOM=80%
+				T_TEXT=(buttons_extra_TC5.T_TEXT)
+				B_TEXT=(buttons_extra_TC5.B_TEXT) />
+		</insert>
+	</modify>
+
+	<modify lm_QuickSideList>
+		<insert>
+			<row 	visible=(buttons_extra_TC5Quick) />
+		</insert>
+	</modify>
+
+	<modify lm_VQuickMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra_TC.list[5].text) bmp=(buttons_extra_TC5.ICON) isselected="ui.buttons_extra_TC5Quick" />
+		</insert>
+	</modify>
+	/*
+	;---insert into QuickTip---
+	<!if condition=(Plugin.isLoaded("quick_tip"))>
+		<modify lm_QuickBattonList>
+			<insert>
+				<row  text=(translate(%ui.lm_buttons_extra_TC.list[5].text)) bmp=(buttons_extra_TC5.ICON) onrelease='ui.buttons_extra_TC5.ONRELEASE()()' />
+			</insert>
+		</modify>
+	<!end/>
+	*/
+<!end/>

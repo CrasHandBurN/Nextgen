@@ -1,0 +1,794 @@
+;----------------------WANDEL™-- 06.08.2022 ----------------
+<var speed_delta_dif = 1 permanent />
+
+;import "all<:~/common/ui/check_plugins.lua"
+
+<layer ui_PropLayer z=51>
+	<implementation>
+		<property DA_freeAtTheMoment value=0 />
+		<property SidePanelVisible value=0 />
+		<property SplPoiListIsVisible value=0 />
+		<property HwyPoiListIsVisible value=0 />
+		<property JunctionViewHiddenByUser value=0 />
+		<property JunctionViewVisible value=0 />
+		<property MiniJunctionViewVisible value=0 />
+		<property TunnelOverviewVisible value=0 />
+		<property ShowSignpostLayer value=( !SidePanelVisible && !%lua.DragMode && !%lua.MenuIsOpened && %lua.SignpostOn && !%route.list.navigated.calculating && %navigation.car_pos_valid && !%screen.msgbox.is_onscreen && !%lua.VehicleIsPedestrian && ( %navigation.junctionview_type != 0 || JunctionViewHiddenByUser )) />
+		<property SignpostVisible value=( ShowSignpostLayer && %lua.SignpostIsValid ) />		
+		<property LaneinfoVisible value=( %navigation.has_laneinfo && !SignpostVisible && !ui_Cockpit.p2p_valid && %lua.LaneinfoOn ) /> 		
+		<property showDiriconBg value=(JunctionViewVisible || SignpostVisible) />
+		<property hideDiriconBg value=( !%sound.voice.inside_first_guidance_area && %lua.enable_mini_diricon && %navigation.distance_to_maneuver > %lua.VDistMini_Maneuver || ( %lua.MiniDiricon_with_SplScreen && !%sound.voice.inside_first_guidance_area && (sc_IsMapPopupOnscreen(%screen.msgbox.is_onscreen) || HwyPoiListIsVisible || SplPoiListIsVisible || SidePanelVisible || (JunctionViewVisible && %navigation.junctionview_type == 0) ) ) ) />	
+		<property ShowSpeedLimit value=( !%lua.VehicleIsPedestrian && !%lua.DragMode && %warning.speedlimit_warning_visual && %lua.SpeedLimitValue && (%lua.speedWarningAlwaysVisibleChk || %warning.driveralert.near_speed_limit)) />
+		<property ShowSpeedCamera value=0 />
+		<property SpeedCameraRate value=0 /> ;??????
+		<property show_hva value=0 />
+		<property SpeedCameraSpeedLimit value=0 />
+		<property ShowSpeedLimit_Percent value=(ShowSpeedLimit && %lua.speedlimitpercent && !ShowSpeedCamera) />
+		<property ShowCondSpeedLimit value=(ShowSpeedLimit && (%warning.driveralert.speed_limit_condition == 0 || %lua.ShowConditionalSpeedLimit) && %warning.driveralert.speed_limit_condition.valid ) />		;&& !ShowSpeedCamera
+		<property ShowTMCButton value=0 />
+		<property trafficFullDelayTextOnMap value=(L"") />		
+		<property TurnRestrictionIsVisible value=0 />
+		<property TruckTurnRestrictionIsVisible value=0 />
+		<property ShowRouteProgress value=( %lua.RouteProgressVisible && %navigation.has_route && !%lua.ptp_navigation && %route.list.navigated.waypoints.list.size >= 2 ) />
+		<property RouteProgressDistance value=(%navigation.is_in_simulation ? %navigation.distance_total : %navigation.distance_to_destination + %other.trips[0].distance_total // 0) />
+		<property RouteProgressViaDistance value=(%navigation.is_in_simulation ? %navigation.distance_to_destination : %route.list.navigated.waypoints.list[%route.list.navigated.waypoints.list.lastindex // 0].total_length // 0) />		
+		<property ShowTimeToManeuver value=(%navigation.distance_to_maneuver > 2500 && %navigation.distance_to_maneuver.valid && %route.list.navigated.has_navigable_path && %navigation.direction_icon.valid && !%route.list.navigated.calculating) />
+		;!!!!!!!!!!!!!!!!it's strange but it's got to be right here!!!!!!!!!!!!!!!!!!!!
+		<property destination_proximity value=( sc_GetSysEntry("ui", "destination_proximity", 350) ) />
+		<property is_destination_near value=( %route.list.navigated.waypoints.list.size == 2 ? (distance(%navigation.car.position, %route.list.navigated.waypoints.list[%route.list.navigated.waypoints.list.lastindex].real_position) < destination_proximity && !%navigation.is_in_simulation) : 0) />
+		<property is_next_wp_near value=( %route.list.navigated.waypoints.list.size > 2 ? (distance(%navigation.car.position, %route.list.navigated.waypoints.list[%route.list.navigated.waypoints.next_waypoint].real_position) < destination_proximity && !%navigation.is_in_simulation) : 0) />
+	</implementation>
+	<observer model="lua.DragMode", "screen.msgbox.is_onscreen" onchange=sc_SetNavCarPos START />
+	<observer boolmodel="ui.bLaneinfoSignpostValid" onselect=sc_SignPostLayerShow ondeselect=sc_SignPostLayerHide START />	
+	<observer model="lua.VehicleIsPedestrian","map.primary.state" onchange=sc_Setbreadcrumbs START />
+	
+	<observer value=(%ui.LaneinfoVisible) onselect=VW_LaneinfoSignal START />
+</layer>
+
+<userlist lm_LocalMenuCockpit text="str" onrelease="ui" enable="bool" visible="bool">
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 />
+		<row text="Select as Waypoint" onrelease=sc_addWaypointFromCockpit enable=( !%map.cursor.is_waypoint && %navigation.has_route ) visible=(%lua.RoutePlanEnable) />
+		<row Detail_Information text="Detailed Information" onrelease=sc_OnMapInfo />
+		<row show_car_position text="Show Current Position" onrelease=sc_ShowCarPos />
+		<row show_cursor_position text="Show Cursor Position" onrelease=sc_ShowCursorPos />
+</userlist>
+
+<userlist lm_FooterWhereAmI text="str" onrelease="ui" enable="bool" >
+	<default enable=1>
+		<row text="Help Nearby" onrelease=sc_showHelpNearby />
+</userlist>
+
+<userlist lm_LocalMenu_WhereAmI text="str" onrelease="ui" />
+
+<element_template et_routeprogress_via>
+	<SPRITE class="routeprogress marker via" visible=(%*.total_length.valid && %*.type == "via") />
+</element_template>
+
+<layer ui_Cockpit z=35 visible=( !%lua.DragMode )>
+	<implementation>
+		<property MapPopupOnscreen value=(sc_IsMapPopupOnscreen(%screen.msgbox.is_onscreen) || ui_PropLayer.HwyPoiListIsVisible || ui_PropLayer.SplPoiListIsVisible || ui_PropLayer.SidePanelVisible) />
+		<property spl_poi_quick_menu value=0 />
+		<property spl_poi_quick_menu2 value=0 />
+  		<property detect_gps value=( !%navigation.is_in_simulation && ( %gps.connection_status > 2 || %gps.connection_status < 3 && !%gps.valid && !%navigation.car_pos_valid && !%navigation.dead_reckoning ) ) />
+		<property p2p_valid value=(%lua.ptp_navigation && %route.list.navigated.waypoints.list.size >= 2) />
+		<property navigation_suspended value=( %route.list.navigated.waypoints.start_is_user_selected && !%navigation.is_in_simulation ) />
+		<property show_compass value=( p2p_valid || navigation_suspended )>
+		<property p2p_pos value=(%route.list.navigated.waypoints.list.size >= 2 ? %route.list.navigated.waypoints.list[1].strapped_position : 0L) />
+		<property p2p_dir value=( show_compass ? direction(%navigation.car.position, p2p_pos, %navigation.car.heading, 1 ) : 0 ) />
+		<property show_mini_diricon value=(!navigation_suspended && (ui_PropLayer.MiniJunctionViewVisible || (%lua.enable_mini_diricon && !show_compass && !detect_gps && %navigation.has_route && (ui_PropLayer.hideDiriconBg || (ui_PropLayer.JunctionViewVisible && %navigation.junctionview_type == 0)) || ( %lua.MiniDiricon_with_SplScreen && %navigation.has_route && (MapPopupOnscreen || (ui_PropLayer.hideDiriconBg || (ui_PropLayer.JunctionViewVisible && %navigation.junctionview_type == 0))))))) />
+		<property show_hwy_diricon value=(%navigation.car.is_on_highway && %navigation.distance_to_maneuver > 3000) />
+		<property show_sec_diricon_always value=(%navigation.secondary_direction_icon.valid && %navigation.distance_to_maneuver.valid && !%route.list.navigated.calculating && %route.list.navigated.has_navigable_path && %lua.SecondaryManeuverAlwaysVisible) />
+		<property show_sec_diricon_default value=(%navigation.secondary_direction_icon.valid && %navigation.distance_to_maneuver.valid && %navigation.secondary_maneuver_is_near && %navigation.secondary_near_to_primary && %navigation.distance_to_maneuver < 15000 && !%route.list.navigated.calculating && %route.list.navigated.has_navigable_path && !%lua.SecondaryManeuverAlwaysVisible) />
+		<property show_sec_diricon value=( ( ( show_sec_diricon_always || show_sec_diricon_default ) && !(MapPopupOnscreen && (%lua.IsLandscape && sc_GetNotifyListCol(%lua.arQuickMenu ? %ui.lm_QuickSideList.size : (%ui.lm_CockpitSideList.size + (%lua.arQuickMenuEnable ? 1 : 0)) ) > 1 ) ) ) && !ui_PropLayer.hideDiriconBg && !(ui_PropLayer.JunctionViewVisible || ui_PropLayer.MiniJunctionViewVisible) ) />
+		<property rotate_destarrow value=(-(direction(%navigation.car.position, (%route.list.navigated.waypoints.list.size >= 2 ? (%lua.switch_Destination_Waypoint ? %route.list.navigated.waypoints.list[1].strapped_position : %route.list.navigated.waypoints.list[%route.list.navigated.waypoints.list.lastindex].strapped_position) : 0L), %navigation.car.heading)) * 360.0 / 4096) />
+		<property tmc_receiving value=0 />
+		<property tmc_icon value=0 />
+		<property traffic_detour_valid value=0 />
+		<property show_diricon value=(!show_compass && %navigation.has_route && !%navigation.exit_icon.valid && %navigation.direction_icon.valid && !ui_PropLayer.hideDiriconBg && !(ui_PropLayer.JunctionViewVisible && %navigation.junctionview_type == 0) && !ui_PropLayer.MiniJunctionViewVisible) />
+		<property p2p_show value=(( p2p_valid && !detect_gps || navigation_suspended ) && %navigation.has_route && !%navigation.exit_icon.valid) />
+		<property roundabout_show value=(!show_compass && %navigation.has_route && %navigation.direction_icon.valid && %navigation.exit_icon.valid && %route.list.navigated.has_navigable_path && !ui_PropLayer.hideDiriconBg) />
+		;---new approach---
+		<property country_flag value=(observe(%navigation.car_pos_valid); VW_Country_for_Flag()) />
+		
+		<property AdvancedSpeedLimitPhase value=(sc_GetAdvancedSpeedLimitPhase((%navigation.car.current_speed // 1), %lua.SpeedLimitValue, %warning.driveralert.speed_limit, %warning.driveralert.near_speed_limit, %warning.driveralert.over_speed_limit, %warning.driveralert.speed_limit.valid)) />
+
+		<property notify_list_visibility value=( !%lua.arQuickMenu && !%lua.DragMode && !(ui_PropLayer.JunctionViewVisible || ui_PropLayer.MiniJunctionViewVisible || ui_PropLayer.TunnelOverviewVisible) && !ui_PropLayer.SignpostVisible && !%lua.MenuIsOpened ) />
+		<property notify_list_ext_visibility value=(!%lua.arQuickMenu && !%lua.DragMode && !(ui_PropLayer.JunctionViewVisible || ui_PropLayer.TunnelOverviewVisible) && !%lua.MenuIsOpened ) />
+
+		<property notify_list_landscape_top value=(observe(%lua.IsLandscape); ( (!%navigation.has_route && (%navigation.car.righthousenumber || %navigation.car.lefthousenumber)) || %navigation.has_route || %lua.ShowTimeInTitle || ui_Cockpit.detect_gps || %warning.notification.notification_area.size > 0 ? CSS.Param.next_street_h : 0 ) ) />
+		<property notify_list_ext_portrait_top value=(observe(%lua.IsPortrait); ( notify_list_landscape_top + (ui_Cockpit.MapPopupOnscreen ? CSS.Param.map_messagebox_h : 0) + (ui_PropLayer.SignpostVisible ? %ui.vLaneInfoSignpostHeight : 0) + (ui_PropLayer.MiniJunctionViewVisible ? CSS.Param.screen_h/3 : 0) ) ) />
+
+		<property Btn_possible_H value=(observe(%lua.IsLandscape, notify_list_landscape_top, notify_list_ext_portrait_top); (CSS.Param.screen_h - (%lua.IsLandscape ? ui_Cockpit.notify_list_landscape_top : ui_Cockpit.notify_list_ext_portrait_top)) ) />
+
+		<property NotifyListCol value=(observe(notify_list_landscape_top, notify_list_ext_portrait_top, %lua.captureScreen); sc_GetNotifyListCol(%lua.arQuickMenu ? %ui.lm_QuickSideList.size : %ui.lm_CockpitSideList.size) ) />
+		<property NotifyListRow value=(observe(notify_list_landscape_top, notify_list_ext_portrait_top, %lua.captureScreen); sc_GetNotifyListRow(%lua.arQuickMenu ? %ui.lm_QuickSideList.size : %ui.lm_CockpitSideList.size) ) />
+	</implementation>
+
+	<DIV class="cockpit">
+		<DIV div_cockpit_buttons class="fill" > 
+			<DIV div_notify_list class="notify_list" visible=notify_list_visibility >
+				<TABLE CockpitBTNTable>
+					<BUTTON QuickMenuBtn class="btn_map" onrelease=sc_arQuickMenuCheck onlongclick='sc_NextStateAnim(st_MapVisualSettingsExtended, "fade", 1, "" )' visible=(%lua.arQuickMenuEnable) >
+						<SPRITE class="button map fill" />
+						<SPRITE QuickMenuBtnFooter class="btn_map svg" img="ico_footer_menu.svg" 
+							visible=( %lua.aSetQuickMenuIcon == 0 ) />
+						<SPRITE QuickMenuBtnCompass class="btn_map rotatecompass icon svg" z=40 
+							rotate=( %map.primary.rotate * 360.0 / 4096 )   
+							visible=( %lua.aSetQuickMenuIcon == 1 || %lua.aSetQuickMenuIcon == 3 ) />
+						<SPRITE QuickMenuBtnDestarrow class="btn_map rotatedestarrow icon svg" z=50 
+							rotate=( rotate_destarrow )
+							visible=( %navigation.has_route && %lua.aSetQuickMenuIcon >= 2 ) />
+					</BUTTON>
+/*					
+					<BUTTON FreeCompass class="btn_map" onrelease="" onlongclick='' visible=1 >
+						<SPRITE class="button map fill" />
+						<SPRITE class="btn_map rotatecompass icon svg" z=40 img="ico_compass_88.svg" phasename="windrose" rotate=( %map.primary.rotate * 360.0 / 4096 ) />
+						<SPRITE class="btn_map rotatedestarrow icon svg" z=50 img="ico_compass_88.svg" phasename="arrow" rotate=( rotate_destarrow ) />
+					</BUTTON>
+*/					
+					<BUTTON class="btn_map" onrelease=sc_GotoDestinationMenu visible=( ui_PropLayer.is_destination_near )>
+						<SPRITE class="button map fill" />
+						<SPRITE class="btn_map svg" img="ico_destination_cockpit.svg" />
+					</BUTTON>
+					<BUTTON class="btn_map" onrelease=sc_RemoveStopover visible=( ui_PropLayer.is_next_wp_near ) >
+						<SPRITE class="button map fill" />
+						<SPRITE class="btn_map svg" img="ico_deletestopover.svg" />
+					</BUTTON>
+					<BUTTON class="btn_map" onrelease='MODEL.lua.switch_Destination_Waypoint = not MODEL.lua.switch_Destination_Waypoint()' onlongclick=sc_RemoveWaypointPopup visible=(%lua.btn_Destination_Waypoint_On && %route.list.navigated.waypoints.list.size > 2) >
+						<SPRITE class="button map fill" />
+						<SPRITE class="btn_map svg" img=( %lua.switch_Destination_Waypoint ? "ico_itinerary_destination_arrive.svg" : "ico_itinerary_waypoint_arrive.svg" ) />
+					</BUTTON>
+				</TABLE>
+			</DIV>
+			<DIV div_notify_list_ext class="notify_list_ext" visible=notify_list_ext_visibility >
+				<TABLE class="ari_ext" >
+
+				</TABLE>
+	  		</DIV>
+		</DIV>	
+		<DIV div_cockpit_top class="fill" onrelease='MODEL.navigation.force_say_next_command()' z=100>
+			<DIV class="next_street" visible=( !( navigation_suspended && %navigation.has_route || %warning.notification.notification_area.size > 0) && detect_gps )>
+				<SPRITE class="panel map" z=10 />
+				<HBOX class="fill detect_gps">		
+					<SPRITE class="fill searchprogress wide" box_align="stretch" />
+					<TEXT class="next_street fill" text=( %gps.connection_status > 2 ? ( %gps.connection_status == 3 ? m_i18n( "Autodetecting GPS receiver..." ) : m_i18n( "GPS receiver disconnected..." ) ) : m_i18n( "Looking for GPS signal..." ) ) />					
+				</HBOX>
+			</DIV>	
+			<DIV class="next_street" visible=( navigation_suspended && %navigation.has_route && !%warning.notification.notification_area.size > 0 )>
+				<SPRITE class="panel map" z=10 />
+				<BUTTON class="btn_map fill btn_resume" onrelease=sc_SuspendOrContinueNavigation>
+					<HBOX class="next_street fill">
+						<SPRITE class="listitem icon_list svg" bmp="ico_resume.svg" />
+						<TEXT class="listitem" text="Continue Guidance" />
+					</HBOX>
+				</BUTTON>
+			</DIV>	
+			<DIV class="housenumber">
+				<TABLE class="housenumber">
+					<HBOX class="housenumber left" >
+						<HBOX class="housenumber_container left">
+	       					<SPRITE class="button map fill" position="absolute" onrelease=sc_WhereAmI />
+							<TEXT class="housenumber left"  text=(%navigation.car.lefthousenumber) />
+							<SPRITE class="housenumber left svg" />
+						</HBOX>
+					</HBOX>
+					<HBOX class="housenumber right" >
+						<HBOX class="housenumber_container right">
+	       					<SPRITE class="button map fill" position="absolute" onrelease=sc_WhereAmI />
+							<SPRITE class="housenumber right svg" />
+							<TEXT class="housenumber right" text=(%navigation.car.righthousenumber) />	
+						</HBOX>
+					</HBOX>
+				</TABLE>
+			</DIV>	
+			<DIV class="current_time" visible=( !(!%navigation.has_route && ui_PropLayer.SignpostVisible) && %lua.ShowTimeInTitle && !%warning.notification.notification_area.size > 0) >
+				<SPRITE class="current_time" z=25 />
+				<TIMETEXT class="current_time" time=(%gps.current_time) formatmodel=0 z=25 />
+			</DIV>	
+			<DIV class="fill" visible=( !detect_gps )>
+				<DIV class="next_street" visible=( !navigation_suspended && %navigation.has_route && !%route.list.navigated.calculating && !%warning.notification.notification_area.size > 0)>
+					<SPRITE class="panel map" z=10 />
+					<ROADSHIELDEDTEXT next_street_with_shield class="next_street fill" text=( %navigation.next_street_with_shield.valid ? %navigation.next_street_with_shield : %navigation.destination_name_short ) z=11 />
+				</DIV>				
+				<DIV class="next_street" visible=( !navigation_suspended && %navigation.has_route && %route.list.navigated.calculating && !%warning.notification.notification_area.size > 0)>
+					<SPRITE class="panel map" z=10 />
+					<TEXT class="next_street fill" text="Route recalculation!" />
+				</DIV>
+			</DIV>
+		</DIV>				
+		<DIV div_cockpit_bottom class="fill">
+			<DIV class="current_city">
+				<HBOX class="current_city">
+					<HBOX class="current_city_container">
+						<SPRITE class="panel map fill" z=10 position="absolute" onrelease=sc_WhereAmI />
+						<ROADSHIELDEDTEXT class="current_city" textmodel_wstr=(%lua.Full_CityDistrict != L"" && %navigation.car.is_incity ? "lua.Full_CityDistrict" : "navigation.car.address.city") />
+						<ROADSHIELDEDTEXT class="current_city zip" combined_textmodel=(%lua.Full_CityDistrict != L"" && %navigation.car.is_incity ? "\fb$navigation.car.address.zip$ \fn$lua.Full_CityDistrict$" : "\fb$navigation.car.address.zip$ \fn$navigation.car.address.city$") />
+						<SPRITE class="listitem flag" img=(country_flag) zoom=60% z=11>
+					</HBOX>
+				</HBOX>
+			</DIV>
+			<DIV class="current_street">
+				<HBOX class="current_street">
+					<HBOX class="current_street_container">
+						<SPRITE class="panel map fill" z=10 onrelease=(%navigation.is_in_simulation ? undef : sc_WhereAmI) position="absolute" />
+						<ROADSHIELDEDTEXT class="current_street" />
+						/*
+						<SPRITE class="listitem" z=11 r2l_invert=0 attach_sprite_provider=("other.roundabout_icons.attach_sprite_provider(roundabout_icons_" + %lua.direction_icon_phasename + ".ini,0)") visible=(%navigation.exit_icon.valid && %navigation.direction_icon.valid && %route.list.navigated.has_navigable_path) >
+							<TEXT class="roundabout" text=(%navigation.exit_id + 1) />
+						</SPRITE>
+						<SPRITE class="listitem flag" z=11 iconid=%navigation.direction_icon phasename=%lua.direction_icon_phasename zoom="zoomvisible" visible=(!%navigation.exit_icon.valid && %navigation.direction_icon.valid && %route.list.navigated.has_navigable_path) />
+						;<GRAPH class="graph_btn" orientation="vertical" full=(%ui.Graph_dist_limit_temp) current=(%navigation.distance_to_maneuver) visible=(%navigation.direction_icon.valid && %route.list.navigated.has_navigable_path) />
+						*/
+					</HBOX>
+				</HBOX>
+			</DIV>			
+			<DIV class="laneinfo" >
+				<SPRITE sprLaneInfo class="laneinfo fill" z=999 zoom=(%ui.LaneInfoSize // 1000)
+					onrelease=VW_LaneInfoSize
+					onlongclick='sc_NextStateAnim(st_LaneInfoSoundSettings, "fade", 1, "" ); MODEL.sound.playchanneltest("ding", L"!button")' overmaplayer />
+			</DIV>
+		</DIV>		
+		<DIV div_cockpit_routeprogress class="fill">
+			<DIV class="routeprogress">
+				<SPRITE class="routeprogress marker dest" />
+				<LIST2 lst_RouteProgress class="routeprogress">
+					<LISTMODEL listmodel="route.list.navigated.waypoints.list" element_template="et_routeprogress_via" />
+				</LIST2>
+				<SPRITE class="routeprogress car" />							
+				<layer>
+					<DIV class="cockpit">
+						<DIV div_cockpit_routeprogress_bg class="cockpit">
+							<DIV class="routeprogress">
+								<SPRITE class="routeprogress bar" />
+								<BOX class="routeprogress container">
+									<SPRITE class="background routeprogress" />
+									<SPRITE class="background routeprogress inside" />
+								</BOX>
+							</DIV>
+						</DIV>
+					</DIV>
+				</layer>
+			</DIV>
+		</DIV>
+		<DIV div_cockpit_datafields class="fill">
+			<DIV class="datafields">
+				<LIST2 lst_TripInfo class="list_control datafields" SHOWSELECTION=1 STARTSELECTIONONSCREEN=1 SMOOTHSCROLLING>
+					<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_Datafields" text=( %ui.lm_CockpitListRoute[ vDataField1 ].text ) img=( %ui.lm_CockpitListRoute[ vDataField1 ].icon ) model=( %ui.lm_CockpitListRoute[ vDataField1 ].model ) type=( %ui.lm_CockpitListRoute[ vDataField1 ].datatype ) visible=( %route.list.navigated.has_navigable_path ) />
+					<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_Datafields" text=( %ui.lm_CockpitListRoute[ vDataField2 ].text ) img=( %ui.lm_CockpitListRoute[ vDataField2 ].icon ) model=( %ui.lm_CockpitListRoute[ vDataField2 ].model ) type=( %ui.lm_CockpitListRoute[ vDataField2 ].datatype ) visible=( %route.list.navigated.has_navigable_path ) />
+					<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_Datafields" text=( %ui.lm_CockpitListRoute[ vDataField3 ].text ) img=( %ui.lm_CockpitListRoute[ vDataField3 ].icon ) model=( %ui.lm_CockpitListRoute[ vDataField3 ].model ) type=( %ui.lm_CockpitListRoute[ vDataField3 ].datatype ) visible=( %route.list.navigated.has_navigable_path ) />
+					
+					<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_Datafields" text=( %ui.lm_CockpitListNoRoute[ vDataField4 ].text ) img=( %ui.lm_CockpitListNoRoute[ vDataField4 ].icon ) model=( %ui.lm_CockpitListNoRoute[ vDataField4 ].model ) type=( %ui.lm_CockpitListNoRoute[ vDataField4 ].datatype ) visible=( !%route.list.navigated.has_navigable_path && !%lua.aHomeWork) />
+				</LIST2>			
+				<LIST2 class="list_control datafieldsHW" SHOWSELECTION=1 >
+					<LISTMODEL  listmodel="ui.lm_OtherLocation"  element_template="et_POIItemList_OtherLocationHW"  onrelease='sc_GoToHomeWork()' />
+				</LIST2>
+				<layer>
+					<DIV class="cockpit">
+						<DIV div_cockpit_datafields_bg class="cockpit">
+							<DIV class="datafields">
+								<BUTTON class="datafields fill" z=25 onrelease=(%navigation.is_in_simulation ? undef : (%route.list.navigated.has_navigable_path ? sc_TripComputer : 'sc_aHomeWorkStopShow()')) onlongclick=(%navigation.is_in_simulation ? undef : (!%route.list.navigated.has_navigable_path ? sc_TripComputer : sc_showDatafields) ) >
+									<SPRITE class="background fill" />
+								</BUTTON>
+							</DIV>
+						</DIV>
+					</DIV>
+				</layer>
+			</DIV>
+		</DIV>
+		<DIV div_cockpit_left class="fill">
+			<DIV class="fill" visible=( !detect_gps )>
+				<DIV class="roundabout" visible=(roundabout_show)>
+					<SPRITE spr_diricon_roundabout class="panel map fill" z=24 onrelease=(%navigation.is_in_simulation ? undef : 'sc_ShowRouteItiner() hook_ItinerShortcut:trigger()') />
+					<SPRITE round2 class="diricon roundabout" z=26 r2l_invert=0 attach_sprite_provider=("other.roundabout_icons.attach_sprite_provider(roundabout_icons_" + %lua.direction_icon_phasename + ".ini,0)")>
+						<TEXT roundtxt class="roundabout" text=(%navigation.exit_id + 1) z=27 />
+					</SPRITE>
+					<DISTTEXT class="next_maneuver_dist"  z=45 distance=%navigation.distance_to_maneuver visible=( %navigation.distance_to_maneuver.valid && ( %gps.valid || %navigation.is_in_simulation || %navigation.dead_reckoning ) ) />
+				</DIV>
+				<DIV class="diricon_hwy" visible=(show_mini_diricon)>
+					<SPRITE spr_diricon_hwy class="diricon_hwy bg" onrelease=(%navigation.is_in_simulation ? undef : 'sc_ShowRouteItiner() hook_ItinerShortcut:trigger()')   onlongclick='sc_NextStateAnim( st_GpsStatus, "fade", 1, "" )' />
+					<HBOX class="fill diricon_hwy" flex=1 visible=( !%route.list.navigated.calculating )>
+						<SPRITE class="diricon_hwy_arrow svg" z=45 visible=(show_hwy_diricon && %navigation.direction_icon.valid && %navigation.distance_to_maneuver.valid && %route.list.navigated.has_navigable_path && !ui_PropLayer.JunctionViewVisible) 
+							img=("spr_hwy_straight_" + %lua.direction_icon_phasename + ".svg") />
+						<SPRITE diricon_hwy class="diricon_mini svg" z=45 iconid=%navigation.direction_icon visible=(((%navigation.car.is_on_highway && ui_PropLayer.JunctionViewVisible) || !show_hwy_diricon) && %navigation.direction_icon.valid && %route.list.navigated.has_navigable_path) 	
+							phasename=%lua.secondary_direction_icon_phasename />
+						<BOX class="fill diricon_hwy" flex=1>
+							<DISTTEXT class="next_maneuver_dist hwy" z=45 distance=%navigation.distance_to_maneuver visible=(%navigation.direction_icon.valid && %navigation.distance_to_maneuver.valid && %route.list.navigated.has_navigable_path) />
+							<TEXT class="time_to_maneuver" z=45 text=(builtin.format("%{timespan:5}",%navigation.time_to_maneuver)) visible=(ui_PropLayer.ShowTimeToManeuver) />
+							;<TIMETEXT class="time_to_maneuver" z=45 time=(%navigation.time_to_maneuver) align="LEFT" formatmodel="regional.timeformat" visible=(ui_PropLayer.ShowTimeToManeuver) />
+						</BOX>
+					</HBOX>					
+					<SPRITE class="fill searchprogress wide" z=26 visible=( %route.list.navigated.calculating ) />
+				</DIV>				
+				<DIV div_main_diricon class="diricon" visible=(show_diricon) >
+					<SPRITE spr_diricon class="panel map fill" z=25 onrelease=(%navigation.is_in_simulation ? undef : 'sc_ShowRouteItiner() hook_ItinerShortcut:trigger()') />					
+					<DIV class="fill" visible=( !%route.list.navigated.calculating )>
+						<SPRITE diricon class="diricon" z=26 iconid=%navigation.direction_icon 
+							visible=( %navigation.direction_icon.valid && %route.list.navigated.has_navigable_path) 
+							phasename=%lua.direction_icon_phasename />	
+						<DISTTEXT class="next_maneuver_dist"  z=45 distance=%navigation.distance_to_maneuver visible=( %navigation.distance_to_maneuver.valid && %navigation.distance_to_destination > 0 &&( %gps.valid || %navigation.is_in_simulation || %navigation.dead_reckoning) ) />
+					</DIV>			
+					<SPRITE class="recalc_anim searchprogress huge" z=26 visible=( %route.list.navigated.calculating )>
+				</DIV>				
+				<DIV class="secondary_diricon">
+					<DISTTEXT  class="dist_to_next_maneuver"  distance=(%navigation.second_maneuver_distance_diff) />
+					<SPRITE class="panel map fill" z=9 />
+					<SPRITE sec_diricon class="secondary_diricon" z=10 iconmodel="navigation.secondary_direction_icon" 
+						onrelease='VW_ShowSecondary_diricon_place(); MODEL.sound.playchanneltest("ding", L"!button")'
+						onlongclick='sc_NextStateAnim(st_aCockpitMiniDiriconSettings, "fade", 1, "" ); MODEL.sound.playchanneltest("ding", L"!button")'
+						phasename=%lua.secondary_direction_icon_phasename />						
+				</DIV>
+			</DIV>			
+			<DIV class="diricon p2p" visible=(p2p_show)>
+				<SPRITE class="panel map fill" z=25 />			
+				<SPRITE p2p_direxion  z=106 img=("spr_offroad_direction_" + %lua.direction_icon_phasename + ".svg") rotate=(-p2p_dir) />
+				<DISTTEXT class="next_maneuver_dist" z=45 distance=%navigation.distance_to_waypoint mode=(%lua.ptp_navigation ? 5 : 3) visible=( %navigation.distance_to_waypoint.valid ) />
+			</DIV>		
+			<DIV class="speedlimit" visible=((ui_PropLayer.ShowSpeedLimit || ((%navigation.car.current_speed // 1) > lua.gMinSpeedToShow)) && !p2p_valid )>
+				<BOX class="speedlimit_container">
+					<BOX class="speedlimit">
+						<SPRITE class="speedlimit_bg" overmaplayer />
+
+						<BOX class="fill">	
+							<BOX box_speedlimit_table class="speedlimit_table" > 
+								<SPRITE class="speedlimit" overmaplayer visible=(lua.gUndefinedSpeedLimit != %lua.SpeedLimitValue && ui_PropLayer.ShowSpeedLimit && !%lua.ShowConditionalSpeedLimit && !ui_PropLayer.ShowCondSpeedLimit) >
+									<TEXT class="speedlimit" text=(format(L"%{speed[%D]:*}",(%navigation.curr_speedcam.speed_limit ? %navigation.curr_speedcam.speed_limit : %lua.SpeedLimitValue), 1)) /> ;%warning.driveralert.speed_limit
+								</SPRITE>
+								<SPRITE class="speedlimit" overmaplayer zoom=200% img=undef iconid=(lua.gEnd_of_all_restrictionsIconId) visible=(lua.gUndefinedSpeedLimit == %lua.SpeedLimitValue && ui_PropLayer.ShowSpeedLimit && !%lua.ShowConditionalSpeedLimit && !ui_PropLayer.ShowCondSpeedLimit) />
+								<SPRITE class="speedlimit" overmaplayer visible=( ui_PropLayer.ShowCondSpeedLimit )>
+									<TEXT class="speedlimit" text=(format(L"%{speed[%D]:*}",%warning.driveralert.speed_limit_conditional,1)) />
+								</SPRITE>
+							</BOX>
+
+							<BOX class="speed" onrelease={invert(speed_delta_dif)} onlongclick={invert(%lua.speedlimitpercent)} onclick='MODEL.sound.playchanneltest("ding", L"!button")' >
+								<SPEEDTEXT class="speed" speed=((%navigation.car.current_speed // 1)) />		
+								<TEXT class="ad_speedlimit" text=(sc_CalcSpeedLimitPercent(%lua.SpeedLimitValue, (%navigation.car.current_speed // 1))) visible=(lua.gUndefinedSpeedLimit != %lua.SpeedLimitValue && %lua.speedlimitpercent && speed_delta_dif) />
+								<TEXT class="ad_speedlimit" text=(sc_CalcSpeedLimitDelta(%lua.SpeedLimitValue, (%navigation.car.current_speed // 1), %lua.SpeedUnitsInCockpit)) visible=(lua.gUndefinedSpeedLimit != %lua.SpeedLimitValue && %lua.speedlimitpercent && !speed_delta_dif && !ui_PropLayer.ShowCondSpeedLimit) />
+								<SPRITE class="condspeed_box" box_align="stretch">
+									<SPRITE class="fill" align="CENTER" img="speedlimit_cond.svg" phase=(%warning.driveralert.speed_limit_condition) visible=(ui_PropLayer.ShowCondSpeedLimit) overmaplayer />
+								</SPRITE>
+							</BOX>
+						</BOX>
+					</BOX>
+				</BOX>
+			</DIV>
+		</DIV>
+		
+		<DIV class="capture">
+			<BUTTON class="btn_map capture"  onrelease=sc_CaptureScreen onlongclick='MODEL.lua.captureScreen = not MODEL.lua.captureScreen()' visible=(%lua.captureScreen)>
+	       		<SPRITE class="button map fill" />
+				<SPRITE class="btn_map svg" z=100 img="ico_capture.svg" />
+			</BUTTON>
+		</DIV>
+	</DIV>
+</layer>
+
+<layer ui_Cockpit_DragMode z=35 visible=(%lua.DragMode && !%navigation.is_in_simulation)>
+	<DIV class="cockpit dragmode">
+		<BUTTON class="btn_map mapselector" onrelease=sc_ChangedDragmodeMapMode>
+	       	<SPRITE class="button map fill" />
+			<SPRITE class="btn_map mapselector drag icon svg" />
+		</BUTTON>
+		
+		<BOX class="mapcontrol zoom">
+			<SPACER flex=1>
+			<BUTTON class="btn_map zoomin" onclick='MODEL.map.primary.zoom_start(1)' onrelease='MODEL.map.primary.zoom_stop()' onmouseleave='MODEL.map.primary.zoom_stop()' enable=(%lua.map.ZoomInEnabled) alpha=(%lua.map.ZoomInEnabled ? 32 : 10)>
+	       		<SPRITE class="button map fill" />
+				<SPRITE class="btn_map zoomin icon svg" />
+			</BUTTON>			
+			<BUTTON class="btn_map zoomout" onclick='MODEL.map.primary.zoom_start(-1)' onrelease='MODEL.map.primary.zoom_stop()' onmouseleave='MODEL.map.primary.zoom_stop()' enable=(%lua.map.ZoomOutEnabled) alpha=(%lua.map.ZoomOutEnabled ? 32 : 10)>
+	       		<SPRITE class="button map fill" />
+				<SPRITE class="btn_map zoomout icon svg" />
+			</BUTTON>
+			<SPACER flex=1>
+		</BOX>
+		
+		<BOX class="mapcontrol tilt">
+			<SPACER flex=1>
+			<BUTTON class="btn_map tiltup" onclick='MODEL.map.primary.tilt_start(1)' onrelease='MODEL.map.primary.tilt_stop()' onmouseleave='MODEL.map.primary.tilt_stop()' enable=( %map.primary.tilt_up_enable ) alpha=(%map.primary.tilt_up_enable ? 32 : 10) visible=(%lua.tiltVisible) >
+				<SPRITE class="button map fill" />
+				<SPRITE class="btn_map tiltup mapcontrol icon svg" />
+			</BUTTON>			
+			<BUTTON class="btn_map tiltdown"  onclick='MODEL.map.primary.tilt_start(-1)'   onrelease='MODEL.map.primary.tilt_stop()' onmouseleave='MODEL.map.primary.tilt_stop()' enable=(%map.primary.tilt) alpha=(%map.primary.tilt ? 32 : 10) visible=(%lua.tiltVisible)>
+	       		<SPRITE class="button map fill" />
+				<SPRITE class="btn_map tiltdown mapcontrol icon svg" />
+			</BUTTON>
+			<SPACER flex=1>
+		</BOX>
+		
+		<BOX class="mapcontrol rotate"  visible=(!%map.primary.rotate_lock)>		
+			<BUTTON class="btn_map rotateleft" onclick='MODEL.map.primary.rotate_start(1)'  onrelease='MODEL.map.primary.rotate_stop() gNextRotate = 0' onMouseLeave='MODEL.map.primary.rotate_stop() nextRotate = 0' >  
+	       		<SPRITE class="button map fill" />
+				<SPRITE class="btn_map rotateleft mapcontrol icon svg" />
+			</BUTTON>
+			<BUTTON class="btn_map rotatecompass" onrelease=sc_NorthLock>
+	       		<SPRITE class="button map fill" />
+				<SPRITE class="btn_map rotatecompass icon svg" rotate=(%map.primary.rotate * 360.0 / 4096) />
+			</BUTTON>
+			<BUTTON class="btn_map rotateright" onclick='MODEL.map.primary.rotate_start(-1)' onrelease='MODEL.map.primary.rotate_stop() gNextRotate = 0' onMouseLeave='MODEL.map.primary.rotate_stop() nextRotate = 0' > 
+	       		<SPRITE class="button map fill" />
+				<SPRITE class="btn_map rotateright mapcontrol icon svg" />
+			</BUTTON>
+		</BOX>
+		
+		<BOX class="low_buttons" >
+			<BOX DragModeLeft_buttons class="left_buttons">
+			</BOX>
+			<BOX DragModeCenter_buttons class="center_buttons" >
+				<BUTTON class="btn_map inbox"  onrelease=sc_CaptureScreen onlongclick='MODEL.lua.captureScreen = not MODEL.lua.captureScreen()' visible=(%lua.captureScreen)>
+					<SPRITE class="button map fill" />
+					<SPRITE class="btn_map svg" z=100 img="ico_capture.svg" />
+				</BUTTON>
+			</BOX>
+			<BOX DragModeRight_buttons class="right_buttons">
+			</BOX>
+		</BOX>
+		
+		<SPRITE class="zoomctrl">
+			<TEXT class="fill zoomctrl" text=( %lua.ZoomControlText ) />
+		</SPRITE>		
+		<BUTTON CLASS="btn_map backtocockpit" ONRELEASE=sc_back_to_cockpit visible=(!%lua.ShowBackButton || !(lua.gDragModeFlow == "normal" || %map.primary.show_cursor)) rawkey=27>
+			<SPRITE CLASS="btn_map backtocockpit icon svg" />
+		</BUTTON>
+	</DIV>	
+</layer>
+
+<layer ui_Singpost z=5210>
+	<DIV class="cockpit">
+		<SPRITE sprSignpost class="signpost" onrelease='sc_SignPostLayerHide() hook_SignPostLayerHide:trigger()' OPAQUE=1 visible=(ui_PropLayer.SignpostVisible) >
+			<SPRITE class="signpost_background" />
+		</SPRITE>
+	</DIV>
+</layer>
+
+<layer ui_SideList z=45 >
+	<implementation>
+		<property tmc_receiving value=0 />
+		<property tmc_icon value=0 />
+	</implementation>
+
+	<DIV class="cockpit">
+		<DIV div_cockpit_right class="fill">
+			<DIV class="notify_list">
+				<TABLE visible=(%lua.arQuickMenu && !%lua.DragMode && !ui_PropLayer.SignpostVisible && !%lua.MenuIsOpened)>
+					<BUTTON class="btn_map" 
+						onrelease=(LuaJava.LuaJavaActive ? 'W_DefaultWebBrowser("http://4pna.com/showpost.php?p=517224&postcount=2")' : 'java:call("android.open_webpage", sc_GetSysEntry("feature", "web_site", L"http://4pna.com/showpost.php?p=517224&postcount=2")); sc_back_to_cockpit()' )  
+						;onlongclick='W_DefaultWebBrowser(sc_GetSysEntry("feature", "Help", "files:///storage/0000-0000/Help.html"))' 
+						>
+						<SPRITE class="button map fill" />
+						<SPRITE class="btn_map icon svg" img="owl.svg" zoom=80% /> 
+						<TEXT class="BTN_top_text" text=(VW_Return_button_text(translate("Help"), L"%s", 1)) />
+						<TEXT class="BTN_bottom_text" text=(VW_Return_button_text(translate("Help"), L"%s", 99)) />
+					</BUTTON>
+					<BUTTON class="btn_map" onrelease=sc_GotoDestinationMenu visible=( ui_PropLayer.is_destination_near )>
+						<SPRITE class="button map fill" />
+						<SPRITE class="btn_map svg" img="ico_destination_cockpit.svg" />
+					</BUTTON>
+				</TABLE>
+			</DIV>
+		</DIV>
+	</DIV>
+</layer>
+
+<userlist lm_QuickSideList visible="bool" enable="bool">
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 />
+		<row 	visible=1 /> ;Help
+		<row 	visible=( ui_PropLayer.is_destination_near // 0 ) />
+</userlist>
+
+<userlist lm_CockpitSideList visible="bool" enable="bool" >
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 />
+		<row 	visible=( %lua.arQuickMenuEnable ) />
+		<row 	visible=( ui_PropLayer.is_destination_near // 0 ) />
+		<row 	visible=( ui_PropLayer.is_next_wp_near // 0 ) />
+		<row 	visible=( %lua.btn_Destination_Waypoint_On && %route.list.navigated.waypoints.list.size > 2 ) />
+</userlist>
+
+<userlist lm_VQuickMenuButtons prio="int" icon="str" bmp="str" text="str" isselected="str" onrelease="ui" enable="bool" type="str" visible="bool" details="ui" checked="ui" changevalue="ui" haspopover="bool" >
+	<default visible=1 enable=1 type="ChkOnOff_Icon" />
+</userlist>
+
+<userlist lm_VCockpitMenuButtons prio="int" icon="str" bmp="str" text="str" isselected="str" onrelease="ui" enable="bool" type="str" visible="bool" details="ui" checked="ui" changevalue="ui" haspopover="bool" >
+	<default visible=1 enable=1 type="ChkOnOff_Icon" />
+		<row text="Show Button Destination/Waypoint" bmp=( %lua.switch_Destination_Waypoint ? "ico_itinerary_destination_arrive.svg" : "ico_itinerary_waypoint_arrive.svg" ) isselected="lua.btn_Destination_Waypoint_On" />
+</userlist>
+
+<layer ui_WhereAmI z=30>
+	<implementation>
+		<property nearest_dir  value=(%navigation.car.near_city_cos.valid && %navigation.car.position.valid ? direction(%navigation.car.position, %navigation.car.near_city_cos, 0, true) : 0) />
+		<property nearest_dist value=(%navigation.car.near_city_cos.valid && %navigation.car.position.valid ? distance(%navigation.car.position, %navigation.car.near_city_cos) : 0) />		
+	</implementation>
+	
+	<DIV class="main"> 
+		<DIV class="nearcity whereami" visible=(!%navigation.car.is_incity)>
+			<SPRITE class="nearcity panel_map">
+				<VBOX class="nearcity">
+					<TEXT class="listitem font_whereami nearcity" text=(%navigation.car.near_city) />
+					<HBOX box_align="CENTER">
+						<SPRITE class="whereami arrow" rotate=(-nearest_dir) visible=(%navigation.car.near_city_cos.valid) />
+						<DISTTEXT class="listitem font_whereami nearcity" distance=(nearest_dist) visible=(%navigation.car.near_city_cos.valid && %navigation.car.position.valid) />
+					</HBOX>
+				</VBOX>
+			</SPRITE>
+		</DIV>
+		<DIV class="sidepanel whereami">
+			<SPRITE class="panel">
+			<VBOX>
+				<SPRITE class="whereami nextcrossing" box_align="stretch" FLEX=1>
+					<HBOX>
+						<SPRITE class="nextcrossing" box_align="stretch"/>
+						<VBOX flex=1>
+							<TEXT class="listitem font_whereami" text="Next crossing road/street:" />
+							<ROADSHIELDEDTEXT class="listitem whereami" text=(%navigation.next_crossroad_with_shield ? %navigation.next_crossroad_with_shield : "n/a") /> 
+						</VBOX>
+					</HBOX>	
+				</SPRITE>					
+			
+				<SPRITE class="whereami currentstreet" box_align="stretch" FLEX=1>
+					<HBOX box_align="stretch" flex=1>
+						<SPRITE class="currentstreet" box_align="stretch">
+							<SPRITE class="currentposition icon" box_align="center" />
+						</SPRITE>
+						<VBOX box_align="stretch" flex=10>
+							<ROADSHIELDEDTEXT class="listitem whereami" text=(%navigation.car.address.long_format) FLEX=4 />
+							<HBOX box_align="stretch" flex=2 paddingleft=0>
+								<TEXT class="fill listitem font_whereami" flex=1 text=(format("%{gcoor[%lat]}", %gps.position)) visible=(%gps.position_valid) />
+								<TEXT class="fill listitem font_whereami" flex=1 text=(format("%{gcoor[%lon]}", %gps.position)) visible=(%gps.position_valid) />								
+							</HBOX>	
+						</VBOX>
+					</HBOX>	
+				</SPRITE>			
+				<HBOX class="whereami prevcrossing" box_align="stretch" FLEX=1>
+					<SPRITE class="prevcrossing" box_align="stretch" />
+					<VBOX flex=1>
+						<TEXT class="listitem font_whereami" text="Previous crossing road/street:" />
+						<ROADSHIELDEDTEXT class="listitem whereami" text=(%navigation.prev_crossroad_with_shield ? %navigation.prev_crossroad_with_shield : "n/a") />
+					</VBOX>
+				</HBOX>	
+			</VBOX>
+		</DIV>
+	</DIV>
+</layer>
+
+<layer ui_SimulationControls z=52200 visible=(%navigation.is_in_simulation && %lua.SimControlsVisible)>
+	<DIV class="cockpit">	
+		<HBOX class="simulation_controls" r2l_invert=0>
+			<BUTTON btn_SimSpeed_d class="btn_map" box_align="STRETCH" flex=1 align="CENTER" valign="CENTER" 
+				onrelease='sc_RestartSimControlsDelay() sc_simulate_speedup(false)'
+				onlongclick='sc_RestartSimControlsDelay() MODEL.route.simulation_speed_percent = 100' > ;;!!!!!!!!!!!!!!!!!!!!
+	       		<SPRITE class="button map fill" />
+				<TEXT class="fill simspeed" text=(L"" + (%route.simulation_speed_percent / 100) + L"÷")  />
+			</BUTTON>
+			<BUTTON btn_ManPrev class="btn_map" box_align="STRETCH" flex=1 enable=%navigation.has_prev_maneuver onrelease='sc_RestartSimControlsDelay() MODEL.navigation.jump_prev_maneuver()'>
+	       		<SPRITE class="button map fill" />
+				<SPRITE spr_ManPrev class="btn_map simulation_controls player_prev icon svg" />
+			</BUTTON>
+			<BUTTON btn_sim_play class="btn_map"   box_align="STRETCH" flex=1 onrelease='sc_RestartSimControlsDelay() MODEL.route.resume_simulation()' visible=(!%navigation.is_simulation_playing)>
+	       		<SPRITE class="button map fill" />
+				<SPRITE spr_sim_play class="btn_map simulation_controls player_play icon svg" />
+			</BUTTON>			
+			<BUTTON btn_sim_pause class="btn_map" box_align="STRETCH" flex=1 onrelease='sc_RestartSimControlsDelay() MODEL.route.pause_simulation() MODEL.route.simulation_speed_percent = 100'  visible=%navigation.is_simulation_playing>
+	       		<SPRITE class="button map fill" />
+				<SPRITE spr_sim_pause class="btn_map simulation_controls player_pause icon svg" />
+			</BUTTON>			
+			<BUTTON btn_ManNext class="btn_map"  box_align="STRETCH" flex=1 enable=%navigation.has_next_maneuver onrelease='sc_RestartSimControlsDelay() MODEL.navigation.jump_next_maneuver()'>
+	       		<SPRITE class="button map fill" />
+				<SPRITE spr_ManNext class="btn_map simulation_controls player_next icon svg" />
+			</BUTTON>			
+			<BUTTON btn_SimSpeed_i class="btn_map" box_align="STRETCH" flex=1 align="CENTER" valign="CENTER" 
+				onrelease='sc_RestartSimControlsDelay() sc_simulate_speedup(true)'
+				onlongclick='sc_RestartSimControlsDelay() MODEL.route.simulation_speed_percent = 1500'> ;;!!!!!!!!!!!!!!!!!!!!
+	       		<SPRITE class="button map fill" />
+				<TEXT class="fill simspeed" text=(L"" + (%route.simulation_speed_percent / 100) + L"x") />
+			</BUTTON>
+		</HBOX>
+	</DIV>
+</layer>
+
+<layer ui_SimulationStop z=46 visible=%navigation.is_in_simulation>
+	<DIV class="cockpit">
+		<DIV class="simclose_button">
+			<BUTTON class="simclose fill" onrelease='sc_StopSimulate_NavigatedRoute(true)' rawkey=27>
+				<SPRITE class="simclose icon svg" z=30 />
+				<SPRITE class="background  fill" />
+			</BUTTON>
+		</DIV>
+	</DIV>
+</layer>
+
+<layer ui_TripComputer z=30>
+	<DIV class="full">
+		<SPRITE class="background tripcomputer" />
+	</DIV>
+
+	<DIV class="main">
+		<SECTIONMARKER>
+		<VBOX class="tripcomputer">
+			<DIV class="tripcomputer header">
+				<SPRITE class="tripcomputer_bg svg" />
+				<HBOX class="tripcomputer">
+					<HBOX class="tripcomputer next_maneuver">
+						<SPRITE class="diricon tripcomputer" iconid=(%navigation.direction_icon) visible=(%navigation.direction_icon.valid && %navigation.distance_to_maneuver.valid && %route.list.navigated.has_navigable_path) 	
+							phasename=%lua.direction_icon_phasename />
+						<DISTTEXT class="next_maneuver_dist" distance=%navigation.distance_to_maneuver visible=(%gps.valid || %navigation.is_in_simulation) />
+					</HBOX>
+					<SPACER flex=1 />
+					<BUTTON class="btn_main tripcomputer" onrelease='sc_NextStateAnim( st_TripInfo, "fade", 1, "" )'>
+						<TEXT class="tripcomputer summary" text="Trip summary" />
+					</BUTTON>
+				</HBOX>
+			</DIV>
+			<SPACER class="tripcomputer" />
+			<HBOX class="tripcomputer">
+				<VBOX class="tripcomputericon">
+					<SPRITE class="tripcomputericon destination" flex=1 />
+					<SPACER flex=2 />
+				</VBOX>
+				<VBOX class="tripcomputerdatas">
+					<SPRITE class="listitem info" box_align="stretch" FLEX=1>
+						<HBOX class="tripcomputerdatas arrive" box_align="stretch">
+							<VBOX class="tripcomputerdatas arrive">
+								<TEXT class="font_info tripcomputer" text="Arrive" box_align="LEFT" flex=2 />
+								<TIMETEXT class="valuetext" flex=3 time=(%navigation.eta_at_destination) box_align="LEFT" visible=(%navigation.eta_at_destination.valid) />
+								<TEXT class="tripcomputer value valuetext"  flex=3 box_align="LEFT" text="0:00" visible=(!%navigation.eta_at_destination.valid) />
+							</VBOX>
+							<SPACER flex=1 />
+							<VBOX class="tripcomputerdatas arrive">
+								<TEXT class="font_info tripcomputer" text="Arrive" box_align="right" flex=2 />
+								<TIMETEXT class="valuetext" flex=3 time=(%navigation.eta_at_waypoint) box_align="right" visible=( %navigation.eta_at_destination != %navigation.eta_at_waypoint ) />
+								<SPACER flex=3 visible=( %navigation.time_to_destination == %navigation.time_to_waypoint ) />								
+							</VBOX>
+						</HBOX>
+					</SPRITE>
+					<SPRITE class="listitem info" box_align="stretch" FLEX=1>
+						<HBOX class="tripcomputerdatas timeleft">
+							<VBOX class="tripcomputerdatas timeleft">
+								<TEXT class="font_info tripcomputer" text="Time left" box_align="LEFT" flex=2 />								
+								<TIMESPANTEXT class="valuetext" flex=3 timespan=(%navigation.time_to_destination) formatmodel=7 box_align="LEFT" />
+							</VBOX>
+							<SPACER flex=2>
+							<VBOX class="tripcomputerdatas timeleft">
+								<TEXT class="font_info tripcomputer" text="Time left" box_align="right" flex=2 />
+								<TIMESPANTEXT class="valuetext" flex=3 timespan=(%navigation.time_to_waypoint) formatmodel=7 box_align="right" visible=( %navigation.time_to_destination != %navigation.time_to_waypoint ) />
+								<SPACER flex=3 visible=( %navigation.time_to_destination == %navigation.time_to_waypoint ) />
+							</VBOX>
+						</HBOX>
+					</SPRITE>
+					<SPRITE class="listitem info lastitem" box_align="stretch" FLEX=1>
+						<HBOX class="tripcomputerdatas distance">
+							<VBOX class="tripcomputerdatas distance">
+								<TEXT class="font_info tripcomputer" text="Distance" flex=2 />
+								<DISTTEXT class="valuetext" flex=3 distance=(%navigation.distance_to_destination) />
+							</VBOX>	
+							<SPACER flex=1>
+							<VBOX class="tripcomputerdatas distance">
+								<TEXT class="font_info tripcomputer" text="Distance" box_align="right" flex=2 />
+								<DISTTEXT class="valuetext" flex=3 distance=(%navigation.distance_to_waypoint) box_align="right" visible=( %navigation.time_to_destination != %navigation.time_to_waypoint ) />
+								<SPACER flex=3 visible=( %navigation.time_to_destination == %navigation.time_to_waypoint ) />
+							</VBOX>						
+						</HBOX>
+					</SPRITE>
+				</VBOX>
+				
+				<VBOX class="tripcomputericon">
+					<SPRITE class="tripcomputericon stopover" flex=1 />
+					<SPACER flex=2 />				
+				</VBOX>
+			</HBOX>
+		</VBOX>
+		
+		<DIV class="tripcomputer speed">
+			<SPRITE class="tripcomputer_speed_bg svg" />
+			<SPRITE class="tripcomputer_speed_bg cover svg" />
+			<VBOX>
+				<SPRITE class="tripcomputer speeddisplay svg">
+					<VBOX class="tripcomputer speed">
+						<SPEEDTEXT class="speed tripcomputer" speed=(%navigation.car.current_speed // 1) />
+					</VBOX>
+				</SPRITE>
+				<HBOX class="tripcomputer speed" box_align="STRETCH" flex=1>
+					<SPRITE class="tripcomputer altitudedisplay svg">
+						<VBOX class="tripcomputer altitude" box_align="STRETCH" >
+							<TEXT class="font_info tripcomputer" text="Altitude" box_align="STRETCH" />
+							<ALTITUDETEXT class="valuetext" altitude=(%navigation.current_altitude) box_align="STRETCH" />
+						</VBOX>	
+					</SPRITE>	
+					<SPRITE class="tripcomputer speedlimitdisplay svg">
+						<VBOX class="tripcomputer speedlimit" box_align="STRETCH">
+							<SPRITE class="speedlimit" box_align="CENTER" z=40 overmaplayer visible=(%warning.speedlimit_warning_visual)> ;(%warning.driveralert.speed_limit.valid)
+								<TEXT class="speedlimit" text=(lua.gUndefinedSpeedLimit == %lua.SpeedLimitValue ? lua.gUndefinedSpeedLimitSimbol : format(L"%{speed[%D]:*}",%lua.SpeedLimitValue,1)) />
+							</SPRITE>
+						</VBOX>
+					</SPRITE>
+					<SPRITE class="tripcomputer headingdisplay svg">
+						<VBOX class="tripcomputer heading" box_align="STRETCH">
+							<TEXT class="font_info tripcomputer" text="Heading" box_align="STRETCH" />
+							<SPRITE class="tripcomputer heading" />
+						</VBOX>
+					</SPRITE>
+				</HBOX>
+			</VBOX>	
+		</DIV>		
+	</DIV>
+</layer>
+
+
+<element_template et_Datafields text="" img="" model="" type="">
+	<implementation>
+		<property speed_visible value=(MODEL == "navigation.car.current_speed" ? (!%navigation.dead_reckoning && %gps.valid || %navigation.is_in_simulation) : 1) />
+	</implementation>
+	
+	<HBOX class="datafields" visible=(TYPE != "_compass")>
+		<SPRITE class="datafields" img=IMG />
+		<DISTTEXT class="valuetext" 	distance=(%{ MODEL }) 	visible=(TYPE == "_distance" && %{ MODEL }.valid) />
+		<TIMETEXT class="valuetext" 	time=(%{ MODEL }) 		visible=(TYPE == "_time" && %{ MODEL }.valid) formatmodel="regional.timeformat" />
+		<TIMETEXT class="valuetext" 	time=(%{ MODEL }) 		visible=(TYPE == "_gpstime" && %{ MODEL }.valid) formatmodel="regional.timeformat" />
+		<TIMESPANTEXT class="valuetext"	timespan=(%{ MODEL }) 	visible=(TYPE == "_timespan" && %{ MODEL }.valid ) formatmodel=7 />
+		<SPEEDTEXT class="valuetext" 	speed=(%{ MODEL }) 		visible=(TYPE == "_speed" && %{ MODEL }.valid && speed_visible) />
+		<ALTITUDETEXT class="valuetext" altitude=(%{ MODEL }) 	visible=(TYPE == "_altitude" && %{ MODEL }.valid) />
+		<TEXT class="datafields" text="n/a"  visible=(TYPE == "_speed" ? speed_visible && !(%{ MODEL }.valid) : !(%{ MODEL }.valid)) />
+	</HBOX>
+	
+	<TABLE class="cockpit_compass" visible=(TYPE == "_compass")>
+		<SPRITE class="carcompass icon svg" />
+		<TEXT class="valuetext" text=(sc_Compass(%navigation.car.heading)) />
+	</TABLE>
+	
+	<SPRITE class="compasslinear mask" visible=(TYPE == "_Vcompasslinear")>
+		<BOX class="compasslinear">
+			<SPRITE class="compass marker" />
+		</BOX>     
+		<BOX class="compasslinear">
+			<SPRITE class="compass linear" />          
+		</BOX>
+	</SPRITE>
+</element_template>
+
+<userlist lm_Datafields text="str" icon="str" onrelease="ui" enable="bool" type="str" isselected="str" visible="bool" details="str" haspopover="bool">
+	<view visibility_filter=visible />
+	<default onrelease=undef enable=1 visible=1 haspopover=1 type="" />
+	<row text="First"    details=( %ui.lm_CockpitListRoute[ vDataField1 ].text ) onrelease='sc_showAvailableDataFields( "ui.lm_CockpitListRoute" )' />
+	<row text="Second" details=( %ui.lm_CockpitListRoute[ vDataField2 ].text ) onrelease='sc_showAvailableDataFields( "ui.lm_CockpitListRoute" )' />
+	<row text="Third" details=( %ui.lm_CockpitListRoute[ vDataField3 ].text ) onrelease='sc_showAvailableDataFields( "ui.lm_CockpitListRoute" )' />
+	<row text="Without Route" details=(%ui.lm_CockpitListNoRoute[vDataField4].text) haspopover=1 onrelease='sc_showAvailableDataFields( "ui.lm_CockpitListNoRoute" )' />
+</userlist>
+
+<userlist lm_CockpitListRoute text="str" onrelease="ui" enable="bool" model="str" datatype="str" icon="str">
+	<default onrelease=sc_setDataField enable=1 icon="" /> 
+	<row text="Time of Arrival at Destination/Waypoint" model=(%lua.switch_Destination_Waypoint && %lua.btn_Destination_Waypoint_On ? "navigation.eta_at_waypoint" : "navigation.eta_at_destination" )     datatype="_time"     icon=(%lua.switch_Destination_Waypoint && %lua.btn_Destination_Waypoint_On && %route.list.navigated.waypoints.list.size > 2  ? "ico_itinerary_waypoint_arrive.svg" : "ico_itinerary_destination_arrive.svg" ) />
+	<row text="Distance to Destination/Waypoint"		model=(%lua.switch_Destination_Waypoint && %lua.btn_Destination_Waypoint_On ? "navigation.distance_to_waypoint" : "navigation.distance_to_destination" )  datatype="_distance" icon=(%lua.switch_Destination_Waypoint && %lua.btn_Destination_Waypoint_On && %route.list.navigated.waypoints.list.size > 2 ? "ico_itinerary_waypoint_distance.svg" :  "ico_itinerary_destination_distance.svg" ) />
+	<row text="Time to Destination/Waypoint"			model=(%lua.switch_Destination_Waypoint && %lua.btn_Destination_Waypoint_On ? "navigation.time_to_waypoint" : "navigation.time_to_destination" )      datatype="_timespan" icon=(%lua.switch_Destination_Waypoint && %lua.btn_Destination_Waypoint_On && %route.list.navigated.waypoints.list.size > 2 ? "ico_itinerary_waypoint_time.svg" : "ico_itinerary_destination_time.svg") />
+	<row text="Time of Arrival at Waypoint"				model="navigation.eta_at_waypoint"			datatype="_time"     icon=(%route.list.navigated.waypoints.list.size < 3 ? "ico_itinerary_destination_arrive.svg" : "ico_itinerary_waypoint_arrive.svg") />
+	<row text="Distance to Waypoint"					model="navigation.distance_to_waypoint"		datatype="_distance" icon=(%route.list.navigated.waypoints.list.size < 3 ? "ico_itinerary_destination_distance.svg" : "ico_itinerary_waypoint_distance.svg") />
+	<row text="Time to Waypoint"						model="navigation.time_to_waypoint"			datatype="_timespan" icon=(%route.list.navigated.waypoints.list.size < 3 ? "ico_itinerary_destination_time.svg" : "ico_itinerary_waypoint_time.svg") />
+	<row text="Heading"									model="gps.valid"							datatype="_compass"  icon="" />
+	<row text="Altitude"								model="navigation.current_altitude"			datatype="_altitude" icon="ico_itinerary_altitude.svg" />
+	<row text="Compass"									model="gps.valid"                   		datatype="_Vcompasslinear"  icon="" />
+</userlist>
+
+<userlist lm_CockpitListNoRoute text="str" onrelease="ui" model="str" datatype="str" icon="str">
+	<default onrelease=sc_setDataField icon="" /> 
+	<row text="Heading"  model="gps.valid"                   datatype="_compass"  icon="" />
+	<row text="Altitude" model="navigation.current_altitude" datatype="_altitude" icon="ico_itinerary_altitude.svg" />
+	<row text="Compass"  model="gps.valid"                   datatype="_Vcompasslinear"  icon="" />
+</userlist>
+
+<element_template et_POIItemList_OtherLocationHW iconname=%*.iconname text=%*.text>
+	<BUTTON left=0 right=0 top=0 bottom=0 z=26 img="" resize_bmp=1 onrelease=ONRELEASE onlongclick=ONLONGCLICK visible=( !%route.list.navigated.has_navigable_path && %lua.aHomeWork)>
+		<SPRITE class="button map fill" />
+		<SPRITE class="btn_map svg" z=27 valign="CENTER" align="LEFT" iconid=(sc_GetIconID(ICONNAME)) />
+		<TEXT class="listitem" fontsize=25  top=0 bottom=0 left=40 right=10 align="CENTER" valign="CENTER" z=28 text=TEXT />
+	</BUTTON>
+</element_template>
+
+<layer ui_ar_NightFilter z=500000 visible=( %screen.nightmode && !%lua.aCockpitNightFilterTransparency == 0)>
+	<DIV class="fill">
+		<DIV class="full">
+			<SPRITE left=0 top=0 bottom=0 right=0 resize_bmp=1 img="night_filter.bmp" z=500000 alpha=(%lua.aCockpitNightFilterTransparency) />
+		</DIV>
+	</DIV>
+</layer>
+
+;------------WANDEL™ 06.05.2020---------- 

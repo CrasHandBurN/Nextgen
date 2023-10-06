@@ -1,0 +1,32 @@
+;---------------WANDEL™ 15.03.2021--------------
+<modify ui_Menu>
+	<modify element="LAYER DIV.menu_button BUTTON.mainmenu.fill" ONRELEASE=(%lua.arQuickMenu ? 'MODEL.lua.arQuickMenu = false' : sc_OpenCloseMenu) ONLONGCLICK = sc_DoExit />
+	<insert into="LAYER DIV.menu_button BUTTON.mainmenu.fill">
+		<SPRITE CLASS="battery_menu" />
+		<TEXT CLASS="battery_cockpit_text" />
+	</insert>	
+</modify>
+
+<modify ui_SimulationStop>
+	<modify element="DIV.cockpit DIV.simclose_button BUTTON.simclose.fill" ONRELEASE=(%lua.arQuickMenu ? 'MODEL.lua.arQuickMenu = false' : 'sc_StopSimulate_NavigatedRoute(true) sc_back_to_cockpit()') ONLONGCLICK = sc_DoExit />
+	<insert into="DIV.cockpit DIV.simclose_button BUTTON.simclose.fill">
+		<SPRITE CLASS="battery_menu" />
+		<TEXT CLASS="battery_cockpit_text" />
+	</insert>	
+</modify>
+
+<modify lm_MapVisualSettingsExtended>
+	<insert>
+		<row prio=5 text="Battery, GPS, Time" icon="ico_info.svg" onrelease='sc_NextStateAnim(st_aBatteryGPSSettings, "fade", 1, "" )' />
+	</insert>	
+</modify>
+
+<userlist lm_aBatteryGPSSettings prio="int" text="str" isselected="str" onrelease="ui" enable="bool" visible="bool" type="str" >
+	<default onrelease=undef visible=1 enable=1 type="ChkOnOff" />
+		<row prio=1 text="Battery in Menu" isselected="lua.ShowBatteryInMenu" />
+		<row prio=2 text="Battery Percentage in Menu" isselected="lua.ShowBatteryPercentInMenu" visible=(%lua.ShowBatteryInMenu) />
+		<row prio=3 text="Battery in Title" isselected="lua.ShowBatteryInTitle_OnOff" onrelease=sc_arbattery />
+		<row prio=4 text="Time in Title" isselected="lua.ShowTimeInTitle_OnOff" onrelease=sc_arbattery />
+		<row prio=5 text="GPS in Title" isselected="lua.ShowGpsInTitle_OnOff" onrelease=sc_arbattery />
+</userlist>
+

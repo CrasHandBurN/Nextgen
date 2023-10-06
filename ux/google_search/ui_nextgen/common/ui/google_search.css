@@ -1,0 +1,3 @@
+BUTTON.button_input{
+	onlongclick:(exists(States.CurrentState.DefaultValue) ? 'States.CurrentState.InputControl.value = States.CurrentState.DefaultValue' : (LuaJava.LuaJavaActive ? (exists(States.CurrentState.google_search_isActive) && %ui.lm_address_fields.size ? 'sc_SetPopoverListAndOpen("ui.lm_address_fields")' : VW_Paste) : undef)); 
+}

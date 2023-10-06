@@ -1,0 +1,112 @@
+;----------------------------------WANDEL™ --------------------------------------
+<data speedcam_soundtype_SET>
+	<property speedcam_soundtype value="no voice", "if overspeed", "on approach"  />
+</data>
+
+<modify ui_Cockpit> 
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON button_speedcam_alert 
+			ONRELEASE=W_Speedcams_AudioOnOff
+			;ONLONGCLICK=W_SpeedCamParams
+			ONLONGCLICK=sc_AlertPointSettings
+			VISIBLE=(%lua.Speedcam_alertBtn && %warning.speedcam_warning && %warning.speedcam_enabled)
+			ICON="ico_speedcam_triangle.svg" 
+			PHASENAME=("phase" + %warning.speedcam_soundtype)
+			ZOOM=90%
+			T_TEXT=(VW_Return_button_text(translate(speedcam_soundtype_SET.speedcam_soundtype[%warning.speedcam_soundtype]), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate(speedcam_soundtype_SET.speedcam_soundtype[%warning.speedcam_soundtype]), L"%s", 99))
+			/>
+	</insert>
+</modify>
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row	text="'Speedcam alert' Button" bmp=(button_speedcam_alert.ICON) isselected="lua.Speedcam_alertBtn" visible=(%warning.speedcam_warning && %warning.speedcam_enabled) />
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row  visible=(%lua.Speedcam_alertBtn && %warning.speedcam_warning && %warning.speedcam_enabled) />
+	</insert>
+</modify>
+
+<modify ui_SideList>
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON 
+			ONRELEASE='ui.button_speedcam_alert.ONRELEASE()()' 
+			ONLONGCLICK='ui.button_speedcam_alert.ONLONGCLICK()()'  
+			VISIBLE=(%lua.Speedcam_alertQuickBtn && %warning.speedcam_warning && %warning.speedcam_enabled) 
+			ICON=(button_speedcam_alert.ICON)
+			PHASENAME=(button_speedcam_alert.PHASENAME)
+			ZOOM=90%
+			T_TEXT=(button_speedcam_alert.T_TEXT)
+			B_TEXT=(button_speedcam_alert.B_TEXT)
+			/>	
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'Speedcam alert' Button" bmp=(button_speedcam_alert.ICON) isselected="lua.Speedcam_alertQuickBtn" visible=(%warning.speedcam_warning && %warning.speedcam_enabled) />
+	</insert>
+</modify>
+
+
+<modify lm_QuickSideList>
+	<insert>
+		<row	visible=(%lua.Speedcam_alertQuickBtn && %warning.speedcam_warning && %warning.speedcam_enabled) />
+	</insert>
+</modify>
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=(button_speedcam_alert.ICON) phasename=(button_speedcam_alert.PHASENAME) text=(translate("Speedcam alert")) onrelease='ui.button_speedcam_alert.ONRELEASE()()' enable=(%warning.speedcam_warning && %warning.speedcam_enabled) />
+		</insert>
+	</modify>
+<!end/>	
+
+;params
+<userlist lm_SetSpeedCamParams_Popover text="wstr" onrelease="ui" ctext="str" enable="bool">
+	<default enable=1 onrelease='
+		local settings = MODEL.warning()
+		settings[MODEL["*"].ctext()] = not MODEL.warning[MODEL["*"].ctext()]()' /> ;sc_ClosePopover()
+
+	<row ctext="speedcam_enabled" text=("speedcam_enabled\n" + %warning.speedcam_enabled) />  ;(0)
+	<row ctext="speedcam_visualtype" text=("speedcam_visualtype\n" + %warning.speedcam_visualtype)/>  ;(1)
+	<row ctext="speedcam_soundtype" text=(L"speedcam_soundtype\n" + translate(speedcam_soundtype_SET.speedcam_soundtype[%warning.speedcam_soundtype])) onrelease='ui.button_speedcam_alert.ONRELEASE()()' />
+	<row ctext="speedcam_warning" text=("speedcam_warning\n" + %warning.speedcam_warning)/>  ;(0)
+	
+	;;<row ctext="speedcam_max_angle" text=("speedcam_max_angle\n" + %warning.speedcam_max_angle) />  ;(20) degrees?
+	;;<row ctext="speedcam_snap_distance" text=("speedcam_snap_distance\n" + %warning.speedcam_snap_distance) />  ;(25) snap what?
+	<row ctext="speedcam_max_lookahead" text=("speedcam_max_lookahead\n" + %warning.speedcam_max_lookahead) onrelease=undef />  ;(1000) check for cams 500 mtr ahead
+	;;<row ctext="speedcam_maxdistance_from_road" text=("speedcam_maxdistance_from_road\n" + %warning.speedcam_maxdistance_from_road) />  ;(50) ignore speedcams more than 20 meters from the road	
+
+	;<row ctext="speedlimit_warning" text=("speedlimit_warning\n" + %warning.speedlimit_warning)/>  ;(1)
+	;<row ctext="speedlimit_warning_voice" text=("speedlimit_warning_voice\n" + %warning.speedlimit_warning_voice)/>  ;(1)
+	;<row ctext="speedlimit_warning_visual" text=("speedlimit_warning_visual\n" + %warning.speedlimit_warning_visual) />  ;(1)
+
+	;<row ctext="speedwarn_alt_builtup_based" text=("speedwarn_alt_builtup_based\n" + %warning.speedwarn_alt_builtup_based) />  ;(0)
+	;<row ctext="speedwarn_alt_limit" text=("speedwarn_alt_limit\n" + %warning.speedwarn_alt_limit) />  ;(0)
+	;<row ctext="speedwarn_alt_tolerance" text=("speedwarn_alt_tolerance\n" + %warning.speedwarn_alt_tolerance) onrelease=undef/>  ;(100)
+	;<row ctext="speedwarn_alt_toltype" text=("speedwarn_alt_toltype\n" + %warning.speedwarn_alt_toltype) />  ;(0) alternative tolerance type
+
+	;<row ctext="speedwarn_tolerance" text=("speedwarn_tolerance\n" + %warning.speedwarn_tolerance) onrelease=undef />  ;(100)
+	;<row ctext="speedwarn_toltype" text=("speedwarn_toltype\n" + %warning.speedwarn_toltype) />  ;(0) absolute or percentage
+
+	;<row ctext="lowspeed_warning" text=("lowspeed_warning\n" + %warning.lowspeed_warning) />  ;(1)
+	;<row ctext="lowspeed_toltype" text=("lowspeed_toltype\n" + %warning.lowspeed_toltype) />  ;(0) percentage
+	;<row ctext="lowspeed_tolerance" text=("lowspeed_tolerance\n" + %warning.lowspeed_tolerance) onrelease=undef />  ;(20)
+
+	;<row ctext="pedestrian_warning" text=("pedestrian_warning\n" + %warning.pedestrian_warning) />  ;(1)
+	;<row ctext="pedestrian_warning_threshold" text=("pedestrian_warning_threshold\n" + %warning.pedestrian_warning_threshold) onrelease=undef />  ;(40)
+
+	;<row ctext="speedwarn_voice_rewarn_toltype" text=("speedwarn_voice_rewarn_toltype\n" + %warning.speedwarn_voice_rewarn_toltype) />  ;(0)
+	;<row ctext="speedwarn_voice_rewarn_tolerance" text=("speedwarn_voice_rewarn_tolerance\n" + %warning.speedwarn_voice_rewarn_tolerance) onrelease=undef />  ;(-1)
+
+	;;<row ctext="approach_beep_distances" text=("approach_beep_distances\n" + %warning.approach_beep_distances) />  ;("8,16,24")
+	;;<row ctext="warn_distances=" text=("warn_distances\n" + %warning.warn_distances) />  ;("110:1000,80:800,60:500,40:300") speed:distance
+
+	;;<row ctext="approach_beep_sound" text=("approach_beep_sound\n" + %warning.approach_beep_sound) />  ;(!sectionbeepB) speedcam approach sound
+	;;<row ctext="overspeed_sound" text=("overspeed_sound\n" + %warning.overspeed_sound) />  ;(!alert5) speedcam sound
+</userlist>

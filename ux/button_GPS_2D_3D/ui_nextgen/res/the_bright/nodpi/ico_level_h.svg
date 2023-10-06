@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2" baseProfile="tiny" viewBox="0 0 16 60" xml:space="preserve" width="16" height="60">
+ <g>
+  <title>Layer 1</title>
+  <g id="svg_1">
+   <g id="svg_2">
+    <path fill="#000000" d="m8,44.5c-3.9,0 -7,3.1 -7,7c0,3.9 3.1,7 7,7s7,-3.1 7,-7c0,-3.9 -3.1,-7 -7,-7zm0,11.4c-2.4,0 -4.4,-2 -4.4,-4.4s2,-4.4 4.4,-4.4s4.4,2 4.4,4.4s-2,4.4 -4.4,4.4z" id="svg_3"/>
+   </g>
+   <g id="svg_4">
+    <path fill="#000000" d="m8,23c-3.9,0 -7,3.1 -7,7c0,3.9 3.1,7 7,7s7,-3.1 7,-7c0,-3.9 -3.1,-7 -7,-7zm0,11.4c-2.4,0 -4.4,-2 -4.4,-4.4s2,-4.4 4.4,-4.4s4.4,2 4.4,4.4s-2,4.4 -4.4,4.4z" id="svg_5"/>
+   </g>
+   <g id="svg_6">
+    <g id="CIRCLE_3_">
+     <path fill="#000000" d="m1,8.5c0,-3.9 3.1,-7 7,-7s7,3.1 7,7s-3.1,7 -7,7s-7,-3.1 -7,-7l0,0z" id="svg_7"/>
+    </g>
+    <g id="CIRCLE_2_">
+     <linearGradient id="SVGID_1_" x1="0.5" y1="-0.05398" x2="0.5" y2="1.05398">
+      <stop offset="0" stop-color="#FCB26C"/>
+      <stop offset="1" stop-color="#FE7C14"/>
+     </linearGradient>
+     <path fill="#FF923A" stroke="url(#SVGID_1_)" stroke-miterlimit="10" d="m3.6,8.5c0,-2.4 2,-4.4 4.4,-4.4s4.4,2 4.4,4.4s-2,4.4 -4.4,4.4s-4.4,-2 -4.4,-4.4l0,0z" id="svg_8"/>
+    </g>
+   </g>
+  </g>
+ </g>
+</svg>

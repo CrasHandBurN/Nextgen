@@ -1,0 +1,18 @@
+<modify lm_Settings>
+	<insert>
+		<row SaveSettings prio=-1 text="Save or Restore Settings" icon="ico_saverestore.svg" onrelease='sc_NextStateAnim(st_save_restore_settings, "fade", 1, "")' dtooltip="'LuaJava' should be loaded" enable=(LuaJava.LuaJavaActive) />
+	</insert>
+</modify>
+
+<modify lm_Settings_localmenu dtooltip="str" >
+	<insert>
+		<row text="Save or Restore Settings" onrelease='sc_NextStateAnim(st_save_restore_settings, "fade", 1, "")' dtooltip="'LuaJava' should be loaded" enable=(LuaJava.LuaJavaActive) />
+	</insert>
+</modify>
+
+<userlist lm_save_restore_settings text="str" onrelease="ui" type="str" dtooltip="str" details="ui" haspopover="bool" enable="bool" visible="bool">
+	<default enable=1 visible=1 type="" dtooltip="" details="" haspopover=1 />
+	<row text="Save" onrelease=VW_SaveSettings />
+	<row text="Restore" onrelease=VW_RestoreSettings details=(%lua.date_of_file_birth) />
+	;<row text="Clean" onrelease='VW_CleanSettings details=("system.ini will be cleand") />
+</userlist>

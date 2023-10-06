@@ -1,0 +1,126 @@
+;-----------------------------------WANDEL™---14.04.2023--------------------------
+<observer obs_Overtake_message value=(%lua.Take_a_breakOnOff && %lua.overtake_color ) onselect='VW_Overtake_message(MODEL.lua.Driving_Period(), MODEL.lua.Rest_Period())' ondeselect=VW_Take_message /> ;START="NO_TRIGGER"
+<modify ui_Cockpit>
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON CLASS="btn_map" ONRELEASE=VW_Take_a_Break ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_TB_longclick_Popover")' VISIBLE=(%lua.Take_a_breakOnOff && %lua.Take_a_breakBtnCockpit && %navigation.has_route)>
+			<SPRITE CLASS="button map fill" />
+			<SPRITE CLASS="btn_map svg" TOP=10%  BOTTOM=20% IMG=(%lua.overtake_color && !%navigation.car.current_speed ? "ico_coffe_break.svg" : "ico_maintenance.svg") /> 
+			<TEXT CLASS="BTN_right_top_text" TEXT=(Format_Timespan(%lua.Rest_Period, lua.ETimespanFormat.HrMinRounded)) VISIBLE=(%lua.overtake_color) />
+			<TEXT CLASS="BTN_left_top_text" TEXT=(Format_Timespan(%lua.Remaining_Resting_Time, lua.ETimespanFormat.HrMinRounded)) VISIBLE=(%lua.overtake_color) />
+			<TEXT CLASS="BTN_bottom_text" TEXT=(!%lua.overtake_color || %navigation.car.current_speed ? VW_TimeGuard(%gps.blink) : VW_DUMMY_VW_TimeGuard(%gps.blink)) /> 
+			<GRAPH CLASS="graph_btn" FULL=(%lua.Driving_Period) CURRENT=(%lua.Driving_Time_in_period_term) INVERT=1 VISIBLE=(!%lua.overtake_color || %navigation.car.current_speed) />
+			<GRAPH CLASS="graph_btn" FULL=(%lua.Rest_Period) CURRENT=(%lua.Remaining_Resting_Time) INVERT=0 VISIBLE=(%lua.overtake_color && !%navigation.car.current_speed) />
+		</BUTTON>
+	</insert>
+</modify>
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'Take a break' Button" bmp="ico_maintenance.svg" isselected="lua.Take_a_breakBtnCockpit" />
+	</insert>
+</modify>
+<modify lm_CockpitSideList>
+	<insert>
+		<row  visible=(%lua.Take_a_breakOnOff && %lua.Take_a_breakBtnCockpit && %navigation.has_route) />
+	</insert>
+</modify>
+;-------------------------------------In Quick Menu-------------------------------------------
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON CLASS="btn_map" ONRELEASE=VW_Take_a_Break ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_TB_longclick_Popover")' VISIBLE=(%lua.Take_a_breakOnOff && %lua.Take_a_breakBtnCockpitQuick && %navigation.has_route)>
+			<SPRITE CLASS="button map fill" />
+			<SPRITE CLASS="btn_map svg" IMG="ico_maintenance.svg" TOP=10%  BOTTOM=20% /> 
+			<TEXT CLASS="BTN_right_top_text" TEXT=(Format_Timespan(%lua.Rest_Period, lua.ETimespanFormat.HrMinRounded)) VISIBLE=(%lua.overtake_color) />
+			<TEXT CLASS="BTN_left_top_text" TEXT=(Format_Timespan(%lua.Remaining_Resting_Time, lua.ETimespanFormat.HrMinRounded)) VISIBLE=(%lua.overtake_color) />
+			<TEXT CLASS="BTN_bottom_text" TEXT=(VW_TimeGuard(%gps.blink)) VISIBLE=(!%lua.overtake_color || %navigation.car.current_speed) />
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row  visible=(%lua.Take_a_breakOnOff && %lua.Take_a_breakBtnCockpitQuick && %navigation.has_route) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'Take a break' Button" bmp="ico_maintenance.svg" isselected="lua.Take_a_breakBtnCockpitQuick" />
+	</insert>
+</modify>
+
+<userlist lm_TB_longclick_Popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+	<row text="Settings" onrelease='sc_NextStateAnim(st_Take_a_breakSettings, "fade", 1, "" ); sc_ClosePopover()' />
+	<row text="Reset" onrelease='MODEL.other.trips[0].reset(); sc_ClosePopover()' />
+	<row text="Help" onrelease='VW_Show_xhtmlQuest("i18n/Help/take_a_break/take_a_break_Help.xhtml", "take_a_break")' />  ;enable=(%regional.current_language.lcid == 1058) /> ; ua language
+</userlist>
+;-------------------------------------------------------------------------------------------
+<layer ui_Take_a_break z=50 visible=( ui_PropLayer.SidePanelVisible )>
+	<implementation>
+		<property splitpoi_icon_id VALUE=( %ui.lm_splitpoi.list[0].icon_id // -1 ) /> 
+		<property disttext value=(builtin.format("%{distance:3}", %lua.Take_a_break_distance) + L" | ") /> 
+		<property timetext value=(builtin.format("%{timespan:0}", %lua.Take_a_break_remaining_time_to_POI)) />	
+	</implementation>
+	<DIV class=cockpit>
+		<DIV class=map_messagebox >
+			<SPRITE right=85% left=2% bottom=90% top=1% align="left" valign="top" img="ico_maintenance.svg" zoom=75% />	
+			
+			<TEXT class="font_main bd color_inf_main" left=5% right=5% top=0 h=20% valign="CENTER" align="CENTER" wordwrap=2 padding=0 twolinesmall=0 text=(disttext + timetext) /> 
+			
+			<SPRITE class="map_messagebox listitem flag" iconid=(%ui.lm_splitpoi.list[0].icon_id) iconindex=2 zoom=1100 /> 
+			<SPRITE left=25% right=25% top=25% bottom=25% align="CENTER" valign="CENTER" iconid=(splitpoi_icon_id) iconindex=2  
+				zoom="ZOOMVISIBLE" visible=(%gps.blink && VW_isPoiBranded(splitpoi_icon_id, 2)) />
+			<SPRITE left=25% right=25% top=25% bottom=25% align="CENTER" valign="CENTER" iconid=(splitpoi_icon_id) iconindex=2  
+				zoom=100% visible=(%gps.blink && !VW_isPoiBranded(splitpoi_icon_id, 2)) />
+				
+			<DIV class="dialog_buttons">
+				<DIALOGBUTTON class="dialog 2_1_1 mapmsgbox" onrelease='VW_StopoverOrNewRoute() hook_SelectPoiItem:trigger() hook_StartRoutePlanning()' text="Add Waypoint"> 
+					<SPRITE class="button map fill" />
+				</DIALOGBUTTON>
+				<DIALOGBUTTON class="dialog 2_1_2 mapmsgbox" onrelease=sc_HideDiscoverySidePopup text="Close"> 
+					<SPRITE class="button map fill" />
+				</DIALOGBUTTON>
+			</DIV>
+
+		</DIV>
+	</DIV>
+</layer>
+;--------------------------settings---------------------------
+<userlist lm_Take_a_breakSettingsList text="str" type="str" haspopover="bool" isselected="str" visible="bool" enable="bool" onrelease="ui" details="ui" dtooltip="str">
+  <view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 />
+		<row	text="General 'Take a break' switch" type="ChkOnOff" isselected="lua.Take_a_breakOnOff" />
+		<row	text="'Take a break' Button in Cockpit" type="ChkOnOff" isselected="lua.Take_a_breakBtnCockpit" />
+		<row	text="'Take a break' Button in QuickMenu" type="ChkOnOff" isselected="lua.Take_a_breakBtnCockpitQuick" />
+		<row    text="Driving period" details=(sc_ShowTimeTool(%lua.Driving_Period_seconds)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_driving_period" )' />
+		<row  	text="Wake up alarm" 
+			details=(%lua.OwnTake_a_break == L"" ? %lua.AudioTake_a_break : %lua.OwnTake_a_break) 
+			onrelease={%lua.SelectedAudioFile = %lua.AudioTake_a_break; %lua.SelectedOwnWarning = %lua.OwnTake_a_break; sc_ScanAudioFiles()} haspopover=1 />
+		<row    text="Safe time until next maneuver" details=(sc_ShowTimeTool(%lua.Take_a_breakSafeTime * 60)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_Take_a_breakSafeTime" )' />
+</userlist>
+
+<userlist lm_driving_period name="str" text="wstr" enable="bool" type="str" min="ui" max="ui" step="ui" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowTimeTool(60*6)) max_text=(sc_ShowTimeTool(60*60*9/2)) />
+	   <row name="Driving period" text=(sc_ShowTimeTool(%lua.Driving_Period_seconds)) type="Scroll" min=(60*6) max=(60*60*9/2) step=(60*6) valuemodel="lua.Driving_Period_seconds" />
+</userlist>
+
+<userlist lm_Take_a_breakSafeTime name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowTimeTool(60)) max_text=(sc_ShowTimeTool(10*60)) />
+	   <row name="Safe time until next maneuver" text=(sc_ShowTimeTool(%lua.Take_a_breakSafeTime * 60)) type="Scroll" min=1 max=10 step=1 valuemodel="lua.Take_a_breakSafeTime" />
+</userlist>
+
+<!if condition=(Plugin.isLoaded("labs"))>
+	<modify lm_ExtraSettingsList>
+		<insert>
+			<row text="'Take a break' settings" icon="ico_maintenance.svg" haspopover=1 onrelease='sc_NextStateAnim(st_Take_a_breakSettings, "fade", 1, "" )' />
+		</insert>
+	</modify>
+<!end>
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp="ico_maintenance.svg" text=(translate("maintenance")) onrelease=VW_Take_a_Break />
+		</insert>
+	</modify>
+<!end/>	

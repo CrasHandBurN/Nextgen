@@ -1,0 +1,187 @@
+;----------------------WANDEL™-- 02.05.2020 ----------------
+<userlist lm_SavedLocation text="str" onrelease="ui" enable="bool" visible="bool">
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 />
+		<row text="Edit" onrelease=sc_EditSavedLocation visible=(!%lua.TravelPlannerFromFav && !%lua.FavEditMode)>
+		<row text="Delete All" onrelease=sc_DeleteAllFavMSGbox visible=(%lua.FavEditMode) />
+		;<row text="Sort" onrelease='MODEL.poi.favorite:sort("group_id")' visible=(!%lua.TravelPlannerFromFav && !%lua.FavEditMode)>
+</userlist>
+
+<userlist lm_SavedLocationFootermenu text="str" onrelease="ui" visible="bool" isactionbutton="bool">
+	<view visibility_filter=visible />
+	<row text="Add Location" onrelease=sc_OpenNewFavorite visible=( !%lua.FavEditMode && !%lua.gFavoriteSearch_root ) />
+	<row text="Done" isactionbutton=1 onrelease='sc_EditModeDone( MODEL.lua.FavEditMode )' visible=( %lua.FavEditMode ) />
+	<row text="Show All" isactionbutton=1 onrelease='
+			MODEL.lua.gFavoriteSearch_root = 0
+			hook_FavoriteSearchSetupReady:trigger()
+			sc_SearchFavorites(L"")
+		' 
+		visible=( !%lua.FavEditMode && %lua.gFavoriteSearch_root && %poi.favorite.ready && !%poi.favorite.list.size ) />
+</userlist>
+
+<userlist lm_PopoverEditSavedLocation text="ui" onrelease="ui" enable="bool">
+	<default enable=1 />
+	<row text="Rename" onrelease=sc_OpenRenameFavorites />
+	<row text="Delete" onrelease=sc_DeleteSelectedFavoriteFromList />
+</userlist>
+
+<userlist lm_PopoverEditOtherLocation text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+	<row text="Change Location" onrelease=sc_ChangeOtherLocationAddress />
+</userlist>
+
+<userlist lm_OtherLocation text="str" iconname="str" position="gcoor">; id="int"
+	<default  FILENAME="locations.txt" />
+	<row text="Home" iconname="poi_home" />
+	<row text="Work" iconname="poi_work"  />
+	<row text="Other" iconname="poi_other" />
+</userlist>
+
+<userlist lm_SaveLocation text="str" onrelease="ui" enable="bool">
+	<default text="" onrelease=undef enable=1>
+		<row save_location text="Save Location" onrelease=sc_OpenKeyboardForSaveFavorite enable=(!( %my.map.selected_item.type == 1 && %my.poi.current.provider_id == lua.gUserPOI_Provider)) />
+</userlist>
+
+<modify lm_LocalMenuCockpit>
+	<insert before=show_car_position>
+		<row save_location text=( %my.map.selected_item.type == 1 && %my.poi.current.provider_id == lua.gUserPOI_Provider ? m_i18n( "Remove Saved Location" ) : m_i18n( "Save Location" ) ) onrelease=sc_AddOrDeletFavorite />
+	</insert>
+</modify>
+
+<modify lm_PointOnMap >
+	<insert after=Detail_Information>
+		<row text=( %my.map.selected_item.type == 1 && %my.poi.current.provider_id == lua.gUserPOI_Provider ? m_i18n( "Remove Saved Location" ) : m_i18n( "Save Location" ) ) onrelease=sc_AddOrDeletFavorite visible=( observe( vActiveState );  %lua.RoutePlanType != lua.ERoutePlanType.TravelPlanner && !st_SavedLocation.saveNew ) />
+	</insert>
+</modify>
+
+<modify lm_FindMenu>
+	<insert after=Places>
+		<row SavedLocation text=(%poi.initialized ? m_i18n( "Saved Location" ) : m_i18n( "Loading Location..." )) icon="ico_savedlocations_star.svg" onrelease=sc_SavedLocation enable=( %poi.initialized && !st_SavedLocation.saveNew ) visible=( %lua.RoutePlanType != 3 ) /> 
+	</insert>
+</modify>
+
+<modify lm_QuickMenu>
+	<insert before=Mute>
+		<row icon="ico_savedlocations_star.svg" onrelease=sc_ShowSavedLocationQuick />
+	</insert>
+</modify>
+
+<modify lm_PopoverTravelPlanner>
+	<insert after=delete >
+		<row save_location text="Save Location" onrelease=sc_SelectWaypointAndSaveFavorite enable=(!( %route.list.navigated.waypoints.list[%route.list.navigated.waypoints.list.index].hist_item_type == 1 && %route.list.navigated.waypoints.list[%route.list.navigated.waypoints.list.index].history.poi.provider_id == lua.gUserPOI_Provider)) />
+	</insert>
+</modify>
+
+<modify lm_LocalMenu_WhereAmI>
+	<insert first_child>
+		<row save_location text="Save Location" onrelease='MODEL.my.map.select_address(MODEL.navigation.car.position()) sc_OpenKeyboardForSaveFavorite()' />
+	</insert>
+</modify>
+
+<modify lm_DestinationMenu>
+	<insert after=nearby>
+		<row save_location text="Save Location" icon="ico_savelocation.svg" onrelease='MODEL.my.map.select_address(MODEL.navigation.car.position()) sc_OpenKeyboardForSaveFavorite()' />
+	</insert>
+</modify>
+
+<modify lm_History>
+	<modify edit visible=( !%lua.EditMode &&  !%lua.FavEditMode) />
+</modify>
+
+<modify et_POIItemList>
+	<modify element="BUTTON.listitem" ONLONGCLICK=(ONLONGCLICK // undef) ONCLICK=(ONCLICK // undef) />
+</modify>
+
+<modify ui_Cockpit_DragMode>
+	<insert into="#DragModeRight_buttons">
+		<BUTTON CLASS="btn_map inbox" ONRELEASE=sc_OpenKeyboardForSaveFavorite VISIBLE=(!(%my.map.selected_item.type == 1 && %my.poi.current.provider_id == lua.gUserPOI_Provider))> 	
+	       	<SPRITE CLASS="button map fill" />		
+			<SPRITE CLASS="btn_map svg" IMG="ico_addpoi.svg" />
+		</BUTTON>
+		<BUTTON CLASS="btn_map inbox" ONRELEASE=sc_DeleteSelectedFavoriteFromMap VISIBLE=(%my.map.selected_item.type==1 && %my.poi.current.provider_id==lua.gUserPOI_Provider && %map.primary.cursor_icon=="cursor_poi")> 
+			<SPRITE CLASS="button map fill" />			
+			<SPRITE CLASS="btn_map svg" IMG="ico_delpoi.svg" />
+		</BUTTON>
+		<BUTTON CLASS="btn_map inbox" ONRELEASE='sc_NextStateAnim(st_OpenRenameFavorites, "fade", 1, ""); States.CurrentState.InputControl.value = MODEL.my.poi.current.name()' VISIBLE=(%my.map.selected_item.type==1 && %my.poi.current.provider_id==lua.gUserPOI_Provider && %map.primary.cursor_icon=="cursor_poi")> 
+			<SPRITE CLASS="button map fill" />			
+			<SPRITE CLASS="btn_map svg" IMG="ico_editpoi.svg" />
+		</BUTTON>
+	</insert>
+</modify> 
+
+
+<element_template et_POIItemList_OtherLocation iconname="" text=%*.text haspopover=false>
+	<BUTTON class="listitem" onrelease=ONRELEASE onlongclick=(ONLONGCLICK // undef) >
+		<HBOX class="listitem">
+			<HBOX class="listitem poi_container">
+				<SPRITE class="listitem icon_list svg poi other" iconid=(sc_GetIconID(ICONNAME)) />
+			</HBOX>
+			<TEXT class="listitem icon top" text=TEXT />
+			<SPACER flex=1>
+			<SPRITE class="listitem icon popover" visible=HASPOPOVER />
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_SavedLocation z=32 > ;onshow='VW_Debugger(MODEL["*"].name(), MODEL["*"].provider_id(), MODEL["*"].path())'>
+	<DIV class="list">
+		<SECTIONMARKER/>
+		
+		<LIST2 lst_SavedLocation class="list_control" SMOOTHSCROLLING>
+			<HEADER class="inputcontrol" visible=(!%lua.FavEditMode)>
+				<USE_LAYER class=fill layer=(States.CurrentState.InputControlLayer) LAYER_Z=32 />
+			</HEADER>
+			<LISTMODEL listmodel="ui.lm_OtherLocation" element_template="et_POIItemList_OtherLocation" iconname=%*.iconname onrelease=sc_OtherLocationSelect onlongclick='sc_EditSavedLocation(); sc_OtherLocationSelect()' haspopover=(%lua.FavEditMode) visible=(!%poi.favorite.name_filter) />
+			<LISTMODEL listmodel="poi.favorite.list" element_template="et_POIItemList" onlongclick='sc_EditSavedLocation(); sc_SelectSavedLocationItem()' > ;sc_GetPoiPath(MODEL.my.poi.current.group_id()) onclick='VW_Debugger(MODEL["*"].name(), MODEL["*"].provider_id(), MODEL["*"].group_id())'
+				<SEPARATOR insert_at=0 element_template=et_Separator TEXT=(%lua.gFavoriteSearch_root ? sc_GetPoiPath(%lua.gFavoriteSearch_root) : "All roots") />
+				;<SEPARATOR insert_at=( sc_insertListSeparators() ) element_template=et_Separator TEXT=( sc_getListSeparatorText() ) visible=( sc_setListSeparatorVisibility() )>
+			</LISTMODEL>	
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+		
+		<EMPTYLISTTEXT top=20% text=(translate("<Empty>") + sc_GetPoiPath(%lua.gFavoriteSearch_root)) visible=( %poi.favorite.ready && !%poi.favorite.list.size ) />
+		
+		<layer>
+			<DIV class="list">
+				<SPRITE class="panel list input" />
+			</DIV>
+		</layer>
+	</DIV>
+</layer>
+
+<userlist lm_SaveFavoriteNamemodifier text="str" type="str" haspopover="bool" isselected="str" visible="bool" enable="bool" onrelease="ui" details="ui" dtooltip="str">
+	<view visibility_filter=visible />
+	<default type="" onrelease='st_OpenKeyboardForSaveFavorite.InputControl.value = MODEL["*"].details() .. L" " .. st_OpenKeyboardForSaveFavorite.InputControl.value' visible=1 enable=1 />
+		<row    text="Insert Address" details=(%my.map.selected_item.address.short_format) haspopover=1 />
+		<row    text="Insert City" details=(%my.map.selected_item.address.city) haspopover=1 />
+		<row    text="Insert Country" details=(translate(%my.map.selected_item.address.country)) haspopover=1 />
+		<row  	text="Insert today date" details=(builtin.format("%{date:*}", %gps.current_date, 0)) haspopover=1 />
+</userlist>
+
+<element_template et_OpenKeyboardForSaveFavorite>
+	<BUTTON class="button_savedhome" onrelease='sc_SaveHomeWorkLocation(0)' visible=1>
+		<SPRITE class="listitem svg" img=(sc_GetIcon("poi_home")) z=1001 />
+	</BUTTON>
+	<BUTTON class="button_savedwork" onrelease='sc_SaveHomeWorkLocation(1)' visible=1>
+		<SPRITE class="listitem svg" img=(sc_GetIcon("poi_work")) z=1001 />		
+	</BUTTON>
+	<BUTTON class="button_savedother" onrelease='sc_SaveHomeWorkLocation(2)' visible=1>
+		<SPRITE class="listitem svg" img=(sc_GetIcon("poi_other")) z=1001 />
+	</BUTTON>
+</element_template>
+
+<layer ui_OpenKeyboardForSaveFavorite z=1000 >
+	<DIV class=list>
+		<LIST2 class="list_control" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_OpenKeyboardForSaveFavorite" />
+			<LISTMODEL listmodel="ui.lm_SaveFavoriteNamemodifier" element_template="et_List" TEMPLATE_TYPE_MODEL="*.type">
+				<SEPARATOR INSERT_AT=0 ELEMENT_TEMPLATE=et_Separator TEXT="Insert" />
+			</LISTMODEL>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>

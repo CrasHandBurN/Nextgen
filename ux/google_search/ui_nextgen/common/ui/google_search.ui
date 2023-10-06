@@ -1,0 +1,9 @@
+<modify lm_FindMenu>
+	<insert before=History>
+		<row text="Google Online Search" icon="ico_GoogleMaps.svg" onrelease=VW_GoogleOnlineSearch visible=(LuaJava.LuaJavaActive) /> ;ico_onlinesearch.svg
+	</insert>
+</modify>
+
+<userlist lm_address_fields text="wstr" onrelease="ui" enable="bool">
+	<default enable=1 onrelease='States.CurrentState.InputControl.value = MODEL["*"].text(); sc_ClosePopover()' />
+</userlist>

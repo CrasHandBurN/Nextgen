@@ -1,0 +1,99 @@
+/*------------- arimi mod ----  02.10.2016 ------------*/
+
+#ui_WeatherForecast #lst_forecast{
+	col:1;
+	row:7;
+	/*cellh:undef;
+	cellh:(screen_h/8);*/
+}
+
+BUTTON.listitem.weather{
+	padding: 0;
+}
+
+BOX.listitem.weather{
+	orientation:"HORIZONTAL";
+	align:"LEFT";
+	box_align:"CENTER";	
+	paddingleft: text_padding_small;
+	paddingright: text_padding_small;
+	CAN_SHRINK:0;
+}
+
+BOX.forecast{
+	FLEX:2;
+}
+
+BOX.listitem.weather.forecast{
+	align:"RIGHT";
+}
+
+BOX.listitem.weather.forecast>SPACER{
+	flex:0 !important;
+}
+
+BOX.listitem.weather > BOX.listitem.weather{
+	paddingleft: 0;
+	paddingright: 0;
+}
+
+BOX.listitem.weather > BOX.listitem.weather TEXT{
+	box_align:"CENTER";
+}
+
+TEMPERATURETEXT.listitem.weather{
+	box_align:"CENTER";
+}
+
+BOX.listitem.details{
+	orientation:"VERTICAL";
+}
+
+HBOX.details{
+	box_align:"STRETCH";
+	FLEX: 6;
+	paddingleft: 0;
+	paddingright: 0;
+}
+
+VBOX.details{
+	box_align:"STRETCH";
+	FLEX: 3;
+}
+
+TEXT.details{
+	FLEX: 3;
+	BOX_ALIGN: "STRETCH";
+	ALIGN: "CENTER";
+	LINE_BREAK_METHOD: "HARD";
+	leading:0.85;
+}
+
+DIV.weather {	
+	right: 0;
+	y: ( (%lua.DragMode ? 0 : header_h) + (st_ShowParkingAroundHereOnMap.isActive ? (mapheader_h *3/2) : mapheader_h) + ( ui_QuickBar.isVisible ? quickbar_h : 0 ));	
+}
+
+BUTTON.background.weather>BOX{
+	orientation:"HORIZONTAL";
+}
+
+BUTTON.background.weather>BOX>TEMPERATURETEXT{
+	box_align:"stretch";
+}
+
+SPRITE.separator_listitem.connected_error{
+	right:(ui_MapHeader.weather_visible && (st_PointOnMap.isActive || st_ShowParkingAroundHereOnMap.isActive) ? weather_w : 0);
+}
+
+BUTTON.listitem BOX listitem.details HBOX.details HBOX.listitem.weather.details SPRITE.listitem.weather {
+	flex: 1;
+}
+
+
+
+TEMPERATURETEXT.details_weather {
+	fontsize: 50 ;
+}
+
+/*------------- arimi mod  11.03.2016 ------------*/

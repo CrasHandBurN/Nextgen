@@ -1,0 +1,11 @@
+
+BOX.sidepanel.detour{
+	orientation:"vertical";
+	flex:3;
+}
+
+
+LIST2.list_control.detour{
+	col:1; flex:4;
+	
+}

@@ -1,0 +1,27 @@
+GRAPH.graph_side_box {
+	left:85%;
+	right:0;
+	top:1%;
+	bottom:1%;
+}
+
+#ui_Discovery .2_1_1 {
+	left:0;
+	h:70;
+	w:50%;
+	bottom:70;
+}
+
+#ui_Discovery .2_1_2 {
+	left:50%;
+	h:70;
+	w:50%;
+	bottom:70;
+}
+
+#ui_Discovery .1_1_1 {
+	left:0;
+	w:100%;
+	h:70;
+	bottom:0;
+}

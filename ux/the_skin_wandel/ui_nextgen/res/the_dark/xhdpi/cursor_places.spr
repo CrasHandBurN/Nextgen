@@ -1,0 +1,8 @@
+BmpFlags = 0
+DefFlags = ALPHA_PIXEL | GRAB_CENTER
+Stripes = 98
+
+Animation = "cursoranim", 0, "ABCDEEFF"
+Animation = "ui_cursoranim", 2, "ABCDEEFF","ABCDEEFF"
+
+

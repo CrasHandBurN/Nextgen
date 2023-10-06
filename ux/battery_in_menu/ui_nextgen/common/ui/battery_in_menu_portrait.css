@@ -1,0 +1,28 @@
+SPRITE.menu.icon.svg {
+	top:(%lua.ShowBatteryInMenu ? 10% : 10%);
+	bottom:0; align: "CENTER"; valign: "CENTER";
+	right: (%lua.ShowBatteryInMenu ? (%lua.ShowBatteryPercentInMenu ? 40% : 30%) : 0);
+	left: 3 ;
+	img:"ico_footer_menu.svg";
+}
+
+SPRITE.simclose.icon.svg {
+	top:(%lua.ShowBatteryInMenu ? 10% : 10%);
+	bottom:0; align: "CENTER"; valign: "CENTER";
+	right: (%lua.ShowBatteryInMenu ? (%lua.ShowBatteryPercentInMenu ? 40% : 30%) : 0);
+	left: 3 ;
+	img:"ico_simclose.svg";
+	image_w: (svg_footer_image_w-5); image_h: (svg_footer_image_h-5);
+}
+
+SPRITE.battery_menu {
+	top: (%lua.ShowBatteryPercentInMenu ? 30 : 20);
+	bottom: (%lua.ShowBatteryPercentInMenu ? 5 : 12);
+	left: (%lua.ShowBatteryPercentInMenu ? 42 : 0);
+	right: (%lua.ShowBatteryPercentInMenu ? 6 : 0);
+}
+
+TEXT.battery_cockpit_text {
+	left:0; top:15; right: 5;
+	fontsize: (%power.real_battery_percent > 99 ? 15 : 16 );
+}

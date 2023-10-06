@@ -1,0 +1,16 @@
+
+
+
+BOX.sidepanel.detour{
+	orientation:"horizontal";
+	flex:2;
+}
+
+
+LIST2.list_control.detour{
+	col:2; flex:3;
+}
+
+LIST2.list_control.detour > LISTCONTROL{
+	bottom:0;
+}

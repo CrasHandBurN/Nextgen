@@ -1,0 +1,14 @@
+#ui_wMapSidePanel_NextRouteWarningSPR .2_1_1 {
+	right:undef; left:0; w:50%;
+	bottom:notify_list_h; h:notify_list_h;
+}
+
+#ui_wMapSidePanel_NextRouteWarningSPR .2_1_2 {
+	right:undef; left:50%; w:50%;
+	bottom:notify_list_h; h:notify_list_h;
+}
+
+#ui_wMapSidePanel_NextRouteWarningSPR .1_1_1 {
+	right:undef; left:0; w:100%;
+	bottom:0; h:notify_list_h;
+}

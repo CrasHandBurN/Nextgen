@@ -1,0 +1,17 @@
+;------------- WANDEL™ 20.09.2023 ------------
+<modify lm_WeatherSettings>
+	<insert>
+		<row text="Automatically change theme and sky \n depending on the season and weather" type="ChkOnOff" isselected="lua.Choice_Sky" onrelease=sc_WeatherChangeSky />
+	</insert>
+</modify>
+
+<modify lm_MapVisualSettings>
+	<insert>
+		<row prio=221 text="Automatically change theme and sky \n depending on the season and weather" type="ChkOnOff" isselected="lua.Choice_Sky" onrelease=sc_WeatherChangeSky />
+	</insert>
+</modify>
+
+;---insert into button_theme_changer---
+<!if condition=(Plugin.isLoaded("button_theme_changer"))>
+	<observer value=(%ui.lm_Theme_colorprofile_Popover.size) onchange=sc_Automatically_change_theme START="NO_TRIGGER" />
+<!end/>

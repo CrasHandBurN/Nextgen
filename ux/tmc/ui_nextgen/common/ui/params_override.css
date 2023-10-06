@@ -1,0 +1,37 @@
+@params {
+	tmcprovider_image_w:42;
+	tmcprovider_image_h:42;
+	tmcprovider_h:48;
+	text_padding_tmc:10;
+	route_progress_tmc_w: 8;
+	route_progress_tmc_h: 8;
+	listitem_route_tmc_w:18; 
+	svg_deay_image_w:36;
+	svg_deay_image_h:36;
+	traffic_summary_route_w:150;
+	traffic_summary_route_h:480;
+	traffic_summary_icon_w: 120;
+	traffic_summary_icon_h: 120;
+	next_event_distance_w:48;
+	traffic_details_distance:138;
+	svg_listitem_tmc_icon_w:60;
+	svg_listitem_tmc_icon_h:60;
+	svg_listitem_tmc_double_icon_w:54;
+	svg_listitem_tmc_double_icon_h:54;
+		
+	fontsize_next_event:26;
+	fontsize_next_event_sec:22;
+
+	fontsize_traffic_delay:32;
+	fontsize_traffic_summary_btn:28;
+	fontsize_main_tmc: 26;
+	fontsize_sec_tmc: 24;	
+		
+	hist_colorcode_grad: "vertical", #ff92362e, 0.0, #ff92362e, 0.2, #ffff0000, 0.21, #ffff0000, 0.4, #fffec600, 0.41, #fffec600, 0.6, #fffefe00, 0.61, #fffefe00, 0.8, #ff98f653, 0.81, #ff98f653, 1.0
+}
+
+@import "~/common/ui/tmc_params_landscape.css" landscape;
+@import "~/common/ui/tmc_params_portrait.css" portrait;
+
+
+

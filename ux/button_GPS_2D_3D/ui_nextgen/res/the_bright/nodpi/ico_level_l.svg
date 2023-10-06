@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2" baseProfile="tiny" viewBox="0 0 16 60" xml:space="preserve" width="16" height="60">
+ <g>
+  <title>Layer 1</title>
+  <g id="svg_1">
+   <g id="svg_2">
+    <g id="CIRCLE_4_">
+     <path id="svg_3" d="m1,51.5c0,-3.9 3.1,-7 7,-7s7,3.1 7,7s-3.1,7 -7,7s-7,-3.1 -7,-7l0,0z" fill="#000000"/>
+    </g>
+    <g id="CIRCLE_1_">
+     <linearGradient y2="1.05398" x2="0.5" y1="-0.05398" x1="0.5" id="SVGID_1_">
+      <stop stop-color="#FCB26C" offset="0"/>
+      <stop stop-color="#FE7C14" offset="1"/>
+     </linearGradient>
+     <path id="svg_4" d="m3.6,51.5c0,-2.4 2,-4.4 4.4,-4.4s4.4,2 4.4,4.4s-2,4.4 -4.4,4.4s-4.4,-2 -4.4,-4.4l0,0z" stroke-miterlimit="10" stroke="url(#SVGID_1_)" fill="#FF923A"/>
+    </g>
+   </g>
+   <g id="svg_5">
+    <path id="svg_6" d="m8,23c-3.9,0 -7,3.1 -7,7c0,3.9 3.1,7 7,7s7,-3.1 7,-7c0,-3.9 -3.1,-7 -7,-7zm0,11.4c-2.4,0 -4.4,-2 -4.4,-4.4s2,-4.4 4.4,-4.4s4.4,2 4.4,4.4s-2,4.4 -4.4,4.4z" fill="#000000"/>
+   </g>
+   <g id="svg_7">
+    <path id="svg_8" d="m8,1.5c-3.9,0 -7,3.1 -7,7c0,3.9 3.1,7 7,7s7,-3.1 7,-7c0,-3.9 -3.1,-7 -7,-7zm0,11.4c-2.4,0 -4.4,-2 -4.4,-4.4s2,-4.4 4.4,-4.4s4.4,2 4.4,4.4s-2,4.4 -4.4,4.4z" fill="#000000"/>
+   </g>
+  </g>
+ </g>
+</svg>

@@ -1,0 +1,31 @@
+;--------------------------------WANDEL™--------------------------------
+<var average_speed_delta_dif = 0 />
+
+<modify ui_Cockpit>
+	<insert into="IMPLEMENTATION"> 
+		<PROPERTY CalcSpeedLimitPercent VALUE=( sc_CalcSpeedLimitPercent(%lua.average_speed_calculated, %{"other.trips.@0"}.speed_total_avg) ) /> 
+		<PROPERTY CalcSpeedLimitDelta VALUE=( sc_CalcSpeedLimitDelta(%lua.average_speed_calculated, %{"other.trips.@0"}.speed_total_avg) ) /> 
+	</insert>
+	<insert last_child into="DIV.notify_list_ext TABLE.ari_ext">
+		<BUTTON CLASS="btn_map" ONRELEASE={invert(average_speed_delta_dif)} ONLONGCLICK=VW_Calculate_average_speed VISIBLE=(%lua.average_speed_in_cockpit && %navigation.has_route) >
+			<SPRITE CLASS="button map fill" />
+			<HBOX ALIGN="LEFT">
+				<SPRITE CLASS="btn_map svg" IMG="ico_average.svg" ZOOM=80% >
+					<TEXT CLASS="speedlimit" ALIGN="CENTER" VALIGN="CENTER" TEXT=(format(L"%{speed[%D]:*}",%lua.average_speed_calculated, 1)) 
+						FONTSIZE=(%lua.average_speed_calculated > 99 ? 20 : 27) /> 
+				</SPRITE>
+			</HBOX>
+			<VBOX ALIGN="RIGHT" >
+				<SPEEDTEXT CLASS="listitem top" BOX_ALIGN="RIGHT" FONTSIZE=22 PADDINGRIGHT=10 SPEED=(%{"other.trips.@0"}.speed_total_avg) UNITVISIBLE=0 />
+				<TEXT CLASS="listitem bottom" BOX_ALIGN="RIGHT" PADDINGRIGHT=10 TEXT=(CalcSpeedLimitPercent) VISIBLE=(average_speed_delta_dif) />
+				<TEXT CLASS="listitem bottom" BOX_ALIGN="RIGHT" PADDINGRIGHT=10 TEXT=(CalcSpeedLimitDelta) VISIBLE=(!average_speed_delta_dif) />
+			</VBOX>
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify lm_MapVisualSettingsExtended>
+	<insert>
+		<row  prio=2013 bmp="ico_average_speed.svg" text="Average speed" type="ChkOnOff_Icon" isselected="lua.average_speed_in_cockpit" />
+	</insert>	
+</modify>

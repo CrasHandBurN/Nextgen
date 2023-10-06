@@ -1,0 +1,570 @@
+@import "~/common/ui/tmc_color.css";
+
+.font_main_tmc{
+	font:"default";
+	fontsize:fontsize_main_tmc !important;
+	align:"CENTER";
+	valign:"CENTER";
+}
+
+.font_sec_tmc{
+	font:"defaultbd";
+	color:btn_main_color; color2:btn_main_color2; color3:btn_main_color3;
+	fontsize:fontsize_sec_tmc !important;
+	align:"CENTER";
+	valign:"CENTER";
+}
+
+DIV.mapheader.tmc{
+	h:mapheader_h_tmc;
+}
+
+LISTMODEL.traffic.location{
+	cellh:listitem_details_tmc_h;
+}
+
+LISTMODEL.traffic.details{
+	cellh:(listitem_details_tmc_h/2);
+}
+
+DIV.tmc_icon_detailsinfo{
+	desired_w:svg_listitem_image_w;
+	box_align:"stretch";
+}
+
+SPRITE.tmc_details.main{
+	left:0; bottom:0; 
+	z:116;
+}
+
+SPRITE.tmc_details.sec{
+	right:0; top:0; bottom:10%; 
+}
+
+BUTTON.btn_main.tmcdetails{
+	left:0; top:0; w:100%; z:0; 
+}
+
+SPRITE.tmcdetails_panel{
+	left:0; top:0; w:100%; z:0; img:"panel_map.bmp"; resize_bmp:1;
+}
+
+ROADSHIELDEDTEXT.top.tmcdetails{
+	align:"LEFT"; valign:"BOTTOM";
+	twolinesmall:3;
+	color:(%lua.traffic_current_affects_route == 1 ? btn_warning_color : btn_main_color);
+	color2:(%lua.traffic_current_affects_route == 1 ? btn_warning_color2 : btn_main_color2);
+}
+
+ROADSHIELDEDTEXT.bottom.tmcdetails{
+	top:53% !important;
+	align:"LEFT"; valign:"TOP";
+	twolinesmall:3;
+	color:(%lua.traffic_current_affects_route == 1 ? btn_warning_color : btn_sec_color);
+	color2:(%lua.traffic_current_affects_route == 1 ? btn_warning_color2 : btn_sec_color2);
+}
+
+VBOX.detailsinfo.tmc>HBOX{
+	flex:0;
+}
+
+TEXT.listitem.detailsinfo_name.tmc{
+	wordwrap:0; fontsize:fontsize_next_event;
+}
+
+DISTTEXT.detailsinfo{
+	desired_w:traffic_details_distance;
+}
+
+HBOX.tmc_event{
+	paddingleft:0; paddingright:20;
+}
+
+HBOX.tmc_event>VBOX{
+	paddingright:12;
+	flex:1; box_align:"stretch";
+}
+
+BOX.tmc_event_road{
+	align:"LEFT";
+	box_align:"stretch";
+	flex:1;
+}
+
+ROADSHIELDEDTEXT.tmc_roadname{
+	paddingleft:0; paddingright:0;
+	minaspect:90;
+}
+
+HBOX.tmc_event>VBOX> ROADSHIELDEDTEXT.top.tmc{
+	fontsize:fontsize_main !important;
+	twolinesize:fontsize_sec_twoline;
+	paddingleft:0; paddingright:0;
+	align:"LEFT"; 
+	twolinesmall:3;
+	color2:(%*.affects_route ? btn_warning_color2 : btn_main_color2);
+}
+
+HBOX.tmc_event>VBOX> TEXT.bottom.tmc{
+	w:undef;
+	align:"LEFT"; 
+	twolinesmall:3;
+	fontsize:fontsize_sec !important;
+	twolinesize:fontsize_sec_twoline;
+	leading:1;
+}
+
+DISTTEXT.tmc{
+	desired_w:66;
+	orientation:"vertical"; 
+	box_align:"center";
+	paddingleft:0; paddingright:0;
+	color:btn_main_color; color2:btn_main_color2;
+}
+
+DIV.tmc_icon_list  > SPRITE.icon_center.sec{
+	top:(%lua.traffic_current_single_icon ? 50% : 45%);
+	z:14;
+}
+
+DIV.tmc_icon_list  > SPRITE.icon_center.option,
+DIV.tmc_icon_eventlist > SPRITE.icon_center.option{
+	left:80%;
+	top:60%;
+	z:111; 
+}
+
+SPRITE.icon_center.tmc{
+	r2l_invert:1;
+	z:100;
+	left:0; top:0;
+	right:0; bottom:(%lua.trafficFullDelayTextOnMap ? 30% : 0);
+	bmpalign:"LEFT";
+	bmpvalign:"TOP";
+	iconindex:tmc_icon_index;
+	can_shrink:0;
+	box_align:"center";
+}
+
+SPRITE.btn_map.svg.tmc{
+	r2l_invert:1;
+	z:100;
+	left:0; top:0;
+	right:0; bottom:(%lua.trafficFullDelayTextOnMap ? 30% : 0);
+	bmpalign:"LEFT";
+	bmpvalign:"TOP";
+	iconindex:tmc_icon_index;
+	can_shrink:0;
+	box_align:"center";
+	resize_bmp:0;
+}
+
+TEXT.listitem.tmc{
+	align:"LEFT";
+	color:btn_sec_color; color2:btn_sec_color2; color3:btn_sec_color3;	
+	paddingright:text_padding;
+}
+
+TABLE.traffic_significant_events {
+	top: 24%; right:0; bottom: undef;
+	left:50%; h: 30%; cellh:(40%,);
+	row:2; col:1;
+}
+
+DIV.traffic_summary_icon{
+	desired_w: traffic_summary_icon_w; desired_h: traffic_summary_icon_h;
+}
+
+DIV.tmc_description{
+	left:0; right:0; 
+	top:10%; 
+	bottom:0; 
+}
+
+SPRITE.tmc_event.svg{
+	top:0;bottom:0;left:0;right:0;
+	valign:"CENTER";
+	iconindex:tmc_icon_index;
+}
+
+SPRITE.tmc_event.svg.id{
+	image_w:(%lua.TrafficNextIconSingle ? 78 : 60);
+	image_h:(%lua.TrafficNextIconSingle ? 78 : 60);
+	left:10%; right:0; align:(%lua.TrafficNextIconSingle ? "CENTER" : "LEFT");
+}
+
+SPRITE.tmc_event.svg.id2{
+	image_w:60; image_h:60;
+	align:"RIGHT"; bottom:20%;
+}
+
+SPRITE.tmcprovider.svg{
+	top:0; left:0; w:100%; h:100%;
+	align:"CENTER"; valign:"center";
+	box_align:"center";
+	image_w: tmcprovider_image_w;
+	image_h: tmcprovider_image_h;
+	desired_h:tmcprovider_h;
+}
+
+TEXT.traffic_summary_text, ROADSHIELDEDTEXT.traffic_summary_text {
+	top:0;bottom:0;left:0;right:0;
+	box_align:"STRETCH";
+	align:"CENTER";
+	valign:"CENTER";
+	padding: text_padding;
+	can_shrink:0;
+	leading:0.85;
+	wordwrap:2;
+	color:btn_main_color; color2:btn_main_color2;
+}
+
+ROADSHIELDEDTEXT.traffic_summary_text {
+	wordwrap: ( %regional.current_language.is_r2l ? 1 : 2 );
+}
+
+DIV.listitem.traffic_summary {
+	desired_w: listitem_route_container_w; box_align: "stretch";
+	align: "CENTER";
+}
+
+DIV.listitem.itinerarywarnings.via SPRITE.listitem.route {
+	img: ( TMCVisibility ? route_tmc_color : listitem_route );
+	desired_w: ( TMCVisibility ? listitem_route_tmc_w : listitem_route_w )
+}
+
+DIV.listitem.traffic_summary  HBOX.listitem.route {
+	paddingbottom: ( listitem_route_container_w / 2 ) ;
+}
+
+TEXT.traffic_all_events{
+	color:btn_main_color; 
+}
+
+VBOX.next_event.traffic_summary>TEXT.traffic_summary_text ,
+VBOX.next_event.traffic_summary>ROADSHIELDEDTEXT.traffic_summary_text {
+	align:"left";
+}
+
+TEXT.traffic_summary_text.sec{
+	fontsize:fontsize_next_event_sec;
+	wordwrap:1;
+}
+
+TEXT.traffic_summary_text.direction{
+	wordwrap:1;
+}
+
+TEXT.traffic_summary_text.description{
+	color:inf_main_color;	color2:inf_main_color2;
+}
+
+ROADSHIELDEDTEXT.traffic_summary_text,
+TEXT.traffic_summary_text.direction{
+	fontsize:fontsize_next_event;
+	leading:0.8;
+}
+
+VBOX.next_event.traffic_summary{
+	box_align:"stretch";
+}
+
+VBOX.traffic_summary_route,
+HBOX.traffic_summary_route{
+	desired_w:traffic_summary_route_w; max_h:traffic_summary_route_h;
+	box_align:"stretch";
+	paddingbottom:0;
+	paddingleft:0;
+	visible: (%navigation.has_route);
+	can_shrink: 0;
+}
+
+VBOX.traffic_summary_route>SPRITE{
+	box_align:"right";
+}
+
+VBOX.next_event_container{
+	box_align:"stretch";
+	paddingright:0;
+	paddingtop:0; flex:1;
+}
+
+VBOX.traffic_summary_box{
+	flex:1;
+	box_align:"stretch";	
+}
+
+HBOX.traffic_summary_box{
+	flex:0;
+	box_align:"stretch";
+	desired_h: listitem_h;
+}
+
+SPRITE.traffic_summary.all_delay{
+	img:"ico_route_timedomain.svg";
+	image_h:svg_deay_image_h;
+	image_w:svg_deay_image_w;
+}
+
+BUTTON.next_event.traffic_summary{
+	img:"btn_listitem_itinerary.bmp#3";
+	resize_bmp:1;
+	box_align:"stretch"; flex:1;
+}
+
+DISTTEXT.next_event_distance{
+	paddingleft:0; paddingright:0; can_shrink:0;
+	color:btn_main_color;
+	
+	flex:1;
+	fontsize:fontsize_tmcdelay;
+}
+
+HBOX.traffic_summary_route>SPRITE{
+	box_align:"stretch";
+}
+
+HBOX.traffic_summary.bottom{
+	box_align:"stretch"; flex:1;
+}
+
+HBOX.traffic_summary.bottom>VBOX{
+	desired_w:traffic_summary_route_w;
+}
+
+TEXT.traffic_summary_station{
+	color:inf_main_color;
+}
+
+HBOX.traffic_summary.bottom>BOX{
+	flex:1; box_align:"center";
+}
+
+HBOX.traffic_summary.bottom>BOX>BUTTON{
+	flex:1; box_align:"center";
+	desired_h: listitem_h;
+	paddingleft:button_padding; paddingright:button_padding;
+	fontsize: fontsize_traffic_summary_btn;
+}
+
+SPRITE.panel.map.tmc_header {
+	bottom:undef;
+	h:hsmartscroll_h;
+	img: (%lua.traffic_current_affects_route == 1 ? panel_map_tmc_grad : panel_map_grad);
+}
+
+SPRITE.panel.map.tmc_header.histcurr {
+	h:100%;
+}
+
+SPRITE.tmc_legend {
+	desired_w: legend_w;
+	box_align: "stretch";
+}
+
+SPRITE.panel.map.tmc_legend {
+	left:30%;
+	right:quickbar_w;
+	top:undef;
+	h:header_h;
+}
+
+SPRITE.hist_low_traffic {
+	img:"spr_low_traffic.svg"; can_shrink:0; box_align:"stretch";
+	z:100;
+}
+
+SPRITE.hist_high_traffic {
+	img:"spr_high_traffic.svg"; can_shrink:0; box_align:"stretch";
+	z:100;
+}
+
+SPRITE.hist_colorcode {
+	img:hist_colorcode_grad; flex:1; box_align:"center"; desired_w: 24; min_h: 1;
+	z:100;
+}
+
+TIMETEXT.mapheader{
+	paddingleft:0; paddingright: button_padding;
+	align:"RIGHT";
+	fontsize: 24; desired_w: 120;
+}
+
+.list_control.tmcheader {
+	row:1;
+	bottom: undef;
+	h: 70;
+	left: 10%; right: 10%;
+	KEEPSELECTIONONSCREEN:1; 
+	SHOWSELECTION:1;
+	SMOOTHSCROLLING:1;
+	smoothpageing: 0
+}
+
+BUTTON.historicaltraffic_days{
+	desired_w: 120; box_align:"STRETCH";
+	fontsize: 24;
+	padding:text_padding_small;
+}
+
+HBOX.traffic_summary.next_event{
+	flex:3; box_align:"stretch";
+}
+
+TEXT.traffic_summary_delay {
+	color:tmcdelay_color;
+	font:"default";
+	box_align:"stretch"; flex:1; valign:"center";
+}
+
+TEXT.traffic_summary_delay.value{
+	fontsize:fontsize_traffic_delay;
+}
+
+HBOX.all_delay{
+	box_align:"center"; flex:1;
+}
+
+HBOX.all_delay>TEXT{
+	flex:0;
+}
+
+VBOX.traffic_summary_box.all_delay>TEXT.traffic_summary_delay.value{
+	 box_align:"center";
+}
+
+HBOX.all_delay>TEXT.traffic_summary_delay.value{
+	box_align:"center"; flex:0;
+}
+
+TEXT.traffic_summary_station {
+	top:0; bottom:0;left:0;right:0;
+	padding: 0;
+	fontsize: fontsize_info;
+	color:inf_sec_color;
+	box_align:"CENTER";
+	can_shrink:0;
+}
+
+TEXT.traffic_summary_station.left {
+	right:50%;
+}
+
+TEXT.traffic_summary_station.right {
+	left:50%;
+}
+
+DIV.traffic_receiver_status {
+	desired_w:120; align:"center";
+}
+
+DIV.mapheader_icon{
+	desired_w:(%lua.traffic_current_single_icon ? 80: (st_TrafficMap.isActive ? 96 : 120)) ; desired_h:66; align:"CENTER"; box_align:"CENTER"; z:120;
+}
+
+SPRITE.mapheader.icon{
+	align:(st_TrafficMap.isActive && !%lua.traffic_current_single_icon ? "LEFT" : "CENTER");
+}
+
+SPRITE.mapheader.icon.id2{
+	align:"RIGHT"; z:119;
+}
+
+.tmc_event_road>HBOX{
+	box_align:"stretch"; valign:"center";
+	align:"left";
+}
+
+.tmc_event_road>HBOX>ROADSHIELDEDTEXT{
+	gap:0;
+	paddingleft:0;
+	paddingright:0;
+	can_shrink:0;
+	box_align:"center";
+}
+
+.tmc_event_road>HBOX>TEXT.tmc_roadname{
+	paddingleft:( (%*.roadnumber_enc) ? text_padding_tmc : 0 );
+	can_shrink:1;
+	box_align:"center";
+}
+
+VBOX.mapheader_container_tmc{
+	flex:1; box_align:"stretch";
+}
+
+BOX.mapheader_tmc{
+	box_align:"stretch"; 
+}
+
+BOX.mapheader.tmc{
+	orientation:"horizontal"; flex:0;
+}
+
+VBOX.mapheader.tmc_event{
+	flex:3;
+}
+
+ROADSHIELDEDTEXT.top.mapheader{
+	minaspect:90; can_shrink:1;
+}
+
+TEXT.mapheader.tmc_direction{
+	font:"default"; left:0;
+	box_align:"stretch"; flex:0;
+	can_shrink:1; minaspect:90; clipstyle:"right";
+	wordwrap:1;
+}
+
+TEXT.mapheader.tmc_description{
+	font:"default";
+	fontsize:fontsize_sec; can_shrink:0;
+	box_align:"stretch"; left:0;
+}
+
+SPRITE.mapheader_tmc.separator{
+	img:listitem_separator_grad;
+	desired_h:mapheader_tmc_separator;
+	left:0; top:0; right: 0; bottom:0;
+	box_align:"stretch"; 
+}
+
+BOX.mapheader_tmc>BOX.mapheader_tmc.value{
+	flex:1; can_shrink:1; 
+}
+
+DISTTEXT.mapheader,TIMESPANTEXT.mapheader{
+	box_align:"center";
+}
+
+SPRITE.routeprogress.marker.tmc {
+	img:route_tmc_color;
+	box_align:"STRETCH";
+	resize_bmp:1;
+}
+
+TEXT.mapheader.top.tmc_direction{
+	visible:(%map.primary.clicked_tmc_id.valid);
+	flex:0;
+	wordwrap:1;
+}
+
+HBOX.mapheader_value>TIMESPANTEXT.mapheader{
+	formatmodel:5;
+}
+
+TEXT.color_map_inf_main {
+	color: map_main_color;
+}
+
+BUTTON.dialog.mapmsgbox, DIALOGBUTTON.dialog.mapmsgbox{
+	h: (100%);
+	/*img:"btn.bmp#3";*/
+	img:"";
+	fontsize:fontsize_main;
+	leading: _0.8;
+}
+
+
+@import "~/common/ui/tmc_landscape.css" landscape;
+@import "~/common/ui/tmc_portrait.css" portrait;

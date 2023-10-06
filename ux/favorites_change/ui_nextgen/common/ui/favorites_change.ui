@@ -1,0 +1,42 @@
+;---------------WANDEL™---18.12.2019------------------
+<modify lm_PopoverEditSavedLocation>
+	<insert>
+		<row text="Change root"	onrelease=VW_FVChangeRoot />
+		<row text="Change root visibility" onrelease=VW_Change_root_visibility />
+	</insert>
+</modify>
+
+<userlist lm_PopoverFavoriteVisibilityArea ctext="str" text="ui" onrelease="ui" enable="bool">
+	<default enable=1 onrelease='MODEL.my.poi.current_group[MODEL.map.poi_visibility_array()].visible_at = tonumber(MODEL["*"].ctext()); sc_ClosePopover()' />
+	<row ctext="Off" text="Off" onrelease='MODEL.my.poi.current_group[MODEL.map.poi_visibility_array()].visible_at = 0; sc_ClosePopover()' />
+	<row ctext="500" text=(sc_ShowDistanceTool(500)) />
+	<row ctext="1000" text=(sc_ShowDistanceTool(1000)) />
+	<row ctext="2000" text=(sc_ShowDistanceTool(2000)) />
+	<row ctext="15000" text=(sc_ShowDistanceTool(15000)) />
+	<row ctext=(%ui.lm_VisibilityArea_popover[0].max) text=(sc_ShowDistanceTool(%ui.lm_VisibilityArea_popover[0].max)) />
+	<row ctext="500000" text=(sc_ShowDistanceTool(500000)) />
+	<row ctext="Own" text="Own" onrelease='
+		sc_ClosePopover()
+		MODEL.lua.visible_at = MODEL.my.poi.current_group[MODEL.map.poi_visibility_array()].visible_at()
+		sc_SetPopoverListAndOpen("ui.lm_VisibilityArea_popover")
+		VW_WaitFavoriteVisibility_at() --!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		' />
+</userlist>
+
+<modify lm_SavedLocation>
+	<insert>
+		<row text="Search by root" onrelease=VW_FVSearch_by_root /> 
+	</insert>
+</modify>
+
+<userlist lm_SetGR_name_Popover text="wstr" path="str" id="int" onrelease="ui" onlongclick="ui" enable="bool" icon_id="int" iconindex="int" type="str" >
+	<default enable=1 type="IconBranding" 
+		onrelease='
+			VW_POIStructureSearch_ToChild(index)
+			doDelayed(5, function() 
+				sc_ClosePopover()
+				VW_POIStructureSearchWait() 
+			end)
+			'
+		onlongclick='sc_CH_group_POI__VW_FVSearch_by_root()' />
+</userlist>

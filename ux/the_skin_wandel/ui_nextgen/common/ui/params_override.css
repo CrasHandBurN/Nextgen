@@ -1,0 +1,180 @@
+@params {
+	header_bg_h: 60;
+	footer_h: 72;
+
+	actionbutton_top: -6;
+	
+	menuitem_h: 84;
+	popover_listitem_h:92;
+	menu_icon_w: 42; 
+	menu_icon_h: 42; 
+	inputfield_h: 54;
+	input_padding: 36;
+	inputtext_padding:12;
+	panel_border: 0;
+	text_padding_localmenu:12;
+	text_padding_quickbar:8;
+	quickbar_padding:16;
+	quickbar_top:6;
+	mapheader_container_padding:6;
+	mapheader_text_padding:12;
+	routemethod_w: 75;
+	next_maneuver_dist_padding: 30;
+
+	speedlimit_box_padding:4;	
+	speedlimit_box_padding_left:6;
+	speedlimit_box_padding_right:8;
+	
+	hwy_container_padding_left:3;
+	hwy_container_padding_right:3;
+	hwy_container_padding_bottom:2;
+	
+	margin_top:0;
+	margin_bottom:0;
+
+	datafield_margin: 6;
+
+	headerclock_w: 110;		
+	
+	route_progress_marker_size: 18;
+	
+	traffic_summary_route_w:120;
+	traffic_summary_route_h:480;
+	next_event_distance_w:48;
+	next_event_padding:20;
+	
+	
+
+	key_popup_w: 102;
+	key_popup_h: 144;
+	
+	fontsize_main: 32;
+	fontsize_sec: 21;
+	fontsize_sec_twoline: 21;
+	fontsize_button: 28;
+	fontsize_warning:28;
+	fontsize_title: 24;
+	fontsize_disttext: 24;
+	fontsize_map_msgbx:26;
+	fontsize_map_msgbx_sec:24;
+	fontsize_travelplanner: 26;
+	fontsize_tripcomputer_nextmaneuver:48;
+	fontsize_inputfield:28;
+	fontsize_clock:32;
+	fontsize_countryinfo_sign: 36;
+	fontsize_tmcdelay: 28;
+	fontsize_noitems:22;
+	fontsize_traffic_delay:40;
+	fontsize_editspeedcam:40;
+	fontsize_tripcomputer:21;
+	fontsize_separator_small:18;
+	fontsize_routemethod:28;
+	fontsize_next_street:30;
+	fontsize_itinerarywarnings_sec:18;
+	fontsize_tripcomputer_speed:70;
+	fontsize_speed: 42;
+	fontsize_cond_speed: 26;
+
+
+	itemcounter_image_w: 102;
+	itemcounter_image_h: 30;	
+
+	tripcomputer_header: 126;
+	tripcomputer_speed_h: 366;
+	insertwaypoint_icon_w: 72;
+	
+	listitem_route_container_w: 60;
+	listitem_route_w: 12;
+	
+	svg_insertwaypoint_image_w:28; 
+	svg_insertwaypoint_image_h:28;
+	
+	svg_footer_image_w:38 ; svg_footer_image_h:38 ;
+	
+	svg_listitem_routeinfo_image_w:30;
+	svg_listitem_routeinfo_image_h:30;
+	svg_listitem_image_w:60;
+	svg_listitem_image_h:60;
+	svg_quickmenu_image_w:40;
+	svg_quickmenu_image_h:40;
+	svg_listitem_popover_image_w:38;
+	svg_listitem_popover_image_h:38;
+	svg_keybutton_spec_image_w:32;
+	svg_keybutton_spec_image_h:32;
+	svg_keybutton_done_image_w:54;
+	svg_keybutton_done_image_h:38;
+	svg_inputfield_image_w:32;
+	svg_inputfield_image_h:32;
+	svg_footer_menu_image_w:48;
+	svg_footer_menu_image_h:48;
+	svg_scroll_image_w:28;
+	svg_scroll_image_h:28;
+	svg_radio_image_w:32;
+	svg_radio_image_h:32;
+	svg_avoid_button_image_w:22;
+	svg_avoid_button_image_h:22;
+	svg_quickmenu_icon_image_w:48;
+	svg_quickmenu_icon_image_h:48;
+	svg_sec_diricon_image_w:50;
+	svg_sec_diricon_image_h:50;	
+	
+	travelplanner_list_top: 36;
+	separator_h_travelplanner:78;
+	
+	route_progress_bg_w: (route_progress_w + route_progress_padding);
+	calculate_progress_min_w: 66;
+	
+	countdown_container_w: 100;
+	countdown_container_h: 4;
+	countdown_container_margin: 10;
+
+	avoid_bg_padding_horizontal:6;
+/* mod */
+	notify_list_w:80;
+	notify_list_h:80;
+	fontsize_current_city: 28;
+	fontsize_value:36;
+	fontsize_speedlimit: 40;
+	headerbutton_w: 80;
+	quickbar_w: 80;
+	cockpit_da_warning_w:100;
+	cockpit_da_warning_h:100;
+	mapcontrol_button_w:90;
+	mapcontrol_button_h:90;
+	drag_button:80;   
+	menu_button_w:80;
+	menu_button_h:60;
+	current_street_h:50;
+	current_city_h:40;
+	map_h: (screen_h - footer_h);
+	Signpost_h:130;
+	roundabout_h:165;
+	diricon_mini_w:80;
+	diricon_mini_h:70;
+	current_time_overview_w: 50;
+	current_time_overview_h: 50;
+	current_level_overview_w: 15;
+	current_level_overview_h: 60;
+	current_level_time_overview_w: 9;
+	current_level_time_overview_h: 36;
+	housenumber_h:60;	
+	compass_cockpit_w: 146;
+	fontsize_driver_alert: 18;
+	svg_driveralert_image_w: 50;
+	svg_driveralert_image_h: 66;
+	svg_driveralert_image_h_small: 54;
+	svg_driveralert_arrow_w: 18;
+	legend_image_w:30;
+	legend_image_h:30;
+	notify_list_ext_h: 300 ;
+	notify_list_ext_w: 110 ;
+}
+
+@import "~/common/ui/the_skin_params_landscape.css" landscape;
+@import "~/common/ui/the_skin_params_portrait.css" portrait;
+@import "~/common/ui/the_skin_short_layout_params.css" if (%lua.IsShortLayout);
+
+
+/* ------------------------------------------------------------------------------------*/
+/* -------------- Mod by WANDEL™ -- 27.10.2020 ----------*/
+/* -----------------------------------------------------------------------------------*/

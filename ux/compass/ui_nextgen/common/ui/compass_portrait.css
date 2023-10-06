@@ -1,0 +1,19 @@
+BUTTON.ar_btc {
+	h:10%; w:15%; 
+}
+
+VSPRITE.compass.3d {
+	align: "CENTER";  valign: "CENTER";
+	left: (observe(%map.primary.car_posx); ((%map.primary.car_posx - 50) * screen_w / 100));
+	right: (observe(%map.primary.car_posx); (screen_w - (%map.primary.car_posx + 50) * screen_w / 100));
+	top: (observe(%map.primary.car_posy); ((%map.primary.car_posy - 49) * screen_h / 100));
+	bottom: (observe(%map.primary.car_posy); (screen_h - (%map.primary.car_posy + 49) * screen_h / 100));
+}
+
+VSPRITE.compass.2d {
+	align: "CENTER";  valign: "CENTER";
+	left: (observe(%map.primary.car_posx); ((%map.primary.car_posx - 50) * screen_w / 100));
+	right: (observe(%map.primary.car_posx); (screen_w - (%map.primary.car_posx + 50) * screen_w / 100));
+	top: (observe(%map.primary.car_posy); ((%map.primary.car_posy - 49) * screen_h / 100));
+	bottom: (observe(%map.primary.car_posy); (screen_h - (%map.primary.car_posy + 49) * screen_h / 100));
+}

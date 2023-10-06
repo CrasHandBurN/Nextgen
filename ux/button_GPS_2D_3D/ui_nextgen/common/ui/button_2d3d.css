@@ -1,0 +1,43 @@
+/* ----------WANDEL™--------- 24.11.2020 ------------*/
+SPRITE.ari_2d3d.svg {
+	left: 40%; right: 5%; top: 32%; bottom: 32%;
+	img: ( %map.primary.camera_settings.overview ? "overview1.svg" : MapSettingsMapModes.svg[%lua.CockpitMapMode] );  
+}
+
+SPRITE.current_level.svg {
+	left: 10%; right: 60%; top: 25%; bottom: 25%;
+	img: ( MapSettingsViewModeIcon.svg[%lua.vEasyViewMode] ); 
+}
+
+SPRITE.gps_2d3d_status_ico.svg {
+	left: 30%; right: 5%; top: 10%; bottom: 68%; 
+	img:"v_ico_gpsstatus.svg";
+	phasename: (%gps.satellites_in_view < 3 ? "red" : 3 <= %gps.satellites_in_view < 6  ? "yellow" : %gps.satellites_in_view >= 6 ? "green");
+}
+
+TEXT.gps_2d3d_status {
+	left: 55%; right: 10%; top: 10%; bottom: 65%;
+	font: defaultbd;
+	fontsize: 20;
+	color: map_main_color; 
+	align:"CENTER";  
+	paddingleft: 0; 
+	paddingright: 0;
+	text: %gps.satellites_in_view;
+}
+
+SPRITE.gps_2d3d_height_ico.svg {
+	left: 12%; right: 5%; top: 68%; bottom: 10%;
+	img:"v_ico_altitud.svg";
+}
+TEXT.gps_2d3d_height {
+	left: 35%; right: 10%; top: 65%; bottom: 10%;
+	font: defaultbd; 
+	fontsize: 20;
+	color: map_main_color; 
+	align:"CENTER"; 
+	paddingleft: 0; 
+	paddingright: 0;
+	text:(builtin.format(L"%{altitude}",%navigation.current_altitude));
+	wordwrap: 1;
+}

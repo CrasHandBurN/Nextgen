@@ -1,0 +1,7 @@
+BmpFlags = 0
+DefFlags = ALPHA_PIXEL | GRAB_CENTER | GRAB_HCENTER
+Stripes = 64
+
+Animation = "cursoranim", 0, "ABCDEEFF"
+
+

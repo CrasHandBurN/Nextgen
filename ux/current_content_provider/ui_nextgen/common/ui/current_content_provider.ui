@@ -1,0 +1,40 @@
+/*-------CURRENT MAP PROVIDER ICON -- WANDEL™ -- 17.04.2019 --- */
+
+<modify lm_MapVisualSettingsExtended>
+	<insert after="default">
+		<row	prio=2000 text="Show content provider logo" type="ChkOnOff_Icon" isselected="lua.MapProviderInCockpit" bmp=(VW_GetIconByIconID(%other.contents.list[current].prov_icon_id)) />
+	</insert>
+</modify>
+
+<modify ui_Cockpit>
+	<insert into="DIV.cockpit">
+		<BUTTON CLASS="provider cockpit" ONRELEASE=VW_ContentListOnRelease
+			ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_SetContentCategory_Popover", MODEL.other.contents.current_category())' >
+			<SPRITE CLASS="map_provider" />
+		</BUTTON>
+	</insert>
+	<insert into="DIV.roundabout">
+	;<insert into="DIV.cockpit>DIV.fill>DIV.fill>DIV.roundabout">
+		<BUTTON CLASS="btn_map provider" ONRELEASE=VW_ContentListOnRelease
+			ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_SetContentCategory_Popover", MODEL.other.contents.current_category())' >
+			<SPRITE CLASS="map_provider" />
+		</BUTTON>
+	</insert>
+	<insert into="DIV.cockpit>DIV.fill>DIV.fill>DIV.diricon">
+		<BUTTON current_map_provider CLASS="btn_map provider" ONRELEASE=VW_ContentListOnRelease
+			ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_SetContentCategory_Popover", MODEL.other.contents.current_category())' >
+			<SPRITE CLASS="map_provider" />
+		</BUTTON>
+	</insert>
+
+	<insert into="DIV.cockpit>DIV.fill>DIV.fill>DIV.diricon_hwy">
+		<BUTTON CLASS="btn_map provider mini" ONRELEASE=VW_ContentListOnRelease
+			ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_SetContentCategory_Popover", MODEL.other.contents.current_category())' >
+			<SPRITE CLASS="map_provider" />
+		</BUTTON>
+	</insert>
+</modify>
+
+<userlist lm_SetContentCategory_Popover text="wstr" id="int" onrelease="ui" enable="bool">
+	<default enable=1 onrelease='MODEL.lua.contents_select_category_id = MODEL["*"].id(); sc_ClosePopover()' />
+</userlist>

@@ -1,0 +1,2 @@
+import "~/common/ui/favorites_change.ui"
+import "~/common/ui/favorites_change.lua"

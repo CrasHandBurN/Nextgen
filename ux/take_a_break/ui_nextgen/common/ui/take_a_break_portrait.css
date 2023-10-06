@@ -1,0 +1,14 @@
+#ui_Take_a_break .2_1_1 {
+	left:0;
+  	h:(map_messagebox_h/2);
+	w:notify_list_h;
+/*	focusindex:1; */
+	bottom:0;
+}
+
+#ui_Take_a_break .2_1_2 {
+	left:0;
+  	h:(map_messagebox_h/2);
+	w:notify_list_h;
+	bottom:(map_messagebox_h/2);
+}

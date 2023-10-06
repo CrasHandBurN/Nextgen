@@ -1,0 +1,13 @@
+import "~/common/ui/smartnavi.css"
+
+import "~/common/ui/smartnavi.ui"
+import "~/common/ui/smartnavi.lua"
+
+import "~/common/ui/smartnavi_mods.ui"
+import "~/common/ui/smartnavi_mods.lua"
+
+import "~/common/ui/smartnavi_hooks.lua"
+
+import "~/common/ui/smartnavi_obs.ui"
+
+

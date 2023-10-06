@@ -1,0 +1,16 @@
+<modify lm_SoundSettings dtooltip="str">
+	<insert>
+		<row prio=1600 text="TTS Pro" haspopover=1 onrelease='sc_NextStateAnim(st_TTSProSettings, "fade", 1, "")' enable=(%regional.current_voice.is_tts) dtooltip="In 'Regional Settings' select supported TTS Voice" />
+	</insert>
+</modify>
+
+<modify lm_Settings>
+	<modify element=Sound text="Sound and Voice" />
+</modify>
+
+<modify ui_Cockpit>
+	<insert into="IMPLEMENTATION"> 
+		<PROPERTY city_arm VALUE=(VW_City_by_city(%lua.IN_City)) />
+	</insert>
+</modify>
+

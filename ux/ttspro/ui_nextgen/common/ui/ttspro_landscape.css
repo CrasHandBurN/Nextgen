@@ -1,0 +1,21 @@
+#ui_TTSProNearestTown .2_1_1 {
+	left:0;	right:50%;
+	bottom:notify_list_h; h:notify_list_h;
+}
+
+#ui_TTSProNearestTown .2_1_2 {
+	left:50%; right:0;
+	bottom:notify_list_h; h:notify_list_h;
+}
+
+#ui_TTSProNearestTown .1_1_1 {
+	right:undef; left:0; w:100%;
+	bottom:0; h:notify_list_h;
+}
+
+HBOX.nearest_info {
+	left:0; right:0; 
+	top:2%; bottom:90%;
+	paddingleft:3%; paddingright:3%; 
+	align:"center"; valign:"center";
+}

@@ -1,0 +1,68 @@
+;---------------WANDEL™---24.09.2017------------------
+<observer obs_ScanAudioFiles_Finished boolmodel="oasis.files.finished" onselect=sc_ScanAudioFiles_done />
+
+<userlist AudioList text = "wstr" />
+
+<userlist lm_AudioFilesListShow_footer text="str" onrelease="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+		<row text=(%lua.SelectedOwnWarning == L"" || %lua.SelectedOwnWarning == L"!TTTT" ? (%lua.SelectedAudioFile == L"no sound" ? "No Sound" : "Reset") : "Reset")
+			onrelease=
+			'if MODEL.lua.SelectedOwnWarning() == L"" or MODEL.lua.SelectedOwnWarning() == L"!TTTT" then 
+				MODEL.lua.SelectedAudioFile = L"no sound" 
+			else 
+				MODEL.lua.SelectedOwnWarning = L"" 
+			end'
+			isactionbutton=1 />
+</userlist>
+
+<element_template et_AudioFilesListShow selectable=0>
+  	<RADIO class="listitem select_red" nosound onrelease=sc_AudioFilePlay >
+		<TEXT class="listitem value rad" text=%*.text />
+	</RADIO>
+</element_template>
+          
+<layer ui_AudioFilesListShow z=160>
+	<DIV class="main">
+		<BUTTON left=5 right=5 top=( %lua.IsLandscape ? 5 : 7 ) h=( %lua.IsLandscape ? 19% : 15% ) resize_bmp=1  img="btn_map.bmp#3" 
+			onrelease=(%lua.SelectedOwnWarning == L"!TTTT" ? undef : 'sc_NextStateAnim(st_Set_your_own_warning, "fade", 1, "")') > 
+			<TEXT class="listitem value rad" text="Set your own warning" valign=(%lua.SelectedOwnWarning == L"" ? "CENTER" : "TOP-5%" ) />
+			<TEXT class="listitem value rad" text=(%lua.SelectedOwnWarning == L"!TTTT" ? "Not required in this case" : %lua.SelectedOwnWarning) valign=( %lua.IsLandscape ? "bottom+5%" : "bottom+7%") font="default" />
+		</BUTTON>
+	</DIV>
+	<DIV class="list">
+	;    <SECTIONMARKER/>
+		<LIST2 class="list_control_audio" SMOOTHSCROLLING SHOWSELECTION=1 STARTSELECTIONONSCREEN=1 >
+			<LISTMODEL element_template="et_AudioFilesListShow" listmodel="ui.AudioList.list" selectable=1 />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+		<EMPTYLISTTEXT text="<No items>" visible=%ui.AudioList.list.isempty />
+		;<TEXT class=noitems text="<No items>" visible=%ui.AudioList.list.isempty color=(%interface.theme == L"the_dark" ? #FFFFFF : #000000) />
+	</DIV>
+</layer>
+
+<userlist lm_AudioFilesListShow_localmenu text="str" onrelease="ui" enable="bool"  visible="bool">
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 />
+		<row text="Audio Parameters" onrelease='sc_NextStateAnim(st_AudioParameters, "fade", 1, "")' />	
+</userlist>
+
+<userlist lm_AudioParameters text="str" onrelease="ui" haspopover="bool" enable="bool" icon="str" visible="bool">
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 />
+		<row text="General Sound Setting" onrelease=sc_SettingSound  haspopover=1 />
+		<row text="Common Audio Signals Settings" onrelease='sc_NextStateAnim(st_CommonAudioSignalSettings, "fade", 1, "")'  haspopover=1 />
+</userlist>
+;----
+<userlist lm_CommonAudioSignalSettings text="str" onrelease="ui" details="ui" haspopover="bool" enable="bool" icon="str" visible="bool" >
+	<view visibility_filter=visible sort_by="text" />
+	<default enable=1 visible=1 haspopover=1 />
+</userlist>
+
+<modify lm_SoundSettings>
+	<insert>
+		<row prio=595 text="Common Audio and Warning Signals Settings"  haspopover=1 onrelease='sc_NextStateAnim(st_CommonAudioSignalSettings, "fade", 1, "")' />
+	</insert>
+</modify>

@@ -1,0 +1,58 @@
+<var SettingSoundCockpit = 0 permanent />
+<var SettingSoundQuick = 0 permanent />
+<modify ui_Cockpit>
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON SettingSound 
+			ONRELEASE='MODEL.sound.voice_muted = not MODEL.sound.voice_muted()'
+			ONLONGCLICK=sc_SettingSound
+			VISIBLE=(SettingSoundCockpit)
+			ICON=(lua.gMasterVolumeVisible ? ((%sound.master_muted || (%sound.master_volume == 0)) ? "ico_muteStatus.svg" : "ico_sound.svg") : ((%sound.voice_muted || (%sound.voice_volume == 0)) ? "ico_muteStatus.svg" : "ico_sound.svg")) 
+			ZOOM=80%
+			T_TEXT=(VW_Return_button_text(translate("sound"), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate("sound"), L"%s", 99)) />
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=(SettingSoundCockpit) />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="Sound 'Off / On' Button" bmp=(SettingSound.ICON) isselected="ui.SettingSoundCockpit" />
+	</insert>
+</modify>
+;---- Quick Menu -----
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE='ui.SettingSound.ONRELEASE()()' ONLONGCLICK='ui.SettingSound.ONLONGCLICK()()' 
+			VISIBLE=(SettingSoundQuick)
+			ICON=(SettingSound.ICON) ZOOM=80%
+			T_TEXT=(SettingSound.T_TEXT)
+			B_TEXT=(SettingSound.B_TEXT) />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=(SettingSoundQuick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="Sound 'Off / On' Button" bmp=(SettingSound.ICON) isselected="ui.SettingSoundQuick" />
+	</insert>
+</modify>
+
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=(SettingSound.ICON) text=(translate("sound")) onrelease='ui.SettingSound.ONRELEASE()()' onlongclick='ui.SettingSound.ONLONGCLICK()()' />
+		</insert>
+	</modify>
+<!end/>
+

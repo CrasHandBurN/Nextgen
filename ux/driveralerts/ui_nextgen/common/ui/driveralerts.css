@@ -1,0 +1,105 @@
+@params {
+	text_padding_da: 12;
+	text_padding_da_small:6;
+	box_padding_da: 8;
+	box_delta: (svg_driveralert_image_h - svg_driveralert_image_h_small);
+}
+
+DIV.driver_alert {
+	h: cockpit_warning_h;
+	visible: (%lua.DAEnabled && !ui_Cockpit.p2p_valid && !%lua.VehicleIsPedestrian && !%lua.DragMode && %ui.lm_alert_views.driver_alerts.size && !(ui_PropLayer.JunctionViewVisible || ui_PropLayer.MiniJunctionViewVisible || ui_PropLayer.TunnelOverviewVisible));
+}
+
+DRIVERALERT {
+	box_align:"CENTER";
+	left:0; right:0;
+	top:0; bottom:0;
+	align:"CENTER";
+	desired_w: 84;
+	desired_h: 84;	
+}
+
+SPACER.driver_alert{
+	desired_w:6;
+	visible:(%ui.lm_alert_views.driver_alerts.size >= 2);
+}
+
+DIV.driver_alert>BOX.driver_alert{
+	align:"CENTER"; valign:"CENTER";
+}
+
+VBOX.da{
+	paddingleft:box_padding_da; paddingright:box_padding_da; paddingtop:box_padding_da; paddingbottom:box_padding_da;
+}
+
+SPRITE.da{
+	z: 100;
+	left:0; right:0; top:0; bottom:0;
+	box_align: "center";
+	max_h: ( svg_driveralert_image_h - n_delta * box_delta );
+}
+
+BUTTON.da{
+	z: 100;
+	left:0; right:0; top:0; bottom:0;
+	box_align: "center";
+	max_h:svg_driveralert_image_h;
+}
+
+SPRITE.da.picto {
+	z:101;
+	min_h:28;
+}
+
+SPRITE.da_box{
+	left:0; top:0; right:0; bottom:0; z:100;
+	resize_bmp:1;
+	img:"da_box.bmp";
+}
+
+SPRITE.da_box.duration{
+	img:"spr_duration.svg";
+	image_w:svg_driveralert_arrow_w;
+}
+
+SPRITE.da_box.duration.left{
+	align:"LEFT";
+}
+
+SPRITE.da_box.duration.right{
+	align:"RIGHT";
+}
+
+TEXT.da{
+	left:6;
+	right:6;
+	top:0;
+	z: 101;
+	box_align: "center";
+	clipstyle:"none";
+	font:"defaultbd";
+	fontsize:fontsize_driver_alert;
+	color:#000000;
+	glowsize:0;
+	minaspect:50;
+	padding:text_padding_da_small;
+}
+
+TEXT.footerbutton {
+	wordwrap: (States.CurrentState == st_DASoundTTS || States.CurrentState == st_DAGrupePreshow ? 2 : 1)
+}
+
+TEXT.da.duration{
+	padding:text_padding_da;
+}
+
+LIST2.list_control_da, 
+LIST2.list_control_groupe {
+     	left: 0; top: 0; right: 0; bottom: 0; z:100;
+}
+
+
+
+
+@import "~/common/ui/driveralerts_landscape.css" landscape;
+@import "~/common/ui/driveralerts_portrait.css" portrait;

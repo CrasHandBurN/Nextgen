@@ -1,0 +1,8 @@
+DIV.cockpit DIV.map_messagebox LIST2.panel_waypoints {
+	left:1%;	
+	right:1%;	
+	top:1%;	
+	bottom:( %lua.IsLandscape ? 18% : 28% ); 
+	row:( %lua.IsLandscape ? (%exists:lua.screen4x3 && %lua.screen4x3 ? 6 : 5) : 2 ); 
+	col:( %lua.IsLandscape ? 1 : 2 );
+}

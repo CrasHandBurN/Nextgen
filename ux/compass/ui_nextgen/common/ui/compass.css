@@ -1,0 +1,12 @@
+BUTTON.ar_btc {
+	left: 0; top: 45%;  bmp: "btn_map.bmp#3"; resize_bmp: 1; alpha: 20; h: 15%; w: 10%;
+}
+
+SPRITE.button.CompassPosition {
+	img:"btn_map.bmp#3"; resize_bmp:1; z:1;
+	left:0; top:0; right:0; h=(%lua.IsLandscape ? 22% : 14%)
+	alpha: (%lua.aCockpitTransparency) ;
+}
+
+@import "~/common/ui/compass_landscape.css" landscape;
+@import "~/common/ui/compass_portrait.css" portrait;

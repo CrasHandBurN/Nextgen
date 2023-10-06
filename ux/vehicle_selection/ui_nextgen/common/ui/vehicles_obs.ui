@@ -1,0 +1,3 @@
+<observer value=(%mydata.vehicle_profile.selected_profile) onchange=sc_SelectedProfileChanged start="NO_TRIGGER" />
+
+<observer value=(%mydata.vehicle_profile.list[%mydata.vehicle_profile.selected_profile].use_extended) onselect=VW_ShowAlertMsg start="NO_TRIGGER" />

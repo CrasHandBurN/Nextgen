@@ -1,0 +1,5 @@
+import "~/common/ui/speedcam.css"
+import "~/common/ui/speedcam.lua"
+import "~/common/ui/speedcam.ui"
+import "~/common/ui/speedcam_mods.ui"
+import "~/common/ui/speedcam_mods.lua"

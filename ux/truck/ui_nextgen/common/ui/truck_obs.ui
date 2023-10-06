@@ -1,0 +1,7 @@
+<observer obs_OnRestricted model="navigation.car_in_restricted_area","navigation.restrictions" onchange=sc_CheckOnRestricted />
+<observer obs_ApproachingRestricted value=(%navigation.restrictions_distance) ondeselect=sc_RemoveApproachingRestrictedMsg onselect=sc_CheckRestrictionDist />
+<observer obs_RestrictionsSize value=(%navigation.restrictions.size) ondeselect=sc_RemoveApproachingRestrictedMsg />
+
+<observer obs_BackFromRestriction model="route.list.navigated.truck_restrictions_ahead", "navigation.restrictions" onchange=sc_backFromRestrictionList />
+
+<observer obs_restrictions_turn_alarm value=(%navigation.restrictions_turn_icon_id.valid) onselect=sc_TruckTurnRestrictionAlert_Start />

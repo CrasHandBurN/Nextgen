@@ -1,0 +1,12 @@
+import "~/common/ui/truck.css"
+
+import "~/common/ui/truck.ui"
+import "~/common/ui/truck.lua"
+
+import "~/common/ui/truck_mods.ui"
+import "~/common/ui/truck_mods.lua"
+
+import "~/common/ui/truck_hooks.lua"
+import "~/common/ui/truck_obs.ui"
+
+

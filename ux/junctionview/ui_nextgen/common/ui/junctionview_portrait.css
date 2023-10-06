@@ -1,0 +1,26 @@
+
+.junctionview{
+	left:(0);
+	top:(%lua.MiniJunctionView ? ((ui_PropLayer.SignpostVisible ? %ui.vLaneInfoSignpostHeight : 0) + next_street_h) : 0);
+	h:(%lua.MiniJunctionView ? screen_h/3 : 100%);
+	w:100%;
+}
+
+.cockpit SPRITE.disttext_jv{
+	bottom:menu_button_h;
+}
+
+.ejv_patch{
+	top:(%lua.MiniJunctionView ? ((ui_PropLayer.SignpostVisible ? %ui.vLaneInfoSignpostHeight : 0) + next_street_h) : 0);
+	bottom:(%lua.MiniJunctionView ? (2*screen_h/3 - ((ui_PropLayer.SignpostVisible ? %ui.vLaneInfoSignpostHeight : 0) + next_street_h)) : 0);
+}
+
+SPRITE.panel_map_tunnel{
+	top:(%lua.MiniJunctionView ? 55% : 35%);
+	bottom:30%; 
+}
+
+SPRITE.panel_map_tunnel_length{
+	top:72%;
+	bottom:18%; 
+}

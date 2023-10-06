@@ -1,0 +1,118 @@
+<define_element INFORMATION_PLATE onrelease='' onlongclick='' text='' bg_index=0 fontsize=( %lua.IsShortLayout ? 19 : 31 )>
+	<implementation>
+		;blue, green, red, orange
+		<property bg_colors value=#ff1762AD, #ff008000, #ffff0000, #ffffa500 />
+	</implementation>
+	<SPRITE left=0 right=0 top=0 bottom=0 
+		onrelease={OWNER.ONRELEASE->()} onlongclick={OWNER.ONLONGCLICK->()} 
+		;img="INFORMATION_PLATE.bmp" resize_bmp=1 alpha=32 >
+		;OPAQUE=1
+		;img=(OWNER.BG_INDEX == 0 ? "signpost_template_bg.bmp" : bg_colors[OWNER.BG_INDEX]) resize_bmp=1 alpha=32 >
+		img=(bg_colors[OWNER.BG_INDEX]) resize_bmp=1 alpha=32 >
+		<TEXT right=5% left=5% top=5% h=90% 
+			flex=3 can_shrink=1 box_align="stretch"
+			text=( OWNER.TEXT // "" )
+			font="defaultbd" 
+			fontsize=( OWNER.FONTSIZE )
+			color=#ffffff color2=#000000 ;glowsize=2 
+			align="center" valign="center" wordwrap=3 
+			line_break_method="AUTO" ;"full" "hard"
+			;leading=0.85 
+			leading=90%
+			;minaspect=90
+			;twolinesmall=1
+			;twolinesize=( %lua.IsShortLayout ? 10 : 15 )
+			/>
+	</SPRITE>
+	<SPRITE left=0 right=0 top=0 bottom=0 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 z=100 /> ;overmaplayer
+</define_element>
+
+<define_element GRAPH full current invert=0 invert_r=1 orientation="vertical">
+	<implementation>
+		<property delta value=( OWNER.FULL / 10 ) />
+	</implementation>
+	<BOX orientation=(OWNER.ORIENTATION)> ; it was removed left=0 right=0 top=0 bottom=0
+		<SPRITE class="graph" img="graph.svg" phase=(delta*(OWNER.INVERT_R ? 9 : 0) < OWNER.CURRENT ? (OWNER.INVERT ? 9 : 0) : 10) />
+		<SPRITE class="graph" img="graph.svg" phase=(delta*(OWNER.INVERT_R ? 8 : 1) < OWNER.CURRENT ? (OWNER.INVERT ? 8 : 1) : 10) />
+		<SPRITE class="graph" img="graph.svg" phase=(delta*(OWNER.INVERT_R ? 7 : 2) < OWNER.CURRENT ? (OWNER.INVERT ? 7 : 2) : 10) />
+		<SPRITE class="graph" img="graph.svg" phase=(delta*(OWNER.INVERT_R ? 6 : 3) < OWNER.CURRENT ? (OWNER.INVERT ? 6 : 3) : 10) />
+		<SPRITE class="graph" img="graph.svg" phase=(delta*(OWNER.INVERT_R ? 5 : 4) < OWNER.CURRENT ? (OWNER.INVERT ? 5 : 4) : 10) />
+		<SPRITE class="graph" img="graph.svg" phase=(delta*(OWNER.INVERT_R ? 4 : 5) < OWNER.CURRENT ? (OWNER.INVERT ? 4 : 5) : 10) />
+		<SPRITE class="graph" img="graph.svg" phase=(delta*(OWNER.INVERT_R ? 3 : 6) < OWNER.CURRENT ? (OWNER.INVERT ? 3 : 6) : 10) />
+		<SPRITE class="graph" img="graph.svg" phase=(delta*(OWNER.INVERT_R ? 2 : 7) < OWNER.CURRENT ? (OWNER.INVERT ? 2 : 7) : 10) />
+		<SPRITE class="graph" img="graph.svg" phase=(delta*(OWNER.INVERT_R ? 1 : 8) < OWNER.CURRENT ? (OWNER.INVERT ? 1 : 8) : 10) />
+		<SPRITE class="graph" img="graph.svg" phase=(delta*(OWNER.INVERT_R ? 0 : 9) < OWNER.CURRENT ? (OWNER.INVERT ? 0 : 9) : 10) />
+	</BOX>
+</define_element>
+
+;-------------------------------New-Popover type Icon---------------------
+<element_template et_PopoverIcon>
+	<implementation>
+		<property zoom_On value=( %*._list.index == index && ( !%*.animate // 1 ) ? 80% : 100% ) />
+	</implementation>
+	<BUTTON class="listitem" onrelease='if not gPopoverAnimInProgress then MODEL["*"].onrelease()() end' onlongclick='if not gPopoverAnimInProgress then MODEL["*"].onlongclick()() end' enable=( %*.enable // 1 )>
+		<HBOX class="listitem popover">
+			<SPRITE class="listitem searchprogress wide" visible=( %*.animate // 0 )/>
+			<SPRITE class="radio svg" visible=( %*._list.index == index && ( !%*.animate // 1 ) )/>
+			<SPRITE class="btn_map svg" img=(%*.img // "") visible=(%*.img) zoom=(zoom_On) /> 
+			<SPRITE class="btn_map svg" iconid=(%*.icon_id // -1) iconindex=(%*.iconindex // 0) visible=(%*.icon_id // 0) zoom=(zoom_On) /> 
+			<TEXT class="listitem" right=0 top=0 bottom=0 text=%*.text/>
+			<SPACER flex=1>
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<define_element BUTTON_ICON icon iconid iconindex phasename onrelease='' onclick=((OWNER.T_TEXT // 0) && %lua.voice_on_buttons ? W_ButtonVoicing(OWNER.T_TEXT, (OWNER.B_TEXT // L"")) : '') onlongclick='' zoom t_text b_text t_l_icon t_r_icon b_l_icon b_r_icon c_l_icon c_r_icon >
+	<implementation>
+		<property on_release value=0 />
+	</implementation>
+	<BUTTON class="btn_map" left=0 right=0 top=0 bottom=0 onrelease={OWNER.ONRELEASE->()} onclick={OWNER.ONCLICK->()} onlongclick={OWNER.ONLONGCLICK->()} visible=( (OWNER.ONRELEASE // 0) || (OWNER.LONGCLICK  // 0) || (OWNER.ONCLICK  // 0) ) >
+		<SPRITE class="button map fill" onclick={on_release = 1} alpha=(on_release ? (%ui._idle_time < 8 ? 32 : {on_release = 0}) : %lua.aCockpitTransparency) />
+		<HBOX left=0 right=0 top=0 bottom=0>
+			<SPRITE class="btn_map icon svg" img=(OWNER.ICON // "") iconid=(OWNER.ICONID // -1) phasename=(OWNER.PHASENAME // "") iconindex=(OWNER.ICONINDEX // 0) zoom=(OWNER.ZOOM // 100%) visible=( (OWNER.ICON // 0) || (OWNER.ICONID // 0) ) />
+		</HBOX>
+		
+		<TEXT class="BTN_top_text" text=(OWNER.T_TEXT // "") visible=( (OWNER.T_TEXT // 0) && %lua.text_on_buttons ) />
+		<TEXT class="BTN_bottom_text" text=(OWNER.B_TEXT // "") visible=( (OWNER.B_TEXT // 0) && %lua.text_on_buttons ) />
+		
+		<SPRITE left=2% w=25% top=2% h=25% z=2 valign="CENTER" align="CENTER" zoom="ZOOMVISIBLE" img=(OWNER.T_L_ICON // "") visible=(OWNER.T_L_ICON // 0) />
+		<SPRITE right=2% w=25% top=2% h=25% z=2 valign="CENTER" align="CENTER" zoom="ZOOMVISIBLE" img=(OWNER.T_R_ICON // "") visible=(OWNER.T_R_ICON // 0) />
+		
+		<SPRITE left=2% w=25% h=25% bottom=38% z=2 valign="CENTER" valign="CENTER" zoom="ZOOMVISIBLE" img=(OWNER.C_L_ICON // "") visible=(OWNER.C_L_ICON // 0) />
+		<SPRITE right=2% w=25% h=25% bottom=38% z=2 valign="CENTER" valign="CENTER" zoom="ZOOMVISIBLE" img=(OWNER.C_R_ICON // "") visible=(OWNER.C_R_ICON // 0) />		
+		
+		<SPRITE left=2% w=25% h=25% bottom=2% z=2 valign="CENTER" align="CENTER" zoom="ZOOMVISIBLE" img=(OWNER.B_L_ICON // "") visible=(OWNER.B_L_ICON // 0) />
+		<SPRITE right=2% w=25% h=25% bottom=2% z=2 valign="CENTER" align="CENTER" zoom="ZOOMVISIBLE" img=(OWNER.B_R_ICON // "") visible=(OWNER.B_R_ICON // 0) />
+	</BUTTON>
+</define_element>
+
+<element_template et_ListSetChkOnOff_Icon>
+	<CHECKBOX class="listitem chkonoff" iconspr=(%*.bmp // "") onrelease=%*.onrelease boolmodel=(%*.isselected // undef) checked=(%*.checked // 0) changevalue=(%*.changevalue // undef)  enable=( %*.enable // 1 ) animate=( %*.animate // 0 ) >
+		<TEXT text=%*.text />
+	</CHECKBOX>
+
+	<BUTTON class="btn_main extra" onrelease=%*.onrelease_extra visible=((%*.onrelease_extra // 0) ? 1 : 0) >
+		<SPRITE class="btn_map svg" img="ico_settings.svg" />
+	</BUTTON>
+</element_template>
+
+<element_template et_ListQuestChkOnOff_Icon>
+	<CHECKBOX class="listitem chkonoff" iconspr=(%*.bmp // "") onrelease=%*.onrelease boolmodel=(%*.isselected // undef) checked=(%*.checked // 0) changevalue=(%*.changevalue // undef)  enable=( %*.enable // 1 ) animate=( %*.animate // 0 ) >		
+		<TEXT text=%*.text />
+	</CHECKBOX>
+
+	<BUTTON class="btn_main extra" onrelease=%*.onrelease_extra visible=((%*.onrelease_extra // 0) ? 1 : 0) >
+		<SPRITE class="btn_map svg" img="ico_quest.svg" />
+	</BUTTON>
+</element_template>
+
+<element_template et_ListPlayChkOnOff_Icon>
+	<CHECKBOX class="listitem chkonoff" iconspr=(%*.bmp // "") onrelease=%*.onrelease boolmodel=(%*.isselected // undef) checked=(%*.checked // 0) changevalue=(%*.changevalue // undef)  enable=( %*.enable // 1 ) animate=( %*.animate // 0 ) >		
+		<TEXT text=%*.text />
+	</CHECKBOX>
+
+	<BUTTON class="btn_main extra" onrelease=%*.onrelease_extra visible=((%*.onrelease_extra // 0) ? 1 : 0) >
+		<SPRITE class="btn_map svg" img="ico_announce.svg" />
+	</BUTTON>
+</element_template>
+

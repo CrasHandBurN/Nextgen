@@ -1,0 +1,52 @@
+;--------------------------WANDEL™-----------------------
+<modify ui_Cockpit>   
+	<insert first_child after="BUTTON" into="#CockpitBTNTable"> 
+		<BUTTON_ICON ONRELEASE='sc_NextStateAnim(st_MapVisualSettings, "fade", 1, "")' 
+			ONLONGCLICK=undef
+			ICON="ico_screenview.svg" ZOOM=90%
+			T_TEXT=(VW_Return_button_text(translate("Mapview changer"), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate("Mapview changer"), L"%s", 99))
+			VISIBLE=(%lua.mapview_changer_btn_cockpit) />
+	</insert>
+</modify>
+<modify lm_CockpitSideList>
+	<insert>
+		<row  visible=(%lua.mapview_changer_btn_cockpit) />
+	</insert>
+</modify>
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'Mapview changer' Button" bmp="ico_screenview.svg" isselected="lua.mapview_changer_btn_cockpit" />
+	</insert>
+</modify>
+;-------------------------------In Quick Menu------------------------------------------------------
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE='sc_NextStateAnim(st_MapVisualSettings, "fade", 1, "")'
+			ONLONGCLICK=undef
+			ICON="ico_screenview.svg" ZOOM=90%
+			T_TEXT=(VW_Return_button_text(translate("Mapview changer"), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate("Mapview changer"), L"%s", 99))
+			VISIBLE=(%lua.mapview_changer_btn_quick) />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row  visible=(%lua.mapview_changer_btn_quick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'Mapview changer' Button" bmp="ico_screenview.svg" isselected="lua.mapview_changer_btn_quick" />
+	</insert>
+</modify>
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp="ico_screenview.svg" text=(translate("Mapview changer")) onrelease='sc_NextStateAnim(st_MapVisualSettings, "fade", 1, "")' />
+		</insert>
+	</modify>
+<!end/>

@@ -1,0 +1,132 @@
+
+
+
+
+@params {
+
+	
+
+	btn_main_color:	#2d2d2d;		btn_main_color2: #2d2d2d;		btn_main_color3: #ff5918;
+	btn_sec_color:#2d2d2d;			btn_sec_color2:#2d2d2d;			btn_sec_color3:#ff5918;	
+	inf_main_color:#2d2d2d;			inf_main_color2:#2d2d2d;										
+	inf_sec_color:#2d2d2d;			inf_sec_color2:#2d2d2d;						
+	
+	route_info_color:#2f2f2f;		route_info_color2:#2f2f2f;	
+	route_info_sec_color:#ec3e3e;	route_info_sec_color2:#ec3e3e;
+	
+	chk_radio_color:#2d2d2d;		chk_radio_color2:#2d2d2d;
+	
+	map_main_color:#2d2d2d;			map_main_color2:#2d2d2d;
+	current_street_color:#000000;
+	/*current_street_color_night: #ffffff;*/ 	current_street_color_night: #000000;
+	housenumber_color: #000000;
+	housenumber_color_night: #ffffff;
+	
+	footer_color:	#ffffff;		footer_color2:#ffffff;
+	title_color:	#ffffff;
+	separator_color:	#111111;
+	error_separator_color: #111111;
+	action_color:	#181c21;		action_color2:#a6a6a6;
+
+	xhtml_color: #000000;
+	simspeed_color: #3A3A3A;
+ 
+	color_gps_info:#666666;
+	
+	
+	keyboard_color:#111111;		keyboard_color2:#ffffff;
+	keyboard_alt_color:#ffffff;
+	keyboard_disabled_color: #888888;
+	keyboard_panel_grad: 	"vertical", #ffc6c6c6, 0.0, #ffc7c7c7, 1.0;
+	color_key_popup:#000000;
+	
+	exitnum_color:#2d2d2d;
+	exitnum_sec_color:#2d2d2d;
+	
+	noitems_color:#ffffff;
+	
+	empty_color: #999999;
+	inputfield_focus_color: #ffffff;
+	inputfield_bg_grad:		"horizontal", #ffcacaca, 0.0, #ffd6d6d6, 0.5, #ffc0c0c0, 1.0;
+
+	
+
+	background_grad: 			#ffffffff;
+	background_header_grad:		"vertical", #ff3e3e3e, 0.0, #ff181818, 0.9, #ffff5918, 0.91, #ffff5918, 1.0;	
+	background_footer_grad:		#ff000000;
+	background_list_grad:		#ffffffff;
+	panel_grad: 				#ffffffff;
+	panel_map_grad: 			#ffffffff;
+	panel_mapheader_grad:		"vertical", #ffffffff, 0.0, #ffffffff, 0.98, #ffaaaaaa, 0.99, #ffaaaaaa, 1.0;
+	panel_mapheader_grad_focus:	#ff70c3f8;
+	panel_map_datafields_grad:	#ffffffff;
+	panel_list_grad:			"vertical", #ffffffff, 0.0, #fff6f6f6, 1.0;
+	background_map_grad: 		"vertical", #fffffefe, 0.0, #fff7f7f7, 1.0;
+	background_localmenu_grad:	"vertical", #ff2e1b20, 0.0, #ff2e1b20, 0.17, #ff251515, 0.71, #ff3a3034, 1.0;
+	panel_localmenu_grad:		#ffffffff;
+	listitem_separator_grad:	#ffdddddd;	
+	msgbox_grad: 				#00ffffff;
+	background_tripcomputer_grad: #ffffffff;
+	whereami_currentstreet_grad: "vertical", #32000000, 0.0, #32010101, 1.0;
+	quickbar_grad:				#ffe6e6e6;
+	legend_grad:				#ffffffff;
+	tripinfo_panel_grad: 		#ffeeeeee;
+	quickbarbg_grad:			#ffffffff;	
+
+	hwy_element_header_grad: "vertical", #00000000, 0.0, #60000000, 1.0;
+	
+	listitem_route: 			#ffea6809;
+	listitem_route_dest: 		"vertical", #00000000, 0.0, #00000000, 0.5, #ffea6809, 0.51, #ffea6809, 1.0;
+	listitem_route_dest_travelplanner: 		"vertical", #ffeba97a, 0.0, #ffeba97a, 0.5, #ffea6809, 0.51, #ffea6809, 1.0;
+	listitem_route_start: 		"vertical", #ffea6809, 0.0, #ffea6809, 0.5, #00000000, 0.51, #00000000, 1.0;
+	listitem_separator_route: 	#ffea6809;
+	listitem_separator_route_dest: "vertical", #00000000, 0.0, #00000000, 0.5, #ffeba97a, 0.51, #ffeba97a, 1.0; 
+	
+	separator_line_legend:		"horizontal", #ffdddddd, 0.0, #ffffffff, 1.0;
+	
+	panel_grad_alpha:		#ccf0f0f0;
+	tmcdelay_color:#FF0019;	
+	traffic_station_color: #368028;
+	
+	signpost_bg_color: #ffffffff;
+
+	notification_feedback_grad: #ff2c2c2c;
+	notification_grad:			#ffaa0f0f;	
+	notification_area_textcolor:	#ffffff;
+
+	connected_error_color: #e6f7d91e;
+
+	overspeed_color:#ff0000;
+	
+	countryflag_bg_color:#ff3a3a3a;
+	
+	tunnelview_textcolor: #ffffff;
+	
+	
+	linechart_color: #ff7519;
+	areachart_color: #281818;
+	grid_x_color: #423839;
+	grid_y_color: #423839;
+	scale_numbers_x_color: #000000;
+	scale_numbers_y_color: #000000;
+	selection_line_color: #000000;
+	selection_text_x_color: #ff7519;
+	selection_text_y_color: #ff7519;
+	
+	headertime_textcolor: #ffffff;
+	
+	avoiddist_textcolor: #ffffff;
+/* mod */
+	glow_color:#e7e3de;
+	speed_color:#000000;	
+	speed_color2:#000000;
+	overspeedtol_color:#ffcc00;
+	color_overspeedtol:#000000;
+	color_overspeed:#ffffff;
+}
+
+#ui_LocalMenuFade {color: #777777 !important;}
+
+SPRITE.quickbar_icon.local_search { iconindex: 0 }
+
+SPRITE.providericon{	phasename:"default_light" }

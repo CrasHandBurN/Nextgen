@@ -1,0 +1,6 @@
+.compass_vw {
+	w: 36%;
+	h: 36%;
+	left: (observe(%map.primary.car_posx); ((%map.primary.car_posx - 18) * screen_w / 100));
+	top: (observe(%map.primary.car_posy); ((%map.primary.car_posy - 18) * screen_h / 100));
+}

@@ -1,0 +1,14 @@
+DISTTEXT.next_maneuver_dist {
+	fontsize: 32;
+}
+
+DISTTEXT.dist_to_next_maneuver {
+	fontsize: 22;
+}
+
+@import "~/common/ui/the_skin_short_layout_landscape.css" landscape;
+@import "~/common/ui/the_skin_short_layout_portrait.css" portrait;
+
+/* ------------------------------------------------------------------------------------*/
+/* ---------------------- Mod by arimi   -- 05.03.2017 ----------------- */
+/* ------------------------------------------------------------------------------------*/

@@ -1,0 +1,155 @@
+;---------------WANDEL™---27.01.2022------------------
+<modify lm_AppsAndTools>
+	<insert >
+		<row text="External app config" icon="ico_applications.svg" onrelease=VW_ExternalappconfigOnrelease /> 
+	</insert>
+</modify>
+/*
+<modify lm_MainMenu>
+	<insert after=Settings>
+		<row Externalappconfig text="External app config" icon="ico_applications.svg" onrelease=VW_ExternalappconfigOnrelease /> 
+	</insert>
+</modify>
+*/
+
+<modify lm_Settings>
+	<insert after="default">
+		<row Externalappconfig prio=901 text="External app config" icon="ico_applications.svg" onrelease=VW_ExternalappconfigOnrelease /> 
+	</insert>
+</modify>
+
+<userlist lm_ExternalAppList name="wstr" packagename="str" bmp="str" visible="bool" enable="bool" checked="bool" start="bool"  >
+	<default bmp="" checked=0 start=0 visible=1 enable=1 />
+	<view sort_by="name" visibility_filter=( st_Externalappconfig.isEntered ? (inp_Input.VALUE ? VW_Filter_VarNameWstring($1.name) : 1) : _.checked ) /> ;isEntered isActive
+	<default FILENAME="ExternalAppList.txt" />
+</userlist>
+;--------------------------------------------------------------------------
+<var AppIndexToChange=0>
+/*
+<element_template et_Externalappconfig>
+	<CHECKBOX class="listitem chkonoff" iconspr="da_na.svg" text=( VW_InsertShield("blue", %*.name) + (%lua.IsLandscape ? L" : " : L"\n") + towstring(%*.packagename) ) checked=%*.checked changevalue={invert(%*.checked)} />
+	<SPRITE class="btn_map icon svg" img=(VW_App_iconReturn(%*.bmp, %*.name)) onrelease={VW_RunAppNow(%*.packagename); %sound.playchanneltest("ding", L"!button")} onlongclick='ui.AppIndexToChange = index; VW_Manual_Selection(); MODEL.sound.playchanneltest("ding", L"!button")' align="left" left=2% right=80% />
+</element_template>
+*/
+<element_template et_Externalappconfig>
+	<CHECKBOX class="listitem chkonoff" iconspr="da_na.svg" text=( VW_InsertShield("blue", %*.name) + (%lua.IsLandscape ? L" : " : L"\n") + towstring(%*.packagename) ) checked=%*.checked changevalue={invert(%*.checked)} />
+	<SPRITE class="btn_map icon svg" img=(VW_App_iconReturn(%*.bmp, %*.name)) align="left" left=2% right=80% />
+
+	<BUTTON class="btn_main extra" onrelease='ui.AppIndexToChange = index; sc_st_externalapp_settings_Onrelease()' >
+		<SPRITE class="btn_map svg" img="ico_settings.svg" />
+	</BUTTON>
+</element_template>
+
+<userlist lm_externalapp_Settings text="str" icon="str" haspopover="bool" type="str" enable="bool" onrelease="ui" visible="bool" isselected="str" checked="bool" changevalue="ui" >
+	<view visibility_filter=visible />
+	<default visible=1 enable=1 icon="" />
+	<row	text="Start App now" onrelease={VW_RunAppNow(%ui.lm_ExternalAppList.list[AppIndexToChange].packagename)} />
+	;<row	text="Kill App now" onrelease={VW_killBackgroundProcesses(%ui.lm_ExternalAppList.list[AppIndexToChange].packagename)} />
+	<row	text="Start App at start" checked=(%ui.lm_ExternalAppList.list[AppIndexToChange].start) changevalue={invert(%ui.lm_ExternalAppList.list[AppIndexToChange].start)} type="ChkOnOff" />
+	<row	icon=(VW_App_iconReturn(%ui.lm_ExternalAppList.list[AppIndexToChange].bmp, %ui.lm_ExternalAppList.list[AppIndexToChange].name)) text="Select App Icon" haspopover=1 onrelease=VW_Manual_Selection />
+
+</userlist>
+
+<layer ui_Externalappconfig z=35>
+	<DIV class=list>
+		<SPRITE class=list_panel />
+		<LIST2 class=list_control listmodel="ui.lm_ExternalAppList.list" element_template="et_Externalappconfig" SMOOTHSCROLLING>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<userlist lm_Externalappconfig_footer text="str" onrelease="ui"  onlongclick="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+	<row  text="Click - 'Reset', Long Click - Reload"  isactionbutton=1  onrelease=sc_ResetExternalAppList onlongclick=sc_ReloadExternalAppList />
+</userlist>
+
+<userlist lm_Externalappconfig text="str" onrelease="ui" enable="bool" visible="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+	;<row text="Help" onrelease='W_DefaultWebBrowser("https://4pna.com/showpost.php?p=525162&postcount=265")' />
+	<row text="Help" onrelease='VW_Show_xhtmlQuest("i18n/Help/externalappconfig/Externalappconfig_Help.xhtml", "Externalappconfig")' />
+</userlist>
+
+<element_template et_Manual_SVG_Selection>  
+  	<RADIO class="listitem" onrelease={%ui.lm_ExternalAppList.list[AppIndexToChange].bmp = %*.fname} >
+		<SPRITE class="btn_map icon svg" img=%*.fname  />
+		<TEXT class="BTN_top_text" text=({VW_Return_button_text(translate(VW_GetQVName(tostring(%*.fname))), L"%s", 1)}) />
+		<TEXT class="BTN_bottom_text" text=({VW_Return_button_text(translate(VW_GetQVName(tostring(%*.fname))), L"%s", 99)}) />
+	</RADIO>
+</element_template>
+
+<layer ui_Manual_SVG_Selection z=160>
+	<DIV class="list">
+		<LIST2 class="list_control_MSVG" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.ScanGivenFolderList" element_template="et_Manual_SVG_Selection" />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+;-----------------------buttons----------------------
+<modify ui_Cockpit>           
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON ExternalAppButton 
+			ONRELEASE={VW_RunAppNow(%ui.lm_ExternalAppList[current].packagename); sc_back_to_cockpit()}
+			ONLONGCLICK=VW_ExternalappconfigOnrelease
+			VISIBLE=(%ui.lm_ExternalAppList.list.size && %lua.ExternalAppButtonCockpit)
+			ICON=(%ui.lm_ExternalAppList.list.size ? VW_App_iconReturn(%ui.lm_ExternalAppList[current].bmp, %ui.lm_ExternalAppList[current].name) : "") ;to avoid malfunction
+			ZOOM=80%
+			C_R_ICON="Lua_Logo.svg"
+			T_TEXT=(%ui.lm_ExternalAppList.list.size ? VW_Return_button_text(%ui.lm_ExternalAppList[current].name, L"%s", 1) : "")
+			B_TEXT=(%ui.lm_ExternalAppList.list.size ? VW_Return_button_text(%ui.lm_ExternalAppList[current].name, L"%s", 99) : "") />
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=(%ui.lm_ExternalAppList.list.size && %lua.ExternalAppButtonCockpit) />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'External app config' Button" bmp=(%ui.lm_ExternalAppList.list.size ? ExternalAppButton.ICON : "ico_applications.svg") isselected="lua.ExternalAppButtonCockpit" />
+	</insert>
+</modify>
+;---- Quick Menu -----
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON 
+			ONRELEASE='ui.ExternalAppButton.ONRELEASE()()' 
+			ONLONGCLICK='ui.ExternalAppButton.ONLONGCLICK()()' 
+			VISIBLE=(%ui.lm_ExternalAppList.list.size && %lua.ExternalAppButtonQuick)
+			ICON=(ExternalAppButton.ICON) 
+			ZOOM=80%
+			C_R_ICON=(ExternalAppButton.C_R_ICON) 
+			T_TEXT=(ExternalAppButton.T_TEXT)
+			B_TEXT=(ExternalAppButton.B_TEXT) />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=(%ui.lm_ExternalAppList.list.size && %lua.ExternalAppButtonQuick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'External app config' Button" bmp=(%ui.lm_ExternalAppList.list.size ? ExternalAppButton.ICON : "ico_applications.svg") isselected="lua.ExternalAppButtonQuick" />
+	</insert>
+</modify>
+
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=(%ui.lm_ExternalAppList.list.size ? ExternalAppButton.ICON : "ico_applications.svg") text=(translate("External app config")) onlongclick='ui.ExternalAppButton.ONLONGCLICK()()' onrelease='ui.ExternalAppButton.ONRELEASE()()' enable=(%ui.lm_ExternalAppList.list.size) />
+		</insert>
+	</modify>
+<!end/>

@@ -1,0 +1,14 @@
+;virtual font descriptor file
+;you can mix any number of fonts
+;
+;FORMAT:
+;
+;fontname(can be another virtual font or an ordinal ttf font)="ranges(at least one range)[, font's min aspect][, font's order (to determine fallback if glyph not found)]"
+;range format examples:
+;123|124-200|!100-200
+
+[fonts]
+Roboto-Medium="0-703|720-12031|64256-65023|65136-65279, -1, 1"
+Roboto-Light="0-703|720-12031|64256-65023|65136-65279, -1, 1"
+tahoma="0x0E00-0x0E7F|0xFB50-0xFDFF|0xFE70-0xFEFF|0x0600-0x06FF|0x0590-0x05FF, -1, 2"
+china="704-719|12032-65535, 100, 3"

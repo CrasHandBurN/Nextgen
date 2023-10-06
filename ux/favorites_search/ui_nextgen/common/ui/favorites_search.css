@@ -1,0 +1,11 @@
+BUTTON.button_savedhome,
+BUTTON.button_savedwork,
+BUTTON.button_savedother {
+	top:0; 
+	h:listitem_h;
+	resize_bmp:1;
+	img:"btn.bmp#3";
+} 
+
+@import "~/common/ui/favorites_search_landscape.css" landscape;
+@import "~/common/ui/favorites_search_portrait.css" portrait;

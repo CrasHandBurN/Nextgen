@@ -1,0 +1,155 @@
+;------- 09.05.2023 ------WANDEL™--------    
+<observer obs_wumwelt_nonactive value=(%navigation.env_zone_distance.valid && %lua.wUmweltZoneWarning && !%navigation.env_zone_remaining.valid && %navigation.env_zone_distance > 0) onselect=sc_wUmweltZoneActive START="NO_TRIGGER">
+<observer obs_wumwelt_active 	value=(%navigation.env_zone_distance.valid && %lua.wUmweltZoneWarning && (%navigation.env_zone_remaining_limit_reached || (!%navigation.env_zone_remaining_limit_reached && (%navigation.env_zone_remaining.valid || %navigation.env_zone_remaining_destination_reached)))) onselect=sc_wUmweltZoneActive ondeselect=sc_wUmweltZoneHide START="NO_TRIGGER">
+
+<data Umwelt_ZoneProp>
+	<property UmweltZoneCockpit value=(%navigation.env_zone_distance.valid && !%lua.wUmweltZoneHidden && %lua.wUmweltZoneWarning) />
+	<property Umwelt_Zone_nonactive value=(%navigation.env_zone_distance.valid && !%navigation.env_zone_remaining.valid && %navigation.env_zone_distance > 0) />
+	<property Umwelt_Zone_active value=(%navigation.env_zone_distance.valid && (%navigation.env_zone_remaining_limit_reached || (!%navigation.env_zone_remaining_limit_reached && (%navigation.env_zone_remaining.valid || %navigation.env_zone_remaining_destination_reached)))) />
+</data>
+
+<userlist lm_UmweltZonesettings haspopover="bool" text="str" isselected="str" visible="bool" enable="bool" onrelease="ui" details="ui" type="str" dtooltip="str">
+	<view visibility_filter=visible/>
+	<default onrelease=undef visible=1 enable=1/>
+		<row text="Environmental Zone" isselected="lua.wUmweltZoneWarning" type="ChkOnOff"/>
+		<row text="Choose Sound Environmental Zone" haspopover=1 
+			details=(%lua.AudioUmweltZone)
+			onrelease={%lua.SelectedAudioFile = %lua.AudioUmweltZone; sc_ScanAudioFiles(); %lua.Zone_OR_ZoneHidden = "Zone"} 
+			enable=(%lua.wUmweltZoneWarning) />
+		<row text="Choose Sound Environmental Zone Hidden" haspopover=1 
+			details=(%lua.AudioUmweltZoneHidden)
+			onrelease={%lua.SelectedAudioFile = %lua.AudioUmweltZoneHidden; sc_ScanAudioFiles(); %lua.Zone_OR_ZoneHidden = "ZoneHidden"} 
+			enable=(%lua.wUmweltZoneWarning) />
+		<row text="Read Out Environmental Zone" isselected="lua.wUmweltZoneTTS" type="ChkOnOff" enable=(%lua.wUmweltZoneWarning) dtooltip=(!%lua.wUmweltZoneWarning ? "Turn ON 'Environmental Zone'." : "In 'Regional Settings' select supported TTS Voice")>
+		<row text="Environmental Zone Reading Settings" haspopover=1 onrelease='sc_NextStateAnim(st_wUmweltZoneTTS, "fade", 1, "" )' enable=(%lua.wUmweltZoneWarning && %lua.wUmweltZoneTTS ) dtooltip=(%regional.current_voice.is_tts ? "Turn ON 'Read Out Environmental Zone'." : "In 'Regional Settings' select supported TTS Voice")>
+</userlist>
+
+<userlist lm_wUmweltZone prio="int" text="str" isselected="str"  type="str">
+  <view visibility_filter=visible/>
+  <default onrelease=undef visible=1 enable=1/>
+	<row text="Phrase(distance)" type="ChkOnOff" isselected="lua.wUmweltZoneTTSDistance"/>
+	<row text="Phrase(remaining distance)" type="ChkOnOff" isselected="lua.wUmweltZoneTTSRemaining"/>
+</userlist>
+
+<userlist lm_wUmweltZone_footer text="str" onrelease="ui" isactionbutton="bool">
+	<default enable=1 visible=1/>
+	<view visibility_filter=visible />
+		<row text="Test" isactionbutton=1 onrelease=sc_wUmweltZoneTTS_play/>
+</userlist>
+
+<modify ui_Cockpit>
+	<insert last_child into="#CockpitBTNTable"> 
+		<BUTTON CLASS="btn_map" 
+			ONRELEASE=(Umwelt_ZoneProp.Umwelt_Zone_active ? Current_sc_DiscoverySidePanelChange : undef)
+			VISIBLE=(!ui_PropLayer.DA_freeAtTheMoment && Umwelt_ZoneProp.UmweltZoneCockpit && !ui_LeftSide_Free_Button.ShowLeftSideUmweltZone_VISIBLE) >
+			
+			<SPRITE CLASS="button map fill" />
+			<VBOX TOP=0 BOTTOM=4% LEFT=0 RIGHT=0 BOX_ALIGN="CENTER">
+				<SPRITE TOP=0 BOTTOM=0 LEFT=0 RIGHT=0 BOX_ALIGN="CENTER" ALIGN="CENTER" VALIGN="CENTER" IMG=(st_wSearchCountryUmweltSign(%navigation.car.current_country)) PHASENAME=(!%navigation.env_zone_remaining.valid && %navigation.env_zone_distance ? "disabled" : "normal") >
+					
+				<SPRITE TOP=0 BOTTOM=0 LEFT=0 RIGHT=0 BOX_ALIGN="CENTER" ALIGN="CENTER" VALIGN="CENTER" IMG="umw_box.svg" VISIBLE=(!%navigation.env_zone_remaining.valid && %navigation.env_zone_distance) >
+					<DISTTEXT CLASS="font_umweltdisttext umweltdist" FONTSIZE=(CSS.Param.fontsize_umweltdisttext - 4) DISTANCE=%navigation.env_zone_distance />
+				</SPRITE>
+
+				<SPRITE TOP=0 BOTTOM=0 LEFT=0 RIGHT=0 BOX_ALIGN="CENTER" ALIGN="CENTER" VALIGN="CENTER" IMG="umw_duration.svg" VISIBLE=(%navigation.env_zone_remaining.valid || %navigation.env_zone_remaining_destination_reached) >
+					<DISTTEXT  CLASS="font_umweltdisttext umweltdist"  FONTSIZE=(CSS.Param.fontsize_umweltdisttext - 4) DISTANCE=(%navigation.env_zone_remaining.valid ? %navigation.env_zone_remaining : %navigation.distance_to_destination) 
+						VISIBLE=(!%navigation.env_zone_remaining_limit_reached && (%navigation.env_zone_remaining.valid || %navigation.env_zone_remaining_destination_reached)) />
+					<DISTTEXT CLASS="font_umweltdisttext umweltdist"  FONTSIZE=(CSS.Param.fontsize_umweltdisttext - 4) text=">" DISTANCE=%navigation.env_zone_remaining VISIBLE=%navigation.env_zone_remaining_limit_reached />
+				</SPRITE>
+			</VBOX>
+			;<GRAPH CLASS="graph_btn" FULL=(%ui.WarningsProp.Length) CURRENT=(%ui.WarningsProp.Entry_length_elapsing) INVERT=1 VISIBLE=(%ui.WarningsProp.Remaining_length == "inside" && %ui.WarningsProp.Length) />
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row	visible=(!ui_PropLayer.DA_freeAtTheMoment && Umwelt_ZoneProp.UmweltZoneCockpit && !ui_LeftSide_Free_Button.ShowLeftSideUmweltZone_VISIBLE) />
+	</insert>
+</modify>
+
+	<modify lm_DA_freeAtTheMoment>
+		<insert>
+			<row UmweltZone	visible=( Umwelt_ZoneProp.UmweltZoneCockpit && !ui_LeftSide_Free_Button.ShowLeftSideUmweltZone_VISIBLE ) />
+		</insert>
+	</modify>
+
+	<modify ui_Cockpit>
+		<insert first_child into=box_DA_freeAtTheMoment>
+			<BUTTON BOX_ALIGN="stretch" DESIRED_W=(CSS.Param.cockpit_da_warning_w) 
+				ONRELEASE=(Umwelt_ZoneProp.Umwelt_Zone_active ? Current_sc_DiscoverySidePanelChange : undef)
+				VISIBLE=(Umwelt_ZoneProp.UmweltZoneCockpit && !ui_LeftSide_Free_Button.ShowLeftSideUmweltZone_VISIBLE) >
+				
+				<SPRITE CLASS="button map fill" />
+				<VBOX TOP=0 BOTTOM=4% LEFT=0 RIGHT=0 BOX_ALIGN="CENTER">
+					<SPRITE TOP=0 BOTTOM=0 LEFT=0 RIGHT=0 BOX_ALIGN="CENTER" ALIGN="CENTER" VALIGN="CENTER" IMG=(st_wSearchCountryUmweltSign(%navigation.car.current_country)) PHASENAME=(!%navigation.env_zone_remaining.valid && %navigation.env_zone_distance ? "disabled" : "normal") >
+						
+					<SPRITE TOP=0 BOTTOM=0 LEFT=0 RIGHT=0 BOX_ALIGN="CENTER" ALIGN="CENTER" VALIGN="CENTER" IMG="umw_box.svg" VISIBLE=(!%navigation.env_zone_remaining.valid && %navigation.env_zone_distance) >
+						<DISTTEXT CLASS="font_umweltdisttext umweltdist" FONTSIZE=(CSS.Param.fontsize_umweltdisttext - 4) DISTANCE=%navigation.env_zone_distance />
+					</SPRITE>
+
+					<SPRITE TOP=0 BOTTOM=0 LEFT=0 RIGHT=0 BOX_ALIGN="CENTER" ALIGN="CENTER" VALIGN="CENTER" IMG="umw_duration.svg" VISIBLE=(%navigation.env_zone_remaining.valid || %navigation.env_zone_remaining_destination_reached) >
+						<DISTTEXT  CLASS="font_umweltdisttext umweltdist"  FONTSIZE=(CSS.Param.fontsize_umweltdisttext - 4) DISTANCE=(%navigation.env_zone_remaining.valid ? %navigation.env_zone_remaining : %navigation.distance_to_destination) 
+							VISIBLE=(!%navigation.env_zone_remaining_limit_reached && (%navigation.env_zone_remaining.valid || %navigation.env_zone_remaining_destination_reached)) />
+						<DISTTEXT CLASS="font_umweltdisttext umweltdist"  FONTSIZE=(CSS.Param.fontsize_umweltdisttext - 4) text=">" DISTANCE=%navigation.env_zone_remaining VISIBLE=%navigation.env_zone_remaining_limit_reached />
+					</SPRITE>
+				</VBOX>
+				;<GRAPH CLASS="graph_btn" FULL=(%ui.WarningsProp.Length) CURRENT=(%ui.WarningsProp.Entry_length_elapsing) INVERT=1 VISIBLE=(%ui.WarningsProp.Remaining_length == "inside" && %ui.WarningsProp.Length) />
+			</BUTTON>			
+		</insert>
+	</modify>
+
+<modify lm_WarningsSettings>
+	<insert>
+		<row prio=500 text="Environmental Zone" icon="ico_umwelt_zone_start.svg" onrelease='sc_NextStateAnim(st_UmweltZoneSettings, "fade", 1, "" )'/>
+	</insert>
+</modify>
+
+<modify lm_RouteWarningTypes>
+	<insert >
+		<row prio=1200 text="Environmental Zones" bmp="ico_route_umweltzone.svg" isselected="route.settings.selected.allow_env_zone" enable=(!%lua.ptp_navigation) visible=(isAutomotive)/>
+	</insert>
+</modify>
+
+;---------------------------------left buttons inclusion-------------------------------------------------
+<!if condition=(Plugin.isLoaded("left_big_button"))>
+	<var ShowLeftSideUmweltZone  = 0 permanent />
+	
+	<!DISABLE COMPAT_UPCASE_ATTR_SELECTOR/>
+	<modify lm_LeftButtonsSettings>
+		<modify element="row[prio=3]" bmp="umwelt_zone_eu.svg" text="Environmental Zone" isselected="ui.ShowLeftSideUmweltZone" haspopover=1 dtooltip="Umwelt Zone Warning is Off" enable=(%lua.wUmweltZoneWarning) visible=1 />
+	</modify>
+
+	<modify lm_N_buttons>
+		<modify element="row[prio=3]" name="ShowLeftSideUmweltZone_VISIBLE" visible=(ShowLeftSideUmweltZone && %navigation.env_zone_distance.valid && !%lua.wUmweltZoneHidden && %lua.wUmweltZoneWarning) />
+	</modify>
+
+	<modify ui_LeftSide_Free_Button>
+		<insert into="IMPLEMENTATION">
+			<PROPERTY ShowLeftSideUmweltZone_VISIBLE VALUE=((%ui.lm_N_buttons.size && %ui.lm_N_buttons.list[0].name == "ShowLeftSideUmweltZone_VISIBLE") ||
+						(%ui.lm_N_buttons.size > 1 && %ui.lm_N_buttons.list[1].name == "ShowLeftSideUmweltZone_VISIBLE" && %lua.current_buttons == 2)) />
+		</insert>
+		<insert last_child into="#table_left_big_buttons"> 
+				<BUTTON CLASS="left_big" VISIBLE=ShowLeftSideUmweltZone_VISIBLE
+					ONLONGCLICK='sc_NextStateAnim(st_LeftButtonsSettings, "fade", 1, "" )'
+					ONRELEASE=(Umwelt_ZoneProp.Umwelt_Zone_active ? Current_sc_DiscoverySidePanelChange : undef) >
+					
+					<SPRITE CLASS="button map fill" />
+					<VBOX TOP=0 BOTTOM=4% LEFT=0 RIGHT=0 BOX_ALIGN="CENTER">
+						<SPRITE TOP=0 BOTTOM=0 LEFT=0 RIGHT=0 BOX_ALIGN="CENTER" ALIGN="CENTER" VALIGN="CENTER" IMG=(st_wSearchCountryUmweltSign(%navigation.car.current_country)) PHASENAME=(!%navigation.env_zone_remaining.valid && %navigation.env_zone_distance ? "disabled" : "normal") >
+						
+						<SPRITE TOP=0 BOTTOM=0 LEFT=0 RIGHT=0 BOX_ALIGN="CENTER" ALIGN="CENTER" VALIGN="CENTER" IMG="umw_box.svg" VISIBLE=(!%navigation.env_zone_remaining.valid && %navigation.env_zone_distance) >
+							<DISTTEXT CLASS="font_umweltdisttext umweltdist" DISTANCE=%navigation.env_zone_distance />
+						</SPRITE>
+
+						<SPRITE TOP=0 BOTTOM=0 LEFT=0 RIGHT=0 BOX_ALIGN="CENTER" ALIGN="CENTER" VALIGN="CENTER" IMG="umw_duration.svg" VISIBLE=(%navigation.env_zone_remaining.valid || %navigation.env_zone_remaining_destination_reached) >
+							<DISTTEXT  CLASS="font_umweltdisttext umweltdist" DISTANCE=(%navigation.env_zone_remaining.valid ? %navigation.env_zone_remaining : %navigation.distance_to_destination) 
+								VISIBLE=(!%navigation.env_zone_remaining_limit_reached && (%navigation.env_zone_remaining.valid || %navigation.env_zone_remaining_destination_reached)) />
+							<DISTTEXT CLASS="font_umweltdisttext umweltdist" text=">" DISTANCE=%navigation.env_zone_remaining VISIBLE=%navigation.env_zone_remaining_limit_reached />
+						</SPRITE>
+					</VBOX>
+					
+				</BUTTON>
+		</insert>
+	</modify>
+<!end/>

@@ -1,0 +1,7 @@
+SPRITE.background_nm{
+	left:0; right:0; top:0; bottom:0; resize_bmp:1;
+
+	alpha:%lua.aCockpitTransparency;
+	img:"spr_driveralert_panel.bmp";
+	opaque:1;
+}

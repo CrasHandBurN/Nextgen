@@ -1,0 +1,368 @@
+;----------------------WANDEL™-- 19.12.2020 ----------------
+<observer value=(%lua.DiscoveryNextManeuverValid) onselect='doDelayed(3, VW_Discard_st_PointOnMap)' START="NO_TRIGGER" /> 
+;-------------------------------------main settings-----------------------------------
+<userlist lm_DiscoverySettingsList text="str" type="str" haspopover="bool" isselected="str" visible="bool" enable="bool" onrelease="ui" details="ui" dtooltip="str">
+  <view visibility_filter=visible/>
+	<default onrelease=undef visible=1 enable=1 type=""/>
+		<row	text="Discovery Button in Cockpit" type="ChkOnOff" isselected="lua.ShowDiscoveryBtn" />
+		<row	text="Discovery Button in QuickMenu" type="ChkOnOff" isselected="lua.ShowDiscoveryBtnQuick" />
+		<row    text="Discovery" type="ChkOnOff" isselected="lua.ENABLE_Discavery" />
+		<row	text="Default Action List" onrelease='sc_NextStateAnim(st_DefaultActionList, "fade", 1, "")' details=(lua.gInitialACTION[1]) />
+		<row    text="Entity Exhibition Time" details=(sc_ShowTimeTool(%lua.DiscoveryExhibitionTime)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_DiscoveryExhibitionTime" )' enable=(%lua.ENABLE_Discavery) />
+		<row    text="Safe Next Maneuver Distance" details=(sc_ShowDistanceTool(%lua.NextManeuverSafeDistance)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_NextManeuverSafeDistance" )' enable=(%lua.ENABLE_Discavery) />
+</userlist>
+
+<userlist lm_DiscoveryExhibitionTime name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowTimeTool(5)) max_text=(sc_ShowTimeTool(30)) />
+	   <row name="Entity Exhibition Time" text=(sc_ShowTimeTool(%lua.DiscoveryExhibitionTime)) type="Scroll" min=5 max=30 step=1 valuemodel="lua.DiscoveryExhibitionTime" />
+</userlist>
+
+<userlist lm_NextManeuverSafeDistance name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(100)) max_text=(sc_ShowDistanceTool(1000)) />
+	   <row name="Safe Next Maneuver Distance" text=(sc_ShowDistanceTool(%lua.NextManeuverSafeDistance)) type="Scroll" min=100 max=1000 step=10 valuemodel="lua.NextManeuverSafeDistance" />
+</userlist>
+
+<userlist lm_LocalMenuDiscoverySettings text="str" onrelease="ui" enable="bool">
+	<row text="Sort by Name" onrelease='ui.lm_WhatToDo:sort("name"); VW_WhatToDo_restore()' enable=( %ui.lm_WhatToDo.list.size > 0 ) />
+	<row text="Delete All Entity" onrelease='WhatToDo = {}; VW_WhatToDo_update()' enable=( %ui.lm_WhatToDo.list.size > 0 ) />
+</userlist>
+
+<userlist lm_WhatToDo name="wstr" chunk="str" >
+	<default FILENAME="lm_WhatToDo.txt" />
+</userlist>
+
+<element_template et_DiscoveryEntitySettings > ;MODEL["*"]._list.setcurrent(index)
+	<BUTTON class="listitem" onrelease='MODEL.lua.Discovery_index = index; sc_NextStateAnim(st_Set_DiscoveryEntity, "fade", 1, "")'
+		onlongclick='MODEL.lua.Discovery_index = index; VW_DeleteDiscoveryEntity()' enable=(%lua.ENABLE_Discavery)>
+		<HBOX class="listitem">
+			<VBOX class="listitem">
+				<TEXT class="listitem top" text=%*.name />
+				<TEXT class="listitem bottom" text=(translate("Distance To GeoPoint Warn") + L": " + sc_ShowDistanceTool(lua.WhatToDo[index+1][2].DISTANCE)) />
+			</VBOX>
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_DiscoverySettings z=30 >
+	<DIV class="list">
+		<LIST2 class="list_control" SMOOTHSCROLLING>
+			<SECTIONMARKER>
+			<LISTMODEL listmodel="ui.lm_DiscoverySettingsList" element_template="et_List" TEMPLATE_TYPE_MODEL="*.type">
+				<SEPARATOR insert_at=(%ui.lm_DiscoverySettingsList.size) element_template=et_Separator TEXT="Discovery Entity" />
+			</LISTMODEL>
+			<LISTMODEL listmodel="ui.lm_WhatToDo" element_template="et_DiscoveryEntitySettings" />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<userlist lm_DiscoverySettings_footer text="str" onrelease="ui" onlongclick="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=(%lua.ENABLE_Discavery) visible=1 />
+	<view visibility_filter=visible />
+		<row text="Click to Add Entity. Long Click to Add POI" onrelease=VW_AddDiscoveryEntity onlongclick='MODEL.lua.DiscoveryIsActive = 2; sc_TriggerPOISearch()' isactionbutton=1 />
+</userlist>
+;-------------------------------------entity-----------------------------------------
+<userlist lm_DiscoveryEntitySettingsList text="ui" type="str" onrelease="ui" onlongclick="ui" visible="bool" boolmodel="str" icon="str" details="ui" dtooltip="str" haspopover="bool" isselected="str" enable="bool">	
+  <view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 onrelease=undef type="" />
+		<row    text="To Use Entity" type="ChkOnOff" isselected="lua.ENABLE_Entity" />
+		<row 	text=(lua.WhatToDo[%lua.Discovery_index + 1][1]) icon="write.svg" onrelease='sc_NextStateAnim(st_Set_your_own_TOSAY, "fade", 1, "")' type="FakeInp" enable=(%lua.ENABLE_Entity) />
+		<row    text="GeoPoint" haspopover=1 
+			details=("Lat:" + lua.WhatToDo[%lua.Discovery_index + 1][2].POSITION.lat + " Lon:" + lua.WhatToDo[%lua.Discovery_index + 1][2].POSITION.lon) 
+			onrelease=VW_MapLocation enable=(%lua.ENABLE_Entity) />
+		<row    text="Distance To GeoPoint Warn" haspopover=1 details=(sc_ShowDistanceTool(%lua.DISTANCE_To_GeoPoint)) onrelease='sc_SetPopoverListAndOpen( "ui.lm_Distance_To_GeoPoint_popover" )' enable=(%lua.ENABLE_Entity) />		
+</userlist>
+
+<userlist lm_Distance_To_GeoPoint_popover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(100)) max_text=(sc_ShowDistanceTool(500000)) />
+	   <row name="Distance To GeoPoint Warn" text=(sc_ShowDistanceTool(%lua.DISTANCE_To_GeoPoint)) type="Scroll" min=100 max=500000 step=100 valuemodel="lua.DISTANCE_To_GeoPoint" />
+</userlist>
+
+<userlist lm_EntityWhatToDo text="str" type="str" onrelease="ui" onlongclick="ui" visible="bool" boolmodel="str" icon="str" details="ui" dtooltip="str" haspopover="bool" isselected="str" enable="bool">	
+		<default visible=1 enable=1 type=""
+			onrelease=(%lua.ENABLE_EntityTest ?  VW_ACTION_Test : VW_ACTION_UP) 
+			onlongclick=(%lua.ENABLE_EntityTest ? undef : VW_ACTION_DEL)
+			icon="owl.svg" />
+		<view visibility_filter=visible />
+	/* now it is in hook_StartInit
+		<row text="To Say Name and Text" />
+		<row text="To Show 'Where Is It?'" />
+		<row text="To Say POI Description" />
+		;<row text="To Show POI Description" />
+		<row text="To Show POI Details" />
+		<row text="To Show Map Side Panel" />
+		<row text="To Show POI-connected Picture" />
+	*/
+</userlist>
+
+<layer ui_DiscoveryEntityWhatToDoSettings z=30 >
+	<DIV class=list>
+
+		<LIST2 class="list_control" SMOOTHSCROLLING>
+			<SECTIONMARKER>
+	
+			<LISTMODEL listmodel="ui.lm_DiscoveryEntitySettingsList" element_template="et_List" TEMPLATE_TYPE_MODEL="*.type">
+				<SEPARATOR insert_at=(%ui.lm_DiscoveryEntitySettingsList.size) element_template=et_Separator TEXT="'What To Do?' List" />
+				<SEPARATOR INSERT_AT=(2) ELEMENT_TEMPLATE=et_Separator TEXT="Enter Name and Text To Say" />
+			</LISTMODEL>
+			
+			<LISTMODEL listmodel="ui.lm_EntityWhatToDo.list" element_template="et_List" TEMPLATE_TYPE_MODEL="*.type" >
+				;<SEPARATOR insert_at=(table.getn(lua.WhatToDo[MODEL.lua.Discovery_index() + 1][2].ACTION)) element_template=et_Separator TEXT="Passive 'What To Do?' List">
+			</LISTMODEL>
+			
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<userlist lm_DiscoveryEntitySettings_footer text="str" onrelease="ui" onlongclick="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=(%lua.ENABLE_Entity) visible=1 />
+	<view visibility_filter=visible />
+		<row text="Click to Test Entity. Long Click to Clear Entity." onrelease={invert(%lua.ENABLE_EntityTest)} onlongclick=VW_ClearDiscoveryEntity  isactionbutton=1 />
+</userlist>
+
+<layer ui_DiscoveryEntityTest z=31 visible=(%lua.ENABLE_EntityTest) 
+	onshow='VW_TTSSpeechOwnWarning(sc_translate_VoiceOrLang("You are in the test and demo mode now."))' 
+	onhide='VW_TTSSpeechOwnWarning(sc_translate_VoiceOrLang("You are out of test and demo mode now."))' >
+	<DIV class="full">
+		<SPRITE CLASS="listitem discovery" z=31  img="test.svg" overmaplayer />
+	</DIV>
+</layer>
+;-------------------------------------icon Cockpit-------------------------------------------
+<modify ui_Cockpit>   
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">    
+		<BUTTON_ICON ONRELEASE=VW_LastEntityShow ONLONGCLICK='sc_NextStateAnim(st_DiscoverySettings, "fade", 1, "" )' VISIBLE=(%lua.ShowDiscoveryBtn)
+			ICON="discovery.svg" ZOOM=90% T_TEXT="Discovery" />
+	</insert>
+</modify>
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'Discovery' Button" bmp="discovery.svg" isselected="lua.ShowDiscoveryBtn" />
+	</insert>
+</modify>
+<modify lm_CockpitSideList>
+	<insert>
+		<row  visible=(%lua.ShowDiscoveryBtn) />
+	</insert>
+</modify>
+;-----------------------------add icon in QuickMenu---------------------------------
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE=VW_LastEntityShow ONLONGCLICK='sc_NextStateAnim(st_DiscoverySettings, "fade", 1, "" )' VISIBLE=(%lua.ShowDiscoveryBtnQuick)
+			ICON="discovery.svg" ZOOM=90% T_TEXT="Discovery" />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row  visible=(%lua.ShowDiscoveryBtnQuick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'Discovery' Button" bmp="discovery.svg" isselected="lua.ShowDiscoveryBtnQuick" />
+	</insert>
+</modify>
+;-------------------------------show------------------------------------------------
+<modify ui_PropLayer> 
+    <modify SidePanelVisible VALUE=( %navigation.car_pos_valid && st_Cockpit.isActive && !%lua.MenuIsOpened && !%lua.DragMode && !ui_PropLayer.JunctionViewVisible && !(ui_PropLayer.MiniJunctionViewVisible && %lua.IsPortrait) && %lua.gSidePanelPopupID) />
+	<insert>
+		<OBSERVER  VALUE=( %ui.SidePanelVisible ) ONCHANGE=sc_SetNavCarPos 
+		ONSELECT='ui_DiscoverySidePanel:SHOW()'
+		ONDESELECT='ui_DiscoverySidePanel:HIDE()'
+		START /> ;it need to refresh after %lua.MenuIsOpened
+	</insert>
+</modify>
+
+<layer ui_DiscoverySidePanel_PropLayer z=38 >
+	<observer value=(%screen.current_orientation) onchange=sc_DiscoverySidePanel_replace START />
+	<DIV class=cockpit>
+		<DIV class=map_messagebox >
+			<SPRITE DiscoverySidePanel_propertybox top=(%lua.IsLandscape ? 1% : 3%) left=1% right=1% bottom=(%lua.IsLandscape ? 1% : 3%) />
+		</DIV>
+	</DIV>
+</layer>
+
+<layer ui_DiscoverySidePanel visible=( ui_PropLayer.SidePanelVisible )
+	onshow='VW_OnShow() sc_TimerTool("Discovery", MODEL.lua[gSidePanelShowTime](), true)' 
+	onhide='VW_OnHide()' 
+	z=38>
+	
+	<observer value=(%map.primary.rotate) onchange=sc_DiscoverySidePanel_rotate START />
+	<layer z=38>
+		<DIV class=cockpit>
+			<DIV class=map_messagebox >
+				<SPRITE class=background_sp /> 
+			</DIV>
+		</DIV>
+	</layer>
+	<layer z=100>
+		<implementation>
+			<property height value=(VW_TimeProgressBar("Discovery", %{"lua." + lua.gSidePanelShowTime}, %gps.blink)) /> ;%gps.fast_blink
+		</implementation>
+		<DIV class=cockpit>
+			<DIV class=map_messagebox >
+				;<SPRITE VW_time_progress_bar top=(%lua.IsLandscape ? 1% : 3%) left=1% right=1% bottom=(%lua.IsLandscape ? 1% : 3%) />
+				<SPRITE left=3% w=2% bottom=1% img="btn_infopanel.bmp#3" phase=1 resize_bmp=1 h=(height) alpha=(%lua.aCockpitTransparency < 16 ? 16 : %lua.aCockpitTransparency) />
+				<SPRITE my_logo left=85% right=2% bottom=92% top=2% align="right" valign="top" img="MyLogo.svg" /> 
+			</DIV>
+		</DIV>
+	</layer>
+</layer>
+<layer ui_Discovery_Zoom z=100 visible=( ui_PropLayer.SidePanelVisible )>
+	<DIV class=cockpit>
+		<DIV class=map_messagebox >
+			<HBOX left=0 right=0 top=0 bottom=0 paddingleft=0 paddingright=1% align="right" valign="center" >
+				<BOX class="mapcontrol zoom">
+					<SPACER flex=1>
+					<BUTTON class="btn_map zoomin" img="" 
+							onclick='MODEL.map.discoverysidepanel.zoom_start(1)' 
+							onrelease='MODEL.map.discoverysidepanel.zoom_stop() MODEL.lua[gSidePanelZoom] = MODEL.map.discoverysidepanel.zoom():toInt()' 
+							onmouseleave='MODEL.map.discoverysidepanel.zoom_stop() MODEL.lua[gSidePanelZoom] = MODEL.map.discoverysidepanel.zoom():toInt()' 
+							visible=(%lua.DSCzoomVisible) >
+						<SPRITE CLASS="button map fill" />
+						<SPRITE class="btn_map zoomin icon svg" />
+					</BUTTON>
+							
+					<BUTTON class="btn_map fit" img="" 
+							onrelease='MODEL.map.discoverysidepanel.set_zoom(MODEL.lua.Old_DiscoverySidePanelZoom()) MODEL.lua[gSidePanelZoom] = MODEL.lua.Old_DiscoverySidePanelZoom()' 
+							onlongclick=sc_RemoveAllBoxes 
+							visible=(%lua.DSCzoomVisible) >
+						<SPRITE CLASS="button map fill" />
+						<SPRITE class="btn_map fit icon svg" />
+					</BUTTON>
+							
+					<BUTTON class="btn_map zoomout" img="" 
+							onclick='MODEL.map.discoverysidepanel.zoom_start(-1)' 
+							onrelease='MODEL.map.discoverysidepanel.zoom_stop() MODEL.lua[gSidePanelZoom] = MODEL.map.discoverysidepanel.zoom():toInt()' 
+							onmouseleave='MODEL.map.discoverysidepanel.zoom_stop() MODEL.lua[gSidePanelZoom] = MODEL.map.discoverysidepanel.zoom():toInt()' 
+							visible=(%lua.DSCzoomVisible) >
+						<SPRITE CLASS="button map fill" />
+						<SPRITE class="btn_map zoomout icon svg" />
+					</BUTTON>
+					<SPACER flex=1>
+				</BOX>
+			</HBOX>				
+		</DIV>
+	</DIV>
+</layer>
+<layer ui_zoomctr z=100 visible=( ui_PropLayer.SidePanelVisible )>
+	<DIV class=cockpit>
+		<DIV class=map_messagebox >
+			<SPRITE class="zoomctrl_sp">
+				<TEXT class="fill zoomctrl_sp" text=( %lua.ZoomControlText ) /> 
+			</SPRITE>
+		</DIV>
+	</DIV>
+</layer>
+<layer ui_cursor z=100 visible=( ui_PropLayer.SidePanelVisible )>
+	<DIV class=cockpit>
+		<DIV class=map_messagebox >
+			<SPRITE class="map_messagebox listitem flag" img="ico_cursorhead_place.svg" phasename="active" visible=(%gps.blink) /> 
+		</DIV>
+	</DIV>
+</layer>
+;*********************************************************************
+<layer ui_Discovery z=100 visible=( ui_PropLayer.SidePanelVisible ) onshow='MODEL.lua.Entity_use_visibility = false'>
+	<observer value=(%lua.Entity_use_visibility) 
+		onselect='if in_set(ui_zoomctr, VW_layers) then ui_zoomctr:HIDE() end' 
+		;ondeselect'if in_set(ui_zoomctr, VW_layers) then ui_zoomctr:SHOW() end' 
+		START="NO_TRIGGER" />
+	<DIV class=cockpit>
+		<DIV class=map_messagebox >
+			<SPRITE right=85% left=2% bottom=90% top=1% align="left" valign="top" img="discovery.svg" zoom=800 />
+			<DIV class="dialog_buttons" visible=(%lua.Entity_use_visibility)>
+				<DIALOGBUTTON class="dialog 2_1_1 mapmsgbox" text="Route to" 
+					onrelease='
+					MODEL.my.map.select_gcoor(GCOOR.new({
+						lat = parse_gcoor(temp_value[2].POSITION.lat),
+						lon = parse_gcoor(temp_value[2].POSITION.lon),
+						}), temp_value[1])
+					VW_StopoverOrNewRoute() 
+					hook_StartRoutePlanning:trigger()
+					'
+					;onrelease='VW_StopoverOrNewRoute() hook_SelectPoiItem:trigger() hook_StartRoutePlanning()' 
+				>
+					<SPRITE class="button map fill" />
+				</DIALOGBUTTON>
+				<DIALOGBUTTON class="dialog 2_1_2 mapmsgbox" text="Show place" 
+					onrelease='
+					MODEL.my.map.select_gcoor(GCOOR.new({
+						lat = parse_gcoor(temp_value[2].POSITION.lat),
+						lon = parse_gcoor(temp_value[2].POSITION.lon),
+						}), temp_value[1])
+					VW_StopoverOrNewRoute() 
+					hook_ShowPointOnMap:trigger()
+					'
+				;onrelease='hook_SelectPoiItem:trigger()' 
+				> 
+	       			<SPRITE class="button map fill" />
+				</DIALOGBUTTON>
+				<DIALOGBUTTON class="dialog 1_1_1 mapmsgbox" text="Close" onrelease=sc_HideDiscoverySidePopup> 
+	       			<SPRITE class="button map fill" />
+				</DIALOGBUTTON>
+			</DIV>
+		</DIV>
+	</DIV>
+</layer>
+;---------------------------------------------------------------------
+<layer ui_weatherDSC z=100 visible=( ui_PropLayer.SidePanelVisible ) 
+	onshow=' 
+		VW_WeatherAtDependsPosition(GCOOR.new({
+						lat = parse_gcoor(temp_value[2].POSITION.lat),
+						lon = parse_gcoor(temp_value[2].POSITION.lon),
+						}))
+		'
+	onhide='
+		MODEL.services.weather.request_weather_at_location(MODEL.navigation.car.position())
+		'>
+		<implementation>
+			<property weather_icon_pos_svg value=( %lua.WeatherIconSVG ) />
+			<property weather_icon_pos value=( %services.weather.weather_at_location.list[0].hourly_forecast[0].IconID // -1 ) />
+			<property weather_icon_pos1 value=( VW_WeatherIconSVG(%services.weather.weather_at_location.list[0].hourly_forecast[0].IconID // -1 ) ) />
+			<property weather_temp_pos value=( %services.weather.weather_at_location.list[0].hourly_forecast[0].temperature // 0 ) />
+			<property weather_temp_valid_pos value=( %services.weather.weather_at_location.list[0].hourly_forecast[0].temperature.valid // 0 ) />
+			<property weather_visible_pos value=( %lua.OnlineWeatherEnabled && !%services.weather.weather_at_location.request_in_progress ) /> 			
+		</implementation>
+
+	<DIV class=cockpit>
+		<DIV class=map_messagebox >
+			<BOX sidepanelweather box_align="CENTER" >
+				<TEMPERATURETEXT class="listitem map" valign="CENTER" can_shrink=0 temperature=weather_temp_pos valid=weather_temp_valid_pos 
+					visible=( weather_visible_pos && !%services.weather.weather_at_location.request_in_progress ) />
+				<SPRITE class="weather map" iconid=weather_icon_pos 
+					visible=( weather_visible_pos && !weather_icon_pos_svg && !%services.weather.weather_at_location.request_in_progress ) />
+				<SPRITE class="weather map" img=weather_icon_pos1 
+					visible=( weather_visible_pos && weather_icon_pos_svg  && weather_icon_pos != -1 && !%services.weather.weather_at_location.request_in_progress ) />
+				<SPRITE class="searchprogress wide" can_shrink=0 
+					visible=( weather_visible_pos && %services.weather.weather_at_location.request_in_progress ) />
+			</BOX>
+		</DIV>
+	</DIV>
+</layer>
+;-------------------------------POI-connected picture-------------------
+<observer value=(%lua.PictureFileExistence) onselect='sc_DiscoverySidePanelChange(gPicture_value, "DiscoverySidePanelZoom", "DiscoveryExhibitionTime", {ui_pictureDSC, ui_Discovery})' START="NO_TRIGGER" /> 
+<layer ui_pictureDSC z=99 visible=( ui_PropLayer.SidePanelVisible ) onshow='MODEL.lua.Entity_use_visibility = false'> 
+	<DIV class=cockpit>
+		<DIV class=map_messagebox >
+			<BUTTON left=1% right=1% top=1% bottom=1% 
+				onlongclick={invert(%lua.Entity_use_visibility)}
+				onrelease=sc_HideDiscoverySidePopup >
+				<PSPRITE left=1% right=1% top=1% bottom=1% align="center" valign="center" pictw=(PARENT.W) picth=(PARENT.H) zoom="zoomvisible" bmp=%lua.DiscoveryPoiPicture />
+			</BUTTON>
+		</DIV>
+	</DIV>
+</layer>
+
+<userlist lm_POI_Dy_Popover text="wstr" icon_id="int" iconindex="int" position="gcoor" provider_id="int" id="qword" onrelease="ui" enable="bool" visible="bool" type="str" >
+	<default enable=1 visible=1 type="Icon" iconindex=2 onrelease='
+		MODEL.my.poi.select_poi(MODEL["*"].provider_id(), MODEL["*"].id())
+		sc_ShowPoiInfo()
+		hook_SelectPoiItem:prevent_default()
+	' />
+</userlist>	

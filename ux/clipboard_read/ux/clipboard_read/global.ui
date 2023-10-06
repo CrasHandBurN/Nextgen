@@ -1,0 +1,2 @@
+import "~/common/ui/clipboard_read.ui"
+import "~/common/ui/clipboard_read.lua"

@@ -1,0 +1,8 @@
+;---------------WANDEL™---18.12.2019------------------
+<userlist lm_RunExtra  chunk="wstr" >
+	<default FILENAME="RunExtra.lua" />
+</userlist>
+
+<userlist lm_clipboard clipboard="wstr" visible="bool" enable="bool" >
+	<default FILENAME="clipboard.txt" />
+</userlist>

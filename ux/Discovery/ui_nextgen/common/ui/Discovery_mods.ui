@@ -1,0 +1,25 @@
+;----------------------WANDEL™-- 17.08.2020 ----------------
+<!if condition=(Plugin.isLoaded("labs"))>
+	<modify lm_ExtraSettingsList>
+		<insert>
+			<row text="Discovery" icon="discovery.svg" haspopover=1 onrelease='sc_NextStateAnim(st_DiscoverySettings, "fade", 1, "" )' />
+		</insert>
+	</modify>
+<!end>
+
+<modify lm_aRouteWarningsSettings>
+	<insert>
+		<row text="Discovery" haspopover=1 onrelease='sc_NextStateAnim(st_DiscoverySettings, "fade", 1, "" )' />
+	</insert>
+</modify>
+
+<modify lm_PoiSort>
+	<insert>
+		<row text="Default Action List" onrelease='sc_NextStateAnim(st_DefaultActionList, "fade", 1, "")'
+			enable=( ( %lua.PoiSearchList == "struct_search" && %poi.struct_search.ready && ( %poi.struct_search.container_count || %poi.struct_search.count ) ) || ( %{ "poi." + %lua.PoiSearchList + ".list.size" } && %{ "poi." + %lua.PoiSearchList + ".ready" } ) ) 
+			visible=( observe( vActiveState ); %lua.SelectedProviderType == lua.EProviderTypes.Onboard && !st_PointOnMap.isEntered && %lua.DiscoveryIsActive) />
+		<row text="Upload POI To 'Discovery'" onrelease=VW_SearchAndUploadEntity
+			enable=( ( %lua.PoiSearchList == "struct_search" && %poi.struct_search.ready && ( %poi.struct_search.container_count || %poi.struct_search.count ) ) || ( %{ "poi." + %lua.PoiSearchList + ".list.size" } && %{ "poi." + %lua.PoiSearchList + ".ready" } ) ) 
+			visible=( observe( vActiveState ); %lua.SelectedProviderType == lua.EProviderTypes.Onboard && !st_PointOnMap.isEntered && %lua.DiscoveryIsActive) />
+	</insert>
+</modify>

@@ -1,0 +1,7 @@
+DIV.half_vertical {
+	x: main_x; 
+	y: main_y; 
+	w: main_w; 
+	h: (main_h/2); 
+	top: 20%;
+}

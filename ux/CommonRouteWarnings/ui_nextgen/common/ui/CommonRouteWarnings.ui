@@ -1,0 +1,259 @@
+;---------------WANDEL™---22.11.2018------------------
+<observer obs_RouteWarningRotation value=(%gps.current_time) onchange=sc_RouteWarningRotation />
+
+<observer boolmodel="lua.wNextWarningValid" onselect=sc_WarningAndRotationStart ondeselect=sc_WarningAndRotationStop start />
+
+<observer obs_Start_wnextWarning model="route.list.navigated.itiner.list", "traffic.events.significant_events.size", "traffic.events.has_event_on_route", "traffic.events.has_block_on_route"
+	onchange='obs_RouteWarningRotation:STOP(); sc_wNextWarningStatusChanged(); obs_RouteWarningRotation:START()' />
+
+;<observer obs_Start_wnextWarning model="traffic.events.significant_events.size" onchange='obs_RouteWarningRotation:STOP(); sc_wNextWarningStatusChanged(); obs_RouteWarningRotation:START()' />
+
+<modify lm_WarningsSettings>
+	<insert after="default">
+		<row prio=100 text="Common Route Warnings Settings" icon="ico_route.svg" onrelease='sc_NextStateAnim(st_common_route_warnings_settings, "fade", 1, "" )' />
+	</insert>
+</modify>
+
+<userlist lm_common_route_warnings_settings bmp="str" idx="ui" onrelease="ui" onrelease_extra="ui" enable="bool" visible="bool" text="str" type="str" checked="bool" changevalue="ui" haspopover="bool">
+	<view visibility_filter=visible sort_by="text" />
+	<default enable=1 visible=1 onrelease_extra='sc_st_warning_settings_Onrelease()' type="SetChkOnOff_Icon" haspopover=1 />
+
+;	<row bmp="ico_route.svg"							idx=(lua.ERouteinfoFilterTypes.ALL) 		text="ALL" />
+	<row bmp="ico_route_timedomain.svg"  				idx=(lua.ERouteinfoFilterTypes.TMC) 		text="ROUTEWARNING~TMC"		checked=(%lua["ROUTEWARNING~TMC"]) changevalue={invert(%lua["ROUTEWARNING~TMC"])} /> 
+	
+	<row bmp=(sc_GetIcon("routewarning_highway")) 		idx=(lua.ERouteinfoFilterTypes.HIGHWAY)		text="ROUTEWARNING~HIGHWAY"	checked=(%lua["ROUTEWARNING~HIGHWAY"]) changevalue={invert(%lua["ROUTEWARNING~HIGHWAY"])} visible=(!sc_GetSysEntry("route", "guidance_at_highway_entry", 0)) />
+	<row bmp=(sc_GetIcon("routewarning_highway")) 		idx=(lua.ERouteinfoFilterTypes.HIGHWAY)		text="ROUTEWARNING~HIGHWAY" onrelease_extra='sc_InfoMessageBox("Not available because of \'[route] guidance_at_highway_entry\'")' type="QuestChkOnOff_Icon" visible=(sc_GetSysEntry("route", "guidance_at_highway_entry", 0)) enable=0 />
+
+	<row bmp=(sc_GetIcon("routewarning_carpool")) 		idx=(lua.ERouteinfoFilterTypes.CARPOOL)		text="ROUTEWARNING~CARPOOL"	checked=(%lua["ROUTEWARNING~CARPOOL"]) changevalue={invert(%lua["ROUTEWARNING~CARPOOL"])} />
+	
+	<row bmp=(sc_GetIcon("routewarning_toll_all")) 		idx=(lua.ERouteinfoFilterTypes.PAYMENT)		text="ROUTEWARNING~PAYMENT"	checked=(%lua["ROUTEWARNING~PAYMENT"]) changevalue={invert(%lua["ROUTEWARNING~PAYMENT"])} visible=(!sc_GetSysEntry("debug", "manoeuvre_at_tollgate", 0)) />
+	<row bmp=(sc_GetIcon("routewarning_toll_all")) 		idx=(lua.ERouteinfoFilterTypes.PAYMENT)		text="ROUTEWARNING~PAYMENT"	onrelease_extra='sc_InfoMessageBox("Not available because of \'[debug] manoeuvre_at_tollgate\'")' type="QuestChkOnOff_Icon" visible=(sc_GetSysEntry("debug", "manoeuvre_at_tollgate", 0)) enable=0 />
+	
+	<row bmp=(sc_GetIcon("routewarning_dirt_road")) 	idx=(lua.ERouteinfoFilterTypes.DIRT)		text="ROUTEWARNING~DIRT"	checked=(%lua["ROUTEWARNING~DIRT"]) changevalue={invert(%lua["ROUTEWARNING~DIRT"])} />
+	<row bmp=(sc_GetIcon("routewarning_four_wd")) 		idx=(lua.ERouteinfoFilterTypes.FOURWD)		text="ROUTEWARNING~FOURWD"	checked=(%lua["ROUTEWARNING~FOURWD"]) changevalue={invert(%lua["ROUTEWARNING~FOURWD"])} />
+	<row bmp=(sc_GetIcon("routewarning_border_cross")) 	idx=(lua.ERouteinfoFilterTypes.BORDER)		text="ROUTEWARNING~BORDER"	checked=(%lua["ROUTEWARNING~BORDER"]) changevalue={invert(%lua["ROUTEWARNING~BORDER"])} />
+	<row bmp=(sc_GetIcon("routewarning_restricted_road")) 	idx=(lua.ERouteinfoFilterTypes.RESTRICTED)	text="ROUTEWARNING~RESTRICTED"	checked=(%lua["ROUTEWARNING~RESTRICTED"]) changevalue={invert(%lua["ROUTEWARNING~RESTRICTED"])} />
+	<row bmp=(sc_GetIcon("routewarning_ferry")) 		idx=(lua.ERouteinfoFilterTypes.FERRY)		text="ROUTEWARNING~FERRY"	checked=(%lua["ROUTEWARNING~FERRY"]) changevalue={invert(%lua["ROUTEWARNING~FERRY"])} />
+	<row bmp=(sc_GetIcon("routewarning_railway_ferry")) idx=(lua.ERouteinfoFilterTypes.RAILFERRY)	text="ROUTEWARNING~RAILFERRY"	checked=(%lua["ROUTEWARNING~RAILFERRY"]) changevalue={invert(%lua["ROUTEWARNING~RAILFERRY"])} />
+	
+	<row bmp=(sc_GetIcon("routewarning_long_tunnel")) 	idx=(lua.ERouteinfoFilterTypes.LONG_TUNNEL)	text="ROUTEWARNING~LONG_TUNNEL"	checked=(%lua["ROUTEWARNING~LONG_TUNNEL"]) changevalue={invert(%lua["ROUTEWARNING~LONG_TUNNEL"])} visible=(!sc_GetSysEntry("debug", "enter_tunnel", 0) || !sc_GetSysEntry("debug", "leave_tunnel", 0)) />
+	<row bmp=(sc_GetIcon("routewarning_long_tunnel")) 	idx=(lua.ERouteinfoFilterTypes.LONG_TUNNEL)	text="ROUTEWARNING~LONG_TUNNEL"	onrelease_extra='sc_InfoMessageBox("Not available because of \'[debug] enter_tunnel\' or \'[debug] leave_tunnel\'")' type="QuestChkOnOff_Icon" visible=(sc_GetSysEntry("debug", "enter_tunnel", 0) || sc_GetSysEntry("debug", "leave_tunnel", 0)) enable=0 />
+	
+	<row bmp=(sc_GetIcon("routewarning_truck_restriction")) idx=(lua.ERouteinfoFilterTypes.TRUCK)		text="ROUTEWARNING~TRUCK"	checked=(%lua["ROUTEWARNING~TRUCK"]) changevalue={invert(%lua["ROUTEWARNING~TRUCK"])} />
+
+</userlist>
+
+<data WarningsProp>
+	<property Text value="" />
+	<property Visible value=false />
+	<property Current_Event_Name value="" />
+	<property Saved_Event_Name value="" />
+	<property Icon value="" />
+	<property Remaining_length value="" />
+	<property Arrival_time value=""/>
+	
+	<property Length value=(observe(%other.trips[0].distance_total); Current_Event_Name == "ROUTEWARNING~TMC" ? sc_ReturnWarningEntry_length("ROUTEWARNING~TMC") : 0) />
+	<property Entry_length_elapsing value=(observe(%other.trips[0].distance_total); (Length - (%other.trips[0].distance_total - %lua.Startdistance_total))) />
+</data>
+
+<userlist lm_Warnings_Settings text="str" haspopover="bool" type="str" enable="bool" onrelease="ui" boolmodel="str" visible="bool" isselected="str" details="ui" dtooltip="str">
+	<view visibility_filter=visible />
+	<default visible=1 enable=1 isselected="" />
+
+	;<row	text=(WarningsProp.Text) isselected=("lua." + WarningsProp.Text) type="ChkOnOff" />
+	<row	text="Distance to Event Warning" details=(sc_ShowDistanceTool(%lua[WarningsProp.Text + "_Distance"])) haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_WarningDistance")' />
+	<row	text="Show Event Place" haspopover=1 onrelease={invert(%lua[WarningsProp.Text + "_Show_Event_Place"])} details=(%lua[WarningsProp.Text + "_Show_Event_Place"] ? "On" : "Off") />
+	<row    text="'Events Place' zoom" details=(sc_ShowDistanceTool(%lua.wNextRouteWarningZoom)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_wNextRouteWarningZoom_popover" )' />
+	<row    text="'Events Place' time" details=(sc_ShowTimeTool(%lua.wNextRouteWarningShowTime)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_wNextRouteWarningShowTime" )' />
+	<row	text="Event Warning Sound" haspopover=1 details=(%lua[WarningsProp.Text + "_Audio"]) onrelease={%lua.SelectedAudioFile = %lua[WarningsProp.Text + "_Audio"]; sc_ScanAudioFiles()} />
+	<row 	text="TTS or Audio Priority" haspopover=1 onrelease={invert(%lua[WarningsProp.Text + "_TTSOrAudio"])} details=(%lua[WarningsProp.Text + "_TTSOrAudio"] ? (%regional.current_voice.is_tts ? "TTS" : "Audio is currently as TTS is Off") : "Audio") />
+	<row	text="Current Route Warning Events" haspopover=1 onrelease='sc_NextStateAnim(st_RouteOverview, "fade", 1, "")' />
+
+</userlist>
+
+<userlist lm_WarningDistance name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(0)) max_text=(sc_ShowDistanceTool(500000)) />
+	<row	name=(WarningsProp.Text) text=(sc_ShowDistanceTool(%lua[WarningsProp.Text + "_Distance"])) type="Scroll" min=0 max=500000 step=5 
+		valuemodel=("lua." + WarningsProp.Text +"_Distance") />
+</userlist>
+
+<userlist lm_wNextRouteWarningZoom_popover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(100)) max_text=(sc_ShowDistanceTool(1000)) />
+	   <row name="'Events Place' zoom" text=(sc_ShowDistanceTool(%lua.wNextRouteWarningZoom)) type="Scroll" min=100 max=1000 step=10 valuemodel="lua.wNextRouteWarningZoom" />
+</userlist>
+
+<userlist lm_wNextRouteWarningShowTime name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowTimeTool(5)) max_text=(sc_ShowTimeTool(30)) />
+	   <row name="'Events Place' time" text=(sc_ShowTimeTool(%lua.wNextRouteWarningShowTime)) type="Scroll" min=5 max=30 step=1 valuemodel="lua.wNextRouteWarningShowTime" />
+</userlist>
+
+<views VW_routeinfolist_filtered listmodel="route.list.navigated.itiner.list" >
+	<field filtered_types=(lua.ERouteinfoFilterTypes.ALL) />
+	<view filter filter=(in_set($1.filter_type, views.filtered_types)) /> ;|| in_set($1.filter_type, lua.ERouteinfoFilterTypes.VIA)) />
+</views>
+
+<userlist lm_st_common_route_warnings_settings_footer text="str" onrelease="ui" enable="bool" isactionbutton="bool">
+	<default enable=1 />
+	<row text="Dummy" isactionbutton=1 onrelease=sc_Swithch_All_List />
+</userlist>
+;-----------------------------show--------------------------
+<layer ui_VW_CommonRouteWarningSidePanel z=50 
+	onshow='if ui.WarningsProp.Saved_Event_Name() == "ROUTEWARNING~TMC" then ui_zoomctr:HIDE() end'
+	visible=( ui_PropLayer.SidePanelVisible && sc_GetClosestEventDataVW() != -1 )>
+	<observer value=(%screen.current_orientation) onchange='ui.BTN_CommonRouteWarningsShow.ONRELEASE()' START="NO_TRIGGER" />
+	<implementation>
+		<property itiner_id value=(%route.list.navigated.itiner.list[lua.gAuxilaryPreparation[WarningsProp.Saved_Event_Name].Index0].icon_small_id != -1 ? %route.list.navigated.itiner.list[lua.gAuxilaryPreparation[WarningsProp.Saved_Event_Name].Index0].icon_small_id : %route.list.navigated.itiner.list[lua.gAuxilaryPreparation[WarningsProp.Saved_Event_Name].Index0].icon_id) />
+		<property icon value=(WarningsProp.Saved_Event_Name == "ROUTEWARNING~TMC" ? %traffic.events.significant_events[sc_GetClosestEventDataVW()].icon_id : itiner_id) /> 
+	</implementation>
+	<layer >
+		<DIV class=cockpit>
+			<DIV class=map_messagebox>
+				<SPRITE class="map_messagebox listitem flag" iconid=(icon) phasename="blue" visible=(%gps.blink) /> 
+			</DIV>
+		</DIV>
+	</layer>
+	<layer ui_wMapSidePanel_NextRouteWarningSPR visible=(WarningsProp.Saved_Event_Name == "ROUTEWARNING~TMC")>
+		<implementation>
+			<property disttext value=(builtin.format("%{distance:3}", %traffic.events.significant_events[sc_GetClosestEventDataVW()].distance) + (%lua.trafficFullDelayTextOnMap ? L" | " : L"")) /> 
+			<property delaytext value=(%traffic.events.significant_events[sc_GetClosestEventDataVW()].is_block ? translate("infinite delay") : builtin.format("+%{timespan:0}", %traffic.events.significant_events[sc_GetClosestEventDataVW()].delay)) />
+			<property Length value=(sc_ReturnWarningEntry_length("ROUTEWARNING~TMC")) />
+			<property Entry_length_elapsing value=(Length - (%other.trips[0].distance_total - %lua.Startdistance_total)) />
+		</implementation>
+		<DIV class=cockpit>
+			<DIV class=map_messagebox>
+				<GRAPH class="graph_side_box" full=(Length) current=(Entry_length_elapsing) invert=1 visible=(%ui.WarningsProp.Remaining_length == "inside" && Length) />
+				<TEXT class="map_messagebox discovery_text" text=(disttext + delaytext) visible=(%gps.blink) />
+				<DIV class="dialog_buttons">
+					<DIALOGBUTTON class="dialog 2_1_1 mapmsgbox" iconspr=(ui_Cockpit.traffic_detour_valid ? "detour.svg" : "") onrelease=sc_OpenDetourPreview enable=(ui_Cockpit.traffic_detour_valid) > 
+						<SPRITE class="button map fill" />
+						<SPRITE class="listitem svg" img="ico_avoidroute_avoided.svg" zoom=70% />
+					</DIALOGBUTTON>
+					<DIALOGBUTTON class="dialog 2_1_2 mapmsgbox" onrelease=sc_TrafficClosestEventOnMap> 
+						<SPRITE class="button map fill" />
+						<SPRITE class="listitem svg" img="ico_traffic.svg" zoom=70% />
+					</DIALOGBUTTON>
+					<DIALOGBUTTON class="dialog 1_1_1 mapmsgbox" onrelease=sc_HideDiscoverySidePopup text="Close" visible=(!LuaJava.LuaJavaActive)> 
+						<SPRITE class="button map fill" />
+						;<SPRITE class="listitem svg" img="ico_close.svg" zoom=70% />
+					</DIALOGBUTTON>
+					<DIALOGBUTTON class="dialog 1_1_1 mapmsgbox" 
+						onrelease='VW_GoogleMaps("https://www.google.com/maps/search/?api=1&map_action=map&query=" .. string.gsub(tostring(MODEL.traffic.events.significant_events[sc_GetClosestEventData()].position()), "longitude = (-?%d+.%d+), latitude = (-?%d+.%d+)", "%2,%1"))'
+						visible=(LuaJava.LuaJavaActive) >
+						<SPRITE class="button map fill" />
+						<SPRITE class="listitem svg" img="ico_GoogleMaps.svg" zoom=70% />
+					</DIALOGBUTTON>
+				</DIV>
+			</DIV>
+		</DIV>
+	</layer>
+</layer>
+;----------------------------------------------------------------------------------
+<modify ui_Cockpit> 
+	<insert last_child into="#CockpitBTNTable"> 
+		<BUTTON BTN_CommonRouteWarningsShow CLASS="btn_map" 
+			ONRELEASE='ui.WarningsProp.Saved_Event_Name = ui.WarningsProp.Current_Event_Name(); VW_wNextRouteWarningBoxOnClick(); 
+			local gcoor_p
+			if ui.WarningsProp.Saved_Event_Name() == "ROUTEWARNING~TMC" then
+				gcoor_p = GCOOR.new({
+							lat = parse_gcoor("N90"),
+							lon = parse_gcoor("E0"),
+							})
+			else
+				gcoor_p = gAuxilaryPreparation[ ui.WarningsProp.Saved_Event_Name() ].position
+			end
+			
+			sc_DiscoverySidePanelChange(
+				{
+					"", --ui.WarningsProp.Saved_Event_Name(),
+					{
+						ACTION = {
+							"CommonRouteWarningsShow",
+						},
+						POSITION = {
+							lat = tostring(MODEL.regional.unlocalize_gcoor(builtin.format("%{gcoor[%lat]}", gcoor_p))),
+							lon = tostring(MODEL.regional.unlocalize_gcoor(builtin.format("%{gcoor[%lon]}", gcoor_p))),
+							},
+						DISTANCE = sc_ReturnWarningRemaining_length(ui.WarningsProp.Saved_Event_Name()),
+						VISIBLE = true,
+						ENABLE = true,
+					},
+					true, --have been not activated
+				}, "wNextRouteWarningZoom", "wNextRouteWarningShowTime", {discoverysidepanel, ui_Discovery_Zoom, ui_VW_CommonRouteWarningSidePanel})
+
+				if ui.WarningsProp.Saved_Event_Name() == "ROUTEWARNING~TMC" then
+					local closestIndex = sc_GetClosestEventData()
+					if closestIndex == -1 then
+						return
+					end
+					initialRecordId = MODEL.traffic.events.significant_events[closestIndex].record_id()
+					MODEL.traffic.events.significant_events.index = closestIndex
+					if not MODEL.map.primary.clicked_tmc_id.valid() then
+						MODEL.map.primary.clicked_tmc_id = initialRecordId
+						MODEL.map.primary.clicked_tmc_id.valid = true
+					end
+					local listName = sc_GetTmcListName()
+					local listModel = MODEL.CALL.traffic.events[listName]
+					local TopLeft, BottomRight = listModel.current.get_boundrect()
+					sc_Fit_To_Screen(TopLeft, BottomRight, "discoverysidepanel")
+					
+					local g = GCOOR.new({lat=(TopLeft.lat - (TopLeft.lat - BottomRight.lat)/2), lon=(TopLeft.lon  - (TopLeft.lon - BottomRight.lon)/2)})
+					--MODEL.map.discoverysidepanel.center_follow = true
+					doDelayed(3, function() MODEL.map.discoverysidepanel.center = g end)
+				end
+
+				'
+				;;ONLONGCLICK='sc_NextStateAnim(st_common_route_warnings_settings, "fade", 1, "" )' 
+				ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_CRW_longclick_Popover")'
+				VISIBLE=(WarningsProp.Visible) >
+       		<SPRITE CLASS="button map fill" />
+			<TEXT CLASS="BTN_top_text" TEXT=(WarningsProp.Remaining_length) CLIPSTYLE="NONE" />
+			<SPRITE CLASS="listitem flag" IMG=(WarningsProp.Icon) />
+			<TEXT CLASS="BTN_bottom_text" TEXT=(WarningsProp.Arrival_time) CLIPSTYLE="NONE" />
+			<GRAPH CLASS="graph_btn" FULL=(%ui.WarningsProp.Length) CURRENT=(%ui.WarningsProp.Entry_length_elapsing) INVERT=1 VISIBLE=(%ui.WarningsProp.Remaining_length == "inside" && %ui.WarningsProp.Length) />
+		</BUTTON>
+	</insert>
+</modify>
+<modify lm_CockpitSideList>
+	<insert>
+		<row	visible=(WarningsProp.Visible) />
+	</insert>
+</modify>
+
+<userlist lm_CRW_longclick_Popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+	<row text="Settings" onrelease='sc_NextStateAnim(st_common_route_warnings_settings, "fade", 1, "" ); sc_ClosePopover()' />
+	<row text="Force refresh" onrelease='sc_wCommonRouteUpdate_listON(); obs_Start_wnextWarning:TRIGGER(); sc_ClosePopover()' />
+</userlist>
+
+<observer model="%route.list.navigated.calculation_finished", "%route.list.navigated.itiner.list" onchange=sc_wCommonRouteUpdate_listON start />
+;<observer model="%route.list.navigated.itiner.enable_update_list", "%route.list.navigated.itiner.detailmode" onchange='if st_RouteItiner.isActive or st_RouteWarnings.isActive then sc_wCommonRouteUpdate_listON() end' start />
+;---------------------------------left buttons inclusion-------------------------------------------------
+<!if condition=(Plugin.isLoaded("left_big_button"))>
+	<var ShowLeftSideCommonRouteWarning  = 0 permanent />
+	<!DISABLE COMPAT_UPCASE_ATTR_SELECTOR/>
+	<modify lm_LeftButtonsSettings>
+			<modify element="row[prio=2]" bmp="ico_route.svg" text="Show Left Side CommonRouteWarning" isselected="ui.ShowLeftSideCommonRouteWarning" visible=1 />
+	</modify>
+
+	<modify lm_N_buttons>
+		<modify element="row[prio=2]" name="ShowLeftSideCommonRouteWarning_VISIBLE" visible=(ShowLeftSideCommonRouteWarning && %ui.WarningsProp.Visible) />
+	</modify>
+
+	<modify ui_LeftSide_Free_Button>
+		<insert last_child into="#table_left_big_buttons"> 
+					<BUTTON CLASS="left_big"
+						VISIBLE=((%ui.lm_N_buttons.size && %ui.lm_N_buttons.list[0].name == "ShowLeftSideCommonRouteWarning_VISIBLE") ||
+							(%ui.lm_N_buttons.size > 1 && %ui.lm_N_buttons.list[1].name == "ShowLeftSideCommonRouteWarning_VISIBLE" && %lua.current_buttons == 2))
+
+						ONLONGCLICK='sc_NextStateAnim(st_LeftButtonsSettings, "fade", 1, "" )'
+						ONRELEASE='ui.BTN_CommonRouteWarningsShow.ONRELEASE()' >
+						<SPRITE CLASS="button map fill" />
+						<TEXT CLASS="BTN_top_text" TEXT=(%ui.WarningsProp.Remaining_length) CLIPSTYLE="NONE" FONTSIZE=30 />
+						<SPRITE TOP=0 BOTTOM=0 LEFT=0 RIGHT=0 ALIGN="center" VALIGN="center" IMG=(WarningsProp.Icon) ZOOM=65% VISIBLE=(WarningsProp.Current_Event_Name != "ROUTEWARNING~BORDER") />
+						<SPRITE TOP=15% BOTTOM=15% LEFT=0 RIGHT=0 ALIGN="center" VALIGN="center" IMG=(WarningsProp.Icon) ZOOM=65% VISIBLE=(WarningsProp.Current_Event_Name == "ROUTEWARNING~BORDER") />
+						<TEXT CLASS="BTN_bottom_text" TEXT=(%ui.WarningsProp.Arrival_time) CLIPSTYLE="NONE" FONTSIZE=30 />
+						<GRAPH CLASS="graph_btn" FULL=(%ui.WarningsProp.Length) CURRENT=(%ui.WarningsProp.Entry_length_elapsing) INVERT=1 VISIBLE=(%ui.WarningsProp.Remaining_length == "inside" && %ui.WarningsProp.Length) />
+					</BUTTON>
+		</insert>
+	</modify>
+<!end/>

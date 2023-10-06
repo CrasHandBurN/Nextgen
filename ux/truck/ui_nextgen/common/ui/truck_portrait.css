@@ -1,0 +1,68 @@
+SPRITE.icon_list.restriction{
+	top: 35%;
+	left:13%;
+}
+
+.listitem > .unit_value.restriction{
+	left:0;
+	h:100%;
+	w:25%;
+}
+
+DIV.cockpit>TABLE.truck_alert{
+	left: route_progress_w;
+	w:28%;
+}
+
+DIV.driver_alert {
+	w: (ui_PropLayer.TruckTurnRestrictionIsVisible || %ui.lm_alert_views.driver_alerts.size >= 2 ? cockpit_warning_w+current_speed_w : current_speed_w); 
+	visible: (%lua.DAEnabled && !ui_Cockpit.p2p_valid && !%lua.VehicleIsPedestrian 
+			&& !%lua.DragMode && (%ui.lm_alert_views.driver_alerts.size ||  ui_PropLayer.TruckTurnRestrictionIsVisible) 
+			&& !(ui_PropLayer.JunctionViewVisible && %navigation.junctionview_type == 0) );
+}
+
+DISTTEXT.truckalert{
+	desired_h:truck_alert_h;
+	orientation:"vertical";
+}
+
+#txt_SetDrivingTimes_Title{
+	bottom:90%;
+}
+
+#txt_SetDrivingTimes_Time{
+	top:10% !important;
+	bottom:60% !important;
+}
+
+#tab_SetDrivingTimes{
+	top:40%;
+	hspacing:5%;
+}
+
+#ui_RestrictedMsg TEXT.messagebox_first_line{ wordwrap:4; }
+
+#ui_RestrictedMsg TEXT.messagebox_second_line{
+	wordwrap:6;
+}
+
+
+
+#lstIP_MyRouteWaitingTime{
+	row:5;
+}
+
+TEXT.restriction_header{
+	wordwrap:4;
+	leading:0.85;
+}
+
+LIST2.msgboxicons{
+	col:(ui_RestrictedMsg.listSize < 4 ? 1 : 2 );
+	row:(ui_RestrictedMsg.listSize == 3 || listSize > 4 ? 3 : ( listSize < 2 ? 1 : 2 ) );
+
+}
+
+#txt_RestrictionList {
+	wordwrap:3;
+}

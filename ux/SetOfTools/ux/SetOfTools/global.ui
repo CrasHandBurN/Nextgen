@@ -1,0 +1,3 @@
+import "~/common/ui/SetOfTools.ui"
+import "~/common/ui/SetOfTools.lua"
+import "~/common/ui/SetOfTools.css"

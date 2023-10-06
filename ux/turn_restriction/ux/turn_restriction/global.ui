@@ -1,0 +1,3 @@
+import "~/common/ui/turn_restriction.css"
+import "~/common/ui/turn_restriction.ui"
+import "~/common/ui/turn_restriction.lua"
