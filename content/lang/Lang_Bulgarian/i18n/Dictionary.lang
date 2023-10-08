@@ -518,7 +518,7 @@ timestamp="1696665000"
 "Good night. "="Лека нощ. "
 "Have a nice day. "="Приятен ден. "
 "Have a nice evening. "="Приятна вечер. "
-"Have a nice morning. "="Добро утро. "
+"Have a nice morning. "="Приятно утро. "
 "Have a nice night. "="Приятна вечер. "
 "Low Beam can be off!"="Можете да изгасите фаровете!"
 "Not available because of '[debug] enter_tunnel' or '[debug] leave_tunnel'"="Невъзможно поради '[debug] enter_tunnel=1' или '[debug] leave_tunnel=1'"
@@ -4879,7 +4879,7 @@ Narrow or Low Point.="Ограничение на габаритите." ; Pongo
 Narrow or Low Point="Ограничение на габаритите" ; Pongo
 Nasalization="Nasalization" ; Шрифт
 Nasalizationrg="Nasalizationrg" ; Шрифт
-Native street="родна улица"
+Native street=" " ; родна улица - излишно, пречи за изговарянето на следващата улица
 Natural Voice="Естествен глас"
 Nature="Природа"
 NavFusion license error.="Грешка с лиценза за NavFusion."
