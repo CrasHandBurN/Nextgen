@@ -1,7 +1,5 @@
 module("VOICE", package.seeall)
 
-engine = L"engine_1_1"
-
 function init()
 	dofile(L"%app%/config/config_numbers.lua")					-- Tavolsag string tabla
 	dofile(L"%app%/config/config_condfun.lua")					-- Rules feltetel fuggvenytablak
@@ -11,3 +9,4 @@ function init()
 	dofile(L"%app%/config/config_transforms.lua")				-- Transzformacio kod
 end
 
+engine = L"engine_1_1"
