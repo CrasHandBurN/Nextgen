@@ -33,7 +33,7 @@
 					<TEXT class="roundabout" text=(%navigation.exit_id + 1) />
 				</SPRITE>
 				<SPRITE class="ss_diricon" align="CENTER" valign="CENTER" iconid=%navigation.direction_icon phasename=%lua.direction_icon_phasename zoom="zoomvisible" visible=(!%navigation.exit_icon.valid && Panel_Type < 2) />
-				;<GRAPH class="ss_graph" orientation="horizontal" full=(%ui.Graph_dist_limit_temp) current=(%navigation.distance_to_maneuver) visible=(GraphEnable && %navigation.distance_to_maneuver.valid && %navigation.distance_to_maneuver <= VW_right_distance()) />
+				;<GRAPH class="ss_graph" orientation="horizontal" full=(%ui.Graph_dist_limit_temp) current=(%navigation.distance_to_maneuver) visible=(GraphEnable && %navigation.distance_to_maneuver.valid && %navigation.distance_to_maneuver <= Graph_dist_limit_temp) />
 			</DIV>
 		</BUTTON>
 	</DIV>

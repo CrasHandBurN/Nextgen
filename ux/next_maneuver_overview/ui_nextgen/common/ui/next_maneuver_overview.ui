@@ -64,7 +64,7 @@
 			haspopover=1 enable=1 />		
 		<row 	text="Show graph 'Approach to maneuvering'" type="ChkOnOff" isselected="ui.GraphEnable" />
 		
-		<row    text="Maneuver 2D-overview" type="ChkOnOff" isselected="lua.wNextManeuverEnable"/>
+		<row    text="Maneuver 2D-overview" type="ChkOnOff" isselected="lua.wNextManeuverEnable" />
 		<row    text="Time to Maneuver" details=(sc_ShowTimeTool(%lua.wNextManeuverRemainingTime)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_wNextManeuverRemainingTime" )' enable=(%lua.wNextManeuverEnable) />
 		<row    text="Distance(NO-LESS) to Maneuver" details=(sc_ShowDistanceTool(%lua.wNextManeuverRemainingDistance)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_DistancePreview_popover" )' enable=(%lua.wNextManeuverEnable) />
 		<row    text="Maneuver 2D-overview zoom" details=(sc_ShowDistanceTool(%lua.wNextManeuverZoom)) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_ZoomOverview_popover" )' enable=(%lua.wNextManeuverEnable) />

@@ -16,14 +16,14 @@
 
 <modify ui_Cockpit>
 	<insert into="DIV.cockpit>DIV.fill>DIV.fill>DIV.roundabout">
-		<GRAPH Z=100 FULL=(%ui.Graph_dist_limit_temp) LEFT=0 RIGHT=0 TOP=0 BOTTOM=5% CURRENT=(%navigation.distance_to_maneuver) VISIBLE=(GraphEnable && %navigation.distance_to_maneuver.valid && %navigation.distance_to_maneuver <= VW_right_distance()) />
+		<GRAPH Z=100 FULL=(%ui.Graph_dist_limit_temp) LEFT=0 RIGHT=0 TOP=0 BOTTOM=5% CURRENT=(%navigation.distance_to_maneuver) VISIBLE=(GraphEnable && %navigation.distance_to_maneuver.valid && %navigation.distance_to_maneuver <= Graph_dist_limit_temp) />
 	</insert>
 	
 	<insert into="DIV.cockpit>DIV.fill>DIV.fill>DIV.diricon">
-		<GRAPH Z=100 FULL=(%ui.Graph_dist_limit_temp) LEFT=0 RIGHT=0 TOP=0 BOTTOM=5% CURRENT=(%navigation.distance_to_maneuver) VISIBLE=(GraphEnable && %navigation.distance_to_maneuver.valid && %navigation.distance_to_maneuver <= VW_right_distance()) />
+		<GRAPH Z=100 FULL=(%ui.Graph_dist_limit_temp) LEFT=0 RIGHT=0 TOP=0 BOTTOM=5% CURRENT=(%navigation.distance_to_maneuver) VISIBLE=(GraphEnable && %navigation.distance_to_maneuver.valid && %navigation.distance_to_maneuver <= Graph_dist_limit_temp) />
 	</insert>
   
 	<insert into="DIV.cockpit>DIV.fill>DIV.fill>DIV.diricon_hwy">
-		<GRAPH Z=100 FULL=(%ui.Graph_dist_limit_temp) LEFT=0 RIGHT=0 TOP=0 BOTTOM=5% CURRENT=(%navigation.distance_to_maneuver) VISIBLE=(GraphEnable && %navigation.distance_to_maneuver.valid && %navigation.distance_to_maneuver <= VW_right_distance()) />
+		<GRAPH Z=100 FULL=(%ui.Graph_dist_limit_temp) LEFT=0 RIGHT=0 TOP=0 BOTTOM=5% CURRENT=(%navigation.distance_to_maneuver) VISIBLE=(GraphEnable && %navigation.distance_to_maneuver.valid && %navigation.distance_to_maneuver <= Graph_dist_limit_temp) />
 	</insert>
 </modify>

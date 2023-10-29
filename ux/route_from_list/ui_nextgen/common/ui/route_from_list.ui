@@ -1,6 +1,6 @@
 <modify ui_Cockpit>           
 	<insert first_child after="BUTTON" into="#CockpitBTNTable">
-		<BUTTON_ICON RouteFromList ONRELEASE='sc_SetPopoverListAndOpen("ui.lm_MakeRouten_Popover")' 
+		<BUTTON_ICON RouteFromList ONRELEASE='sc_back_to_cockpit(); sc_SetPopoverListAndOpen("ui.lm_MakeRouten_Popover")' 
 			;ONLONGCLICK='W_DefaultWebBrowser("http://4pna.com/showpost.php?p=533877&postcount=886")'
 			ONLONGCLICK='VW_Show_xhtmlQuest("i18n/Help/route_from_list/route_from_list_Help.xhtml", "route_from_list")'
 			;ONLONGCLICK='java:call("android.open_webpage", L"http://4pna.com/showpost.php?p=533877&postcount=886")'

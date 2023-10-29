@@ -271,7 +271,7 @@
 	</implementation>
 
 	<DIV class="cockpit">
-		<INFORMATION_PLATE right=(!%lua.IsPortrait ? 35% : 30%) left=(!%lua.IsPortrait ? 35% : 30%) top=(!%lua.IsPortrait ? 26% : 36%) h=150 
+		<INFORMATION_PLATE right=(%lua.IsPortrait ? (%lua.screen4x3 ? 30% : 25%) : 35%) left=(%lua.IsPortrait ? (%lua.screen4x3 ? 30% : 25%) : 35%) top=(%lua.IsPortrait ? 36% : 26%) h=150 
 			onrelease='ui_ON_Send_Notification:tween("ALPHA", 32, 0, 600, { on_complete = function() ui_ON_Send_Notification:HIDE() end} )'
 			text=(Notification_text)
 			bg_index=(Notification_saved_text == Notification_text ? Notification_bg_index : 0)

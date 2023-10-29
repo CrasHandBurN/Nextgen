@@ -145,7 +145,7 @@
 
 				<USE_LAYER class="left_big" layer=(tcmap3d_left) LAYER_Z=12 visible=(ShowLeftSideTCMap_VISIBLE) >
 					<SPRITE top=-1 bottom=-1 left=-1 right=-1 z=112 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 />
-					<GRAPH class="graph_btn" full=(%ui.Graph_dist_limit_temp) current=(%navigation.distance_to_maneuver) visible=(GraphEnable && %navigation.distance_to_maneuver.valid && %navigation.distance_to_maneuver <= VW_right_distance()) />
+					<GRAPH class="graph_btn" full=(%ui.Graph_dist_limit_temp) current=(%navigation.distance_to_maneuver) visible=(GraphEnable && %navigation.distance_to_maneuver.valid && %navigation.distance_to_maneuver <= Graph_dist_limit_temp) />
 				</USE_LAYER>
 				
 				<USE_LAYER class="left_big" layer=(splitpoi_left) LAYER_Z=12 visible=(%ui.ShowLeftSidePOI_Info_VISIBLE)>
