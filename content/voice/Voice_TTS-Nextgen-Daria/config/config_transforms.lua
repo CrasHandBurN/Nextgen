@@ -111,7 +111,7 @@ assert(type(transform_pattern_match) == "function")
 assert(type(transform_chain) == "function")
 assert(type(transform_format_roadnumber_eu) == "function")
 
-local preposition_tbl = {L"След",L"в Направление Към"}
+local preposition_tbl = {L"След",L"в Посока Към"}
 
 local preposition_insert_tbl = {
 	{L"в ",{L"Странична улица",L"Кръстовище",L"Път без изход"}},
@@ -126,7 +126,7 @@ local main_streetnames = {L"Булевард",L"Странична улица",L
 
 local mother_country = "_bul"
 
-local settlement_preposition = L"в направление към"
+local settlement_preposition = L"в Посока Към"
 
 local exit_preposition = L"на Изход"
 
@@ -144,7 +144,7 @@ local replace_roadnumber_prepare = {
 ---  Нови регистрационни номера на автомобилни пътища от drey95 - 05.07.19
 VOICE["replace_roadnumber" .. mother_country] = {
 	{L"(.*)",L"%1/"},
-	{L"^A +103([^0-9])",L"Щелковское Шосе%1"},
+	{L"^A +103([^0-9])",L"Щелковско Шосе%1"},
 	{L"^M +1([^0-9])",L"Трасе Москва Минск%1"},
 	{L"^R +21([^0-9])",L"Път Санкт-Петербург Печенга%1"},
 --- Регионални пътища от drey95 - 11.07.19
@@ -430,8 +430,8 @@ local replace_for_turns_inner2 = {
 VOICE["replace_cities_for_turns" .. mother_country] = {
 	{L"^(%S+)ая$", L"%1ую"},
 	{L"^(%S+)яя$", L"%1юю"},
-	{L"^(%S+)а$", L"%1у"},
-	{L"^(%S+)я$", L"%1ю"},
+	{L"^(%S+)а$", L"%1а"},
+	{L"^(%S+)я$", L"%1я"},
 	{L"^Белая Калитва$", L"Белую Калитву"},
 }
 
