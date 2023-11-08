@@ -1224,7 +1224,7 @@ end
 --- Край на вложката от Cat 18.04.19. ---
 
 wlocalized = {}
-wlocalized.countries = {"_ukr"}
+wlocalized.countries = {"_bul"}
 for _,v in pairs(wlocalized.countries) do
 	wlocalized["loaded"..v] = false
 end
