@@ -428,8 +428,8 @@ local replace_for_turns_inner2 = {
 }
 
 VOICE["replace_cities_for_turns" .. mother_country] = {
-	{L"^(%S+)ая$", L"%1ую"},
-	{L"^(%S+)яя$", L"%1юю"},
+	{L"^(%S+)ая$", L"%1ая"},
+	{L"^(%S+)яя$", L"%1яя"},
 	{L"^(%S+)а$", L"%1а"},
 	{L"^(%S+)я$", L"%1я"},
 	{L"^Белая Калитва$", L"Белую Калитву"},
