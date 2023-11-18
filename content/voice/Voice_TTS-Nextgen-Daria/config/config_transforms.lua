@@ -1,18 +1,24 @@
 module("VOICE")
 
-----------------------------------------------------------------------------------------------------
----------------------------|  V O I C E   T R A N S F O R M   U T I L S  |--------------------------
-----------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------
+---------------|  V O I C E   T R A N S F O R M   U T I L S  |---------------
+-----------------------------------------------------------------------------
 
 -----------------------------------------------
 -- ASSERT a konyvtari transform fuggvenyekre --
 -----------------------------------------------
 fill_functions.fill_waypointname = function (idx) return format_waypointname(info, idx) end
+
 wprevroadtable = {L"-1", L"-1", L"-1"}
+
 wsameroadname = false
+
 wprevpointtable = {L"-1", L"-1"}
+
 waypointname = L""
+
 local use_dativ_for_sameroad = SysConfig:get("tts", "dativ_for_sameroad", 1)
+
 local function get_full_roadname(road)
 	local roadname = road.name
 	local roadnumber = road.number
@@ -22,6 +28,7 @@ local function get_full_roadname(road)
 	elseif roadname then roadtext = roadname.text end
 	return roadtext
 end
+
 local function check_same_maneuvers_done(data, idx, prevroadtable)
 	local same = true
 	local t = {L"-1", L"-1", L"-1"}
@@ -41,6 +48,7 @@ local function check_same_maneuvers_done(data, idx, prevroadtable)
 	end
 	return same, t
 end
+
 local function check_same_maneuvers(mapinfo, events)
 	if events.new_manouver then
 		if mapinfo[1].road then wsameroadname, wprevroadtable = check_same_maneuvers_done(mapinfo, 1, wprevroadtable)
@@ -50,6 +58,7 @@ local function check_same_maneuvers(mapinfo, events)
 		voice_debug_log(L"TTS: sameroadname: " .. match .. L" road'"..str..L"'", 3)
 	end
 end
+
 local function check_waypoint_maneuvers(mapinfo, events)
 	local t_used_manouvers = {L"^goal", L"^via"}
 	if transform_pattern_match(towstring(mapinfo[1].manouver),t_used_manouvers) then
@@ -76,16 +85,19 @@ local function check_waypoint_maneuvers(mapinfo, events)
 		waypointname = L""
 	end
 end
+
 local guidance_orig = guidance
 guidance = function(mapinfo, events)
 	if use_dativ_for_sameroad then check_same_maneuvers(mapinfo, events) end
 	if announce_waypointname then check_waypoint_maneuvers(mapinfo, events) end
 	return guidance_orig(mapinfo, events)
 end
+
 function set_announce_waypoint()
 	if MODEL.EXISTS.lua.tts.announce_waypointname() then announce_waypointname = MODEL.lua["tts.announce_waypointname"]()
 	else announce_waypointname = SysConfig:get("tts", "announce_waypointname", 0) end
 end
+
 function set_tts_settings()
 	if MODEL.EXISTS.lua.tts.numbers_mode() then numbers_mode = MODEL.lua["tts.numbers_mode"]()
 	else numbers_mode = SysConfig:get("tts", "numbers_mode", 1) end
@@ -107,8 +119,11 @@ end
 set_tts_settings()
 
 assert(type(transform_and_format) == "function")
+
 assert(type(transform_pattern_match) == "function")
+
 assert(type(transform_chain) == "function")
+
 assert(type(transform_format_roadnumber_eu) == "function")
 
 local preposition_tbl = {L"След",L"в Посока Към"}
@@ -128,7 +143,7 @@ local mother_country = "_bul"
 
 local settlement_preposition = L"в Посока Към"
 
-local exit_preposition = L"на Изход"
+local exit_preposition = L" на Изход " -- за изход от магистрала
 
 local replace_roadnumber_prepare = {
 	{L"^ ",L""},
@@ -141,17 +156,17 @@ local replace_roadnumber_prepare = {
 	{L"[аА]",L"A"},
 }
 
----  Нови регистрационни номера на автомобилни пътища от drey95 - 05.07.19
+	---  Нови регистрационни номера на автомобилни пътища от drey95 - 05.07.19
 VOICE["replace_roadnumber" .. mother_country] = {
 	{L"(.*)",L"%1/"},
 	{L"^A +103([^0-9])",L"Щелковско Шосе%1"},
 	{L"^M +1([^0-9])",L"Трасе Москва Минск%1"},
 	{L"^R +21([^0-9])",L"Път Санкт-Петербург Печенга%1"},
---- Регионални пътища от drey95 - 11.07.19
+	--- Регионални пътища от drey95 - 11.07.19
 	{L"^ +[0-9][0-9][^0-9]%-([0-9][0-9][0-9][^0-9])",L"Регионален път номер %1"},
---- Европейски маршрути от drey95 - 16.07.19
+	--- Европейски маршрути от drey95 - 16.07.19
 	{L"^E +([1-9][0-9]?[0-9]?)",L"Трасе Е %1"},
---- Азиатски маршрути от drey95 - 11.07.19
+	--- Азиатски маршрути от drey95 - 11.07.19
 	{L"^AN +([1-9][0-9]?)",L"Трасе А Н %1"},
 	{L"/",L""},
 }
@@ -178,7 +193,7 @@ VOICE["replace_mapinfo" .. mother_country] = {
 		if smart_lower_case_get_codegroup(wstring.byte(s1,1)) and smart_lower_case_get_codegroup(wstring.byte(s3,1)) then return L" " end
 		return L" "..s1..L"."..s2..s3..L". " end},
 		
-	--- Заглушки от drey95 - 12.01.20 - За да не се произнасят фразите
+	--- Тапи от drey95 - 12.01.20 - За да не се произнасят фразите
 	{L"Път Без Име",L" "},
 	{L"^ +Изход +$",L""},
 	{L"^ +Кръгово Движение +$",L""},
@@ -232,107 +247,13 @@ VOICE["replace_mapinfo_numbers" .. mother_country] = {
 		wstring.gsub(s, L"([0-9]+)", function() matched = matched + 1 end)
 		return (matched >= 2 and L"||" or L"")..wstring.gsub(s, L"Имени ", L"|Имени ") end},
 	{L"([0-9]+) +(%S+)", function (s1,s2)
-		local t = {L"Година", L"Партсъезда", L"Януари", L"Февруари", L"Март", L"Април", L"Май", L"Юни", L"Юли", L"Август", L"Септември", L"Октомври", L"Ноември", L"Декември"}
+		local t = {L"Година", L"Януари", L"Февруари", L"Март", L"Април", L"Май", L"Юни", L"Юли", L"Август", L"Септември", L"Октомври", L"Ноември", L"Декември"}
 		local suffix = L""
 		for _,v in ipairs(t) do
 			if s2==v then suffix = L"-о" break end
 		end
 		if s2==L"Километър" then suffix = L" " end
-		if s2==L"Линия" then suffix = L" " end
-		if s2==L"Петилетка" then suffix = L" " end
 		return s1..suffix..L" "..s2 end},
-	{L"([^0-9]+) ([0-9]+) ([^0-9]+)", function (s1,s2,s3)
-		local suffix = L""
-		if wstring.find(s1..s3,L"Кръстовище") then suffix = L"-То" end
-		if wstring.find(s3,L"Дивизия") then suffix = L" " end
-		return s1..L" "..s2..suffix..L" "..s3 end},
-	{L"([0-9]+)-й ([^0-9]+)", function (s1,s2)
-		local t = {L"Дивизия", L"Армия", L"Батарея", L"Линия"}
-		local suffix = L"-я"
-		for _,v in ipairs(t) do
-			if wstring.find(s2,v) then suffix = L" " break end
-		end
-		return s1..suffix..L" "..s2 end},
-
-	{L" ([0-9])000[%- ]?А?я ", function (s) return L" |"..mapinfo_numbers[1][tonumber(s)]..L"тысячная| " end},
-	{L" ([0-9])000[%- ]?Ой ", function (s) return L" "..mapinfo_numbers[1][tonumber(s)]..L"тысячной " end},
-	{L" ([0-9])000[%- ]?Ы?й ", function (s) return L" |"..mapinfo_numbers[1][tonumber(s)]..L"тысячный| " end},
-	{L" ([0-9])000[%- ]?О?е ", function (s) return L" |"..mapinfo_numbers[1][tonumber(s)]..L"тысячное| " end},
-	{L" ([0-9])000[%- ]?Г?о ", function (s) return L" "..mapinfo_numbers[1][tonumber(s)]..L"тысячного " end},
-	{L" ([0-9])000[%- ]?Летия ", function (s) return L" "..mapinfo_numbers[1][tonumber(s)]..L"тысячелетия " end},
-	{L" ([0-9])([0-9])([0-9])([0-9])[%- ]?[АЬ]?я ", function (s1,s2,s3,s4) if s2==L"0" then s2=L"" if s3==L"0" then s3=L"" end end return L" |"..mapinfo_numbers[5][tonumber(s1)]..L" "..s2..s3..s4..L"-я " end},
-	{L" ([0-9])([0-9])([0-9])([0-9])[%- ]?[ОЕ]й ", function (s1,s2,s3,s4) if s2==L"0" then s2=L"" if s3==L"0" then s3=L"" end end return L" |"..mapinfo_numbers[5][tonumber(s1)]..L" "..s2..s3..s4..L"-Ой " end},
-	{L" ([0-9])([0-9])([0-9])([0-9])[%- ]?[ЫИ]?й ", function (s1,s2,s3,s4) if s2==L"0" then s2=L"" if s3==L"0" then s3=L"" end end return L" |"..mapinfo_numbers[5][tonumber(s1)]..L" "..s2..s3..s4..L"-й " end},
-	{L" ([0-9])([0-9])([0-9])([0-9])[%- ]?[ОЬ]?е ", function (s1,s2,s3,s4) if s2==L"0" then s2=L"" if s3==L"0" then s3=L"" end end return L" |"..mapinfo_numbers[5][tonumber(s1)]..L" "..s2..s3..s4..L"-е " end},
-	{L" ([0-9])([0-9])([0-9])([0-9])[%- ]?Г?о ", function (s1,s2,s3,s4) if s2==L"0" then s2=L"" if s3==L"0" then s3=L"" end end return L" "..mapinfo_numbers[5][tonumber(s1)]..L" "..s2..s3..s4..L"-о " end},
-	{L" ([0-9])([0-9])([0-9])([0-9])[%- ]?Летия ", function (s1,s2,s3,s4) if s2==L"0" then s2=L"" if s3==L"0" then s3=L"" end end return L" "..mapinfo_numbers[5][tonumber(s1)]..L" "..s2..s3..s4..L"-Летия " end},
-	{L" ([0-9])00[%- ]?А?я ", function (s) return L" |"..mapinfo_numbers[1][tonumber(s)]..L"сотая| " end},
-	{L" ([0-9])00[%- ]?Ой ", function (s) return L" |"..mapinfo_numbers[1][tonumber(s)]..L"сотой| " end},
-	{L" ([0-9])00[%- ]?Ы?й ", function (s) return L" |"..mapinfo_numbers[1][tonumber(s)]..L"сотый| " end},
-	{L" ([0-9])00[%- ]?О?е ", function (s) return L" |"..mapinfo_numbers[1][tonumber(s)]..L"сотое| " end},
-	{L" ([0-9])00[%- ]?Г?о ", function (s) return L" "..mapinfo_numbers[1][tonumber(s)]..L"сотого " end},
-	{L" ([0-9])00[%- ]?Летия ", function (s)
-		local t = {L"сто", L"двухсот", L"трёхсот", L"четырёхсот", L"пятьсот", L"шестьсот", L"семьсот", L"восемьсот", L"девятьсот"}
-		return L" "..t[tonumber(s)]..L"летия " end},
-	{L" ([0-9])([0-9])([0-9])[%- ]?[АЬ]?я ", function (s1,s2,s3) if s2==L"0" then s2=L"" end return L" |"..mapinfo_numbers[4][tonumber(s1)]..L" "..s2..s3..L"-я " end},
-	{L" ([0-9])([0-9])([0-9])[%- ]?[ОЕ]й ", function (s1,s2,s3) if s2==L"0" then s2=L"" end return L" |"..mapinfo_numbers[4][tonumber(s1)]..L" "..s2..s3..L"-Ой " end},
-	{L" ([0-9])([0-9])([0-9])[%- ]?[ЫИ]?й ", function (s1,s2,s3) if s2==L"0" then s2=L"" end return L" |"..mapinfo_numbers[4][tonumber(s1)]..L" "..s2..s3..L"-й " end},
-	{L" ([0-9])([0-9])([0-9])[%- ]?[ОЬ]?е ", function (s1,s2,s3) if s2==L"0" then s2=L"" end return L" |"..mapinfo_numbers[4][tonumber(s1)]..L" "..s2..s3..L"-е " end},
-	{L" ([0-9])([0-9])([0-9])[%- ]?Г?о ", function (s1,s2,s3) if s2==L"0" then s2=L"" end return L" "..mapinfo_numbers[4][tonumber(s1)]..L" "..s2..s3..L"-о " end},
-	{L" ([0-9])([0-9])([0-9])[%- ]?Летия ", function (s1,s2,s3) if s2==L"0" then s2=L"" end return L" "..mapinfo_numbers[4][tonumber(s1)]..L" "..s2..s3..L"-Летия " end},
-	{L" ([0-9])0[%- ]?А?я ", function (s)
-		local t = {L"десятая", L"двадцатая", L"тридцатая", L"сороковая", L"пятидесятая", L"шестидесятая", L"семидесятая", L"восьмидесятая", L"девяностая"}
-		return L" |"..t[tonumber(s)]..L"| " end},
-	{L" ([0-9])0[%- ]?Ой ", function (s)
-		local t = {L"десятой", L"двадцатой", L"тридцатой", L"сороковой", L"пятидесятой", L"шестидесятой", L"семидесятой", L"восьмидесятой", L"девяностой"}
-		return L" |"..t[tonumber(s)]..L"| " end},
-	{L" ([0-9])0[%- ]?Ы?й ", function (s)
-		local t = {L"десятый", L"двадцатый", L"тридцатый", L"сороковой", L"пятидесятый", L"шестидесятый", L"семидесятый", L"восьмидесятый", L"девяностый"}
-		return L" |"..t[tonumber(s)]..L"| " end},
-	{L" ([0-9])0[%- ]?О?е ", function (s)
-		local t = {L"десятое", L"двадцатое", L"тридцатое", L"сороковое", L"пятидесятое", L"шестидесятое", L"семидесятое", L"восьмидесятое", L"девяностое"}
-		return L" |"..t[tonumber(s)]..L"| " end},
-	{L" ([0-9])0[%- ]?Г?о ", function (s)
-		local t = {L"десятого", L"двадцатого", L"тридцатого", L"сорокового", L"пятидесятого", L"шестидесятого", L"семидесятого", L"восьмидесятого", L"девяностого"}
-		return L" "..t[tonumber(s)]..L" " end},
-	{L" ([0-9])0[%- ]?Летия ", function (s)
-		local t = {L"десяти", L"двадцати", L"тридцати", L"сорока", L"пятидесяти", L"шестидесяти", L"семидесяти", L"восьмидесяти", L"девяносто"}
-		return L" "..t[tonumber(s)]..L"летия " end},
-	{L" 1([0-9])[%- ]?А?я ", function (s) return L" |"..mapinfo_numbers[2][tonumber(s)]..L"надцатая| " end},
-	{L" 1([0-9])[%- ]?Ой ", function (s) return L" |"..mapinfo_numbers[2][tonumber(s)]..L"надцатой| " end},
-	{L" 1([0-9])[%- ]?Ы?й ", function (s) return L" |"..mapinfo_numbers[2][tonumber(s)]..L"надцатый| " end},
-	{L" 1([0-9])[%- ]?О?е ", function (s) return L" |"..mapinfo_numbers[2][tonumber(s)]..L"надцатое| " end},
-	{L" 1([0-9])[%- ]?Г?о ", function (s) return L" "..mapinfo_numbers[2][tonumber(s)]..L"надцатого " end},
-	{L" 1([0-9])[%- ]?Летия ", function (s)
-		local t = {L"одиннадцати", L"двенадцати", L"тринадцати", L"четырнадцати", L"пятнадцати", L"шестнадцати", L"семнадцати", L"восемнадцати", L"девятнадцати"}
-		return L" "..t[tonumber(s)]..L"летия " end},
-	{L" ([0-9])([0-9])[%- ]?[АЬ]?я ", function (s1,s2) return L" |"..mapinfo_numbers[3][tonumber(s1)]..L" "..s2..L"-я " end},
-	{L" ([0-9])([0-9])[%- ]?[ОЕ]й ", function (s1,s2) return L" |"..mapinfo_numbers[3][tonumber(s1)]..L" "..s2..L"-Ой " end},
-	{L" ([0-9])([0-9])[%- ]?[ЫИ]?й ", function (s1,s2) return L" |"..mapinfo_numbers[3][tonumber(s1)]..L" "..s2..L"-й " end},
-	{L" ([0-9])([0-9])[%- ]?[ОЬ]?е ", function (s1,s2) return L" |"..mapinfo_numbers[3][tonumber(s1)]..L" "..s2..L"-е " end},
-	{L" ([0-9])([0-9])[%- ]?Г?о ", function (s1,s2) return L" "..mapinfo_numbers[3][tonumber(s1)]..L" "..s2..L"-о " end},
-	{L" ([0-9])([0-9])[%- ]?Летия ", function (s1,s2)
-		local t = {L"", L"двадцати", L"тридцати", L"сорока", L"пятидесяти", L"шестидесяти", L"семидесяти", L"восьмидесяти", L"девяносто"}
-		return L" "..t[tonumber(s1)]..L" "..s2..L"-Летия " end},
-	{L" ([0-9])[%- ]?[АЬ]?я ", function (s)
-		local t = {L"первая", L"вторая", L"третья", L"четвёртая", L"пятая", L"шестая", L"седьмая", L"восьмая", L"девятая"}
-		return L" |"..t[tonumber(s)]..L"| " end},
-	{L" ([0-9])[%- ]?[ОЕ]й ", function (s)
-		local t = {L"первой", L"второй", L"третьей", L"четвёртой", L"пятой", L"шестой", L"седьмой", L"восьмой", L"девятой"}
-		return L" |"..t[tonumber(s)]..L"| " end},
-	{L" ([0-9])[%- ]?[ЫИ]?й ", function (s)
-		local t = {L"первый", L"второй", L"третий", L"четвёртый", L"пятый", L"шестой", L"седьмой", L"восьмой", L"девятый"}
-		return L" |"..t[tonumber(s)]..L"| " end},
-	{L" ([0-9])[%- ]?[ОЬ]?е ", function (s)
-		local t = {L"первое", L"второе", L"третье", L"четвёртое", L"пятое", L"шестое", L"седьмое", L"восьмое", L"девятое"}
-		return L" |"..t[tonumber(s)]..L"| " end},
-	{L" ([0-9])[%- ]?Г?о ", function (s)
-		local t = {L"первого", L"второго", L"третьего", L"четвёртого", L"пятого", L"шестого", L"седьмого", L"восьмого", L"девятого"}
-		return L" "..t[tonumber(s)]..L" " end},
-	{L" ([0-9])[%- ]?Летия ", function (s)
-		local t = {L"одно", L"двух", L"трёх", L"четырёх", L"пяти", L"шести", L"семи", L"восьми", L"девяти"}
-		return L" "..t[tonumber(s)]..L"летия " end},
-
 	{L"^||(.*)",function (s) return wstring.gsub(s, L"|", L"") end},
 	{L"|(.*)|", function (s) return L"|"..wstring.gsub(s, L"|",L"")..L"|" end},
 }
@@ -352,7 +273,7 @@ VOICE["replace_mapinfo_end" .. mother_country] = {
 	{L" +д[%. ]+(.* +Странична улица) +",L" Долна %1 "},
 	{L" +г[%. ]+(.* +Кръстовище) +",L" Горно %1 "},
 	{L" +д[%. ]+(.* +Кръстовище) +",L" Долно %1 "},
--- Думите „голям“, „малък“ и др. се преместват в началото на реда: "1-ва голяма улица" -> "голяма първа улица"
+	-- Думите "голям“, "малък" и др. се преместват в началото на реда: "1-ва голяма улица" -> "голяма първа улица"
 	{L"(.*) +(Голям) +(.*)",L" %2 %1 %3 "},
 	{L"(.*) +(Голяма) +(.*)",L" %2 %1 %3 "},
 	{L"(.*) +(Голямо) +(.*)",L" %2 %1 %3 "},
@@ -369,7 +290,7 @@ VOICE["replace_mapinfo_end" .. mother_country] = {
 	{L"(.*) +(Долна) +(.*)",L" %2 %1 %3 "},
 	{L"(.*) +(Долно) +(.*)",L" %2 %1 %3 "},
 	{L"(.*) +(Долни) +(.*)",L" %2 %1 %3 "},
--- Думите "първи", "втори" и т.н. се преместват в началото на реда: "българска 1-ва улица" -> "първата българска улица", "улица българска 1-ва" -> "първа улица българска"
+	-- Думите "първи", "втори" и т.н. се преместват в началото на реда: "българска 1-ва улица" -> "първата българска улица", "улица българска 1-ва" -> "първа улица българска"
 	{L"(.*)|(.*)|(.*)",L" %2 %1 %3 "},
 	{L" (%S)%.", function (s) if smart_lower_case_get_codegroup(wstring.byte(s,1)) then return L" " end return L" "..s..L". " end},
 	{L"^([A-Z])([A-Z])[ ?]*([0-9]+)",L"%1.%2. %3"},
@@ -428,8 +349,8 @@ local replace_for_turns_inner2 = {
 }
 
 VOICE["replace_cities_for_turns" .. mother_country] = {
-	{L"^(%S+)ая$", L"%1ая"},
-	{L"^(%S+)яя$", L"%1яя"},
+	{L"^(%S+)ая$", L"%1ую"},
+	{L"^(%S+)яя$", L"%1юю"},
 	{L"^(%S+)а$", L"%1а"},
 	{L"^(%S+)я$", L"%1я"},
 	{L"^Белая Калитва$", L"Белую Калитву"},
@@ -554,7 +475,7 @@ local replace_for_summary_inner2 = {
 }
 
 local replace_sentence={
-    {L"/",L" , "},
+	{L"/",L" , "},
 	{L" +",L" "},
 	{L" след това ",L" , след това "},
 	{L" там ",L" , там "},
@@ -570,13 +491,13 @@ local function get_preposition(str, tbl)
 	end
 end
 
-----------------------------------------------------------------------------------------------------
-----------------------------------------|  РЪКОВОДСТВО  |---------------------------------------
-----------------------------------------------------------------------------------------------------
+---------------------------------------------------------
+---------------|  Р Ъ К О В О Д С Т В О  |---------------
+---------------------------------------------------------
 
 local function not_settlement(str, direction)
 	if transform_pattern_match(str,preposition_tbl) then return L"" end
-        return get_preposition(str, direction and preposition_insert_tbl_direction or preposition_insert_tbl)
+		return get_preposition(str, direction and preposition_insert_tbl_direction or preposition_insert_tbl)
 end
 
 local function wlocalize_table(tname,tcountry)
@@ -698,7 +619,7 @@ local function signpost_destination(data, idx)
 	local dest
 	if not ( data[idx].signpost and data[idx].road ) then return end
 	if data[idx].signpost.destination and wstring.find( data[idx].signpost.destination.text, L"[A-z]" ) and data[idx].road then
-		dest = data[idx].road.name --amk data[idx].signpost.destination
+		dest = data[idx].road.name			--  amk data[idx].signpost.destination
 	else
 		dest = data[idx].signpost.destination
 	end
@@ -711,7 +632,7 @@ local function signpost_destination(data, idx)
 	end
 end
 
-local function signpost_settlement(data, idx) 			--  в "напрвление" където е символът '>>'
+local function signpost_settlement(data, idx)			--  в "напрвление" където е символът '>>'
 	local settlement = data[idx].signpost.settlement
 	if settlement then
 		local str=settlement.text
@@ -725,7 +646,7 @@ local function signpost_settlement(data, idx) 			--  в "напрвление" �
 	end
 end
 
-local function signpost_roadnumber(data, idx)    		--  име на трасето M1 ... Mx
+local function signpost_roadnumber(data, idx)			--  име на трасето M1 ... Mx
 	local roadnumber = data[idx].signpost.roadnumber
 	if roadnumber then
 		local str=roadnumber.text
@@ -862,7 +783,7 @@ function format_waypointname(data, idx)
 		str = wstring.gsub(str, L"([0-9]+)(%S)[ +]?$", function (s1,s2)
 			if smart_lower_case_get_codegroup(wstring.byte(s2,1)) > 2 then return s1..wstring.char(2200)..s2 end
 			return s1..s2 end)
-	        local m_sign = wstring.char(215)
+			local m_sign = wstring.char(215)
 		local t = {}
 		if wstring.find(str, m_sign) then
 			wstring.gsub(str, L"([^"..m_sign..L"]+)"..m_sign..L"?", function(s) if wstring.gsub(s,L" ",L"")~=L"" then table.insert(t, transform_and_format(s, replace_for_turns_end)) end end)
@@ -887,12 +808,12 @@ transform_roadnumber_explode_eu = function(str)
 	return t
 end
 
-----------------------------------------------------------------------------------------------------
------------------------------------|  РЕЗЮМЕ НА МАРШРУТА  |----------------------------------
-----------------------------------------------------------------------------------------------------
+------------------------------------------------------
+---------------|  РЕЗЮМЕ НА МАРШРУТА  |---------------
+------------------------------------------------------
 
 function route_summary_format_road_name(data)
-        local str = data.text
+	local str = data.text
 	voice_debug_log(L"TTS: summary roadnumber in: '"..str..L"'", 3)
 	str = format_roadnumber(str,"")
 	voice_debug_log(L"TTS: summary roadnumber out: '"..str..L"'", 3)
@@ -900,7 +821,7 @@ function route_summary_format_road_name(data)
 end
 
 function route_summary_format_street_name(data)
-        local str = data.text
+	local str = data.text
 	voice_debug_log(L"TTS: summary streetname in: '"..str..L"'", 3)
 	str = format_cases(format_mapinfo(str), "for_summary")
 	voice_debug_log(L"TTS: summary streetname out: '"..str..L"'", 3)
@@ -908,7 +829,7 @@ function route_summary_format_street_name(data)
 end
 
 function route_summary_format_bridge_tunnel(data)
-        local str = data.text
+	local str = data.text
 	voice_debug_log(L"TTS: summary bridge_tunnel in: '"..str..L"'", 3)
 	str = format_cases(format_mapinfo(str), "for_summary")
 	voice_debug_log(L"TTS: summary bridge_tunnel out: '"..str..L"'", 3)
@@ -916,7 +837,7 @@ function route_summary_format_bridge_tunnel(data)
 end
 
 function route_summary_format_order(data)
-        local str = data.text
+	local str = data.text
 	voice_debug_log(L"TTS: summary order in: '"..str..L"'", 3)
 	str = format_cases(format_mapinfo(str), "for_summary")
 	voice_debug_log(L"TTS: summary order out: '"..str..L"'", 3)
@@ -982,14 +903,9 @@ function smart_lower_case(str)
 	return out .. L" "
 end
 
-----------------------------------------------------------------------------------------------------
------------------------------------------|  ТРАФИК  |----------------------------------------
-----------------------------------------------------------------------------------------------------
-
--- 1. Zar az M0 uton, Martonvasar kozeleben. = in die Strasse Numer A1, in der Nahe von Martonvasar./ in der Nahe von der HaupStrasse Numer 33.
--- 2. Zar az M0 uton, Martonvasar es Velence kozt. = in die Strasse Numer A1, zwischen Martonvasar und Velence.
--- 3. Zar a Budai uton, a Budai ut Fiskalis ut keresztezodesben = in der/dem (lsd tabla) Budai ut, in der Kreuzung Budai ut und Fiskalis ut.
--- 4. Zar a Budai uton, Fiskalis ut es 8. ut kozott. = in der/dem Budai ut, zwischen Fiskalis ut und 8. ut.
+-----------------------------------------------
+---------------|  Т Р А Ф И К  |---------------
+-----------------------------------------------
 
 function traffic_event_supported()
 	return true
@@ -1103,9 +1019,9 @@ function traffic_event(DescKey, data)
 	return format_sentence(traffic_distance .. traffic_description .. traffic_on .. traffic_from .. traffic_to)
 end
 
-----------------------------------------------------------------------------------------------------
----------------------------------------------|  E T A  |--------------------------------------------
-----------------------------------------------------------------------------------------------------
+-----------------------------------------
+---------------|  E T A  |---------------
+-----------------------------------------
 function format_all_numbers2text(str,spell)
 	return wstring.gsub(str, L"([0-9]+)", function(s)
 		local inner = L""
@@ -1143,67 +1059,170 @@ function format_numbers2text(number)
 	return out
 end
 
+-- function eta(time,waypoint,currenttime)
+	-- local head = currenttime and L"Сега е " or (waypoint and L" Надявам се да пристигнем в спирката във ") or L" Надявам се да пристигнем в дестинацията във "
+	-- local hours, mins, tod = L"", L"", L""
+	-- local hour = time.hour
+	-- local min = time.min
+	-- if hour == 0 then hour = 12 tod = L" - през нощта" end
+	-- if hour == 1 then hours = L" час"
+	-- else hours = format_numbers2text(hour) end
+	-- if min == 0 then mins = L""
+	-- elseif min < 10 then mins = L" нула" .. format_numbers2text(min)
+	-- else mins = format_numbers2text(min) end
+	-- if min == 0 and tod == L"" then mins = L" нула нула" end
+	--Беше return head..hours..mins..tod -- Стана 01.11.19 от nik4m за правилно произношение на времето в TTS от Wiman
+	-- return head..(currenttime and L" " or L" в ")..hours..mins..tod
+-- end
 function eta(time,waypoint,currenttime)
-	local head = currenttime and L"Сега е " or (waypoint and L" Надявам се да пристигнем в спирката във ") or L" Надявам се да пристигнем в дестинацията във "
-	local hours, mins, tod = L"", L"", L""
+	local head = currenttime and L"В момента е " or (waypoint and L"Надявам се да пристигнем в спирката във " or L"Надявам се да пристигнем в дестинацията във ")
+	local strmins,strhour
 	local hour = time.hour
-	local min = time.min
-	if hour == 0 then hour = 12 tod = L" - през нощта" end
-	if hour == 1 then hours = L" час"
-	else hours = format_numbers2text(hour) end
-	if min == 0 then mins = L""
-	elseif min < 10 then mins = L" нула" .. format_numbers2text(min)
-	else mins = format_numbers2text(min) end
-	if min == 0 and tod == L"" then mins = L" нула нула" end
--- Беше return head..hours..mins..tod -- Стана 01.11.19 от nik4m за правилно произношение на времето в TTS от Wiman
-	return head..(currenttime and L" " or L" в ")..hours..mins..tod
+	local mins = time.min
+	local wi_hour_table = {L"един часа и",L"два часа и",L"три часа и",L"четири часа и",L"пет часа и",L"шест часа и",L"седем часа и",L"осем часа и",L"девет часа и",L"десет часа и",L"единайсет часа и",L"дванайсет часа и",L"тринайсет часа и",L"четиринайсет часа и",L"петнайсе-т ч-ас-а и",L"шестнайсет часа и",L"седемнайсет часа и",L"осемнайсет часа и",L"деветнайсет часа и",L"двайсет часа и",L"двайсет и един часа и",L"двайсет и два часа и",L"двайсет и три часа и",L"нула часа и",}
+	local wi_hour_table_cur = {L"един часа и",L"два часа и",L"три часа и",L"четири часа и",L"пет часа и",L"шест часа и",L"седем часа и",L"осем часа и",L"девет часа и",L"десет часа и",L"единайсет часа и",L"дванайсет часа и",L"тринайсет часа и",L"четиринайсет часа и",L"петнайсет часа и",L"шестнайсет часа и",L"седемнайсет часа и",L"осемнайсет часа и",L"деветнайсет часа и",L"двайсет часа и",L"двайсет и един часа и",L"двайсет и два часа и",L"двайсет и три часа и",L"нула часа и",}
+	local wi_min_table = {L" една минута",L" две минути",L" три минути",L" четири минути",L" пет минути",L" шест минути",L" седем минути",L" осем минути",L" девет минути",L" десет минути",L" единайсет минути",L" дванайсет минути",L" тринайсет минути",L" четиринайсет минути",L" петнайсет минути",L" шестнайсет минути",L" седемнайсет минути",L" осемнайсет минути",L" деветнайсет минути",L" двайсет минути",L" двайсет и една минути",L" двайсет и две минути",L" двайсет и три минути",L" двайсет и четири минути",L" двайсет и пет минути",L" двайсет и шест минути",L" двайсет и седем минути",L" двайсет и осем минути",L" двайсет и девет минути",L" трийсет минути",L" трийсет и една минути",L" трийсет и две минути",L" трийсет и три минути",L" трийсет и четири минути",L" трийсет и пет минути",L" трийсет и шест минути",L" трийсет и седем минути",L" трийсет и осем минути",L" трийсет и девет минути",L" четиресет минути",L" четиресет и една минути",L" четиресет и две минути",L" четиресет и три минути",L" четиресет и четири минути",L" четиресет и пет минути",L" четиресет и шест минути",L" четиресет и седем минути",L" четиресет и осем минути",L" четиресет и девет минути",L" петдесет минути",L" петдесет и една минути",L" петдесет и две минути",L" петдесет и три минути",L" петдесет и четири минути",L" петдесет и пет минути",L" петдесет и шест минути",L" петдесет и седем минути",L" петдесет и осем минути",L" петдесет и девет минути"}
+
+	if time.hour == 0 then
+		if time.min == 0 then
+			strhour = L"нула часа"
+		else
+			strhour = L"нула часа и"
+		end
+	else
+		strhour = currenttime and wi_hour_table_cur[hour] or wi_hour_table[hour]
+	end
+
+	if time.min == 0 then
+		strmins = L"нула нула"
+	else
+		strmins = wi_min_table[time.min]
+	end
+	return head .. strhour .. strmins
 end
 
 --- Вложка за скиновете на VICEWANDEL и Pongo - произнасяне на времето ---
 --- Редактирано от VICEWANDEL 14.01.2020 ---
 local time_patternts = {L" една", L" две"}
 
-function format_timeto(timeto)
-	local hour, min
-	if type(timeto) == "wstring" then
-		local hour_ = wstring.sub(timeto,1,-4)
-		local min_  = wstring.sub(timeto,-2,-1)
-		hour = tonumber(hour_)
-		min = tonumber(min_)
-	else
-		local _, _, hour_, min_ = wstring.find(Format_Timespan(timeto, ETimespanFormat.HrMinRounded), L"(%d+):(%d+)")
-		hour, min = tonumber(hour_), tonumber(min_)
-end
+-- function format_timeto(timeto)
+	-- local hour, min
+	-- if type(timeto) == "wstring" then
+		-- local hour_ = wstring.sub(timeto,1,-4)
+		-- local min_  = wstring.sub(timeto,-2,-1)
+		-- hour = tonumber(hour_)
+		-- min = tonumber(min_)
+	-- else
+		-- local _, _, hour_, min_ = wstring.find(Format_Timespan(timeto, ETimespanFormat.HrMinRounded), L"(%d+):(%d+)")
+		-- hour, min = tonumber(hour_), tonumber(min_)
+-- end
 
-local function time_to_phrase(number, hm)
-	local sentence = L""
-	if number ~= 0 then
-		local number_10 = number % 10
-		if number_10 == 1 and number ~= 11 then
-			sentence = hm == "h" and L" часа " or L" минута "
-		elseif number_10 > 4 or number_10 == 0 or (number > 10 and number < 20) then
-			sentence = hm == "h" and L" часа " or L" минути "
-		else
-			sentence = hm == "h" and L" часа " or L" минути "
-		end
-		sentence = (((hm=="m")
-			and(number_10 == 1 or number_10 == 2)
-			and number ~= 11 and number ~= 12)
-			and((number - number_10)
-			and format_numbers2text(number - number_10) or L"") .. time_patternts[number_10]
-			or format_numbers2text(number)) .. sentence
-	end
-	return sentence
-end
+-- local function time_to_phrase(number, hm)
+	-- local sentence = L""
+	-- if number ~= 0 then
+		-- local number_10 = number % 10
+		-- if number_10 == 1 and number ~= 11 then
+			-- sentence = hm == "h" and L" часа " or L" минута "
+		-- elseif number_10 > 4 or number_10 == 0 or (number > 10 and number < 20) then
+			-- sentence = hm == "h" and L" часа " or L" минути "
+		-- else
+			-- sentence = hm == "h" and L" часа " or L" минути "
+		-- end
+		-- sentence = (((hm=="m")
+			-- and(number_10 == 1 or number_10 == 2)
+			-- and number ~= 11 and number ~= 12)
+			-- and((number - number_10)
+			-- and format_numbers2text(number - number_10) or L"") .. time_patternts[number_10]
+			-- or format_numbers2text(number)) .. sentence
+	-- end
+	-- return sentence
+-- end
 
 --- Корекции на "hours" и "mins" от VICEWANDEL 14.01.2020 ---
-local time_text = time_to_phrase(hour, "h") .. time_to_phrase(min, "m")
-	if time_text == L"" then
-		time_text = L"по-малко от една минута"
-	end
-	return time_text
-end
+-- local time_text = time_to_phrase(hour, "h") .. time_to_phrase(min, "m")
+	-- if time_text == L"" then
+		-- time_text = L"по-малко от една минута"
+	-- end
+	-- return time_text
+-- end
 --- Край на вложката за скиновете на VICEWANDEL и Pongo - произнасяне на времето ---
+function format_timeto(timeto)
+	local hournew, minsnew
+	local hour = wstring.sub(timeto,1,-4)
+	local mins = wstring.sub(timeto,-2,-1)
+	local hournumber = tonumber(hour)
+	local minsnumber = tonumber(mins)
+	local replace_hourone = {{L"0",L" "},{L"1",L"един"},}
+	local replace_hoursec = {{L"2",L"два"},{L"3",L"три"},{L"4",L"четири"},{L"5",L"пет"},{L"6",L"шест"},{L"7",L"седем"},{L"8",L"осем"},{L"9",L"девет"},{L"10",L"десет"},{L"11",L"единайсет"},{L"12",L"дванайсет"},{L"13",L"тринайсет"},{L"14",L"четиринайсет"},{L"15",L"петнайсет"},{L"16",L"шестнайсет"},{L"17",L"седемнайсет"},{L"18",L"осемнайсет"},{L"19",L"деветнайсет"},{L"20",L"двайсет"},{L"21",L"двайсет и един"},{L"22",L"двайсет и два"},{L"23",L"двайсет и три"},{L"24",L"двайсет и четири"},{L"25",L"двайсет и пет"},{L"26",L"двайсет и шест"},{L"27",L"двайсет и седем"},{L"28",L"двайсет и осем"},{L"29",L"двайсет и девет"},{L"30",L"трийсет"},{L"31",L"трийсет и един"},{L"32",L"трийсет и два"},{L"33",L"трийсет и три"},{L"34",L"трийсет и четири"},{L"35",L"трийсет и пет"},{L"36",L"трийсет и шест"},{L"37",L"трийсет и седем"},{L"38",L"трийсет и осем"},{L"39",L"трийсет и девет"},{L"40",L"четиресет"},{L"41",L"четиресет и един"},{L"42",L"четиресет и два"},{L"43",L"четиресет и три"},{L"44",L"четиресет и четири"},{L"45",L"четиресет и пет"},{L"46",L"четиресет и шест"},{L"47",L"четиресет и седем"},{L"48",L"четиресет и осем"},{L"49",L"четиресет и девет"},{L"50",L"петдесет"},{L"51",L"петдесет и един"},{L"52",L"петдесет и два"},{L"53",L"петдесет и три"},{L"54",L"петдесет и четири"},}
+	local replace_mins = {{L"00",L""},{L"01",L"една"},{L"02",L"две"},{L"03",L"три"},{L"04",L"четири"},{L"05",L"пет"},{L"06",L"шест"},{L"07",L"седем"},{L"08",L"осем"},{L"09",L"девет"},{L"10",L"десет"},{L"11",L"единайсет"},{L"12",L"дванайсет"},{L"13",L"тринайсет"},{L"14",L"четиринайсет"},{L"15",L"петнайсет"},{L"16",L"шестнайсет"},{L"17",L"седемнайсет"},{L"18",L"осемнайсет"},{L"19",L"деветнайсет"},{L"20",L"двайсет"},{L"21",L"двайсет и една"},{L"22",L"двайсет и две"},{L"23",L"двайсет и три"},{L"24",L"двайсет и четири"},{L"25",L"двайсет и пет"},{L"26",L"двайсет и шест"},{L"27",L"двайсет и седем"},{L"28",L"двайсет и осем"},{L"29",L"двайсет и девет"},{L"30",L"трийсет"},{L"31",L"трийсет и една"},{L"32",L"трийсет и две"},{L"33",L"трийсет и три"},{L"34",L"трийсет и четири"},{L"35",L"трийсет и пет"},{L"36",L"трийсет и шест"},{L"37",L"трийсет и седем"},{L"38",L"трийсет и осем"},{L"39",L"трийсет и девет"},{L"40",L"четиресет"},{L"41",L"четиресет и една"},{L"42",L"четиресет и две"},{L"43",L"четиресет и три"},{L"44",L"четиресет и четири"},{L"45",L"четиресет и пет"},{L"46",L"четиресет и шест"},{L"47",L"четиресет и седем"},{L"48",L"четиресет и осем"},{L"49",L"четиресет и девет"},{L"50",L"петдесет"},{L"51",L"петдесет и една"},{L"52",L"петдесет и две"},{L"53",L"петдесет и три"},{L"54",L"петдесет и четири"},{L"55",L"петдесет и пет"},{L"56",L"петдесет и шест"},{L"57",L"петдесет и седем"},{L"58",L"петдесет и осем"},{L"59",L"петдесет и девет"},}
+	if hournumber == 0 then
+		hournew = transform_and_format(hour .. L" ",replace_hourone)
+	elseif  hournumber == 1 then
+	if minsnumber == 0 then
+		hournew = transform_and_format(hour .. L" _час ",replace_hourone)
+	else
+		hournew = transform_and_format(hour .. L" _час и ",replace_hourone)
+	end
+	else
+	if minsnumber == 0 then
+		hournew = transform_and_format(hour .. L" _ча''с-a ",replace_hoursec)
+	else
+		hournew = transform_and_format(hour .. L" _ча''с-a и ",replace_hoursec)
+	end
+	end
+	if minsnumber == 0 then
+	if hournumber == 0 then
+		minsnew = transform_and_format(mins .. L" по малко от ми_ну_-т'а ",replace_mins)
+	else
+		minsnew = transform_and_format(mins,replace_mins)
+	end
+	elseif  minsnumber == 1 then
+		minsnew = transform_and_format(mins .. L" _минутa",replace_mins)
+	else
+		minsnew = transform_and_format(mins .. L" _минути",replace_mins)
+	end
+	return hournew .. minsnew
+end
+
+
+over_speed_limit = function()
+	local key = m_i18n_voice("The speed limit is %s!")
+	local speedunits = {"mph","km/h","mph"}
+	if MODEL.regional.is_it_voice_localizable(key) then
+		local correct = SysConfig:get("tts", "correct_speed_unit", true) and MODEL.regional.is_it_voice_localizable(m_i18n_voice("km/h")) and MODEL.regional.is_it_voice_localizable(m_i18n_voice("mph"))
+		local announce = SysConfig:get("tts", "announce_speed_unit", true)
+		local limitphrasepart = (correct or not announce) and 2 or 0
+		local limitphraseunit = correct and announce and (L" " .. translate_voice(speedunits[MODEL.regional.units() + 1])) or L""
+		return translated_voice_format(key, MODEL.other.format_speed(MODEL.warning.driveralert.speed_limit(), MODEL.regional.units(), 1, limitphrasepart) .. limitphraseunit)
+	end
+end
+
+function format_lane_info(DescKey)
+	voice_debug_log(L"TTS: DescKeyLaneinfo in: '"..DescKey..L"'", 3)
+	local lane_info_str = DescKey
+	if DescKey ~= L"" then
+		if wstring.find(DescKey,L"far_left") then lane_info_str = L"Дръжте крайната лява лента."
+		elseif wstring.find(DescKey,L"far_right") then lane_info_str = L"Дръжте крайната дясна лента."
+		elseif wstring.find(DescKey,L"centre") then lane_info_str = L"Дръжте централната лента."
+		elseif wstring.find(DescKey,L"any") then lane_info_str = L"Продължете по из''бр''ан'ата лента."
+		else
+			local numb = tonumber(wstring.sub(DescKey, 1, 1))
+			local t = {
+				{L"", L"двете", L"трите", L"чети-р-и_тЕ", L"петте", L"шестте", L"седемте", L"осемте", L"деветте"},
+				{L"", L"вто-ра-та", L"трета-та", L"чет-въ-р-та-т-а", L"пета-та", L"шеста-та", L"седмата", L"осмата", L"деветата"}
+			}
+			if wstring.find(DescKey,L"side_c") then lane_info_str = L"Дръжте " .. t[1][numb] .. L" ленти по средата."
+			elseif wstring.find(DescKey,L"side_r") or wstring.find(DescKey,L"side_l") then lane_info_str = wstring.find(DescKey,L"side_r") and L"Задръжте в дясно, без да заемате " or L"Задръжте в ляво, без да заемате " lane_info_str = numb == 1 and (lane_info_str .. L"крайната лента.") or (lane_info_str .. t[1][numb] .. L" крайните ленти.")
+			elseif wstring.find(DescKey,L"left") then lane_info_str = L"Дръжте " .. t[1][numb] .. L" ленти отляво."
+			elseif wstring.find(DescKey,L"right") then lane_info_str = L"Дръжте " .. t[1][numb] .. L" ленти отдясно."
+			elseif wstring.find(DescKey,L"middle_l") then lane_info_str = L"Дръжте " .. t[2][numb] .. L" лента отляво."
+			elseif wstring.find(DescKey,L"middle_r") then lane_info_str = L"Дръжте " .. t[2][numb] .. L" лента отдясно."
+			end
+		end
+	end
+	voice_debug_log(L"TTS: Laneinfo out: '"..lane_info_str..L"'", 3)
+	return lane_info_str
+end
 
 --- Вложка от Cat 18.04.19. --- С тази вложка скоростта на пътя се обявява преди населеното място, а не в него
 --- over_speed_limit = function()
