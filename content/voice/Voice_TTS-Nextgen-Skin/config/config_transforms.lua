@@ -160,14 +160,14 @@ local replace_roadnumber_prepare = {
 VOICE["replace_roadnumber" .. mother_country] = {
 	{L"(.*)",L"%1/"},
 	{L"^A +103([^0-9])",L"Щелковско Шосе%1"},
-	{L"^M +1([^0-9])",L"Трасе Москва Минск%1"},
+	{L"^M +1([^0-9])",L"Магистрала Москва Минск%1"},
 	{L"^R +21([^0-9])",L"Път Санкт-Петербург Печенга%1"},
 	--- Регионални пътища от drey95 - 11.07.19
 	{L"^ +[0-9][0-9][^0-9]%-([0-9][0-9][0-9][^0-9])",L"Регионален път номер %1"},
 	--- Европейски маршрути от drey95 - 16.07.19
-	{L"^E +([1-9][0-9]?[0-9]?)",L"Трасе Е %1"},
+	{L"^E +([1-9][0-9]?[0-9]?)",L"Магистрала Е %1"},
 	--- Азиатски маршрути от drey95 - 11.07.19
-	{L"^AN +([1-9][0-9]?)",L"Трасе А Н %1"},
+	{L"^AN +([1-9][0-9]?)",L"Магистрала А Н %1"},
 	{L"/",L""},
 }
 
@@ -179,7 +179,7 @@ VOICE["replace_mapinfo_roadnumber_name" .. mother_country] = {
 	}
 		for _,roads in ipairs(t_roads) do if roads[1] == s then strroad = roads[2] break end end
 		if strroad == nil then return L" "..s..L" " end
-		local strroadtype = wstring.find(strroad, L"^М") and L" Трасе " or L" Път "
+		local strroadtype = wstring.find(strroad, L"^М") and L" Магистрала " or L" Път "
 		return strroadtype..strroad..L" "..s..L" " end},
 }
 
@@ -192,13 +192,13 @@ VOICE["replace_mapinfo" .. mother_country] = {
 	{L" (%S)%.( ?)(%S)%. ", function (s1, s2, s3)
 		if smart_lower_case_get_codegroup(wstring.byte(s1,1)) and smart_lower_case_get_codegroup(wstring.byte(s3,1)) then return L" " end
 		return L" "..s1..L"."..s2..s3..L". " end},
-		
+
 	--- Тапи от drey95 - 12.01.20 - За да не се произнасят фразите
 	{L"Път Без Име",L" "},
 	{L"^ +Изход +$",L""},
 	{L"^ +Кръгово Движение +$",L""},
 	{L"^ +Черен Път +$",L""},
-	
+
 	--- Съкращения от drey95 - 09.07.19
 	{L"Екад ",L"Околовръстнен Път "},
 	{L"Кад ",L"Околовръстнен Път "},
@@ -211,19 +211,19 @@ VOICE["replace_mapinfo" .. mother_country] = {
   	{L"Ул[^а-я^ё]",L"Улица "},
 	{L" Ор ",L"Общински Район "},
 	{L"-ОР ",L"Общински Район "},
-	
-	--- Вложка от drey95 - 09.07.19: Декодиране на трасетата
- 	{L"^ +Беларус +$",L"Трасе М 1 Беларус "},
-	
+
+	--- Вложка от drey95 - 09.07.19: Декодиране на магистралите
+ 	{L"^ +Беларус +$",L"Магистрала М 1 Беларус "},
+
 	--- Вложка от drey95 - 09.07.19: Декодиране на номера на пътища по първия номер
 	{L"^ +[аА]103 +%W* +[аАеЕмМрР]?[нН]?[0-9]?[0-9]?[0-9]? +$",L"Щелковское Шосе"},
-	{L"^ +[мМ]1 +%W* +[аАеЕмМрР]?[нН]?[0-9]?[0-9]?[0-9]? +$",L"Трасе Москва Минск"},
+	{L"^ +[мМ]1 +%W* +[аАеЕмМрР]?[нН]?[0-9]?[0-9]?[0-9]? +$",L"Магистрала Москва Минск"},
 	--- Регионални пътища от drey95 - 17.07.19
 	{L"[0-9][0-9][^0-9]%-([0-9][0-9][0-9])",L"Регионален път номер %1"},
 	--- Европейски маршрути от drey95 - 17.07.19
-	{L"^ +[еЕ]([1-9][0-9]?[0-9]?) +%W* +[аАеЕмМрР]?[нН]?[0-9]?[0-9]?[0-9]? +$",L"Трасе Е %1"},
+	{L"^ +[еЕ]([1-9][0-9]?[0-9]?) +%W* +[аАеЕмМрР]?[нН]?[0-9]?[0-9]?[0-9]? +$",L"Магистрала Е %1"},
 	--- Азиатски маршрути от drey95 - 17.07.19
-	{L"^ +[аА][нН]([1-9][0-9]?) +%W* +[аАеЕмМрР]?[0-9]?[0-9]?[0-9]? +$",L"Трасе А Н %1"},
+	{L"^ +[аА][нН]([1-9][0-9]?) +%W* +[аАеЕмМрР]?[0-9]?[0-9]?[0-9]? +$",L"Магистрала А Н %1"},
 	--- Премахване на нулите преди числото [1-9] от drey95 - 09.07.19 (записът трябва да е в края на раздела)
 	{L"[^1-9]0+([1-9])",L"%1"},
 	{L"|",L""},
@@ -247,106 +247,18 @@ VOICE["replace_mapinfo_numbers" .. mother_country] = {
 		wstring.gsub(s, L"([0-9]+)", function() matched = matched + 1 end)
 		return (matched >= 2 and L"||" or L"")..wstring.gsub(s, L"Имени ", L"|Имени ") end},
 	{L"([0-9]+) +(%S+)", function (s1,s2)
-		local t = {L"Година", L"Партсъезда", L"Януари", L"Февруари", L"Март", L"Април", L"Май", L"Юни", L"Юли", L"Август", L"Септември", L"Октомври", L"Ноември", L"Декември"}
+		local t = {L"Година", L"Януари", L"Февруари", L"Март", L"Април", L"Май", L"Юни", L"Юли", L"Август", L"Септември", L"Октомври", L"Ноември", L"Декември"}
 		local suffix = L""
 		for _,v in ipairs(t) do
-			if s2==v then suffix = L"-о" break end
+			if s2==v then suffix = L"-а" break end
 		end
 		if s2==L"Километър" then suffix = L" " end
 		if s2==L"Линия" then suffix = L" " end
-		if s2==L"Петилетка" then suffix = L" " end
 		return s1..suffix..L" "..s2 end},
 	{L"([^0-9]+) ([0-9]+) ([^0-9]+)", function (s1,s2,s3)
 		local suffix = L""
 		if wstring.find(s1..s3,L"Кръстовище") then suffix = L"-То" end
-		if wstring.find(s3,L"Дивизия") then suffix = L" " end
 		return s1..L" "..s2..suffix..L" "..s3 end},
-	{L"([0-9]+)-й ([^0-9]+)", function (s1,s2)
-		local t = {L"Дивизия", L"Армия", L"Батарея", L"Линия"}
-		local suffix = L"-я"
-		for _,v in ipairs(t) do
-			if wstring.find(s2,v) then suffix = L" " break end
-		end
-		return s1..suffix..L" "..s2 end},
-
-	{L" ([0-9])000[%- ]?А?я ", function (s) return L" |"..mapinfo_numbers[1][tonumber(s)]..L"тысячная| " end},
-	{L" ([0-9])000[%- ]?Ой ", function (s) return L" "..mapinfo_numbers[1][tonumber(s)]..L"тысячной " end},
-	{L" ([0-9])000[%- ]?Ы?й ", function (s) return L" |"..mapinfo_numbers[1][tonumber(s)]..L"тысячный| " end},
-	{L" ([0-9])000[%- ]?О?е ", function (s) return L" |"..mapinfo_numbers[1][tonumber(s)]..L"тысячное| " end},
-	{L" ([0-9])000[%- ]?Г?о ", function (s) return L" "..mapinfo_numbers[1][tonumber(s)]..L"тысячного " end},
-	{L" ([0-9])000[%- ]?Летия ", function (s) return L" "..mapinfo_numbers[1][tonumber(s)]..L"тысячелетия " end},
-	{L" ([0-9])([0-9])([0-9])([0-9])[%- ]?[АЬ]?я ", function (s1,s2,s3,s4) if s2==L"0" then s2=L"" if s3==L"0" then s3=L"" end end return L" |"..mapinfo_numbers[5][tonumber(s1)]..L" "..s2..s3..s4..L"-я " end},
-	{L" ([0-9])([0-9])([0-9])([0-9])[%- ]?[ОЕ]й ", function (s1,s2,s3,s4) if s2==L"0" then s2=L"" if s3==L"0" then s3=L"" end end return L" |"..mapinfo_numbers[5][tonumber(s1)]..L" "..s2..s3..s4..L"-Ой " end},
-	{L" ([0-9])([0-9])([0-9])([0-9])[%- ]?[ЫИ]?й ", function (s1,s2,s3,s4) if s2==L"0" then s2=L"" if s3==L"0" then s3=L"" end end return L" |"..mapinfo_numbers[5][tonumber(s1)]..L" "..s2..s3..s4..L"-й " end},
-	{L" ([0-9])([0-9])([0-9])([0-9])[%- ]?[ОЬ]?е ", function (s1,s2,s3,s4) if s2==L"0" then s2=L"" if s3==L"0" then s3=L"" end end return L" |"..mapinfo_numbers[5][tonumber(s1)]..L" "..s2..s3..s4..L"-е " end},
-	{L" ([0-9])([0-9])([0-9])([0-9])[%- ]?Г?о ", function (s1,s2,s3,s4) if s2==L"0" then s2=L"" if s3==L"0" then s3=L"" end end return L" "..mapinfo_numbers[5][tonumber(s1)]..L" "..s2..s3..s4..L"-о " end},
-	{L" ([0-9])([0-9])([0-9])([0-9])[%- ]?Летия ", function (s1,s2,s3,s4) if s2==L"0" then s2=L"" if s3==L"0" then s3=L"" end end return L" "..mapinfo_numbers[5][tonumber(s1)]..L" "..s2..s3..s4..L"-Летия " end},
-	{L" ([0-9])00[%- ]?А?я ", function (s) return L" |"..mapinfo_numbers[1][tonumber(s)]..L"сотая| " end},
-	{L" ([0-9])00[%- ]?Ой ", function (s) return L" |"..mapinfo_numbers[1][tonumber(s)]..L"сотой| " end},
-	{L" ([0-9])00[%- ]?Ы?й ", function (s) return L" |"..mapinfo_numbers[1][tonumber(s)]..L"сотый| " end},
-	{L" ([0-9])00[%- ]?О?е ", function (s) return L" |"..mapinfo_numbers[1][tonumber(s)]..L"сотое| " end},
-	{L" ([0-9])00[%- ]?Г?о ", function (s) return L" "..mapinfo_numbers[1][tonumber(s)]..L"сотого " end},
-	{L" ([0-9])00[%- ]?Летия ", function (s)
-		local t = {L"сто", L"двухсот", L"трёхсот", L"четырёхсот", L"пятьсот", L"шестьсот", L"семьсот", L"восемьсот", L"девятьсот"}
-		return L" "..t[tonumber(s)]..L"летия " end},
-	{L" ([0-9])([0-9])([0-9])[%- ]?[АЬ]?я ", function (s1,s2,s3) if s2==L"0" then s2=L"" end return L" |"..mapinfo_numbers[4][tonumber(s1)]..L" "..s2..s3..L"-я " end},
-	{L" ([0-9])([0-9])([0-9])[%- ]?[ОЕ]й ", function (s1,s2,s3) if s2==L"0" then s2=L"" end return L" |"..mapinfo_numbers[4][tonumber(s1)]..L" "..s2..s3..L"-Ой " end},
-	{L" ([0-9])([0-9])([0-9])[%- ]?[ЫИ]?й ", function (s1,s2,s3) if s2==L"0" then s2=L"" end return L" |"..mapinfo_numbers[4][tonumber(s1)]..L" "..s2..s3..L"-й " end},
-	{L" ([0-9])([0-9])([0-9])[%- ]?[ОЬ]?е ", function (s1,s2,s3) if s2==L"0" then s2=L"" end return L" |"..mapinfo_numbers[4][tonumber(s1)]..L" "..s2..s3..L"-е " end},
-	{L" ([0-9])([0-9])([0-9])[%- ]?Г?о ", function (s1,s2,s3) if s2==L"0" then s2=L"" end return L" "..mapinfo_numbers[4][tonumber(s1)]..L" "..s2..s3..L"-о " end},
-	{L" ([0-9])([0-9])([0-9])[%- ]?Летия ", function (s1,s2,s3) if s2==L"0" then s2=L"" end return L" "..mapinfo_numbers[4][tonumber(s1)]..L" "..s2..s3..L"-Летия " end},
-	{L" ([0-9])0[%- ]?А?я ", function (s)
-		local t = {L"десятая", L"двадцатая", L"тридцатая", L"сороковая", L"пятидесятая", L"шестидесятая", L"семидесятая", L"восьмидесятая", L"девяностая"}
-		return L" |"..t[tonumber(s)]..L"| " end},
-	{L" ([0-9])0[%- ]?Ой ", function (s)
-		local t = {L"десятой", L"двадцатой", L"тридцатой", L"сороковой", L"пятидесятой", L"шестидесятой", L"семидесятой", L"восьмидесятой", L"девяностой"}
-		return L" |"..t[tonumber(s)]..L"| " end},
-	{L" ([0-9])0[%- ]?Ы?й ", function (s)
-		local t = {L"десятый", L"двадцатый", L"тридцатый", L"сороковой", L"пятидесятый", L"шестидесятый", L"семидесятый", L"восьмидесятый", L"девяностый"}
-		return L" |"..t[tonumber(s)]..L"| " end},
-	{L" ([0-9])0[%- ]?О?е ", function (s)
-		local t = {L"десятое", L"двадцатое", L"тридцатое", L"сороковое", L"пятидесятое", L"шестидесятое", L"семидесятое", L"восьмидесятое", L"девяностое"}
-		return L" |"..t[tonumber(s)]..L"| " end},
-	{L" ([0-9])0[%- ]?Г?о ", function (s)
-		local t = {L"десятого", L"двадцатого", L"тридцатого", L"сорокового", L"пятидесятого", L"шестидесятого", L"семидесятого", L"восьмидесятого", L"девяностого"}
-		return L" "..t[tonumber(s)]..L" " end},
-	{L" ([0-9])0[%- ]?Летия ", function (s)
-		local t = {L"десяти", L"двадцати", L"тридцати", L"сорока", L"пятидесяти", L"шестидесяти", L"семидесяти", L"восьмидесяти", L"девяносто"}
-		return L" "..t[tonumber(s)]..L"летия " end},
-	{L" 1([0-9])[%- ]?А?я ", function (s) return L" |"..mapinfo_numbers[2][tonumber(s)]..L"надцатая| " end},
-	{L" 1([0-9])[%- ]?Ой ", function (s) return L" |"..mapinfo_numbers[2][tonumber(s)]..L"надцатой| " end},
-	{L" 1([0-9])[%- ]?Ы?й ", function (s) return L" |"..mapinfo_numbers[2][tonumber(s)]..L"надцатый| " end},
-	{L" 1([0-9])[%- ]?О?е ", function (s) return L" |"..mapinfo_numbers[2][tonumber(s)]..L"надцатое| " end},
-	{L" 1([0-9])[%- ]?Г?о ", function (s) return L" "..mapinfo_numbers[2][tonumber(s)]..L"надцатого " end},
-	{L" 1([0-9])[%- ]?Летия ", function (s)
-		local t = {L"одиннадцати", L"двенадцати", L"тринадцати", L"четырнадцати", L"пятнадцати", L"шестнадцати", L"семнадцати", L"восемнадцати", L"девятнадцати"}
-		return L" "..t[tonumber(s)]..L"летия " end},
-	{L" ([0-9])([0-9])[%- ]?[АЬ]?я ", function (s1,s2) return L" |"..mapinfo_numbers[3][tonumber(s1)]..L" "..s2..L"-я " end},
-	{L" ([0-9])([0-9])[%- ]?[ОЕ]й ", function (s1,s2) return L" |"..mapinfo_numbers[3][tonumber(s1)]..L" "..s2..L"-Ой " end},
-	{L" ([0-9])([0-9])[%- ]?[ЫИ]?й ", function (s1,s2) return L" |"..mapinfo_numbers[3][tonumber(s1)]..L" "..s2..L"-й " end},
-	{L" ([0-9])([0-9])[%- ]?[ОЬ]?е ", function (s1,s2) return L" |"..mapinfo_numbers[3][tonumber(s1)]..L" "..s2..L"-е " end},
-	{L" ([0-9])([0-9])[%- ]?Г?о ", function (s1,s2) return L" "..mapinfo_numbers[3][tonumber(s1)]..L" "..s2..L"-о " end},
-	{L" ([0-9])([0-9])[%- ]?Летия ", function (s1,s2)
-		local t = {L"", L"двадцати", L"тридцати", L"сорока", L"пятидесяти", L"шестидесяти", L"семидесяти", L"восьмидесяти", L"девяносто"}
-		return L" "..t[tonumber(s1)]..L" "..s2..L"-Летия " end},
-	{L" ([0-9])[%- ]?[АЬ]?я ", function (s)
-		local t = {L"первая", L"вторая", L"третья", L"четвёртая", L"пятая", L"шестая", L"седьмая", L"восьмая", L"девятая"}
-		return L" |"..t[tonumber(s)]..L"| " end},
-	{L" ([0-9])[%- ]?[ОЕ]й ", function (s)
-		local t = {L"первой", L"второй", L"третьей", L"четвёртой", L"пятой", L"шестой", L"седьмой", L"восьмой", L"девятой"}
-		return L" |"..t[tonumber(s)]..L"| " end},
-	{L" ([0-9])[%- ]?[ЫИ]?й ", function (s)
-		local t = {L"первый", L"второй", L"третий", L"четвёртый", L"пятый", L"шестой", L"седьмой", L"восьмой", L"девятый"}
-		return L" |"..t[tonumber(s)]..L"| " end},
-	{L" ([0-9])[%- ]?[ОЬ]?е ", function (s)
-		local t = {L"первое", L"второе", L"третье", L"четвёртое", L"пятое", L"шестое", L"седьмое", L"восьмое", L"девятое"}
-		return L" |"..t[tonumber(s)]..L"| " end},
-	{L" ([0-9])[%- ]?Г?о ", function (s)
-		local t = {L"первого", L"второго", L"третьего", L"четвёртого", L"пятого", L"шестого", L"седьмого", L"восьмого", L"девятого"}
-		return L" "..t[tonumber(s)]..L" " end},
-	{L" ([0-9])[%- ]?Летия ", function (s)
-		local t = {L"одно", L"двух", L"трёх", L"четырёх", L"пяти", L"шести", L"семи", L"восьми", L"девяти"}
-		return L" "..t[tonumber(s)]..L"летия " end},
 
 	{L"^||(.*)",function (s) return wstring.gsub(s, L"|", L"") end},
 	{L"|(.*)|", function (s) return L"|"..wstring.gsub(s, L"|",L"")..L"|" end},
@@ -457,7 +369,7 @@ local replace_for_directions_inner = {
 	{L"(.*) Крайбрежие ",L" Крайбрежието %1 "},
 	{L"(.*) Кръстовище ",L" Кръстовището %1 "},
 	{L"(.*) Станция ",L" Станцията %1 "},
-	{L"(.*) Шосе ",L" Шосето %1 "},
+	{L"(.*) Магистрала ",L" Магистрала %1 "},
 }
 
 local replace_for_directions_inner2 = {
@@ -488,7 +400,7 @@ local replace_for_traffic_fromto_inner = {
 	{L"(.*) Крайбрежие ",L" Крайбрежието %1 "},
 	{L"(.*) Кръстовище ",L" Кръстовището %1 "},
 	{L"(.*) Станция ",L" Станцията %1 "},
-	{L"(.*) Шосе ",L" Шосето %1 "},
+	{L"(.*) Магистрала ",L" Магистрала %1 "},
 }
 
 local replace_for_traffic_fromto_inner2 = {
@@ -519,7 +431,7 @@ local replace_for_traffic_on_inner = {
 	{L"(.*) Крайбрежие ",L" Крайбрежието %1 "},
 	{L"(.*) Кръстовище ",L" Кръстовището %1 "},
 	{L"(.*) Станция ",L" Станцията %1 "},
-	{L"(.*) Шосе ",L" Шосето %1 "},
+	{L"(.*) Магистрала ",L" Магистрала %1 "},
 }
 
 local replace_for_traffic_on_inner2 = {
@@ -713,7 +625,7 @@ local function signpost_destination(data, idx)
 	local dest
 	if not ( data[idx].signpost and data[idx].road ) then return end
 	if data[idx].signpost.destination and wstring.find( data[idx].signpost.destination.text, L"[A-z]" ) and data[idx].road then
-		dest = data[idx].road.name			--  amk data[idx].signpost.destination
+		dest = data[idx].road.name	--  amk data[idx].signpost.destination
 	else
 		dest = data[idx].signpost.destination
 	end
@@ -726,7 +638,7 @@ local function signpost_destination(data, idx)
 	end
 end
 
-local function signpost_settlement(data, idx)			--  в "напрвление" където е символът '>>'
+local function signpost_settlement(data, idx)	--  в "напрвление" където е символът '>>'
 	local settlement = data[idx].signpost.settlement
 	if settlement then
 		local str=settlement.text
@@ -740,7 +652,7 @@ local function signpost_settlement(data, idx)			--  в "напрвление" к
 	end
 end
 
-local function signpost_roadnumber(data, idx)			--  име на трасето M1 ... Mx
+local function signpost_roadnumber(data, idx)	--  име на трасето M1 ... Mx
 	local roadnumber = data[idx].signpost.roadnumber
 	if roadnumber then
 		local str=roadnumber.text
@@ -938,7 +850,7 @@ function route_summary_format_order(data)
 	return str
 end
 
----------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
 local function format_string2unicode(str)
 	if not SysConfig:get("tts", "voice_log_to_unicode_chars", 0) then return str end
 	local out, uni_code, repl_str
@@ -1169,7 +1081,7 @@ end
 	-- return head..(currenttime and L" " or L" в ")..hours..mins..tod
 -- end
 function eta(time,waypoint,currenttime)
-	local head = currenttime and L"В момента е " or (waypoint and L"В междинната точка ще пристигнете в " or L"Ще пристигнете в ")
+	local head = currenttime and L"В момента е " or (waypoint and L"В спирката ще пристигнете в " or L"Ще пристигнете дестинацията в ")
 	local strmins,strhour
 	local hour = time.hour
 	local mins = time.min
