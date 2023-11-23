@@ -1,4 +1,4 @@
-module("VOICE")
+﻿module("VOICE")
 
 distances = {}
 
