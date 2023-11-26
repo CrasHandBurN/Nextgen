@@ -1,9 +1,9 @@
 [words]
-plugin~compass_vw="compass_vw: компас с много функции"
+plugin~compass_vw="compass_vw: многофункционален компас"
 
 Multifunctional compass="Многофункционален компас"
-Multifunctional compass(Sideboxes dependencies)="Многофункционален компас (зависи от Страничната лента)"
+Multifunctional compass(Sideboxes dependencies)="Многофункционален компас (зависи от страничната лента)"
 Central point compass="Компас върху курсора"
 Big compass="Голям компас"
 
-Show Left Side Compass="Компас"
+Show Left Side Compass="Компас отляво"
