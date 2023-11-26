@@ -1,0 +1,105 @@
+<observer obs_SearchForOnlineProviders value=( %services.netlocalsearch_bingo.provider.is_provider_search_in_progress // 0 ) ondeselect=sc_SetOnlineProviders/>
+
+<userlist lm_Online_Providers text="wstr" id="int" icon_id="int" key="str" type="str" visible="bool">
+	<view visibility_filter=visible>
+	<default text=( translate( m_i18n( "Unknown Search Provider" ) ) ) id=-1 icon_id=-1 key="" type="_online" visible=( %poi[ %lua.PoiSearchList ].center != "route" )/>
+</userlist>
+
+<layer ui_LocalSearch z=30 visible=( %lua.SelectedProviderType == lua.EProviderTypes.Online )>
+	<implementation>
+		<property HasValidResult value = false>
+	</implementation>
+	
+	<DIV class="list">
+			
+		<LIST2 lst_LocalSearch class="list_control local_search" SMOOTHSCROLLING>
+			<SECTIONMARKER/>
+			<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_ProviderInfoList" searching=( %services.netlocalsearch_bingo.provider.is_provider_search_in_progress ) service="Service~Online Search" visible=( %services.netlocalsearch_bingo.provider.is_provider_search_in_progress || !%services.netlocalsearch_bingo.provider.list.size )/>
+			<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_POI_Searching" visible=( !%services.netlocalsearch_bingo.provider.is_provider_search_in_progress && %services.netlocalsearch_bingo.provider.list.size && !%poi.local_search.ready )/>
+			<LISTMODEL listmodel="poi.local_search.list" element_template="et_POIItemList"/>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+		
+		<EMPTYLISTTEXT text=( builtin.format( m_i18n( "%s: no online information available." ), m_i18n( "Service~Online Search" ) ) ) visible=( %poi.local_search.ready && !%poi.local_search.list.size && !%services.netlocalsearch_bingo.provider.is_provider_search_in_progress && %services.netlocalsearch_bingo.provider.list.size && HasValidResult )/>
+		
+		<layer>
+			<DIV class="list">
+				<SPRITE class="panel list input"/>
+			</DIV>
+		</layer>
+	</DIV>
+</layer>
+
+<layer ui_LocalSearchAround z=30 visible=( %lua.SelectedProviderType == lua.EProviderTypes.Online )>
+	<implementation>
+		<property HasValidResult value = false>
+	</implementation>
+	
+	<DIV class="list">
+		<SECTIONMARKER/>
+		
+		<LIST2 lst_LocalSearchAround class="list_control local_search" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_ProviderInfoList" searching=( %services.netlocalsearch_bingo.provider.is_provider_search_in_progress ) service="Service~Online Search" visible=( %services.netlocalsearch_bingo.provider.is_provider_search_in_progress || !%services.netlocalsearch_bingo.provider.list.size )/>
+			<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_POI_Searching" visible=( !%services.netlocalsearch_bingo.provider.is_provider_search_in_progress && %services.netlocalsearch_bingo.provider.list.size && !%poi.local_search_around.ready )/>
+			<LISTMODEL listmodel="poi.local_search_around.list" element_template="et_POIItemList"/>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+		
+		<EMPTYLISTTEXT text=( builtin.format( m_i18n( "%s: no online information available." ), m_i18n( "Service~Online Search" ) ) ) visible=( %poi.local_search_around.ready && !%poi.local_search_around.list.size && !%services.netlocalsearch_bingo.provider.is_provider_search_in_progress && %services.netlocalsearch_bingo.provider.list.size && HasValidResult )/>
+		
+		<layer>
+			<DIV class="list">
+				<SPRITE class="panel list input"/>
+			</DIV>
+		</layer>
+	</DIV>
+</layer>
+
+<element_template et_QuickBarPoiProviders_online>
+	<implementation>
+		<property activating value=( !Plugin.isLoaded( "grp_shop" ) && ( %services.activate_status == lua.EActivationStatus.SERVICE_OPERATION_PENDING // 0 ) )/>
+	</implementation>
+	
+	<DIV class="fill" visible=( %*.type == "_online_dummy" )>
+		<BUTTON class="listitem quickbar" onrelease='hook_QuickBarOnrelease:trigger( sc_SelectDummyOnlineProvider )' enable=( sc_checkConnectedServiceEnability( "search", %services.activate_status // 0, %services.has_activated // 0 ) )>
+			<VBOX class="listitem">
+				<SPRITE class="quickbar_icon searchprogress wide" visible=( activating )>
+				<SPRITE class="quickbar_icon" img="ico_dummyprovider_localsearch.svg" visible=( !activating )>
+			</VBOX>
+		</BUTTON>
+	</DIV>
+	
+	<DIV class="fill" visible=( %*.type == "_online" )>
+		<BUTTON class="listitem quickbar" onrelease='hook_QuickBarOnrelease:trigger( function() sc_SelectOnlineProvider( MODEL["*"].id() ) end )'>
+			<VBOX class="listitem">
+				<SPRITE class="quickbar_icon local_search"  iconid=%*.icon_id>
+			</VBOX>
+			<SPRITE class="quickbar_selection fill">
+		</BUTTON>
+	</DIV>
+</element_template>
+
+<element_template et_QuickBarPoiProviders_online_qbp>
+	<implementation>
+		<property activating value=( !Plugin.isLoaded( "grp_shop" ) && ( %services.activate_status == lua.EActivationStatus.SERVICE_OPERATION_PENDING // 0 ) )/>
+	</implementation>
+	
+	<BUTTON class="listitem qbp" visible=( %*.type == "_online_dummy" ) onrelease='hook_QuickBarOnrelease:trigger( sc_SelectDummyOnlineProvider )' enable=( sc_checkConnectedServiceEnability( "search", %services.activate_status // 0, %services.has_activated // 0 ) )>
+		<HBOX class="listitem qbp">
+			<SPRITE class="listitem searchprogress wide" visible=( activating )>
+			<SPRITE class="listitem qbp icon" img="ico_dummyprovider_localsearch.svg" visible=( !activating )>
+			<TEXT class="listitem qbp" text=%*.text>
+		</HBOX>
+	</BUTTON>
+	
+	<BUTTON class="listitem qbp" visible=( %*.type == "_online" ) onrelease='hook_QuickBarOnrelease:trigger( function() sc_SelectOnlineProvider( MODEL["*"].id() ) end )'>
+		<HBOX class="listitem qbp">
+			<SPRITE class="listitem qbp" iconid=%*.icon_id>
+			<TEXT class="listitem qbp" text=%*.text>
+		</HBOX>
+	</BUTTON>
+</element_template>

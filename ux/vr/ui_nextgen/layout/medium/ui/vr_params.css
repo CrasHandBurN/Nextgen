@@ -1,0 +1,22 @@
+
+
+
+
+@params {
+	
+	vr_mode_w: 96;	
+	vr_mode_header_h: listitem_h;
+	vr_actionpanel_w: 114;
+	vr_actionbutton_w: 100;	
+	vr_actionbutton_h: 100;
+	vr_helpbutton_w: 96;
+	vr_capable_icon_size:24;
+	vr_capable_icon_left:70;
+	vr_capable_icon_bottom:32;
+	
+	vr_fontsize_rowcount: 48;
+	vr_ovde_findaddress_text_w: 148;
+}
+
+@import "~res/ui/vr_params_landscape.css" landscape;
+@import "~res/ui/vr_params_portrait.css" portrait;

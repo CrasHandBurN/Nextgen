@@ -1,0 +1,48 @@
+<modify lm_RouteMenuOptions>
+	<insert before=Eco>
+		<row Green prio=1000 text="Green" setting=L"GREEN" visible=(%lua.showGreenUI)>
+	</insert>
+	
+	<modify Eco visible=(!%lua.green_routing_enabled || !%lua.showGreenUI)/>
+</modify>
+
+<!if condition=(Plugin.isLoaded("vehicle_selection"))>
+	<modify lm_VehicleProfileSettings>
+		<insert after=MaxSpeed>
+			<row text="VEHICLE~Fuel Consumption Urban" details=( sprintf( L"%s %s", sc_FormatConsumptionValue( %{"mydata.vehicle_profile.list"}[current].consumption_urban ), translate( sc_FormatConsumptionUnit() ) ) ) onrelease='sc_VehicleProfileProps_OnRelease(m_i18n("VEHICLE~Fuel Consumption Urban"),"consumption_urban")'  visible=(%mydata.vehicle_profile.list[current].consumption_urban.valid)>
+			<row text="VEHICLE~Fuel Consumption Rural" details=( sprintf( L"%s %s", sc_FormatConsumptionValue( %{"mydata.vehicle_profile.list"}[current].consumption_rural ), translate( sc_FormatConsumptionUnit() ) ) ) onrelease='sc_VehicleProfileProps_OnRelease(m_i18n("VEHICLE~Fuel Consumption Rural"),"consumption_rural")' visible=(%mydata.vehicle_profile.list[current].consumption_rural.valid)>
+			<row text="VEHICLE~Type of Engine"         details=(lua.EEngineTypes[%{"mydata.vehicle_profile.list"}[current].engine_type]) onrelease='sc_SetPopoverListAndOpen("ui.lm_enginetype_popover")'   visible=(%mydata.vehicle_profile.list[current].engine_type.valid) haspopover=1>
+			<row text="VEHICLE~Price of Fuel"          details=( sprintf( L"%s %s", (sc_FormatFuelCost( %{"mydata.vehicle_profile.list"}[current].fuel_cost, 3 )), %lua.Currency ) ) onrelease=sc_Set_GR_Cost visible=(%mydata.vehicle_profile.list[current].fuel_cost.valid)>
+		</insert>
+	</modify>
+<!end/>
+
+<modify ui_RouteOverview>
+	<insert into="DIV.mapmain">
+		<DIV CLASS="fuel_route_overview">
+			<SPRITE CLASS="route_fuel_background">
+				<BOX CLASS="fill"> 
+					<HBOX CLASS="route_overview_destination">
+						<SPRITE CLASS="route_summary fuelgreen svg">
+					</HBOX>               
+					<HBOX CLASS="route_overview_destination">
+						<SPRITE CLASS="route_summary fuelprice svg">
+						<UNITTEXT CLASS="route_summary_text" VALUE=(sc_FormatFuelCost(%route.list.navigated.fuel_cost, %gps.blink)) UNIT=(%lua.Currency)>
+					</HBOX>
+					<HBOX CLASS="route_overview_destination"> ;new 18.08.2020
+						<SPRITE CLASS="route_summary fuel_per_100 svg" />
+						<UNITTEXT CLASS="route_summary_text" VALUE=(sc_FormatConsumptionValue( VW_fuel_per_100km_pm(%gps.blink) )) UNIT=(sc_FormatConsumptionUnit()) />
+					</HBOX>
+					<HBOX CLASS="route_overview_destination">
+						<SPRITE CLASS="route_summary fuelusage svg">
+						<UNITTEXT CLASS="route_summary_text" VALUE=(sc_FormatFuelValue(%route.list.navigated.fuel_usage, %gps.blink)) UNIT=(sc_FormatFuelUnit())>
+					</HBOX> 
+					<HBOX CLASS="route_overview_destination">
+						<SPRITE CLASS="route_summary fuelco2 svg">
+						<UNITTEXT CLASS="route_summary_text" VALUE=(sc_FormatCo2(%route.list.navigated.co2_emission, %gps.blink)) UNIT="kg">
+					</HBOX>                             
+				</BOX>
+			</SPRITE>
+		</DIV> 
+	</insert>
+</modify>

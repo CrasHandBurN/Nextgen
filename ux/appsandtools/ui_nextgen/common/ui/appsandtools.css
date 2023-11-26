@@ -1,0 +1,45 @@
+LIST2.list_control.sunsetlist {
+	reversed: 1;
+}
+
+DIV.listitem.sunsetsunrise {
+	desired_w: listitem_route_container_w; box_align: "stretch";
+	align: "CENTER";
+}
+
+
+HBOX.listitem.sunsetsunrise {
+	flex:1;
+	paddingleft:0; paddingright:0;
+}
+
+DIV.listitem >SPRITE 
+{
+	phasename:"normal";
+}
+
+TEXT.listitem.sunsetsunrise{
+	wordwrap:2; leading:0.85; line_break_method:"auto";
+	paddingleft: text_padding; paddingright: 0; flex:1;
+	box_align:"stretch";
+	can_shrink:0;
+	fontsize: fontsize_sunset;
+
+}
+
+BOX.sunsetsunrise_time{
+	flex:0;
+	paddingleft:0; paddingright:0;
+}
+
+HBOX.sunsetsunrise_time {
+	paddingleft: text_padding_small;
+}
+
+TEXT.listitem.sunsetsunrise_time{
+	fontsize: fontsize_sunset_time;
+	wordwrap:1;
+}
+
+@import "~/common/ui/appsandtools_landscape.css" landscape;
+@import "~/common/ui/appsandtools_portrait.css" portrait;

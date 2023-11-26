@@ -1,0 +1,6 @@
+DIV.fuel_route_overview {
+	left:0;
+	right:0;
+	top:(route_overview_h + header_overlap_h);
+	h:(footer_h - footer_h/3);
+}

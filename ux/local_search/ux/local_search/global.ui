@@ -1,0 +1,8 @@
+import "~/common/ui/local_search.css"
+
+import "~/common/ui/local_search.ui"
+import "~/common/ui/local_search.lua"
+
+import "~/common/ui/local_search_mods.ui"
+import "~/common/ui/local_search_mods.lua"
+

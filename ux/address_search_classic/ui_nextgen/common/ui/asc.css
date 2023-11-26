@@ -1,0 +1,6 @@
+.50_25     { w: 50% !important; h: 25% !important;}
+.100_25    { w: 100% !important; h: 25% !important;}
+
+BUTTON.button_input.fake.address {
+	top: ((listitem_address_h - inputfield_h) / 2);
+}

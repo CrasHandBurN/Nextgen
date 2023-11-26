@@ -1,7 +1,7 @@
 [words]
 'Country Speed Tolerance' Button="'Толерантност на скорост в страната' бутон"
 Country Speed Tolerance="Толерантност на скоростта в страната"
-Country Speed Tolerance Dependencies="В зависимост на толерантността от страната"
+Country Speed Tolerance Dependencies="Зависимост на толерантността от страната"
 %s speed tolerance is %s %s.="Допустимо превишаване на скоростта в %s %s %s."
 plugin~country_speed_tolerance="country_speed_tolerance: скорост на толерантност в страната"
 Please define Home position="Моля, посочете \"Вкъщи\""
@@ -11,3 +11,4 @@ Please define \"Home\"="Първо задайте \"Вкъщи\""
 In a city="Градско"
 Out of city="Извънградско"
 "Restore to \"Home\""="Възстанови \"Вкъщи\""
+Tolerance country="Списък на страните с толерантност"

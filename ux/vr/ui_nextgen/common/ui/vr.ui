@@ -1,0 +1,568 @@
+<var vVROn=1 permanent>
+<var vSelectedPOICategoryVR=0>
+<var vVRTitleClick=L"">
+<var vVRTitlePrompt=L"">
+<var vVRTitleSpec=L"">
+<var vVRShowSpecTitle=0>
+<var vCanGenerateVRKeys=1>
+<var vSearchingVDE=0>
+<var vCountrySelectEnabledVDE=0>
+<var vCountryHasState=0>
+<var vSampleText=L"">
+<var vOVDEIsWorking=0>
+<var vPromptMode=2 permanent>
+<var VrInactive=1/>
+<var vReadOut=0 permanent>  
+<var vMsgBoxVoiceIsSaying=0>
+
+<layer ui_Header_VR z=55 visible=(%lua.VRStatus != lua.eVRStatus.inactive)>
+	<DIV class="vr_header">
+		<HBOX class="vr_header">
+			<SPRITE class=vu_level>
+			<SPRITE class="vr_header statusico" visible=(%lua.VRStatus != lua.eVRStatus.click)>
+			<BUTTON class="btn_main vr_header taphere" onrelease=sc_VRHeader_Onrelease visible=(%lua.VRStatus == lua.eVRStatus.click)>
+				<HBOX>
+					<SPRITE class="vr_header statusico click" visible=(%lua.VRStatus == lua.eVRStatus.click)>
+					<TEXT class="btn_main" text=(m_i18n("Tap here to speak"))>
+				</HBOX>
+			</BUTTON>
+			<TEXT class="vrprompt" text=(vVRTitlePrompt) visible=(%lua.VRStatus != lua.eVRStatus.click)>
+			<BUTTON class="btn_main vr_header" text="Help" vrtext="VRTEXT_help" onrelease=sc_VRHelp_onrelease onvr_activate=sc_VRHelp_onrelease>
+		</HBOX>
+		<SPRITE class="vr_color fill">
+		<SPRITE class="vr_background fill">
+	</DIV>
+</layer>
+
+<layer ui_FitBox_vr>
+	<DIV class="mapmain">
+		<SPRITE fitbox_common_vr class="fitbox vr" />
+	</DIV>
+</layer>
+
+<layer ui_FitBox_vr_avoid>
+	<DIV class="mapmain">
+		<SPRITE fitbox_common_avoid class="fitbox vr_avoid" />
+	</DIV>
+</layer>
+
+
+<userlist lm_VR_footer text="str" onrelease="ui" vrtext="str" onvr_activate="ui">
+	<row text="Back" onrelease='sc_VRModeToClick(); sc_back()' vrtext="VRTEXT_back" onvr_activate=sc_VRback/>
+</userlist>
+
+<userlist lm_VR_footer_pointonmap text="str" onrelease="ui" vrtext="str" onvr_activate="ui" enable="bool" vr_enable="bool">
+	<default enable=1 vr_enable=1/>
+	<row text="Back" onrelease='sc_VRModeToClick(); sc_back()' vrtext="VRTEXT_back" onvr_activate=sc_VRback/>
+	<row text="Go"	 onrelease='gSkipRouteSummary = true hook_StartRoutePlanning:trigger()' vrtext="VRTEXT_go" onvr_activate='gSkipRouteSummary = true hook_StartRoutePlanning:trigger()' enable=(!%map.cursor.is_waypoint) vr_enable=(!%map.cursor.is_waypoint)/>
+	<row text="Show Route"  vrtext="VRTEXT_show route" onrelease=sc_ShowRoute_onrelease onvr_activate=sc_ShowRoute_onrelease enable=(!%map.cursor.is_waypoint) vr_enable=(!%map.cursor.is_waypoint)/>
+</userlist>
+
+<userlist lm_avoidrouteahead_footer_vr text="str" onrelease="ui" enable="bool" isactionbutton="bool" vrtext="str" onvr_activate="ui">
+	<default enable=1/>
+	<row text="Back" onrelease='sc_VRModeToClick(); sc_BackFromSpecVRState()' vrtext="VRTEXT_back" onvr_activate=sc_BackFromSpecVRState/>
+	<row text="Accept" isactionbutton=1 vrtext="VRTEXT_accept" onvr_activate=sc_AvoidRouteAhead_Accept onrelease=sc_AvoidRouteAhead_Accept enable=(!%route.list.temporary.calculating)/>
+</userlist>
+
+<element_template et_vrfooter>
+	<FOOTERBUTTON class="btn_footer vr" text=%*.text onrelease=%*.onrelease enable=(%*.enable // 1) nostress=(%*.nostress // 0)>
+	<DIV vrtext=%*.vrtext onvr_activate=%*.onvr_activate visible=(%*.vr_enable // 1)>
+</element_template>
+
+<layer ui_Footer_VR z=85 visible=(!(%lua.WizardModeActive && sc_StateisExtend(States.CurrentState, st_Wizard )))>
+	<DIV class="full">
+		<DIV class="footer">
+			<LIST2 lst_VRFooterMenu class="list_footermenu vr">
+				<LISTMODEL element_template="et_vrfooter">
+			</LIST2>
+			<layer>
+				<DIV class="full">
+					<DIV class="footer">
+						<SPRITE class="vr_footer_bg fill">
+					</DIV>
+				</DIV>
+			</layer>
+			
+			<DIV vrtext="VRTEXT_cancel" onvr_activate=hook_ExitVR/>
+			<DIV vrtext="VRTEXT_go map" onvr_activate='MODEL.lua.VRStatus = eVRStatus.inactive sc_back_to_cockpit()'/>
+		</DIV>
+	</DIV>
+</layer>
+
+<layer ui_VR_Controls>
+	<DIV vrtext="VRTEXT_up"     onvr_activate=sc_ScrollVRListUp/>
+	<DIV vrtext="VRTEXT_down"   onvr_activate=sc_ScrollVRListDown/>
+	<DIV vrtext="VRTEXT_top"    onvr_activate=sc_ScrollVRListTop/>
+	<DIV vrtext="VRTEXT_middle" onvr_activate=sc_ScrollVRListMiddle/>
+	<DIV vrtext="VRTEXT_bottom" onvr_activate=sc_ScrollVRListBottom/>
+</layer>
+
+<layer ui_VR_Controls_Consolidate>
+	<DIV vrtext="VRTEXT_change city in line 1"   onvr_activate='sc_ChangeCityInLineVDE(MODEL.ui[States.CurrentState.listparent].first_visible_index())'     visible=(%ui[States.CurrentState.listparent].last_visible_index >= 0)>
+	<DIV vrtext="VRTEXT_change city in line 2"   onvr_activate='sc_ChangeCityInLineVDE(MODEL.ui[States.CurrentState.listparent].first_visible_index() + 1)' visible=(%ui[States.CurrentState.listparent].last_visible_index >= 1)>
+	<DIV vrtext="VRTEXT_change city in line 3"   onvr_activate='sc_ChangeCityInLineVDE(MODEL.ui[States.CurrentState.listparent].first_visible_index() + 2)' visible=(%ui[States.CurrentState.listparent].last_visible_index >= 2)>
+	<DIV vrtext="VRTEXT_change city in line 4"   onvr_activate='sc_ChangeCityInLineVDE(MODEL.ui[States.CurrentState.listparent].first_visible_index() + 3)' visible=(%ui[States.CurrentState.listparent].last_visible_index >= 3)>
+	<DIV vrtext="VRTEXT_change city in line 5"   onvr_activate='sc_ChangeCityInLineVDE(MODEL.ui[States.CurrentState.listparent].first_visible_index() + 4)' visible=(%ui[States.CurrentState.listparent].last_visible_index >= 4)>
+	<DIV vrtext="VRTEXT_change city in line 6"   onvr_activate='sc_ChangeCityInLineVDE(MODEL.ui[States.CurrentState.listparent].first_visible_index() + 5)' visible=(%ui[States.CurrentState.listparent].last_visible_index >= 5)>
+	<DIV vrtext="VRTEXT_change street in line 1" onvr_activate='sc_ChangeStreetInLineVDE(MODEL.ui[States.CurrentState.listparent].first_visible_index())'     visible=(%ui[States.CurrentState.listparent].last_visible_index >= 0)>
+	<DIV vrtext="VRTEXT_change street in line 2" onvr_activate='sc_ChangeStreetInLineVDE(MODEL.ui[States.CurrentState.listparent].first_visible_index() + 1)' visible=(%ui[States.CurrentState.listparent].last_visible_index >= 1)>
+	<DIV vrtext="VRTEXT_change street in line 3" onvr_activate='sc_ChangeStreetInLineVDE(MODEL.ui[States.CurrentState.listparent].first_visible_index() + 2)' visible=(%ui[States.CurrentState.listparent].last_visible_index >= 2)>
+	<DIV vrtext="VRTEXT_change street in line 4" onvr_activate='sc_ChangeStreetInLineVDE(MODEL.ui[States.CurrentState.listparent].first_visible_index() + 3)' visible=(%ui[States.CurrentState.listparent].last_visible_index >= 3)>
+	<DIV vrtext="VRTEXT_change street in line 5" onvr_activate='sc_ChangeStreetInLineVDE(MODEL.ui[States.CurrentState.listparent].first_visible_index() + 4)' visible=(%ui[States.CurrentState.listparent].last_visible_index >= 4)>
+	<DIV vrtext="VRTEXT_change street in line 6" onvr_activate='sc_ChangeStreetInLineVDE(MODEL.ui[States.CurrentState.listparent].first_visible_index() + 5)' visible=(%ui[States.CurrentState.listparent].last_visible_index >= 5)>
+</layer>
+
+<userlist lm_VoiceRecognitionSettings text="str" onrelease="ui" details="str" isselected="str" type="str" haspopover="bool">
+	<row text="Voice recognition" onrelease=undef type="ChkOnOff" isselected="ui.vVROn">
+	<row text="Mode" details=(lua.EVRSettings[vPromptMode]) haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_VoiceRecognitionSettings_popover")'>
+	<row text="Read out search results" onrelease=undef type="ChkOnOff" isselected="ui.vReadOut">
+</userlist>  
+
+<userlist lm_VoiceRecognitionSettings_popover text="str" onrelease="ui" enable="bool">
+	<default enable=1/>
+	<row text="Normal" onrelease='ui.vPromptMode = 2 sc_ClosePopover()'/>
+	<row text="Expert" onrelease='ui.vPromptMode = 1 sc_ClosePopover()'/>
+</userlist>
+
+<userlist lm_MainMenuVR text="str" vrtext="str" onrelease="ui" onvr_activate="ui" visible="bool" enable="bool" hassubmenu="bool">
+	<view visibility_filter=visible/>
+	<default enable=1 visible=1 hassubmenu=0>
+	
+	<row text="New Route" hassubmenu=1 onrelease=sc_NewRouteVR_Onrelease vrtext="VRTEXT_new route"  onvr_activate='MODEL.lua.VRMainMenuId = 0; sc_SearchFavorites( L"" ); MODEL.lua.RoutePlanType = ERoutePlanType.New; sc_VRListen()'>
+	<row text="Add Waypoint" hassubmenu=1 onrelease='sc_AddStopoverVR(); MODEL.lua.VRStatus = eVRStatus.click' vrtext="VRTEXT_add waypoint" onvr_activate='sc_AddStopoverVR(); sc_VRListen()' visible=( %navigation.has_route )/>
+	<row text=(%route.list.navigated.waypoints.list.size > 2 ? m_i18n("Delete Waypoint") : m_i18n("Delete Route")) onrelease='MODEL.lua.VRMainMenuId = -1; sc_RemoveWaypointPopup()' vrtext=(%route.list.navigated.waypoints.list.size > 2 ? "VRTEXT_delete waypoint" : "VRTEXT_delete route") onvr_activate=sc_RemoveWaypointPopupVR visible=( %navigation.has_route )/>
+	
+  
+    <row text="Route Info"			vrtext="VRTEXT_info"         onrelease=sc_ReadOutRouteInfoVR                       onvr_activate=sc_ReadOutRouteInfoVR      visible=(%sound.voice.route_summary_supported && %navigation.has_route)>
+    <row text="Avoid Route Ahead"   vrtext="VRTEXT_avoid route ahead"   onrelease='sc_VRModeToClick() sc_AvoidRouteAheadVR()' onvr_activate=sc_VRAvoid_onvr_activate   visible=(%navigation.has_route && !%navigation.calculation_todo && %route.list.navigated.has_navigable_path)>
+
+</userlist>  
+
+<userlist lm_SubMenuVR text="str" vrtext="str" onrelease="ui" onvr_activate="ui" visible="bool" enable="bool">
+	<view visibility_filter=visible/>
+  <default enable=1>
+  
+  ;<row text="Address"      vrtext="VRTEXT_address"  onrelease=sc_IQS_VR_onrelease                               onvr_activate=sc_IQS_VR_onrelease                               visible=((%exists:vr.vde.one_shot || %exists:vr.vde.streets) && %lua.VRMainMenuId == 0 && (lua.VR.IsModeSupported(lua.eContentTypeVDE.oneShot) || lua.VR.IsLCIDSupported(%regional.current_language.lcid, lua.eContentTypeVDE.structured)) )>
+  <row text="Address"      vrtext="VRTEXT_address"  onrelease=sc_VRAddress_onrelease                               onvr_activate=sc_StartVRAddresSearch                               visible=((%exists:vr.vde.one_shot || %exists:vr.vde.streets) && %lua.VRMainMenuId == 0 && (lua.VR.IsModeSupported(lua.eContentTypeVDE.oneShot) || lua.VR.IsLCIDSupported(%regional.current_language.lcid, lua.eContentTypeVDE.structured)) )>
+
+  <row text="Places"       vrtext="VRTEXT_place"    onrelease=sc_VRPlaces_onrelease                                onvr_activate='sc_NextStateAnim( st_PoiSearch_MainVR, "fade", 1, "" )'   visible=(%lua.VRMainMenuId == 0)>
+  <row text="Saved Location" vrtext="VRTEXT_saved location" onrelease=sc_VRFavorites_onrelease                             onvr_activate=sc_VRFavorites_onvr_activate                         visible=(%lua.VRMainMenuId == 0 && !%poi.favorite.list.isempty)>
+  <row text="History"      vrtext="VRTEXT_history"  onrelease=sc_VRHistory_onrelease                               onvr_activate=sc_VRHistory_vr_activate                             visible=(%lua.VRMainMenuId == 0 && !%mydata.history.list.isempty)>
+</userlist>
+
+
+<element_template et_MenuVR>
+	<implementation>
+		<property text value=( %*.text // "" )>
+		
+	</implementation>
+
+	<BUTTON class="listitem" onrelease=sc_SelectVRItem enable=%*.enable vrcapable=1>
+		<HBOX class="listitem menu_vr">
+			<TEXT class="listitem menu_vr" text=text />
+			<SPRITE class="listitem icon_menu svg menu_vr" />
+		</HBOX>
+	</BUTTON>	
+	
+	<DIV vrtext=%*.vrtext onvr_activate='MODEL["*"]._list.setcurrent(index); MODEL["*"].onvr_activate()()'/>
+</element_template>
+
+<layer ui_MainMenuVR z=57>
+	<DIV class="vr_main">
+		<HBOX class="menu_vr">
+			<LIST2 class="list_control menu_vr">
+				<LISTMODEL listmodel="ui.lm_MainMenuVR" element_template="et_MenuVR"/>
+			</LIST2>
+			<LIST2 class="list_control menu_vr submenu">
+				<LISTMODEL listmodel="ui.lm_SubMenuVR"  element_template="et_MenuVR"/>
+			</LIST2>
+	    </HBOX>
+	</DIV>
+	
+	<layer>
+		<DIV class="vr_main">
+			<HBOX class="menu_vr">
+				<SPRITE class="background menu_vr">
+				<SPRITE class="background menu_vr submenu">
+			</HBOX>
+		</DIV>
+	</layer>
+</layer>
+
+<userlist lmVrSupportedLanguages lcid="int" text="wstr"/>
+<userlist lmOVDESupportedCountries country_code="str" country_name="wstr" context_type="int"/>
+<userlist lmOVDESupportedCountriesFiltered country_code="str" country_name="wstr" context_type="int"/>
+
+<userlist lm_PoiVR text="str" vrtext="str" params="str" quick="str" defaultScript="ui">
+	
+  <row text="POICATEGORY~Petrol_Station" vrtext="VRTEXT_petrol station" params="petrol_search"       quick="poi.petrol_search"		  defaultScript='sc_Search_For_SG(0, "gps")'>
+  <row text="POICATEGORY~Parking"        vrtext="VRTEXT_parking"        params="parking_search"      quick="poi.parking_search"       defaultScript='sc_Search_For_SG(1, "gps")'>
+  <row text="POICATEGORY~Restaurant"     vrtext="VRTEXT_restaurant"     params="restaurant_search"   quick="poi.restaurant_search"    defaultScript='sc_Search_For_SG(2, "gps")'>
+  <row text="POICATEGORY~Accommodation"  vrtext="VRTEXT_accommodation"  params="accomodation_search" quick="poi.accomodation_search"  defaultScript='sc_Search_For_SG(3, "gps")'>
+</userlist>   
+
+<userlist lm_ConsolidatedAddressVDE street="wstr" city="wstr" name="wstr" description="wstr" position="gcoor" probability="int" state="cstr" has_sibling="bool"/>
+<userlist lm_DisambiguousAddressVDE street="wstr" city="wstr" name="wstr" description="wstr" position="gcoor" street_id="str" housenumber_match="bool"/>
+
+<element_template et_POIItemListVR>
+	<implementation>
+		<property listRowCount value=(0 <= listpos - %*._vlist.first_visible_index && listpos - %*._vlist.first_visible_index < %{"ui.lstFPF.item_per_page"} ? listpos - %*._vlist.first_visible_index + 1 : 0)>
+	</implementation>
+
+	<BUTTON class="listitem" onrelease='sc_VRModeToClick() MODEL["*"]._list.setcurrent(index) hook_SelectPoiItem:trigger()'>
+		<HBOX class="listitem">
+			<TEXT class="listitem vr rowcount" text=listRowCount>
+			<VBOX class="listitem">
+				<TEXT class="listitem top vr" text=%*.name>
+				<TEXT class="listitem bottom vr" text=%*.address.long_format>
+			</VBOX>				
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+
+<layer ui_PoiQuickSearchVR z=30 visible=( %lua.SelectedProviderType == lua.EProviderTypes.Onboard )>
+	<DIV class="vr_main">
+		<SECTIONMARKER/>
+		
+		<LIST2 lstFPF class="list_control vr" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_POI_Searching" visible=( !%poi.vr_search.ready )/>
+			<LISTMODEL listmodel="poi.vr_search.list" element_template="et_POIItemListVR"/>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+			
+			<OBSERVER boolmodel="ui.PARENT.is_grabbed" onselect=sc_IncPhaseCounter ondeselect='sc_VRListenReadOutListMode(0, "id_struct_line_number", sc_VRPromptGeneratorPOI)' START="NO_TRIGGER">
+			<DIV vrtext="VRTEXT_line 1" onvr_activate='sc_PoiSearchItem_OnvrActivate(MODEL.ui.PARENT.first_visible_index())'     visible=(%ui.PARENT.last_visible_index >= 0)>
+			<DIV vrtext="VRTEXT_line 2" onvr_activate='sc_PoiSearchItem_OnvrActivate(MODEL.ui.PARENT.first_visible_index() + 1)' visible=(%ui.PARENT.last_visible_index >= 1)>
+			<DIV vrtext="VRTEXT_line 3" onvr_activate='sc_PoiSearchItem_OnvrActivate(MODEL.ui.PARENT.first_visible_index() + 2)' visible=(%ui.PARENT.last_visible_index >= 2)>
+			<DIV vrtext="VRTEXT_line 4" onvr_activate='sc_PoiSearchItem_OnvrActivate(MODEL.ui.PARENT.first_visible_index() + 3)' visible=(%ui.PARENT.last_visible_index >= 3)>
+			<DIV vrtext="VRTEXT_line 5" onvr_activate='sc_PoiSearchItem_OnvrActivate(MODEL.ui.PARENT.first_visible_index() + 4)' visible=(%ui.PARENT.last_visible_index >= 4 && %ui.PARENT.item_per_page > 4)>
+			<DIV vrtext="VRTEXT_line 6" onvr_activate='sc_PoiSearchItem_OnvrActivate(MODEL.ui.PARENT.first_visible_index() + 5)' visible=(%ui.PARENT.last_visible_index >= 5 && %ui.PARENT.item_per_page > 5)>
+			<DIV vrtext="VRTEXT_read out" onvr_activate='sc_VRListenReadOutListMode(1, "id_struct_line_number", sc_VRPromptGeneratorPOI)'/>			
+		</LIST2>
+		<EMPTYLISTTEXT text=( translate(m_i18n( "No matching results." )) ) visible=( %poi.vr_search.ready && !%poi.vr_search.list.size )/>
+	</DIV>
+</layer>
+
+
+<layer ui_VR z=57>
+	<DIV class="main">
+		<TEXT class="font_double bd color_inf_sec vr" x=40% top=0 w=60% h=100% align="CENTER" valign="CENTER" text="Please say a command." enable=(!%lua.VRError) wordwrap=5>
+		<DIV vrtext="VRTEXT_menu"  onvr_activate='MODEL.lua.VRMainMenuId = -1 sc_NextStateAnim( st_MainMenuVR, "fade", 1, "")'/>
+
+		<DIV vrtext="VRTEXT_find"  onvr_activate='MODEL.lua.VRMainMenuId = 0 sc_NextStateAnim( st_MainMenuVR, "fade", 1, "")'/>
+		<DIV vrtext="VRTEXT_route" onvr_activate='MODEL.lua.VRMainMenuId = 1 sc_NextStateAnim( st_MainMenuVR, "fade", 1, "")'/>
+		<DIV vrtext="VRTEXT_more"  onvr_activate='MODEL.lua.VRMainMenuId = 2 sc_NextStateAnim( st_MainMenuVR, "fade", 1, "")'/>
+	</DIV>
+	<DIV class="full">
+		<DIV class="footer">
+			<FOOTERBUTTON x=66% top=0 class="btn_footer right" text="Menu" onrelease='MODEL.lua.VRMainMenuId = -1 MODEL.lua.VRStatus = eVRStatus.click sc_NextStateAnim( st_MainMenuVR, "fade", 1, "")' vrcapable=1>
+		</DIV>
+	</DIV>
+</layer>
+
+<element_template et_PoiCategoryShortCutsVR>
+	<DIV VRTEXT=%*.vrtext onvr_activate=sc_ActivateShortcut/>
+</element_template>
+
+<layer ui_ShortCutsVR z=57>
+	<LIST2 LEFT=0 RIGHT=0 TOP=0 BOTTOM=0 ROW=(%ui.lm_PoiVR.size) COL=1 LISTMODEL="ui.lm_PoiVR.list" ELEMENT_TEMPLATE="et_PoiCategoryShortCutsVR">
+</layer>
+
+<userlist lm_FooterAvoidVR text="str" onrelease="ui" enable="bool" visible="bool" vrtext="str" onvr_activate="ui">
+	<view visibility_filter=visible />
+	<default enable=1 visible=1/>
+	<row text="Back" onrelease='sc_VRModeToClick(); sc_back()' vrtext="VRTEXT_back" onvr_activate=sc_VRback/>
+	<row text="Next" onrelease='sc_VRModeToClick() sc_AvoidRouteAheadVR()' vrtext="VRTEXT_next" onvr_activate=sc_AvoidRouteAheadVR enable=(%navigation.has_route && !%navigation.calculation_todo && %route.list.navigated.has_navigable_path)/>
+</userlist>
+
+<element_template et_AvoidableDistance>
+	<DIV vrtext=(%*.dist_str != ".5" ? %*.dist_str : "VRTEXT_half") onvr_activate='sc_AvoidRouteAheadVR(MODEL.ui.lm_avoidRouteDistancesList[index].dist_str())'/>
+</element_template>
+
+<layer ui_AvoidVR z=57>
+	<DIV class="vr_main">
+		<TABLE class="avoidable_distances_container vr">
+			<BOX class="avoidable_distances vr">
+				<BUTTON class="btn_main avoidable_distances_half" onrelease='sc_AvoidRouteAheadVR(MODEL.ui.lm_avoidRouteDistancesList[0].dist_str())' text=((%ui.lm_avoidRouteDistancesList[0].dist_str // "") == ".5" ? "half" : (%ui.lm_avoidRouteDistancesList[0].dist_str // "")) visible=(%ui.lm_avoidRouteDistancesList.size > 0)>
+				<BUTTON class="btn_main avoidable_distances" onrelease='sc_AvoidRouteAheadVR(MODEL.ui.lm_avoidRouteDistancesList[1].dist_str())' text=(%ui.lm_avoidRouteDistancesList[1].dist_str // "") visible=(%ui.lm_avoidRouteDistancesList.size > 1)>
+				<BUTTON class="btn_main avoidable_distances" onrelease='sc_AvoidRouteAheadVR(MODEL.ui.lm_avoidRouteDistancesList[2].dist_str())' text=(%ui.lm_avoidRouteDistancesList[2].dist_str // "") visible=(%ui.lm_avoidRouteDistancesList.size > 2)>
+				<BUTTON class="btn_main avoidable_distances" onrelease='sc_AvoidRouteAheadVR(MODEL.ui.lm_avoidRouteDistancesList[3].dist_str())' text=(%ui.lm_avoidRouteDistancesList[3].dist_str // "") visible=(%ui.lm_avoidRouteDistancesList.size > 3)>
+				<BUTTON class="btn_main avoidable_distances" onrelease='sc_AvoidRouteAheadVR(MODEL.ui.lm_avoidRouteDistancesList[4].dist_str())' text=(%ui.lm_avoidRouteDistancesList[4].dist_str // "") visible=(%ui.lm_avoidRouteDistancesList.size > 4)>
+				<BUTTON class="btn_main avoidable_distances" onrelease='sc_AvoidRouteAheadVR(MODEL.ui.lm_avoidRouteDistancesList[5].dist_str())' text=(%ui.lm_avoidRouteDistancesList[5].dist_str // "") visible=(%ui.lm_avoidRouteDistancesList.size > 5)>
+				<BUTTON class="btn_main avoidable_distances" onrelease='sc_AvoidRouteAheadVR(MODEL.ui.lm_avoidRouteDistancesList[6].dist_str())' text=(%ui.lm_avoidRouteDistancesList[6].dist_str // "") visible=(%ui.lm_avoidRouteDistancesList.size > 6)>
+				<BUTTON class="btn_main avoidable_distances" onrelease='sc_AvoidRouteAheadVR(MODEL.ui.lm_avoidRouteDistancesList[7].dist_str())' text=(%ui.lm_avoidRouteDistancesList[7].dist_str // "") visible=(%ui.lm_avoidRouteDistancesList.size > 7)>
+				<BUTTON class="btn_main avoidable_distances" onrelease='sc_AvoidRouteAheadVR(MODEL.ui.lm_avoidRouteDistancesList[8].dist_str())' text=(%ui.lm_avoidRouteDistancesList[8].dist_str // "") visible=(%ui.lm_avoidRouteDistancesList.size > 8)>
+			</BOX>
+			<TEXT class="font_main bd color_inf_sec vr fill" align="center" text=(builtin.format("%{distance[%U]}",2000))> 
+		</TABLE>
+		
+		<LIST2 class="avoidable_distances vr" element_template="et_AvoidableDistance" listmodel="ui.lm_avoidRouteDistancesList">
+	</DIV>
+</layer>
+
+
+
+
+
+<element_template et_FindAddressCountryVDE>
+	
+	<implementation>
+		<property listRowCount value=(0 <= listpos - %*._vlist.first_visible_index && listpos - %*._vlist.first_visible_index < %{"ui.lstFindAddressCountryVDE.item_per_page"} ? listpos - %*._vlist.first_visible_index + 1 : 0)>
+	</implementation>
+
+	<BUTTON class="listitem" onrelease='MODEL.lua.VRStatus = eVRStatus.listen; sc_FindAddressCountryResultVDE_OK()'>
+		<HBOX class="listitem">
+			<TEXT class="listitem vr rowcount" text=listRowCount>
+			<TEXT class="listitem vr" text=%*.country_name>
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<userlist VRCountryNames country_name="wstr" country_code="cstr" />
+
+<layer ui_FindAddressCountryVDE z=57>
+	<DIV class="vr_main">
+	    <LIST2 lstFindAddressCountryVDE class="list_control" element_template="et_FindAddressCountryVDE" listmodel="ui.VRCountryNames" SMOOTHSCROLLING>
+	        <VSMARTSCROLL> 
+	        <WHEEL>
+	        <LISTCONTROL>
+	        
+	        <OBSERVER boolmodel="ui.PARENT.is_grabbed" onselect=sc_IncPhaseCounter ondeselect='sc_VRListenReadOutListMode(0, "id_struct_line_change_city", sc_VRPromptGeneratorCountryVDE)' START="NO_TRIGGER">
+			<DIV vrtext="VRTEXT_line 1" onvr_activate='sc_FindAddressCountryResultVDE_OK(MODEL.ui.PARENT.first_visible_index())'     visible=(%ui.PARENT.last_visible_index >= 0)>
+			<DIV vrtext="VRTEXT_line 2" onvr_activate='sc_FindAddressCountryResultVDE_OK(MODEL.ui.PARENT.first_visible_index() + 1)' visible=(%ui.PARENT.last_visible_index >= 1)>
+			<DIV vrtext="VRTEXT_line 3" onvr_activate='sc_FindAddressCountryResultVDE_OK(MODEL.ui.PARENT.first_visible_index() + 2)' visible=(%ui.PARENT.last_visible_index >= 2)>
+			<DIV vrtext="VRTEXT_line 4" onvr_activate='sc_FindAddressCountryResultVDE_OK(MODEL.ui.PARENT.first_visible_index() + 3)' visible=(%ui.PARENT.last_visible_index >= 3)>
+			<DIV vrtext="VRTEXT_line 5" onvr_activate='sc_FindAddressCountryResultVDE_OK(MODEL.ui.PARENT.first_visible_index() + 4)' visible=(%ui.PARENT.last_visible_index >= 4 && %ui.PARENT.item_per_page > 4)>
+			<DIV vrtext="VRTEXT_line 6" onvr_activate='sc_FindAddressCountryResultVDE_OK(MODEL.ui.PARENT.first_visible_index() + 5)' visible=(%ui.PARENT.last_visible_index >= 5 && %ui.PARENT.item_per_page > 5)>
+			<DIV vrtext="VRTEXT_read out" onvr_activate='sc_VRListenReadOutListMode(1, "id_struct_line_change_city", sc_VRPromptGeneratorCountryVDE)'/>	        
+        </LIST2>
+	</DIV>
+
+	<DIV class="full">
+		<DIV class="footer">
+			<DIV vrtext="VRTEXT_back"   onvr_activate=sc_BackFromSpecVRState/>
+			<DIV vrtext="VRTEXT_cancel" onvr_activate=hook_ExitVR/>
+			<DIV vrtext="VRTEXT_go map" onvr_activate='MODEL.lua.VRStatus = eVRStatus.inactive sc_back_to_cockpit()'/>
+		</DIV>
+	</DIV>
+</layer>
+
+<layer ui_FindAddressVDE z=57>
+	<implementation>
+		<property vdetext value="" />
+		<property vrtext_1 value="" />
+		<property vrtext_2 value="" />
+		<property onvr_activate_1 />
+		<property onvr_activate_2 />
+	</implementation>
+	
+	<DIV class="main">
+		<TEXT class="font_double bd color_inf_sec vr fill" text=vdetext wordwrap=0 enable=(!%lua.VRError)>
+		<SPRITE class="fill vr_color" flex=1>
+		<DIV vrtext=vrtext_1 onvr_activate=onvr_activate_1/>
+	</DIV>
+	<DIV visible=(vCountrySelectEnabledVDE)>
+		<DIV vrtext=vrtext_2 onvr_activate=onvr_activate_2 />
+	</DIV>
+</layer>
+
+<element_template et_ConsolidatedAddressVDE>
+	
+	<implementation>
+		<property listRowCount value=(0 <= listpos - %*._vlist.first_visible_index && listpos - %*._vlist.first_visible_index < %{"ui.lstConsolidatedAddressVDE.item_per_page"} ? listpos - %*._vlist.first_visible_index + 1 : 0)>
+	</implementation>
+
+	<BUTTON class="listitem" onrelease='sc_VRModeToClick() sc_ConsolidatedAddress_onvr_activare(index)'>
+		<HBOX class="listitem">
+			<TEXT class="listitem vr rowcount" text=listRowCount>
+
+			<VBOX class="listitem">
+				<TEXT class="listitem top vr" text=%*.name>
+				<TEXT class="listitem bottom vr" text=%*.description>
+			</VBOX>	
+			
+			<SPRITE class="icon" z=50 img=(%*.has_sibling ? "ico_more_results.svg" : "")>			
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_ConsolidatedAddressVDE z=57>
+	<DIV class="vr_main">
+	    <LIST2 lstConsolidatedAddressVDE class="list_control vr" element_template="et_ConsolidatedAddressVDE" listmodel="ui.lm_ConsolidatedAddressVDE.list"  SMOOTHSCROLLING>
+	        <VSMARTSCROLL> 
+	        <WHEEL>
+	        <LISTCONTROL>
+	        
+	        <OBSERVER boolmodel="ui.PARENT.is_grabbed" onselect=sc_IncPhaseCounter ondeselect='sc_VRListenReadOutListMode(0, "id_struct_line_change_city", sc_VRPromptGeneratorConsolidatedVDE)' START="NO_TRIGGER">
+			<DIV vrtext="VRTEXT_line 1" onvr_activate='sc_ConsolidatedAddress_onvr_activare(MODEL.ui.PARENT.first_visible_index())'     visible=(%ui.PARENT.last_visible_index >= 0)>
+			<DIV vrtext="VRTEXT_line 2" onvr_activate='sc_ConsolidatedAddress_onvr_activare(MODEL.ui.PARENT.first_visible_index() + 1)' visible=(%ui.PARENT.last_visible_index >= 1)>
+			<DIV vrtext="VRTEXT_line 3" onvr_activate='sc_ConsolidatedAddress_onvr_activare(MODEL.ui.PARENT.first_visible_index() + 2)' visible=(%ui.PARENT.last_visible_index >= 2)>
+			<DIV vrtext="VRTEXT_line 4" onvr_activate='sc_ConsolidatedAddress_onvr_activare(MODEL.ui.PARENT.first_visible_index() + 3)' visible=(%ui.PARENT.last_visible_index >= 3)>
+			<DIV vrtext="VRTEXT_line 5" onvr_activate='sc_ConsolidatedAddress_onvr_activare(MODEL.ui.PARENT.first_visible_index() + 4)' visible=(%ui.PARENT.last_visible_index >= 4 && %ui.PARENT.item_per_page > 4)>
+			<DIV vrtext="VRTEXT_line 6" onvr_activate='sc_ConsolidatedAddress_onvr_activare(MODEL.ui.PARENT.first_visible_index() + 5)' visible=(%ui.PARENT.last_visible_index >= 5 && %ui.PARENT.item_per_page > 5)>
+			<DIV vrtext="VRTEXT_read out" onvr_activate='sc_VRListenReadOutListMode(1, "id_struct_line_change_city", sc_VRPromptGeneratorConsolidatedVDE)'/>	        
+        </LIST2>
+		<EMPTYLISTTEXT text="<No items>" visible=(%ui.lm_ConsolidatedAddressVDE.list.isempty)>
+	</DIV>
+	<DIV class="full">
+		<DIV class="footer">
+			<DIV vrtext="VRTEXT_change city"   onvr_activate=sc_ChangeCityVDE/>
+			<DIV vrtext="VRTEXT_change street" onvr_activate=sc_ChangeStreetVDE/>
+	
+			<DIV vrtext="VRTEXT_back"   onvr_activate=sc_BackFromConsolidatedAddress/>
+			<DIV vrtext="VRTEXT_cancel" onvr_activate=hook_ExitVR/>
+			<DIV vrtext="VRTEXT_go map" onvr_activate='MODEL.lua.VRStatus = eVRStatus.inactive sc_back_to_cockpit()'/>
+		</DIV>
+	</DIV>
+</layer>
+
+<element_template et_DisambiguousAddresListVDE>
+	
+	<implementation>
+		<property listRowCount value=(0 <= listpos - %*._vlist.first_visible_index && listpos - %*._vlist.first_visible_index < %{"ui.lstDisambiguousAddresListVDE.item_per_page"} ? listpos - %*._vlist.first_visible_index + 1 : 0)>
+	</implementation>
+
+	<BUTTON class="listitem" onrelease='sc_VRModeToClick() sc_DisambiguousAddressList_onrelease()'>
+		<HBOX class="listitem">
+			<TEXT class="listitem vr rowcount" text=listRowCount>
+			<VBOX class="listitem">
+				<TEXT class="listitem top vr" text=%*.name>
+				<TEXT class="listitem bottom vr" text=%*.description>
+			</VBOX>	
+		</HBOX>
+	</BUTTON>
+
+</element_template>
+
+<layer ui_DisambiguousAddresListVDE z=57>
+	<DIV class="list vr">
+		<LIST2 lstDisambiguousAddresListVDE class="list_control" element_template="et_DisambiguousAddresListVDE" listmodel="ui.lm_DisambiguousAddressVDE"  SMOOTHSCROLLING>
+	        <VSMARTSCROLL> 
+	        <WHEEL>
+	        <LISTCONTROL>
+	        
+	        <OBSERVER boolmodel="ui.PARENT.is_grabbed" onselect=sc_IncPhaseCounter ondeselect='sc_VRListenReadOutListMode(0, "id_struct_line_change_city", sc_VRPromptGeneratorDisambiguousVDE)' START="NO_TRIGGER">
+
+			<DIV vrtext="VRTEXT_line 1" onvr_activate='sc_DisambiguousAddresList_onvr_activate(MODEL.ui.PARENT.first_visible_index())'     visible=(%ui.PARENT.last_visible_index >= 0)>
+			<DIV vrtext="VRTEXT_line 2" onvr_activate='sc_DisambiguousAddresList_onvr_activate(MODEL.ui.PARENT.first_visible_index() + 1)' visible=(%ui.PARENT.last_visible_index >= 1)>
+			<DIV vrtext="VRTEXT_line 3" onvr_activate='sc_DisambiguousAddresList_onvr_activate(MODEL.ui.PARENT.first_visible_index() + 2)' visible=(%ui.PARENT.last_visible_index >= 2)>
+			<DIV vrtext="VRTEXT_line 4" onvr_activate='sc_DisambiguousAddresList_onvr_activate(MODEL.ui.PARENT.first_visible_index() + 3)' visible=(%ui.PARENT.last_visible_index >= 3)>
+			<DIV vrtext="VRTEXT_line 5" onvr_activate='sc_DisambiguousAddresList_onvr_activate(MODEL.ui.PARENT.first_visible_index() + 4)' visible=(%ui.PARENT.last_visible_index >= 4 && %ui.PARENT.item_per_page > 4)>
+			<DIV vrtext="VRTEXT_line 6" onvr_activate='sc_DisambiguousAddresList_onvr_activate(MODEL.ui.PARENT.first_visible_index() + 5)' visible=(%ui.PARENT.last_visible_index >= 5 && %ui.PARENT.item_per_page > 5)>
+
+			<DIV vrtext="VRTEXT_read out" onvr_activate='sc_VRListenReadOutListMode(1, "id_struct_line_change_city", sc_VRPromptGeneratorDisambiguousVDE)'/>	        
+        </LIST2>
+	</DIV>
+</layer>
+
+
+<element_template et_SavedLocationVR>
+	<implementation>
+		<property listRowCount value=(0 <= listpos - %*._vlist.first_visible_index && listpos - %*._vlist.first_visible_index < %{"ui.lstSavedLocationVR.item_per_page"} ? listpos - %*._vlist.first_visible_index + 1 : 0)>
+	</implementation>
+	
+	<BUTTON class="listitem" onrelease='sc_VRModeToClick() MODEL["*"]._list.setcurrent(index) hook_SelectPoiItem:trigger()'>
+		<HBOX class="listitem">
+			<TEXT class="listitem vr rowcount" text=listRowCount>
+			<TEXT class="listitem vr" text=%*.name>
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_SavedLocationVR z=30>
+	<DIV class="vr_main">
+		<SECTIONMARKER/>
+		
+		<LIST2 lstSavedLocationVR class="list_control vr" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="poi.favorite.list" element_template="et_SavedLocationVR"/>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+			
+			<OBSERVER boolmodel="ui.PARENT.is_grabbed" onselect=sc_IncPhaseCounter ondeselect='sc_VRListenReadOutListMode(0, "id_struct_line_number", sc_VRPromptGeneratorFavorites)' START="NO_TRIGGER">
+			<DIV vrtext="VRTEXT_line 1" onvr_activate='sc_FindFavorite_OnvrActivate(MODEL.ui.PARENT.first_visible_index())'     visible=(%ui.PARENT.last_visible_index >= 0)>
+			<DIV vrtext="VRTEXT_line 2" onvr_activate='sc_FindFavorite_OnvrActivate(MODEL.ui.PARENT.first_visible_index() + 1)' visible=(%ui.PARENT.last_visible_index >= 1)>
+			<DIV vrtext="VRTEXT_line 3" onvr_activate='sc_FindFavorite_OnvrActivate(MODEL.ui.PARENT.first_visible_index() + 2)' visible=(%ui.PARENT.last_visible_index >= 2)>
+			<DIV vrtext="VRTEXT_line 4" onvr_activate='sc_FindFavorite_OnvrActivate(MODEL.ui.PARENT.first_visible_index() + 3)' visible=(%ui.PARENT.last_visible_index >= 3)>
+			<DIV vrtext="VRTEXT_line 5" onvr_activate='sc_FindFavorite_OnvrActivate(MODEL.ui.PARENT.first_visible_index() + 4)' visible=(%ui.PARENT.last_visible_index >= 4 && %ui.PARENT.item_per_page > 4)>
+			<DIV vrtext="VRTEXT_line 6" onvr_activate='sc_FindFavorite_OnvrActivate(MODEL.ui.PARENT.first_visible_index() + 5)' visible=(%ui.PARENT.last_visible_index >= 5 && %ui.PARENT.item_per_page > 5)>
+			<DIV vrtext="VRTEXT_read out" onvr_activate='sc_VRListenReadOutListMode(1, "id_struct_line_number", sc_VRPromptGeneratorFavorites)'/>
+		</LIST2>
+	</DIV>
+</layer>
+
+<element_template et_FindHistoryVR>
+	<implementation>
+		<property listRowCount value=(0 <= listpos - %*._vlist.first_visible_index && listpos - %*._vlist.first_visible_index < %{"ui.lstFindHistoryVR.item_per_page"} ? listpos - %*._vlist.first_visible_index + 1 : 0)>
+	</implementation>
+	
+	<BUTTON class="listitem icon" onrelease='sc_VRModeToClick() sc_SelectHistoryAndGoVR(index)'>
+		<HBOX class="listitem">
+			<TEXT class="listitem vr rowcount" text=listRowCount>
+			<TEXT class="listitem vr history" text=(%*.text)>
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_FindHistoryVR z=30 >
+	<DIV class="vr_main">
+		<SECTIONMARKER>
+		<LIST2 lstFindHistoryVR class="list_control vr" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.lm_smartHistoryList" element_template="et_FindHistoryVR" />
+			<WHEEL>
+			<VSMARTSCROLL>
+			<LISTCONTROL>
+			
+			<OBSERVER boolmodel="ui.PARENT.is_grabbed" onselect=sc_IncPhaseCounter ondeselect='sc_VRListenReadOutListMode(0, "id_struct_line_number", sc_VRPromptGeneratorHistory)' START="NO_TRIGGER">
+			<DIV vrtext="VRTEXT_line 1" onvr_activate='sc_SelectHistoryAndGoVR(MODEL.ui.PARENT.first_visible_index())'     visible=(%ui.PARENT.last_visible_index >= 0)>
+			<DIV vrtext="VRTEXT_line 2" onvr_activate='sc_SelectHistoryAndGoVR(MODEL.ui.PARENT.first_visible_index() + 1)' visible=(%ui.PARENT.last_visible_index >= 1)>
+			<DIV vrtext="VRTEXT_line 3" onvr_activate='sc_SelectHistoryAndGoVR(MODEL.ui.PARENT.first_visible_index() + 2)' visible=(%ui.PARENT.last_visible_index >= 2)>
+			<DIV vrtext="VRTEXT_line 4" onvr_activate='sc_SelectHistoryAndGoVR(MODEL.ui.PARENT.first_visible_index() + 3)' visible=(%ui.PARENT.last_visible_index >= 3)>
+			<DIV vrtext="VRTEXT_line 5" onvr_activate='sc_SelectHistoryAndGoVR(MODEL.ui.PARENT.first_visible_index() + 4)' visible=(%ui.PARENT.last_visible_index >= 4 && %ui.PARENT.item_per_page > 4)>
+			<DIV vrtext="VRTEXT_line 6" onvr_activate='sc_SelectHistoryAndGoVR(MODEL.ui.PARENT.first_visible_index() + 5)' visible=(%ui.PARENT.last_visible_index >= 5 && %ui.PARENT.item_per_page > 5)>
+			<DIV vrtext="VRTEXT_read out" onvr_activate='sc_VRListenReadOutListMode(1, "id_struct_line_number", sc_VRPromptGeneratorHistory)'/>
+		</LIST2>
+	</DIV>
+</layer>
+
+<userlist lm_PoiSearch_MainVR text="str" vrtext="str" onvr_activate="ui" details="str" onrelease="ui" enable="bool" type="str">
+	<default text="" details="" onrelease=undef enable=1 type=""/>
+
+	<row text="Gas Stations"  details=( sc_SetPoiQuickSearchAreaName( 1, %navigation.has_route, %gps.valid ) ) vrtext="VRTEXT_petrol station" onvr_activate='sc_DefaultPoiSearchVR(0)' onrelease='ui.vSelectedPOICategoryVR = 0 sc_VRModeToClick() sc_DefaultPoiSearchVR(0)'/>
+	<row text="Parking"       details=( sc_SetPoiQuickSearchAreaName( 0, %navigation.has_route, %gps.valid ) ) vrtext="VRTEXT_parking"		  onvr_activate='sc_DefaultPoiSearchVR(1)' onrelease='ui.vSelectedPOICategoryVR = 1 sc_VRModeToClick() sc_DefaultPoiSearchVR(1)'/>
+	<row text="Restaurant"    details=( sc_SetPoiQuickSearchAreaName( 1, %navigation.has_route, %gps.valid ) ) vrtext="VRTEXT_restaurant"	  onvr_activate='sc_DefaultPoiSearchVR(2)' onrelease='ui.vSelectedPOICategoryVR = 2 sc_VRModeToClick() sc_DefaultPoiSearchVR(2)'/>
+	<row text="Accommodation" details=( sc_SetPoiQuickSearchAreaName( 0, %navigation.has_route, %gps.valid ) ) vrtext="VRTEXT_accommodation"  onvr_activate='sc_DefaultPoiSearchVR(3)' onrelease='ui.vSelectedPOICategoryVR = 3 sc_VRModeToClick() sc_DefaultPoiSearchVR(3)'/>
+</userlist>
+
+<userlist lm_POISearchAreaVR text="str" vrtext="str" onrelease="ui" onvr_activate="ui" visible="bool" enable="bool">
+  <view visibility_filter=visible/>
+  <default enable=1/>
+
+  <row text="Along Route"       vrtext="VRTEXT_along route"       onrelease='sc_VRModeToClick() sc_FindPlacesVR("route")'         onvr_activate='sc_FindPlacesVR("route")'       visible=(vSelectedPOICategoryVR != -1 && %navigation.has_route)>
+  <row text="At my Destination" vrtext="VRTEXT_at my destination" onrelease='sc_VRModeToClick() sc_FindPlacesVR("destination")'   onvr_activate='sc_FindPlacesVR("destination")' visible=(vSelectedPOICategoryVR != -1 && %navigation.has_route)>
+  <row text="Around Here"       vrtext="VRTEXT_near here"         onrelease='sc_VRModeToClick() sc_FindPlacesVR("gps")'           onvr_activate='sc_FindPlacesVR("gps")'         visible=(vSelectedPOICategoryVR != -1 && %gps.valid && %navigation.has_route)>
+</userlist> 
+
+<layer ui_FindPlacesVR z=57>
+	<DIV class="vr_main">
+		<HBOX class="menu_vr">
+			<LIST2 class="list_control menu_vr">
+				<LISTMODEL listmodel="ui.lm_PoiSearch_MainVR" element_template="et_MenuVR" />
+			</LIST2>
+			<LIST2 class="list_control menu_vr submenu">
+				<LISTMODEL listmodel="ui.lm_POISearchAreaVR"  element_template="et_MenuVR" />
+			</LIST2>
+	    </HBOX>
+	</DIV>
+	
+	<layer>
+		<DIV class="vr_main">
+			<HBOX class="menu_vr">
+				<SPRITE class="background menu_vr findplaces">
+				<SPRITE class="background menu_vr submenu findplaces">
+			</HBOX>
+		<DIV>
+	</layer>
+</layer>

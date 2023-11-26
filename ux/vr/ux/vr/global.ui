@@ -1,0 +1,22 @@
+import "~res/ui/vr_params.css"
+import "~/common/ui/vr_color.css"
+import "~/common/ui/vr.css"
+
+import "~/common/ui/vrtext_to_langkey.lua"
+import "~/common/ui/vr.ui"
+import "~/common/ui/vr.lua"
+import "~/common/ui/prompts.lua"
+
+import "~/common/ui/vr_ovde.ui"
+
+
+
+import "~/common/ui/vr_ovde.lua"
+import "~/common/ui/vr_ovde_search.lua"
+import "~/common/ui/vr_ovde_parser.lua"
+
+import "~/common/ui/vr_mods.ui"
+import "~/common/ui/vr_mods.lua"
+
+import "~/common/ui/vr_hooks.lua"
+import "~/common/ui/vr_obs.ui"

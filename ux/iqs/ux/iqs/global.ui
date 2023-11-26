@@ -1,0 +1,10 @@
+import "~res/ui/iqs.css"
+import "~/common/ui/iqs_models.lua"
+
+import "~/common/ui/iqs_mod.ui"
+
+import "~/common/ui/iqs.ui"
+import "~/common/ui/iqs.lua"
+
+
+

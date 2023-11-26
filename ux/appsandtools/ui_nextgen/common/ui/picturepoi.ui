@@ -1,0 +1,32 @@
+<modify lm_FindMenu>
+	<insert>
+		<row PicturePoi text="Picture" icon="ico_picturenavigation.svg" onrelease=sc_Go_PicturePoiList enable=( !%poi.picturepoi.is_empty ) visible=( %lua.HasPictureViewerLic ) />
+	</insert>
+</modify>
+
+
+<element_template et_PicturePoi>
+	<BUTTON class="listitem" onrelease='hook_SelectPoiItem:trigger()'>
+		<PSPRITE class="fill" z=100 pictw=( PARENT.W - CSS.Param.picture_margin ) picth=( PARENT.H - CSS.Param.picture_margin ) align="CENTER" valign="CENTER" zoomfrom="shrinkvisible" bmp=( sc_getPoiPicture( %*.ext_picturefilepath, %*.ext_picturefilename ) ) />
+	</BUTTON>
+</element_template>
+
+<layer ui_PicturePoi z=30>
+	<DIV class="list picturepoi">
+		<LIST2 lst_PicturePoi class="list_picture" SMOOTHSCROLLING>
+			<SECTIONMARKER class="picturepoi" />
+			<LISTMODEL listmodel="poi.flat_search.list" element_template="et_PicturePoi" />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+		
+		<EMPTYLISTTEXT visible=( %poi.flat_search.ready && !%poi.flat_search.list.size ) />
+		
+		<layer>
+			<DIV class="list">
+				<SPRITE class="panel list input" />
+			</DIV>
+		</layer>
+	</DIV>
+</layer>

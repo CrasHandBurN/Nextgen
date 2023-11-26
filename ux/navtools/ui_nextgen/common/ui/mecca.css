@@ -1,0 +1,21 @@
+
+
+BUTTON.mecca {
+	left:0; right:60%; top:85%; bottom:0;
+	resize_bmp:1; bmp:"button8.bmp#8";
+}
+
+TEXT.mecca {
+	r2l_invert:1;
+	left:0;top:0;right:0;bottom:0;
+	color: btn_main_color; color2: btn_main_color2; color3: btn_main_color3;
+	fontsize:fontsize_info;
+	font:"defaultbd";
+	align:"CENTER"; valign:"CENTER";
+	wordwrap:2;
+	padding:button_padding;
+}
+
+DIV.drag_compass{
+	left:40%; right:40%; top:0; h:25%;
+}

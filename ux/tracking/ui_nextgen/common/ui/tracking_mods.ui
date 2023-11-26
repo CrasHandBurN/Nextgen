@@ -1,0 +1,26 @@
+
+<modify lm_MapVisualSettings>
+	<insert after="default">
+		<row prio=800 text="Track Logs" type="ChkOnOff" isselected="mydata.tracks.show_on_map" />
+	</insert>
+</modify>
+
+<modify lm_CollectingLogsSettings>
+	<insert after=AppUsageInfo>
+		<row text="GPS tracks" isselected="mydata.tracks.autotracklog_enabled" type="ChkOnOff" />
+	</insert>
+</modify>
+
+<!if condition=(Plugin.isLoaded("triplog"))>
+	<modify lm_Settings >
+		<insert after="default">
+			<row TriplogSettings prio=1100 text="Trip Monitor" icon="ico_triplogs.svg" onrelease=sc_Triplog_settings />
+		</insert>
+	</modify>
+
+  	<modify lm_localmenu_triplog>
+		<insert after=exportall>
+			<row text="Trip Monitor Settings" onrelease=sc_Triplog_settings visible=( !%lua.EditMode ) />
+		</insert>
+	</modify>
+<!end/>

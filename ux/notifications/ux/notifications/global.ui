@@ -1,0 +1,10 @@
+import "~/common/ui/notifications.css"
+
+import "~/common/ui/notifications.ui"
+import "~/common/ui/notifications.lua"
+
+import "~/common/ui/notifications_mods.ui"
+
+import "~/common/ui/notifications_hooks.lua"
+import "~/common/ui/notifications_obs.ui"
+

@@ -44,9 +44,16 @@
 			ONRELEASE='ui.SimpleTimeFormat = (SimpleTimeFormat() + 1) % 4' 
 			VISIBLE=(SimpleTimeBTNCockpit) >
 			<SPRITE CLASS="panel map arrive" Z=10 POSITION="absolute" IMG="btn_map.bmp#3" >
-				<TEXT class="simple_clock" />
+				<TEXT CLASS="simple_clock" />
 			</SPRITE>
 		</BUTTON>
+	</insert>
+	
+	<modify element="DIV.current_time SPRITE.current_time" ONRELEASE=( SimpleTimeBTNCockpit ? '' : 'ui.SimpleTimeFormat = (SimpleTimeFormat() + 1) % 4' ) 
+		ONLONGCLICK='ui.SimpleTimeBTNCockpit = not SimpleTimeBTNCockpit()' />
+	<modify element="DIV.current_time TIMETEXT.current_time" FORMATMODEL=( SimpleTimeFormat ) VISIBLE=( !SimpleTimeBTNCockpit ) />
+	<insert into="DIV.current_time" after="TIMETEXT">
+		<TEXT CLASS="simple_date" VISIBLE=( SimpleTimeBTNCockpit ) Z=25 />
 	</insert>
 </modify>
 

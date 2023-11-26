@@ -1,0 +1,215 @@
+<userlist lm_findAddress_VR text="str" value="wstr" details="wstr" onrelease="ui" enable="bool" visible="bool" dtooltip="str" type="str" selected="bool">
+	<view visibility_filter=visible/>
+	<default visible=1 enable=1 type="FakeInp_address_OVDE" />
+	<row text="Country" details=( %lua.AddressSearchText_Country ) selected=1 onrelease='MODEL.lua.VRStatus = eVRStatus.click; sc_GetCountryMain()' visible=( %lua.AddressSearchCountryAndStateButtonVisibility )/>
+	<row text="State" details=( %lua.AddressSearchText_State )  selected=1 onrelease='MODEL.lua.VRStatus = eVRStatus.click; sc_GetStateMain()' visible=( !%lua.AddressSearchCountryAndStateButtonVisibility && !%lua.AddressSearchCityOnly )/>
+	<row text="City" details=( %lua.AddressSearchText_City ) selected=(%lua.AddressCityIsSelected) onrelease='MODEL.lua.VRStatus = eVRStatus.click; sc_GetCityMain()' enable=( %lua.AddressSearchCityEnable )/>
+	<row text="Street" details=( %lua.AddressSearchText_Street ) selected=(%lua.AddressStreetIsSelected) onrelease='MODEL.lua.VRStatus = eVRStatus.click; sc_GetStreetMain()' enable=( %lua.AddressSearchStreetEnable ) dtooltip=( %lua.AddressSearchText_Street_DT ) visible=( !%lua.AddressSearchCityOnly && %lua.AddressSearchStreetEnable)/>
+	<row text="House number or crossing street" details=( %lua.AddressSearchText_HN ) selected=(%address.search.housenumber != L"")onrelease='MODEL.lua.VRStatus = eVRStatus.click; sc_GetHNIMain()' enable=( %lua.AddressSearchHNIEnable ) dtooltip=( %lua.AddressSearchText_HNI_DT ) visible=( !%lua.AddressSearchCityOnly && %lua.AddressSearchHNIEnable )>
+</userlist>
+
+<userlist lm_findAddress_VR_RawResults probability="str" address="wstr">
+</userlist>
+
+<userlist lm_FooterAddress_VR text="str" onrelease="ui" enable="bool" vrtext="str" onvr_activate="ui">
+	<default enable=1 />
+	<row text="Back" onrelease='sc_VRModeToClick(); sc_back()' vrtext="VRTEXT_back" onvr_activate=sc_VRback/>
+	<row text="Next" vrtext="VRTEXT_next" onvr_activate=sc_SmartGoOVDE onrelease='sc_VRModeToClick() sc_SmartGo()' enable=(%lua.AddressCityIsSelected || %lua.AddressStreetIsSelected)>
+</userlist>
+
+<element_template et_ListFakeInp_address_OVDE>
+	<implementation>
+		<property enable value=( %*.enable // 1 )>
+		<property dtooltip value=( %*.dtooltip // "" )>
+		<property icon value=( %*.icon // "" )/>
+		<property text value=( %*.text // "" )>
+		<property details value=( %*.details // "" )>
+		<property selected value=( %*.selected // 1 )>
+	</implementation>
+	
+	<HBOX flex=1>
+		<TEXT class="ovde address" text=text />
+		<BUTTON class="button_input fake address" box_align="stretch" flex=1 onrelease=%*.onrelease enable=( %*.enable // 1 ) dtooltip=dtooltip>
+			<HBOX class="inputfield">
+				<SPRITE class="inputfield svg" img=icon />
+				<TEXT class="input_text_fake" text=details  wordwrap=1 />
+			</HBOX>
+		</BUTTON>
+	</HBOX>
+</element_template>
+
+<layer ui_FindAddress_VR z=30>
+	<DIV class="vr_main">
+		<SECTIONMARKER/>
+		<LIST2 lst_FindAddressVR class="list_control address auto" SMOOTHSCROLLING>
+			<LISTMODEL element_template="et_List" listmodel="ui.lm_findAddress_VR" template_type_model="*.type" >
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<element_template et_OVDE_CountryList>
+	<BUTTON class="listitem" onrelease={%ui.lmOVDESupportedCountries.setcurrent( index ); sc_OVDE_CountrySelected()}>
+	   <TEXT class="listitem vr" text=(%*.country_name)>
+	</BUTTON>
+</element_template>
+
+<layer ui_OVDE_Countries z=30>
+	<DIV class="header vr">
+		<TEXT class="btn_main color_inf_sec vr" left=0 top=0 w=100% h=100% z=260 valign="CENTER" text="Please use the touch screen to select a country.">
+	</DIV>
+  
+	<DIV class="list vr_no_speach">
+		<LIST2 class="list_control" element_template="et_OVDE_CountryList" listmodel="ui.lmOVDESupportedCountries" SMOOTHSCROLLING>
+			<VSMARTSCROLL> 
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<layer ui_Footer_OVDE z=80 visible=(!(%lua.WizardModeActive && sc_StateisExtend(States.CurrentState, st_Wizard )))>
+	<DIV class="full">
+		<DIV class="footer">
+			<FOOTERBUTTON class="btn_footer back svg vr ovde" onrelease='sc_VRModeToClick(); sc_back()' onlongclick=sc_longBack enable=(!(%lua.EulaIsVisible && %lua.WizardModeActive))>
+			<SPRITE class="vr_footer_bg fill">
+		</DIV>
+	</DIV>
+</layer>
+
+<layer ui_Speech z=30>
+	<OBSERVER value=(%vr.vde.one_shot.state == 2) onselect=sc_StartModeOVDE start="NO_TRIGGER">
+	<OBSERVER model="vr.engine_state","lua.VRStatus","sound.speech.is_say_bool" onchange=sc_SetOVDEAnim start>
+	<DIV class="vr_main">
+		<VBOX class="ovde_container">
+			<SPACER flex=1 />
+			<TEXT class="ovde" text="OVDE~Examples: " />
+			<SPACER class="ovde" />
+			<TEXT txt_SampleText class="ovde example" text=(vSampleText) />
+			<SPACER flex=1 />
+			<HBOX class="ovde">
+				<VBOX class="ovde">
+					<TEXT class="ovde" text="Search in" />   
+   					<BUTTON class="btn_main ovde" onrelease=sc_OVDE_ShowCountryList>
+	  					<TEXT btnSpeechCountry class="ovde country" text=(%address.search.get_country_and_state_text(lua.tDataVDE.CountryID)) />
+		  			</BUTTON>
+		  		</VBOX>
+	            <VBOX class="ovde">
+					<TEXT class="ovde" text="Voice language">
+					<BUTTON class="btn_main ovde" onrelease=sc_OVDE_ShowLangList>
+						<HBOX class="ovde_voice">
+							<SPRITE spr_ovde_lang class="ovde_flag" iconid=(sc_GetVRLanguageFlag(%ui.lmVrSupportedLanguages)) />
+							<TEXT class="ovde" text=(%ui.lmVrSupportedLanguages[States.CurrentState.langIdx].text // "") />
+						</HBOX>
+	  				</BUTTON>
+	  			</VBOX>		
+			</HBOX>
+		</VBOX>
+	</DIV>
+</layer>
+
+
+
+
+<element_template et_OVDE_LangSelection>
+	<BUTTON class="listitem" onrelease=sc_OVDE_VoiceList_Onrelease>
+		<TEXT class="listitem vr" text=(%*.text)>
+	</BUTTON>
+</element_template>
+
+<layer ui_OVDE_LangSelection z=30>
+	<DIV class="main">
+		<LIST2 class="list_control vr" element_template="et_OVDE_LangSelection" listmodel="ui.lmVrSupportedLanguages" focusindex=1>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<element_template et_OVDESearch>
+	<implementation>
+		<property listRowCount value=(0 <= listpos - %*._vlist.first_visible_index && listpos - %*._vlist.first_visible_index < %{"ui.lstSSRCH_Items.item_per_page"} ? listpos - %*._vlist.first_visible_index + 1 : 0)>
+	</implementation>
+	<BUTTON class="listitem" onrelease='sc_VRModeToClick() MODEL["*"]._list.setcurrent(index) sc_OVDESearch_ItemSelected()'>
+		<HBOX class=listitem>
+			<TEXT class="listitem vr rowcount" text=listRowCount>
+			
+			<VBOX class=listitem>
+				<TEXT class="listitem vr" text=(sprintf((L"%s %s"), %*.name, %*.house_number)) visible=(%*.category.valid || (!%*.has_similar && !%*.category.valid))>
+				<TEXT class="listitem vr" text=(sprintf((L"%s %s"), %*.name, %*.house_number)) wordwrap=1 visible=%*.has_similar>
+				<TEXT class="listitem vr"   wordwrap=1 text=(%*.postal_code) visible=(%*.has_similar && %*.item_type!=2)>
+				<TEXT class="listitem vr"   wordwrap=1 text=(sprintf((L"%s %s"), %*.city_name, %*.postal_code)) visible=(%*.has_similar && %*.item_type==2)>
+			</VBOX>
+			
+			<SPRITE class="icon moreresults" z=50 img=(%*.category.valid ? "ico_more_results.svg" : "")>    
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_OVDESearch z=30>
+	<DIV class="vr_main">
+		<LIST2 lstSSRCH_Items class="list_control vr" element_template="et_OVDESearch" listmodel="vr.one_shot_search.list" SMOOTHSCROLLING>
+			<WHEEL>
+			<VSMARTSCROLL>
+			<LISTCONTROL>
+			
+			<OBSERVER boolmodel="ui.PARENT.is_grabbed" onselect=sc_IncPhaseCounter ondeselect='sc_VRListenReadOutListMode(0, "id_struct_line_number", function() return sc_VRPromptGeneratorCanAddress( MODEL.ui.lstSSRCH_RawItemslstSSRCH_RawItems, MODEL.vr.one_shot_search.list, "name" ) end)' START="NO_TRIGGER">
+			<DIV vrtext="VRTEXT_line 1" onvr_activate='sc_OVDESearch_ItemSelectedVR(MODEL.ui.PARENT.first_visible_index())'     visible=(%ui.PARENT.last_visible_index >= 0)>
+			<DIV vrtext="VRTEXT_line 2" onvr_activate='sc_OVDESearch_ItemSelectedVR(MODEL.ui.PARENT.first_visible_index() + 1)' visible=(%ui.PARENT.last_visible_index >= 1)>
+			<DIV vrtext="VRTEXT_line 3" onvr_activate='sc_OVDESearch_ItemSelectedVR(MODEL.ui.PARENT.first_visible_index() + 2)' visible=(%ui.PARENT.last_visible_index >= 2)>
+			<DIV vrtext="VRTEXT_line 4" onvr_activate='sc_OVDESearch_ItemSelectedVR(MODEL.ui.PARENT.first_visible_index() + 3)' visible=(%ui.PARENT.last_visible_index >= 3)>
+			<DIV vrtext="VRTEXT_line 5" onvr_activate='sc_OVDESearch_ItemSelectedVR(MODEL.ui.PARENT.first_visible_index() + 4)' visible=(%ui.PARENT.last_visible_index >= 4 && %ui.PARENT.item_per_page > 4)>
+			<DIV vrtext="VRTEXT_line 6" onvr_activate='sc_OVDESearch_ItemSelectedVR(MODEL.ui.PARENT.first_visible_index() + 5)' visible=(%ui.PARENT.last_visible_index >= 5 && %ui.PARENT.item_per_page > 5)>
+			<DIV vrtext="VRTEXT_read out" onvr_activate='sc_VRListenReadOutListMode(1, "id_struct_line_number", function() return sc_VRPromptGeneratorCanAddress( MODEL.ui.lstSSRCH_Items, MODEL.vr.one_shot_search.list, "name" ) end)'/>
+		</LIST2>
+	</DIV>
+</layer>
+
+<element_template et_OVDESearch_RawResults>
+	<implementation>
+		<property listRowCount value=(0 <= listpos - %*._vlist.first_visible_index && listpos - %*._vlist.first_visible_index < %{"ui.lstSSRCH_RawItems.item_per_page"} ? listpos - %*._vlist.first_visible_index + 1 : 0)>
+	</implementation>
+	<BUTTON class="listitem" onrelease=''>
+		<HBOX class=listitem>
+			<TEXT class="listitem vr rowcount" desired_w=100 text=(format(L"%d%%", %*.probability))>
+			<VBOX class=listitem>
+				<TEXT class="listitem vr" wordwrap=2 text=(%*.address)>
+			</VBOX>
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_OVDESearch_RawResults z=30>
+	<DIV class="vr_main">
+		<LIST2 lstSSRCH_RawItems class="list_control vr" element_template="et_OVDESearch_RawResults" listmodel="ui.lm_findAddress_VR_RawResults" SMOOTHSCROLLING>
+			<WHEEL>
+			<VSMARTSCROLL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<layer ui_OVDE_Header_VR z=55>
+	<DIV class="vr_header">
+		<HBOX class="vr_header">
+			<SPRITE class=vu_level>
+			<SPRITE class="vr_header statusico" visible=(%lua.VRStatus != lua.eVRStatus.click)>
+			<BUTTON class="btn_main vr_header test" text="Prev" onrelease=sc_OVDEHT_PrevAddress visible=(%lua.OVDEHumanTestEnabled)>
+			<BUTTON class="btn_main vr_header test" text="Next" onrelease=sc_OVDEHT_NextAddress visible=(%lua.OVDEHumanTestEnabled)>
+			<BUTTON class="btn_main vr_header taphere" onrelease=sc_VRHeader_Onrelease visible=(%lua.VRStatus == lua.eVRStatus.click)>
+				<HBOX>
+					<SPRITE class="vr_header statusico click" visible=(%lua.VRStatus == lua.eVRStatus.click)>
+					<TEXT class="btn_main" text=(m_i18n("Tap here to speak"))>
+				</HBOX>
+			</BUTTON>
+			<TEXT class="vrprompt" text=(vVRTitlePrompt) visible=(%lua.VRStatus != lua.eVRStatus.click)>
+			<BUTTON class="btn_main vr_header help" text="Help" vrtext="VRTEXT_help" onrelease=sc_VRHelp_onrelease vrcapable=0 visible=(!%lua.OVDEHumanTestEnabled)>
+		</HBOX>
+		<SPRITE class="vr_color fill">
+		<SPRITE class="vr_background fill">
+	</DIV>
+</layer>
+

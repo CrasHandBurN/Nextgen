@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 17.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 174 114"
+   enable-background="new 0 0 174 114"
+   xml:space="preserve"
+   inkscape:version="0.48.5 r10040"
+   width="100%"
+   height="100%"
+   sodipodi:docname="spr_payment_coins.svg"><metadata
+   id="metadata4455"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><defs
+   id="defs4453" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1600"
+   inkscape:window-height="1137"
+   id="namedview4451"
+   showgrid="false"
+   inkscape:zoom="1.9137931"
+   inkscape:cx="87"
+   inkscape:cy="57"
+   inkscape:window-x="-8"
+   inkscape:window-y="-8"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Layer_1" />
+<path
+   fill-rule="evenodd"
+   clip-rule="evenodd"
+   fill="#0394FC"
+   d="M29.051,39.123c0-5.575,11.737-10.098,26.218-10.098  c14.475,0,26.218,4.522,26.218,10.098c0,5.582-11.743,10.104-26.218,10.104C40.787,49.228,29.051,44.705,29.051,39.123  L29.051,39.123z M27.945,55.238c0-0.388,0.191-0.757,0.309-1.139v-9.11l0.612-0.25c0.902,5.273,12.316,9.452,26.403,9.452  s25.501-4.187,26.396-9.452l0.619,0.25v9.11c0.119,0.382,0.309,0.75,0.309,1.139c0,0.388-0.191,0.757-0.309,1.139V69.16  c0.119,0.382,0.309,0.751,0.309,1.139c0,0.388-0.191,0.757-0.309,1.139V86.09c0,0,0.184,10.104-26.922,10.104  c-27.107,0-27.107-10.104-27.107-10.104V71.437c-0.118-0.382-0.309-0.751-0.309-1.139c0-0.388,0.191-0.757,0.309-1.139V56.376  C28.136,55.995,27.945,55.626,27.945,55.238L27.945,55.238z M55.269,85.451c14.673,0,26.567-4.522,26.567-10.098  c0-0.718-0.204-1.415-0.579-2.087c-3.449,4.121-13.718,7.136-25.988,7.136c-12.283,0-22.545-3.008-25.988-7.136  c-0.375,0.678-0.586,1.369-0.586,2.087C28.695,80.929,40.596,85.451,55.269,85.451L55.269,85.451z M55.269,69.818  c14.673,0,26.567-4.522,26.567-10.098c0-0.573-0.204-1.132-0.448-1.679c-3.304,4.206-13.685,7.293-26.12,7.293  c-12.447,0-22.828-3.1-26.126-7.3c-0.244,0.553-0.448,1.106-0.448,1.685C28.695,65.296,40.596,69.818,55.269,69.818L55.269,69.818z   M119.047,80.337c-14.482,0-26.218-4.522-26.218-10.098c0-5.582,11.737-10.104,26.218-10.104c14.475,0,26.212,4.522,26.212,10.104  C145.259,75.815,133.522,80.337,119.047,80.337L119.047,80.337z M119.047,85.451c11.276,0,20.853-2.679,24.711-6.451h2.297v7.089  c0,0,0.191,10.104-26.916,10.104S92.032,86.09,92.032,86.09v-7.089h2.297C98.187,82.772,107.765,85.451,119.047,85.451  L119.047,85.451z"
+   id="path4449"
+   style="fill:#d4aa00" />
+</svg>

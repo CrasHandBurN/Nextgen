@@ -1,0 +1,16 @@
+<observer obs_AC_ResolveAddressMS boolmodel="address.multi.address_result_ready" onselect=sc_AC_ResolveAddressMS_Completed />
+<observer obs_AC_ResolveIncommingAddress_finished boolmodel="other.android_utils.structured_address_result_ready" onselect=sc_AC_ResolvedIncommingAddress />
+
+<userlist lm_android_contacts street="wstr" city="wstr" postcode="wstr" state="wstr" country="wstr" gcoor="gcoor" />
+
+<element_template et_SelectContactAddress>
+	<BUTTON  class="listitem icon" onrelease='sc_AC_ResolveContactAddress(MODEL["*"])'>
+		<TEXT class="listitem icon" text=(%*.country + L" " + %*.state + L" " + %*.postcode + L" " + %*.city + L" " + %*.street) />
+	</BUTTON>
+</element_template>
+
+<modify ui_SavedLocation>
+	<insert into="LIST2">
+		<LISTMODEL LISTMODEL="ui.lm_android_contacts" ELEMENT_TEMPLATE="et_SelectContactAddress" />
+	</insert>
+</modify>

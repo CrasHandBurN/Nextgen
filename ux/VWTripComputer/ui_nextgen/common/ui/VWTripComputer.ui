@@ -422,6 +422,7 @@
 	;---------------------------Point on map--------------------
 	<row	text="Orientation" details=(%ui.lm_Orientation_Popover[%lua.Show_NorthUp_HeadUp].text) owner="Point on map" onrelease='sc_SetPopoverListAndOpen("ui.lm_Orientation_Popover", ui.lm_Orientation_Popover[MODEL.lua.Show_NorthUp_HeadUp()].text())' />
 	<row	text="SplitScreen POI on map" type="ChkOnOff" owner="Point on map" isselected="lua.poi_around_for_TC" />
+	<row	type="ChkOnOff" text="Announce System Messages" isselected="ui.vReadOutSystemMessages" owner="Settings" /> ;12/11/2023
 </userlist>
 
 <userlist lm_Orientation_Popover text="str" onrelease="ui" enable="bool">

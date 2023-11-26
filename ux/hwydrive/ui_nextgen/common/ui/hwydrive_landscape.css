@@ -1,0 +1,40 @@
+HBOX.hwy_element{
+	 max_h:((screen_h - next_street_h)/3);
+}
+
+BOX.hwy_container{
+	orientation:"vertical";
+}
+
+BOX.hwy_element.icons{
+	orientation:"vertical";
+}
+
+BOX.hwy_container>#txtHWInfoTxt{
+	box_align:"center";
+}
+
+
+/*------------------hwy----------------*/
+SPRITE.hwy_element_header{
+	desired_w:undef;
+	desired_h:hwy_header_h;
+}
+
+HBOX.hwy_element{
+	desired_h:((screen_h - next_street_h - hwy_panel_bottom - hwy_container_top*3 - hwy_container_bottom*3 - ( index == 0 ? hwy_header_h : 0))/3);
+}
+
+VBOX.hwy_element.text, BOX.hwy_element.icons{
+	flex:1;
+}
+
+#ui_HighwayInfo .cockpit>.map_messagebox.highwayinfo {
+	top: (sc_IsMapPopupOnscreen(%screen.msgbox.is_onscreen) && (!%navigation.has_route && %navigation.car.righthousenumber || %navigation.car.lefthousenumber ) || %lua.ShowTimeInTitle || ui_Cockpit.detect_gps || %navigation.has_route || %warning.notification.notification_area.size > 0 ? (ui_PropLayer.SignpostVisible ? %ui.vLaneInfoSignpostHeight  : next_street_h ) : (ui_PropLayer.SignpostVisible ? %ui.vLaneInfoSignpostHeight  : 0 ) ) ;
+}
+#ui_HighwayInfo .cockpit>.map_messagebox> .panel.map.background {
+	top: (sc_IsMapPopupOnscreen(%screen.msgbox.is_onscreen) && (!%navigation.has_route && %navigation.car.righthousenumber || %navigation.car.lefthousenumber ) || %lua.ShowTimeInTitle || ui_Cockpit.detect_gps || %navigation.has_route || %warning.notification.notification_area.size > 0 ? (ui_PropLayer.SignpostVisible ? %ui.vLaneInfoSignpostHeight  : 0 ) : (ui_PropLayer.SignpostVisible ? %ui.vLaneInfoSignpostHeight  : (-next_street_h) ) ) ;
+
+}
+
+

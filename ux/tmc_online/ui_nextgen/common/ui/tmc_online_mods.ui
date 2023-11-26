@@ -1,0 +1,28 @@
+<!if condition=(Plugin.isLoaded("tmc"))/>
+	<modify lm_TrafficData_popover>
+		<insert>
+			<row onlineTMC text="Online" checked=(%tmc.src.http.enabled) type="Chk" onrelease=sc_TurnOnOnlineTmc enable=( sc_checkConnectedServiceEnability( "traffic", %services.activate_status // 0, %services.has_activated // 0 ) ) animate=( !Plugin.isLoaded( "shop" ) && ( %services.activate_status == lua.EActivationStatus.SERVICE_OPERATION_PENDING // 0 ) ) />
+		</insert>
+	</modify>
+
+	<modify lm_TrafficSettings>
+		<modify DataSource details=(sc_SetDataSourceDetails(%tmc.rds_present, %tmc.rds_tmc_connector_enabled, %tmc.online_present, %tmc.src.http.enabled)) visible=(%tmc.rds_present || %lua.OnlineTrafficExists) />
+	</modify>
+	
+	<modify ui_Traffic_Summary>
+			<insert first_child into="VBOX.traffic_summary_provider">
+				<SPRITE CLASS="tmcprovider svg" ICONID=(%services.tmclite.provider_icon) VISIBLE=(%tmc.src.http.enabled && %services.tmclite.provider_icon.valid) /> 
+				<TEXT CLASS="traffic_summary_station online" TEXT="Online Traffic" VISIBLE=(%tmc.src.http.enabled) />
+			</insert>
+	</modify>
+
+	<modify ui_SideList>
+		<modify tmc_receiving VALUE=(%tmc.rds_present && ((%tmc.state_integer // 0) == 2 || (%tmc.state_integer // 0) == 4) || (%tmc.online_present && !%tmc.src.http.fail) ) />
+		<modify tmc_icon VALUE=((%tmc.rds_present || %tmc.online_present) && %traffic.events.list.size ? "ico_tmc_onmap.svg" : "ico_tmc_disabled.svg") />
+	</modify>
+
+	<modify ui_Cockpit>
+		<modify tmc_receiving VALUE=(%tmc.rds_present && ((%tmc.state_integer // 0) == 2 || (%tmc.state_integer // 0) == 4) || (%tmc.online_present && !%tmc.src.http.fail) ) />
+		<modify tmc_icon VALUE=((%tmc.rds_present || %tmc.online_present) && %traffic.events.list.size ? "ico_tmc_onmap.svg" : "ico_tmc_disabled.svg") />
+	</modify>
+<!end/>

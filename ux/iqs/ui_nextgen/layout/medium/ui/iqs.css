@@ -1,0 +1,17 @@
+@params {
+	mainmenu_panel_margin:8;
+	inputtext_padding_iqs:472;
+	
+	quickbarhint_arrow_top: 48;
+	quickbarhint_arrow_w: 24;
+}
+
+@import "~/common/ui/iqs.css";
+
+ 
+
+
+#et_IQS_ResultList_POI DISTTEXT{
+	right:2% !important;
+	w:(15%) !important;
+}

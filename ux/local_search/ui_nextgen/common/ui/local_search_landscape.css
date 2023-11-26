@@ -1,0 +1,3 @@
+.list_control.local_search {
+	top: ( ui_Input.isVisible ? listitem_h : 0 );
+}

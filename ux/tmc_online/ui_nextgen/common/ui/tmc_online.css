@@ -1,0 +1,18 @@
+TEXT.traffic_summary_station.online {
+	paddingleft: 0;
+	wordwrap:1; align:"center"; 
+	leading:0.85;
+}
+
+
+TEXT.traffic_summary_station.scanning{
+	visible:(((!%other.tmc_station_finder.provider_in_use && !%lua.TMCOldProviderName) || ((%tmc.state_integer // 0) != 2 && (%tmc.state_integer // 0) != 4)) && %tmc.rds_tmc_connector_enabled && (%tmc.state_integer // 0) != 0 && !%tmc.src.http.enabled ) !important;
+}
+
+TEXT.traffic_summary_station.provider{
+	visible:((((%lua.TMCOldProviderName || %other.tmc_station_finder.provider_in_use) && ((%tmc.state_integer // 0) == 2 || (%tmc.state_integer // 0) == 4))) && !%tmc.src.http.enabled) !important;
+}
+
+TEXT.traffic_summary_station.station{
+	visible:(( %lua.TMCProviderName || (%tmc.state_integer // 0) != 0 ) && !%tmc.src.http.enabled ) !important;
+}

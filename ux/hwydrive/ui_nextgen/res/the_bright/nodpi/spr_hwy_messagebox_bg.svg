@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 17.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="220px" height="410px" viewBox="0 0 220 410" enable-background="new 0 0 220 410" xml:space="preserve">
+<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="110" y1="4.5849" x2="110" y2="407.2751">
+	<stop  offset="0" style="stop-color:#3B3B3B"/>
+	<stop  offset="1" style="stop-color:#6D6A6A"/>
+</linearGradient>
+<polygon fill-rule="evenodd" clip-rule="evenodd" fill="url(#SVGID_1_)" fill-opacity="0.6" points="93.756,4.585 126.278,4.585 
+	159.066,407.267 60.934,407.275 93.756,4.585 "/>
+<linearGradient id="SVGID_2_" gradientUnits="userSpaceOnUse" x1="110" y1="4.585" x2="110" y2="407.275">
+	<stop  offset="0" style="stop-color:#3B3B3B"/>
+	<stop  offset="1" style="stop-color:#6D6A6A"/>
+</linearGradient>
+<polygon fill-rule="evenodd" clip-rule="evenodd" fill="url(#SVGID_2_)" fill-opacity="0.6" points="96.433,4.59 123.596,4.59 
+	150.94,407.267 159.066,407.267 126.278,4.585 93.756,4.585 60.934,407.275 69.057,407.274 "/>
+<linearGradient id="SVGID_3_" gradientUnits="userSpaceOnUse" x1="110" y1="4.5898" x2="110" y2="407.3202">
+	<stop  offset="0" style="stop-color:#3B3B3B"/>
+	<stop  offset="1" style="stop-color:#6D6A6A"/>
+</linearGradient>
+<polygon display="none" fill-rule="evenodd" clip-rule="evenodd" fill="url(#SVGID_3_)" fill-opacity="0.6" points="123.595,4.59 
+	150.944,407.32 69.056,407.279 96.433,4.59 "/>
+<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#FFFFFF" points="86.435,395.248 110,367.667 133.565,395.248 110,388.463 
+	86.435,395.248 "/>
+<path fill-rule="evenodd" clip-rule="evenodd" fill="#295594" d="M110.444,386c-0.146-0.041-0.295-0.063-0.444-0.063
+	c-0.149,0-0.298,0.02-0.444,0.063c0,0-9.327,2.685-16.281,4.688c5.97-6.987,14.906-17.449,16.725-19.577
+	c1.819,2.128,10.755,12.59,16.725,19.577C119.771,388.685,110.444,386,110.444,386"/>
+</svg>

@@ -1,0 +1,115 @@
+<userlist lm_hwypoi name="wstr" address="wstr" iconId="int" position="gcoor" provider_id="int" id="qword"/>
+<userlist lm_hwd_filtered id="int"/>
+
+<userlist lm_PopoverHighwayPoiCatList text="str" onrelease="ui" enable="bool">
+	<default enable=1/>
+	<row text="Select" onrelease=sc_SaveHwyPoiCat/>
+	<row text="Select Subcategories" onrelease='sc_PoiStructure_ToChild("lst_HwyPoiCat", MODEL.poi.structure.group_list.index());sc_ClosePopover()'>
+</userlist>
+
+<element_template et_HighwaySettings>
+	<implementation>
+		<property name value=(sc_GetHwyPoiCatName(%*.group))/>
+	</implementation>
+	<BUTTON class="listitem" onrelease=sc_SetHwyPoiCategories>
+		<HBOX class="listitem">
+			<SPRITE class="listitem" iconid=%*.icon iconindex=2 visible=( !sc_isPoiBranded( %*.icon, 2 ) )>
+			<SPRITE class="listitem brand" visible=( sc_isPoiBranded( %*.icon, 2 ) )>
+				<SPRITE class="fill brand" z=150 iconindex=2 iconmodel="*.icon"/>
+			</SPRITE>			
+			<TEXT class="listitem icon" text=(name)>
+			<TEXT class="listitem" align="CENTER" text="<No items>" visible=(!name)>
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_HighwaySettings z=30>
+	<DIV class="list">
+		<SECTIONMARKER/>
+		<LIST2 class="list_control"  SMOOTHSCROLLING>
+			<LISTMODEL listmodel="other.highway_drive.poi_category_list" element_template="et_HighwaySettings"/>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<element_template et_HighwayPoiCatList>
+	<implementation>
+		<property selectedId value=(%other.highway_drive.poi_category_list[%lua.selectedHwyPoiCat].group)/>
+		<property childIsSelected value=(sc_HwyPoiCatChildIsSelected(selectedId, %*.id))>
+	</implementation>
+	<BUTTON class="listitem" onrelease=sc_HwyPOICat_Onrelease>
+		<HBOX class="listitem">
+			<HBOX class="poi_visibility">
+				<SPRITE class="listitem poi_visibility" z=103 align="left" iconindex=(childIsSelected && selectedId == %*.id ? 2 : 4) iconmodel="*.icon" visible=%*.has_child />
+				<SPRITE class="listitem brand" visible=( sc_isPoiBranded( %*.icon, 2 ) )>
+					<SPRITE class="fill brand hwy" z=150 iconindex=(childIsSelected ? 2 : 4) iconmodel="*.icon"/>
+				</SPRITE>
+				<SPRITE class="listitem" z=102 iconindex=(childIsSelected ? 2 : 4) iconmodel="*.icon" visible=( !sc_isPoiBranded( %*.icon, 2 ) )/> 
+				<SPRITE class="listitem poi_visibility" z=101 align="right" iconindex=(childIsSelected && selectedId == %*.id ? 2 : 4) iconmodel="*.icon" visible=%*.has_child />
+			</HBOX>
+			<TEXT   r2l_invert=1 class="listitem icon poicat" z=101 text=%*.name>
+			<SPRITE class="listitem icon popover" visible=( %*.has_child )>
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_HighwayPoiCatList z=30>
+	<DIV class="list">
+		<SECTIONMARKER/>
+		<LIST2 lst_HwyPoiCat class="list_control" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="poi.structure.group_list" element_template="et_HighwayPoiCatList"/>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<element_template et_highwayinfo>
+	<implementation>
+		<property origlist value=(ref(%other.highway_drive.list[%*.id]))>
+	</implementation>
+		<BOX class="hwy_container">
+			<BUTTON class="panel map fill" z=9 onrelease=sc_HwyPoiSearch position="absolute"/>
+			<SPRITE CLASS="button map fill" position="absolute"/>
+			<TEXT txtHWInfoTxt  CLASS="color_inf_sec r2l" Z=10 TEXT="Next" VISIBLE=(%*.id == 0)>
+			<SPACER FLEX=1 VISIBLE=(%*.id == 0)>
+			<HBOX class="hwy_element">
+				<VBOX class="hwy_element text">
+					<DISTTEXT     txtHWInfoDist class="font_main bd color_inf_sec r2l" distance=(origlist->distance)>
+					<TIMESPANTEXT txtHWInfoTime class="bd color_inf_sec r2l" timespan=(origlist->remaining_time) formatmodel=7 visible=(origlist->remaining_time >= %lua.oneMinute && %*.id == 0)>
+					<TEXT         txtHWInfoTxt  class="bd color_inf_sec r2l" text="< 1 min" visible=(origlist->remaining_time < %lua.oneMinute && %*.id == 0)>
+				</VBOX>
+				<BOX class="hwy_element icons">
+					<HBOX class="svg" visible=(origlist->has_poi_category0 || origlist->has_poi_category1)>
+						<SPRITE class="hwy_element svg cat1" z=10 iconid=(%other.highway_drive.poi_category_list[0].icon) visible=(origlist->has_poi_category0) iconindex=5>
+						<SPRITE class="hwy_element svg cat2" z=10 iconid=(%other.highway_drive.poi_category_list[1].icon) visible=(origlist->has_poi_category1) iconindex=5>
+					</HBOX>
+					<HBOX class="svg" visible=(origlist->has_poi_category2 || origlist->has_poi_category3)>
+						<SPRITE class="hwy_element svg cat3" z=10 iconid=(%other.highway_drive.poi_category_list[2].icon) visible=(origlist->has_poi_category2) iconindex=5>
+						<SPRITE class="hwy_element svg cat4" z=10 iconid=(%other.highway_drive.poi_category_list[3].icon) visible=(origlist->has_poi_category3) iconindex=5>
+					</HBOX>
+				</BOX>
+			</HBOX>
+			<SPACER FLEX=1 VISIBLE=(%*.id == 0)>
+		</BOX>
+</element_template>
+
+<layer ui_HighwayInfo z=15 visible=(ui_PropLayer.HwyPoiListIsVisible && !(ui_PropLayer.SignpostVisible && bLaneInfoSignpostAtManeuver) && !%screen.msgbox.is_onscreen )> 
+	<DIV class="cockpit">
+		<DIV class="map_messagebox highwayinfo">
+			<SECTIONMARKER class="highwayinfo"/>
+			<LIST2 lst_Highwayinfo class="hwy_panel" SMOOTHSCROLLING>
+				<LISTMODEL listmodel="ui.lm_hwd_filtered" element_template="et_highwayinfo"/>
+			</LIST2>
+		</DIV>
+		<layer>
+			<DIV class="cockpit">
+				<DIV class="map_messagebox">
+					<SPRITE class="panel map background" onrelease=sc_CloseHwyPanel overmaplayer>
+				</DIV>
+			</DIV>
+		</layer>
+	</DIV>
+</layer>

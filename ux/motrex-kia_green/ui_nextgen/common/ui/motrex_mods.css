@@ -1,0 +1,35 @@
+SPRITE.listitem.route, SPRITE.separator.route {
+	img: listitem_route_green;
+}
+
+DIV.listitem.start SPRITE.listitem.route {
+	img: listitem_route_start_green;
+}
+
+DIV.listitem.destination SPRITE.listitem.route {
+	img: listitem_route_green;
+}
+
+DIV.listitem.travelplanner.destination SPRITE.listitem.route {
+	img: ( States.CurrentState.showAddButton ? listitem_route_dest_travelplanner_green : listitem_route_dest_green);
+}
+
+DIV.listitem.traffic_summary.start SPRITE.listitem.route {
+	img: listitem_route_green;
+}
+
+DIV.listitem.itinerarywarnings.via SPRITE.listitem.route {
+	img: ( TMCVisibility ? route_tmc_color : listitem_route_green );
+}
+
+SPRITE.panel.mapheader{
+	img: panel_mapheader_grad_green;
+}
+
+SPRITE.itemcounter{
+	img: panel_mapheader_grad_green;
+}
+
+SPRITE.panel.map{
+	img: panel_map_grad_green;
+}

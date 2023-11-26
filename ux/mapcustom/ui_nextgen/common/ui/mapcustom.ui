@@ -1,0 +1,76 @@
+; -------------- ari + Vami mod ---------------------
+
+<userlist lm_act_colorprofile icon="int" name="str" idx="int"/>
+
+<observer value=((%lua.VOverview_Mode == 0 || (%lua.VOverview_Mode == 1 && !%navigation.car.is_incity) || (%lua.VOverview_Mode == 2 && %navigation.car.is_on_highway)) && %lua.OverViewModeOn && !%sound.voice.inside_first_guidance_area) onselect='MODEL.map.primary.camera_settings.overview_enabled = true' ondeselect='MODEL.map.primary.camera_settings.overview_enabled = false' start>
+<observer obs_Overview value=( %map.primary.camera_settings.overview ) onselect=sc_OverviewOn ondeselect=sc_OverviewOff>
+<observer value=(%map.primary.camera_settings.presetid) onchange=sc_RefreshOverviewStatus start="NO_TRIGGER">
+
+<modify lm_NavigationMap>
+	<insert after="default">
+		<row prio=500 text="Automatic Overview" type="ChkOnOff" isselected="lua.OverViewModeOn"/>
+		<row prio=500 text="Automatic Overview Settings" haspopover=1 onrelease='sc_NextStateAnim(st_VOverviewSettings, "fade", 1, "" )' enable=(%lua.OverViewModeOn)/>
+	</insert>
+</modify>
+
+<modify lm_MapVisualSettings dtooltip="str">
+	<insert after="default">
+		<row prio=210 text="Day Map Colors" haspopover=1 onrelease=sc_MapSettings_MapColor_Day details=(%interface.current_day_color_original_name) />
+		<row prio=220 text="Night Map Colors" haspopover=1 onrelease=sc_MapSettings_MapColor_Night details=(%interface.current_night_color_original_name) />
+		<row prio=500 text="Landmarks"  type="ChkOnOff" isselected="map.primary.3d_landmarks" onrelease=sc_set_3dlandmarks/>
+		<row prio=600 text="Buildings"  type="ChkOnOff" checked=( %map.primary.3d_buildings ) changevalue={ if (%map.primary.3d_buildings == 0) {%map.primary.3d_buildings = 2} else {%map.primary.3d_buildings = 0} } onrelease=sc_set_3dbuildings/>
+		<row prio=700 text="3D Terrain" type="ChkOnOff" checked=( %map.3d_dem )	changevalue={{if (%map.3d_dem == 0) {%map.3d_dem = 3} else {%map.3d_dem = 0}} } onrelease=sc_set_3dDem/>
+		<row prio=990 text="Raster Maps Settings" isselected="lua.RasterMaps" type="ChkOnOff">
+		<row prio=1000 text="Satellite Image in 2D" type="ChkOnOff" checked=( %map.rasterimages.list.size && %map.raster_in_2d ) changevalue={invert(%map.raster_in_2d)} enable=(%map.rasterimages.list.size) visible=(%lua.RasterMaps && %other.license.has_license_of_type("RCT"))
+			dtooltip="You have no satellite images on your device. You can purchase satellite images on www.naviextras.com."/>
+		<row prio=1010 text="Satellite Image in 3D" type="ChkOnOff" checked=( %map.rasterimages.list.size && %map.raster_in_3d ) changevalue={invert(%map.raster_in_3d)} enable=(%map.rasterimages.list.size) visible=(%lua.RasterMaps && %other.license.has_license_of_type("RCT"))
+			dtooltip="You have no satellite images on your device. You can purchase satellite images on www.naviextras.com."/>
+	</insert>
+</modify>
+
+<userlist lm_VOverviewMode_popover text="str" onrelease="ui" enable="bool">
+	<default text enable=1/>
+		<row text="Default" onrelease='MODEL.lua.VOverview_Mode = 0 sc_ClosePopover()'/>
+		<row text="Only Out Of City" onrelease='MODEL.lua.VOverview_Mode = 1 sc_ClosePopover()'/>
+		<row text="Only On Highway" onrelease='MODEL.lua.VOverview_Mode = 2 sc_ClosePopover()'/>
+</userlist>
+
+
+<userlist lm_VOverviewSettings prio="int" text="str" isselected="str" onrelease="ui" enable="bool" type="str" visible="bool" details="ui" checked="ui" changevalue="ui" haspopover="bool" >
+	<default onrelease=undef visible=1 enable=1/>
+		<row text="Automatic Overview Mode" haspopover=1 details=(sc_VOverview_Mode_Settings(%lua.VOverview_Mode)) onrelease='sc_SetPopoverListAndOpen("ui.lm_VOverviewMode_popover")'/>
+		<row text="Overview 2D North Up" type="ChkOnOff"   isselected="lua.wOverview_northup" />
+</userlist>
+
+<layer ui_MapSettings_MapColorScheme z=30>
+	<DIV class="mapheader">
+		<SECTIONMARKER class="mapheader"/>
+		<SPRITE class="panel mapheader"/>
+		<HBOX class="mapheader_container">
+			<BUTTON class="mapheader btn_prev" onrelease=sc_MapColorSchemePrev enable=(%ui.lm_act_colorprofile.size > 1) visible=(%lua.IsLandscape) z=99>
+				<SPRITE class="btn_map prev icon svg" z=100>
+			</BUTTON>
+			<BOX class="mapheader">
+				<HBOX class="mapheader name">
+					<TEXT class="mapheader colorscheme" text=(%ui.lm_act_colorprofile[current].name) />
+				</HBOX>
+			</BOX>
+			
+			<VBOX>
+				<BUTTON class="mapheader btn_prev" onrelease=sc_MapColorSchemePrev enable=(%ui.lm_act_colorprofile.size > 1) visible=(%lua.IsPortrait) z=99>
+					<SPRITE class="btn_map prev icon svg" z=100>
+				</BUTTON>
+				<BUTTON class="mapheader btn_next" onrelease=sc_MapColorSchemeNext enable=(%ui.lm_act_colorprofile.size > 1) z=99>
+					<SPRITE class="btn_map next icon svg" z=100>
+				</BUTTON>
+			</VBOX>
+		</HBOX>
+	</DIV>
+</layer>
+
+<layer ui_wAdvancedOverview z=51 visible=(%lua.wOverview_northup && %map.primary.center_follow)>
+	<observer value=(%map.primary.camera_settings.overview) onselect=sc_wAdvancedOverviewStart ondeselect=sc_wAdvancedOverviewStop START>
+</layer>
+
+
+

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Слой_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="120px" height="120px" viewBox="0 0 120 120" enable-background="new 0 0 120 120" xml:space="preserve">
+<g id="Layer_1">
+	<radialGradient id="disabled_1_" cx="60" cy="60" r="53.25" gradientUnits="userSpaceOnUse">
+		<stop  offset="0" style="stop-color:#FF3300"/>
+		<stop  offset="1" style="stop-color:#CCCCCC"/>
+	</radialGradient>
+	<circle id="disabled" fill="url(#disabled_1_)" fill-opacity="0.2" cx="60" cy="60" r="53.25"/>
+	<radialGradient id="active_1_" cx="60" cy="60" r="53.25" gradientUnits="userSpaceOnUse">
+		<stop  offset="0" style="stop-color:#FF3300"/>
+		<stop  offset="1" style="stop-color:#880000"/>
+	</radialGradient>
+	<circle id="active" fill="url(#active_1_)" cx="60" cy="60" r="53.25"/>
+	<radialGradient id="normal_1_" cx="60" cy="60" r="53.25" gradientUnits="userSpaceOnUse">
+		<stop  offset="0" style="stop-color:#FF3300"/>
+		<stop  offset="1" style="stop-color:#880000"/>
+	</radialGradient>
+	<circle id="normal" fill="url(#normal_1_)" cx="60" cy="60" r="53.25"/>
+</g>
+</svg>

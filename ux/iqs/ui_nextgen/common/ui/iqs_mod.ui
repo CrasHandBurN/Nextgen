@@ -1,0 +1,17 @@
+<userlist lm_IQStoFindMenu text="str" icon="str" type="str" onrelease="ui" enable="bool" visible="bool">
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 />
+	<row IQS text="Search in All" icon="ico_search_inputfield.svg" onrelease=sc_IQS_Onrelease type="FakeInp" />
+</userlist>
+
+<modify ui_FindMenu>
+	<insert first_child into="LIST2">
+		<LISTMODEL LISTMODEL="ui.lm_IQStoFindMenu" ELEMENT_TEMPLATE="et_List" TEMPLATE_TYPE_MODEL="*.type">
+			<SEPARATOR INSERT_AT=(%ui.lm_IQStoFindMenu.size) ELEMENT_TEMPLATE=et_Separator TEXT="Smart Destination" VISIBLE=(%ui.lm_smartHistoryList.size) />
+		</LISTMODEL>
+	</insert>
+</modify>
+
+<modify et_POIItemList>
+	<modify element="TEXT.listitem.icon.bottom" TEXT=(%address.multi.phone_search && %*.phone != L"" ? %*.phone : %*.address.long_format) />
+</modify>

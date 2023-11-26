@@ -1,0 +1,6 @@
+<userlist lm_enginetype_popover text="str" onrelease="ui" enable="bool">
+	<default enable=1 />
+	<row text="Otto Engine (Gasoline)" onrelease='MODEL.mydata.vehicle_profile.list[current].engine_type = 0 sc_ClosePopover()' />
+	<row text="Hybrid Engine (Gasoline)" onrelease='MODEL.mydata.vehicle_profile.list[current].engine_type = 2 sc_ClosePopover()' />
+	<row text="Diesel Engine" onrelease='MODEL.mydata.vehicle_profile.list[current].engine_type = 1 sc_ClosePopover()' />
+</userlist>

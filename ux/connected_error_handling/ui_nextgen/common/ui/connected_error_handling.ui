@@ -1,0 +1,156 @@
+<observer obs_licenseAdded event="BINGO_LICENSE_ADDED_EVENT" onchange=sc_licenseAdded />
+
+<observer obs_expiration_warning model="gps.date", "gps.date.valid" onchange=sc_checkExpirationDate />
+
+<observer obs_CheckActivationStatus model="services.check_activatable_services_status", "services.has_activatable_service", "services.has_activated", "services.activate_status" onchange=sc_CheckActivationStatus />
+
+<observer obs_startActivationErrorChecking value=( %services.weather.last_bingo_error.main_error_code // 0 ) onchange=sc_showActivationError />
+<observer obs_ParkingConnectedErrorChecking value=( %services.online_parking.last_bingo_error.main_error_code // 0 ) onchange=sc_ParkingConnectedError />
+<observer obs_startActivationSuccess event="BINGO_LICENSE_ADDED_EVENT" onchange=sc_activationSuccess />
+
+<observer obsCheckConnectedSearchError value=( %{ "poi." + %lua.ConnectedSearchToCheck + ".ready" } ) onselect=sc_checkConnectedSearchError />
+
+<element_template et_PartialConnectedError>
+	<DIV class="fill">
+		<SPRITE class="separator_listitem connected_error">
+			<TEXT class="separator connected_error" text="Communication error occurred. The available data may be incomplete or outdated." />
+		</SPRITE>
+	</DIV>
+</element_template>
+
+<userlist lm_ConnectedServices text="str" isselected="str" type="str" onrelease="ui" enable="bool" visible="bool" animate="bool">
+	<view visibility_filter=visible />
+	<default type="ChkOnOff" onrelease=undef animate=( !Plugin.isLoaded( "grp_shop" ) && ( %services.activate_status == lua.EActivationStatus.SERVICE_OPERATION_PENDING // 0 ) ) />
+	<row text="Online Traffic" isselected="tmc.src.http.enabled" onrelease='sc_TurnOnlineSetting( "tmc.src.http.enabled", "traffic" )' enable=( sc_checkConnectedServiceEnability( "traffic", %services.activate_status // 0, %services.has_activated // 0 ) ) visible=( Plugin.isLoaded( "tmc_online" ) ) />
+	<row text="Online Weather" isselected="lua.OnlineWeatherEnabled" onrelease='sc_TurnOnlineSetting( "lua.OnlineWeatherEnabled", "weather" )' enable=( sc_checkConnectedServiceEnability( "weather", %services.activate_status // 0, %services.has_activated // 0 ) ) visible=( Plugin.isLoaded( "weather" ) ) />
+	<row text="Online Parking" isselected="lua.OnlineParkingEnabled" onrelease='sc_TurnOnlineSetting( "lua.OnlineParkingEnabled", "parking" )' enable=( sc_checkConnectedServiceEnability( "parking", %services.activate_status // 0, %services.has_activated // 0 ) ) visible=( Plugin.isLoaded( "online_parking" ) ) />
+	<row text="Online Fuel Prices" isselected="lua.OnlineFuelPriceEnabled" onrelease='sc_TurnOnlineSetting( "lua.OnlineFuelPriceEnabled", "fuel" )' enable=( sc_checkConnectedServiceEnability( "fuel", %services.activate_status // 0, %services.has_activated // 0 ) ) visible=( Plugin.isLoaded( "fuel_prices" ) ) />
+	<row text="Online Search" isselected="lua.OnlineSearchEnabled" onrelease='sc_TurnOnlineSetting( "lua.OnlineSearchEnabled", "search" )' enable=( sc_checkConnectedServiceEnability( "search", %services.activate_status // 0, %services.has_activated // 0 ) ) visible=( Plugin.isLoaded( "local_search" ) ) />
+</userlist>
+
+<layer ui_ConnectedActivation z=30>
+	<DIV class="list">
+		<SECTIONMARKER/>
+		
+		<layer ui_connected_sublayer type="xhtml" class="layer_control xhtml action font_xhtml" orientation="L2R" />
+		<WHEEL class="xhtml">
+		
+		<DIV left=0 bottom=0 w=100% h=( CSS.Param.listitem_h ) >
+			<CHECKBOX class="listitem" boolmodel="lua.activateAtStart">
+				<HBOX class="listitem">
+					<SPACER flex=1 />
+					<TEXT class="action" text="I agree to activate online services now." />
+					<SPACER flex=1 />
+				</HBOX>
+			</CHECKBOX>
+		</DIV>
+	</DIV>
+</layer>
+
+<element_template et_detailsinfo_payment_text>
+	<HBOX class="listitem">
+		<VBOX class="listitem" align="center" valign="center" box_align="stretch">
+			<SPRITE class="detailsinfo payment" /> 
+		</VBOX>
+
+		<VBOX class="detailsinfo" box_align="stretch">
+			<TEXT class="detailsinfo bd" text="Payment method" flex=1 />
+			<HBOX flex=2>
+				<TEXT class="detailsinfo small" text=( sc_getPaymentText() ) />
+			</HBOX>
+			
+			<HBOX flex=2>
+				<SPRITE class="listitem paymentcardtype svg" img="spr_payment_other.svg" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.OTHER.value ) ) /> 
+				<SPACER class="paymentcard" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.OTHER.value ) ) />
+				
+				<SPRITE class="listitem paymentcardtype svg" img="spr_payment_cash.svg" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.CASH.value ) ) /> 
+				<SPACER class="paymentcard" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.CASH.value ) ) />
+				
+				<SPRITE class="listitem paymentcardtype svg" img="spr_payment_creditcard.svg" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.CREDITCARD.value ) || sc_isPaymentIconVisible( lua.EPaymentMethods.BANKCARD.value ) ) /> 
+				<SPACER class="paymentcard" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.CREDITCARD.value ) || sc_isPaymentIconVisible( lua.EPaymentMethods.BANKCARD.value ) ) />
+				
+				<SPRITE class="listitem paymentcardtype svg" img="spr_payment_prepaycard.svg" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.PREPAYCARD.value ) ) /> 
+				<SPACER class="paymentcard" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.PREPAYCARD.value ) ) />	
+				
+				<SPRITE class="listitem paymentcardtype svg" img="spr_payment_smartcard.svg" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.SMARTCARD.value ) || sc_isPaymentIconVisible( lua.EPaymentMethods.MONEYCARD.value ) ) /> 
+				<SPACER class="paymentcard" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.SMARTCARD.value ) || sc_isPaymentIconVisible( lua.EPaymentMethods.MONEYCARD.value ) ) />
+				
+				<SPRITE class="listitem paymentcardtype svg" img="spr_payment_rfid.svg" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.RFID.value ) ) /> 
+				<SPACER class="paymentcard" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.RFID.value ) ) />	
+				
+				<SPRITE class="listitem paymentcardtype svg" img="spr_payment_clubcard.svg" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.CLUBCARD.value ) ) /> 
+				<SPACER class="paymentcard" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.CLUBCARD.value ) ) />	
+				
+				<SPRITE class="listitem paymentcardtype svg" img="spr_payment_cellphone.svg" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.CELLPHONE.value ) ) /> 
+				<SPACER class="paymentcard" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.CELLPHONE.value ) ) />
+				
+				<SPRITE class="listitem paymentcardtype svg" img="spr_payment_coins.svg" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.COINS.value ) ) /> 
+				<SPACER class="paymentcard" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.COINS.value ) ) />
+				
+				<SPRITE class="listitem paymentcardtype svg" img="spr_payment_banknotes.svg" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.BANKNOTES.value ) ) /> 
+				<SPACER class="paymentcard" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.BANKNOTES.value ) ) />	
+				
+				<SPRITE class="listitem paymentcardtype svg" img="spr_payment_cashcard.svg" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.CASHCARD.value ) ) /> 
+				<SPACER class="paymentcard" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.CASHCARD.value ) ) />	
+				
+				<SPRITE class="listitem paymentcardtype svg" img="spr_payment_visa.svg" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.VISACARD.value ) ) /> 
+				<SPACER class="paymentcard" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.VISACARD.value ) ) />
+				
+				<SPRITE class="listitem paymentcardtype svg" img="spr_payment_visaelectron.svg" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.VISAELECTROCARD.value ) ) /> 
+				<SPACER class="paymentcard" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.VISAELECTROCARD.value ) ) />
+				
+				<SPRITE class="listitem paymentcardtype svg" img="spr_payment_mastercard.svg" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.MASTERCARD.value ) ) /> 
+				<SPACER class="paymentcard" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.MASTERCARD.value ) ) />
+				
+				<SPRITE class="listitem paymentcardtype svg" img="spr_payment_maestro.svg" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.MAESTROCARD.value ) ) /> 
+				<SPACER class="paymentcard" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.MAESTROCARD.value ) ) />
+				
+				<SPRITE class="listitem paymentcardtype svg" img="spr_payment_eurocard.svg" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.EUROCARD.value ) ) /> 
+				<SPACER class="paymentcard" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.EUROCARD.value ) ) />
+				
+				<SPRITE class="listitem paymentcardtype svg" img="spr_payment_americanexpress.svg" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.AMERICANEXPRESS.value ) ) /> 
+				<SPACER class="paymentcard" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.AMERICANEXPRESS.value ) )/>
+				
+				<SPRITE class="listitem paymentcardtype svg" img="spr_payment_dinersclub.svg" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.DINERSCLUB.value ) ) /> 
+				<SPACER class="paymentcard" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.DINERSCLUB.value ) ) />
+				
+				<SPRITE class="listitem paymentcardtype svg" img="spr_payment_girocard.svg" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.GIROCARD.value ) ) /> 
+				<SPACER class="paymentcard" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.GIROCARD.value ) ) />
+				
+				<SPRITE class="listitem paymentcardtype svg" img="spr_payment_discovercard.svg" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.DISCOVERCARD.value ) ) /> 
+				<SPACER class="paymentcard" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.DISCOVERCARD.value ) ) />
+				
+				<SPRITE class="listitem paymentcardtype svg" img="spr_payment_paypal.svg" visible=( sc_isPaymentIconVisible( lua.EPaymentMethods.PAYPAL.value ) ) /> 
+				
+			</HBOX>
+			
+		</VBOX>
+	</HBOX>
+</element_template>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

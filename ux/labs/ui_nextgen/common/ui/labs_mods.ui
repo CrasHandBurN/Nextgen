@@ -1,0 +1,5 @@
+<modify lm_Settings>
+	<insert after="default">
+		<row prio=610 text="Extra Settings" icon="ico_uilabs.svg" onrelease=sc_ExtraSettings_OnRelease />
+	</insert>
+</modify>

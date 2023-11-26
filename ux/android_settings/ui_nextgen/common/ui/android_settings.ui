@@ -1,0 +1,10 @@
+<modify lm_SoundSettings>
+	<insert after=Master>
+		<row prio=100 text="Silent Mode"   type="ChkOnOff" isselected="sound.master_muted" />
+	</insert>
+	<remove Master>
+</modify>
+
+<modify lm_QuickMenu>
+	<modify Mute onrelease='MODEL.sound.master_muted = not MODEL.sound.master_muted()' icon=( %sound.master_muted ? "ico_muteStatus.svg" : "ico_unmuteStatus.svg" ) visible=( lua.gShowMute ) />
+</modify>

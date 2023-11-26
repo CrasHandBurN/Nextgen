@@ -1,0 +1,24 @@
+DIV.footerlist {
+	x: screen_x;
+	y: (screen_h - menu_button_h);
+	w: screen_w;
+  	h: menu_button_h;
+}
+
+.blockingtime {
+	font:"defaultbd";
+	color:inf_main_color; 
+	fontsize:fontsize_popup; 
+	align:"RIGHT"; valign:"CENTER"; z:10; 
+	top:33%; h:33%;
+}
+
+.50_20  { w: 50%; h: 18%;}
+.100_25  { w: 100%; h: 25%;}
+.100_33  { w: 100%; h: 33%;}
+.25_33   { w: 25%; h: 33%;}
+
+
+@import "~/common/ui/block_route_landscape.css" landscape;
+@import "~/common/ui/block_route_portrait.css" portrait;
+

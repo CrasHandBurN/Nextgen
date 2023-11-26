@@ -1,0 +1,102 @@
+<userlist lm_findAddress text="wstr" details="wstr" onrelease="ui" enable="bool" visible="bool" dtooltip="str" type="str" selected="bool">
+	<view visibility_filter=visible />
+	<default visible=1 enable=1 type="FakeInp_address" />
+	<row Country	text=( %lua.AddressSearchText_Country ) selected=1 onrelease=sc_GetCountryMain visible=( %lua.AddressSearchCountryAndStateButtonVisibility ) />
+	<row State		text=( %lua.AddressSearchText_State ) selected=1 onrelease=sc_GetStateMain visible=( !%lua.AddressSearchCountryAndStateButtonVisibility && !%lua.AddressSearchCityOnly ) />
+	<row 			text=( %lua.AddressSearchText_City ) selected=(%lua.AddressCityIsSelected) onrelease=sc_GetCityMain enable=( %lua.AddressSearchCityEnable ) />
+	<row 			text=( %lua.AddressSearchText_Street ) selected=(%lua.AddressStreetIsSelected) onrelease=sc_GetStreetMain enable=( %lua.AddressSearchStreetEnable ) dtooltip=( %lua.AddressSearchText_Street_DT ) visible=( !%lua.AddressSearchCityOnly && %lua.AddressSearchStreetEnable ) />
+	<row HNI		text=(sc_GetHouseNumberEmptyText(%lua.AddressSearchText_Street)) selected=0 onrelease=sc_GetHNIMain enable=( %lua.AddressSearchHNIEnable ) dtooltip=( %lua.AddressSearchText_HNI_DT ) visible=( !%lua.AddressSearchCityOnly && %lua.AddressSearchHNIEnable ) />
+</userlist>
+
+<userlist lm_findAddress_separators text="str" visible="bool">
+	<view visibility_filter=visible />
+	<default visible=1 />
+	<row Country	text="Country" visible=( %lua.AddressSearchCountryAndStateButtonVisibility ) />
+	<row 			text="City or ZIP code" />
+	<row 			text="Street" visible=( !%lua.AddressSearchCityOnly && %lua.AddressSearchStreetEnable ) />
+	<row 			text="House number or crossing street" visible=( !%lua.AddressSearchCityOnly && %lua.AddressSearchHNIEnable ) />
+</userlist>
+
+<userlist lm_FooterAddress text="wstr" onrelease="ui" enable="bool">
+	<default enable=1 />
+	<row text=(sc_AddressSearchGoText( %lua.AddressSearchCityOnly )) onrelease=sc_SmartGo enable=(%lua.AddressCityIsSelected || %lua.AddressStreetIsSelected) />
+</userlist>
+
+<userlist lm_AddressFooter text="str" onrelease="ui" enable="bool" visible="bool">
+	<view visibility_filter=visible />
+		<row text="Clear City" onrelease=sc_ClearCitySelection enable=(%lua.AddressCityIsSelected) visible=( %lua.AddressSearchStreetsInState && st_FindAddress.isActive ) />
+</userlist>
+
+<element_template et_ListFakeInp_address>
+	<implementation>
+		<property enable value=( %*.enable // 1 ) />
+		<property dtooltip value=( %*.dtooltip // "" ) />
+		<property icon value=( %*.icon // "" ) />
+		<property text value=( %*.text // "" ) />
+		<property selected value=( %*.selected // 1 ) />
+	</implementation>
+	
+	<BUTTON class="button_input fake address" onrelease=%*.onrelease enable=( %*.enable // 1 ) dtooltip=dtooltip>
+		<HBOX class="inputfield">
+			<SPRITE class="inputfield svg" img=icon />
+			<TEXT class="input_text_fake" text=text  wordwrap=1 />
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_FindAddress z=30>
+	 <DIV class="list">
+		<SECTIONMARKER />
+		<LIST2 lst_FindAddress class="list_control address auto" SMOOTHSCROLLING>
+			<LISTMODEL element_template="et_List" listmodel="ui.lm_findAddress" template_type_model="*.type" >
+				<SEPARATOR class="address" listmodel="ui.lm_findAddress_separators" insert_at=0,1,2,3 element_template=et_Separator_FindAddress TEXT=(%*.text) />
+			</LISTMODEL>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<views cityhistory listmodel="mydata.cityhistory.list" >
+	<view filtered filter={ $1.city_id != lua.EAddressSearch.Result.startCity } />
+</views>
+
+<layer ui_FindAddressResult z=30>
+	<implementation>
+		<property onrelease value=undef />
+	</implementation>
+	
+	<DIV class="list">
+		<LIST2 lst_FindAddressResult class="list_control" SMOOTHSCROLLING>
+			<SECTIONMARKER/>
+			
+			<LISTMODEL listmodel="ui.cityhistory.filtered" element_template="et_TemplateList" text=%*.name onrelease=onrelease visible=( st_FindAddressCity.isActive && !inp_Input.VALUE )>
+				<SEPARATOR insert_at=0 element_template=et_Separator TEXT="City History" />
+			</LISTMODEL>
+			
+			<LISTMODEL listmodel="mydata.streethistory.list" element_template="et_TemplateList" text=%*.name details=( %*.address.zip + L" " + %*.address.city ) onrelease=onrelease visible=( st_FindAddressStreet.isActive && !inp_Input.VALUE )>
+				<SEPARATOR insert_at=0 element_template=et_Separator TEXT="Street History" />
+			</LISTMODEL>
+			
+			<LISTMODEL listmodel="address.search.list" element_template="et_TemplateList" text=%*.name_highlighted details=%*.description onrelease=onrelease>
+				<SEPARATOR insert_at=0 element_template=et_Separator TEXT="Suggestions" visible=( ( st_FindAddressCity.isActive || st_FindAddressStreet.isActive ) && !inp_Input.VALUE ) />
+			</LISTMODEL>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+
+<layer ui_IntersectionResult z=30>
+	 <DIV class="list">
+	    <LIST2 lbIR_Intersections class="list_control" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="address.search.list" element_template="et_TemplateList" onrelease=sc_SelectIntersection text=%*.name_highlighted details=%*.description />
+            <VSMARTSCROLL> 
+	        <WHEEL>
+			<LISTCONTROL>
+        </LIST2>
+    </DIV>
+</layer>

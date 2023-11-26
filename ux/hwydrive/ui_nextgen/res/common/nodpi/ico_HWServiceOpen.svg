@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 18.1.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="120px"
+	 height="120px" viewBox="0 0 120 120" enable-background="new 0 0 120 120" xml:space="preserve">
+<g id="Layer_4" display="none">
+	<circle display="inline" opacity="0.5" fill="#DF1F26" cx="60" cy="60" r="60"/>
+	<rect x="6.5" y="6.5" display="inline" opacity="0.5" fill="#3B4FA1" width="107" height="107"/>
+</g>
+<g id="normal">
+	<path fill-rule="evenodd" clip-rule="evenodd" fill="#A6A6A6" d="M106.849,50.026v5.47h-4.995v-5.47H43.163v5.47H38.17v-5.47
+		h-7.396v-4.722H113.5v4.722H106.849L106.849,50.026z M75.713,19.848h12.82l3.396,19.229H75.713V19.848L75.713,19.848z
+		 M55.772,19.848h12.82v19.229H52.376L55.772,19.848L55.772,19.848z M6.5,57.482l17.112,14.741l0.023-29.441L6.5,57.482z
+		 M68.592,54.554v45.598H41.59l8.064-45.663L68.592,54.554L68.592,54.554z M102.714,100.152H75.713V54.577l18.965,0.064
+		L102.714,100.152L102.714,100.152z"/>
+</g>
+<g id="active">
+	<path fill-rule="evenodd" clip-rule="evenodd" fill="#A6A6A6" d="M106.849,50.026v5.47h-4.995v-5.47H43.163v5.47H38.17v-5.47
+		h-7.396v-4.722H113.5v4.722H106.849L106.849,50.026z M75.713,19.848h12.82l3.396,19.229H75.713V19.848L75.713,19.848z
+		 M55.772,19.848h12.82v19.229H52.376L55.772,19.848L55.772,19.848z M6.5,57.482l17.112,14.741l0.023-29.441L6.5,57.482z
+		 M68.592,54.554v45.598H41.59l8.064-45.663L68.592,54.554L68.592,54.554z M102.714,100.152H75.713V54.577l18.965,0.064
+		L102.714,100.152L102.714,100.152z"/>
+</g>
+<g id="disabled" opacity="0.25">
+	<path fill-rule="evenodd" clip-rule="evenodd" fill="#A6A6A6" d="M106.849,50.026v5.47h-4.995v-5.47H43.163v5.47H38.17v-5.47
+		h-7.396v-4.722H113.5v4.722H106.849L106.849,50.026z M75.713,19.848h12.82l3.396,19.229H75.713V19.848L75.713,19.848z
+		 M55.772,19.848h12.82v19.229H52.376L55.772,19.848L55.772,19.848z M6.5,57.482l17.112,14.741l0.023-29.441L6.5,57.482z
+		 M68.592,54.554v45.598H41.59l8.064-45.663L68.592,54.554L68.592,54.554z M102.714,100.152H75.713V54.577l18.965,0.064
+		L102.714,100.152L102.714,100.152z"/>
+</g>
+</svg>

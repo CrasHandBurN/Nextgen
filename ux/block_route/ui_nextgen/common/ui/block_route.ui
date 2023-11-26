@@ -1,0 +1,241 @@
+<!ENABLE OVERRIDE>
+	<observer obs_Enter_Drag_Mode boolmodel="map.primary.center_follow" ondeselect='sc_DragMode(true) sc_wBlockCheck()' />
+<!DISABLE OVERRIDE>
+<observer obs_wblockroute_calculated value=(%route.list.wblockroute.calculation_finished) onselect=sc_wBlockRouteCalculated />
+
+<layer ui_wBlockRoute z=160>
+	<implementation>
+		<property bl_name  value=(%route.list.wblockroute.waypoints.list.size > 0 ? %route.list.wblockroute.waypoints.list[0].name : L"") />
+		<property bl_name1 value=(%route.list.wblockroute.waypoints.list.size > 1 ? %route.list.wblockroute.waypoints.list[1].name : L"") />
+	</implementation>
+	<DIV class="main">
+		<BUTTON class="btn_main 50_20" left=0 top=0 >
+			<HBOX class="listitem">
+				<SPRITE class="btn_map svg" img="ico_via.svg" align="LEFT" />
+				<TEXT class="listitem" leading=_0.7 text=bl_name visible=(%route.list.wblockroute.waypoints.list.size) />
+		  	</HBOX>
+	  	</BUTTON>
+
+		<BUTTON class="btn_main 50_20" right=0 top=0 >
+		  	<HBOX class="listitem">
+				<SPRITE class="btn_map svg" img="ico_destination.svg" align="LEFT" />
+				<TEXT class="listitem" leading=_0.7 text=bl_name1 visible=(%route.list.wblockroute.waypoints.list.size > 1) />
+		  	</HBOX>
+	  	</BUTTON>
+	</DIV>
+	
+	<DIV class="footerlist">
+		<TABLE class="row2row" align="center" COMPACT=1>
+			<RADIO class="btn_main" z=10 groupmodel="lua.wBlockRoutePoint" var=0>
+				<SPRITE class="btn_map svg" img="ico_via.svg" />
+			</RADIO>
+			<RADIO class="btn_main" z=10 groupmodel="lua.wBlockRoutePoint" var=1 enable=%lua.wBlockRouteStatus dtooltip="You have to tap on map for selecting Start Point.">
+				<SPRITE class="btn_map svg" img="ico_destination.svg" />
+			</RADIO>
+			<BUTTON class="btn_main" z=10 onrelease={if (%lua.wBlockRouteDir < 2) {%lua.wBlockRouteDir+=1} else {%lua.wBlockRouteDir = 0}}>
+				<TEXT class="listitem info" left=0 right=0 top=10% align="CENTER" z=110 text="Direction" />
+				<SPRITE left=0 right=0 top=35% bottom=0 valign="center" align="center" bmp="ico_block_route_dir.svg" phase=(%lua.wBlockRouteDir) />; iconphasesync=0
+			</BUTTON>
+			<BUTTON class="btn_main" z=10 onrelease=sc_wBlockRouteSave enable=(%lua.wBlockRouteStatus==2) dtooltip="You have to select Start Point and Destination on map.">
+				<SPRITE class="btn_map svg" img="ico_footer_block_done.svg" />
+			</BUTTON>
+		</TABLE>
+	</DIV>
+</layer>
+
+<element_template et_SetBlockedRoads>
+	<BUTTON class="listitem"  clickmodel="mydata.blocked_roads.list.setcurrent $i" onrelease=sc_wBlockedRoadItem>
+		<TEXT class="listitem" left=10 w=100% h=100% leading=_0.75 align="LEFT" wordwrap=(%*.name == L"" ? 3 : 1) text=(%*.name == L"" ? %*.address.long_format : %*.name) />
+	</BUTTON>
+</element_template>
+
+<userlist lm_moremenu_BlockedRoadList_footer text="str" onrelease="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+	<row text="Clear all" isactionbutton=1 onrelease=sc_DelBlockedRoadsMSG />
+</userlist>
+
+<layer ui_SetBlockedRoads z=160>
+	<DIV class="list">
+  		<LIST2 class="list_control" SMOOTHSCROLLING>
+      		<LISTMODEL listmodel="mydata.blocked_roads.list" element_template="et_SetBlockedRoads" />
+			<VSMARTSCROLL> 
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<layer ui_BlockedRoadItem z=160>
+	<DIV class="list">
+		<BUTTON class="listitem" top=0 bottom=65% onrelease=sc_BlockedRoadOnMap >
+			<TEXT class="listitem" left=10 top=0 w=100% h=100% leading=_0.85 align="LEFT" 
+				text=(%wstr:mydata.blocked_roads.list.current.name == L"" ? %wstr:mydata.blocked_roads.list.current.address.long_format : %wstr:mydata.blocked_roads.list.current.name) />
+		</BUTTON>
+
+		<BUTTON class="listitem"  top=35% bottom=40% onrelease=(%mydata.blocked_roads.list[%mydata.blocked_roads.list.index].is_permanent ? sc_ChangeBlockedRoad : undef) >;h=25%
+		  	<TEXT class="listitem" left=10 top=0 w=100% h=100% leading=_0.85 align="LEFT" text=(sc_wGetBlockRoadStatus()) />
+      	</BUTTON>
+
+		<BUTTON class="listitem" top=60% bottom=15% onrelease=sc_wDelBlockedRoad >; h=25% 
+		    <TEXT class="listitem" left=10 top=0 w=100% h=100% leading=_0.85 align="LEFT" text="Delete" />
+     	</BUTTON>
+	</DIV>
+</layer>
+
+<element_template et_ChangeBlockedRoad>
+	<BUTTON class="listitem" onrelease='sc_BlockedRoadDays_SetDay(index)' phase=(%*.usage !=0 )>
+		<TEXT class="listitem" left=20 top=0 bottom=0 right=67% z=20 align="LEFT" valign="CENTER" wordwrap=1 text=%*.day />
+		
+		<TEXT class="listitem" left=33% right=(%*.usage ? 30% : 15%) z=20 top=0 bottom=0 align="CENTER" wordwrap=1 
+			text=(sc_GetBlockRoadTimeOneLine(index, %*.usage)) visible=(sc_GetBlockRoadTimeTwoLines(index, %*.usage)<11) />
+
+		<TEXT class="listitem" left=33% right=30% bottom=90% z=20 align="CENTER" valign="bottom" wordwrap=1 
+			text=(sc_GetBlockRoadTimeLine(index, 1, %*.usage)) visible=(sc_GetBlockRoadTimeTwoLines(index, %*.usage)==11) />
+
+		<TEXT class="listitem" left=33% right=30% top=45% z=20 align="CENTER" valign="top" wordwrap=1 
+			text=(sc_GetBlockRoadTimeLine(index, 2, %*.usage)) visible=(sc_GetBlockRoadTimeTwoLines(index, %*.usage)==11) />
+		<BUTTON class="btn_main" r2l_invert=1 left=80% right=5% top=0 bottom=0 z=20 text="..." wordwrap=1 onrelease='sc_BlockedRoadDays_ChangeTime(index)' visible=%*.usage />
+  	</BUTTON>
+</element_template>
+
+<userlist lm_ChangeBlockedRoad_footer text="str" onrelease="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+	<row text="OK" isactionbutton=1 onrelease=sc_ChangeBlockedRoadOK_onrelease />
+</userlist>
+
+<userlist blocked_roads_dayusage day="str" usage="int">
+  <default usage=0 />
+  <row day="DAYOFWEEK~Sunday" />
+  <row day="DAYOFWEEK~Monday" />
+  <row day="DAYOFWEEK~Tuesday" />
+  <row day="DAYOFWEEK~Wednesday" />
+  <row day="DAYOFWEEK~Thursday" />
+  <row day="DAYOFWEEK~Friday" />
+  <row day="DAYOFWEEK~Saturday" />
+</userlist>
+
+<layer ui_ChangeBlockedRoad z=160>
+	<DIV class=list>
+		<LIST2 class="list_control" element_template="et_ChangeBlockedRoad" listmodel="ui.blocked_roads_dayusage" SMOOTHSCROLLING>
+			<VSMARTSCROLL> 
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+    </DIV>
+</layer>
+
+<userlist lm_moremenu_SetBlockingTime text="str" icon="str" onrelease="ui" enabled="bool">
+	<row text="Block 24h" onrelease=sc_BlockRoadTime_Set24 enabled=(1) />
+  	<row text="Use intervals for all days" onrelease=sc_BlockRoadTimeUseFor_SetAllDays enabled=(1) />
+  	<row text="Use intervals for all working days" onrelease=sc_BlockRoadTimeUseFor_SetWDays enabled=(1) />
+</userlist>
+
+<layer ui_SetBlockingTime z=160>
+	<DIV class="main">
+		<SPRITE class="listitem 100_25" left=0 top=0 bmp="btn.bmp#3" resize_bmp=1 onrelease=sc_BlockTime_SetInterval1>
+			<TEXT class="listitem" left=7% right=7% top=25% z=45 align="LEFT" text="Interval 1" />
+			<TEXT class="listitem" left=7% right=7% top=25% z=45 align="RIGHT" text=(sc_GetBlockRoadTime(%ui.blocked_roads_dayusage.index, 1)) />
+		</SPRITE>
+		<SPRITE class="listitem 100_25" left=0 top=25% bmp="btn.bmp#3" resize_bmp=1 onrelease=sc_BlockTime_SetInterval2>
+			<TEXT class="listitem" left=7% right=7% top=25% z=45 align="LEFT" text="Interval 2" />
+			<TEXT class="listitem" left=7% right=7% top=25% z=45 align="RIGHT" text=(sc_GetBlockRoadTime(%ui.blocked_roads_dayusage.index, 2)) />
+		</SPRITE>
+	</DIV>
+</layer>
+
+<layer ui_BlockTime_SetInterval1 z=160>
+	<DIV class="main">
+		<BUTTON class="btn_main 100_33" left=0 top=0 text="Interval 1" />
+
+		<BUTTON class="btn_main 25_33" left=0  y=66% repeat_delay=250 repeat_interval=100 onclick='sc_BlockRoadTime_StartTimeChange(1,-1)' 
+			enable=(%lua.blocked_roads.currentday.Range1.Start>0  && %lua.blocked_roads.currentday.Range1.Start!=%lua.blocked_roads.currentday.Range2.End)>
+			<SPRITE class="btn_map svg" img="ico_zoomout.svg" />
+	  	</BUTTON>
+
+	  	<BUTTON class="btn_main 25_33" x=25% y=66%  repeat_delay=250 repeat_interval=100 onclick='sc_BlockRoadTime_StartTimeChange(1,1)'  
+			enable=(%lua.blocked_roads.currentday.Range1.Start<24 && %lua.blocked_roads.currentday.Range1.End>%lua.blocked_roads.currentday.Range1.Start)>
+			<SPRITE class="btn_map svg" img="ico_zoomin.svg" />
+		</BUTTON>
+
+	  	<BUTTON class="btn_main 25_33" x=50% y=66% repeat_delay=250 repeat_interval=100 
+			onclick='sc_BlockRoadTime_EndTimeChange(1,-1)'   
+			enable=(%lua.blocked_roads.currentday.Range1.End>0 && %lua.blocked_roads.currentday.Range1.End>%lua.blocked_roads.currentday.Range1.Start)>
+			<SPRITE class="btn_map svg" img="ico_zoomout.svg" />
+		</BUTTON>
+
+		<BUTTON class="btn_main 25_33" x=75% y=66% repeat_delay=250 repeat_interval=100 
+			onclick='sc_BlockRoadTime_EndTimeChange(1,1)' 
+			enable=(%lua.blocked_roads.currentday.Range1.End<24 && %lua.blocked_roads.currentday.Range1.End!=%lua.blocked_roads.currentday.Range2.Start)>
+			<SPRITE class="btn_map svg" img="ico_zoomin.svg" />
+		</BUTTON>
+
+		<TEXT class="blockingtime" left=5% right=55% combined_textmodel="$int:lua.blocked_roads.currentday.Range1.Start$:00" align="CENTER" />
+		<TEXT class="blockingtime" left=45% right=45% text=L"-" align="CENTER" />
+		<TEXT class="blockingtime" left=55% right=5% combined_textmodel="$int:lua.blocked_roads.currentday.Range1.End$:00" align="CENTER" />
+	</DIV>
+</layer>
+
+<layer ui_BlockTime_SetInterval2 z=160>
+	<DIV class="main">
+		<SPRITE class="listitem"   resize_bmp=1  bmp="btn.bmp#3" top=0 left=0 right=0 h=33%> 
+	  		<CHECKBOX  class="listitem chkonoff"     text="Interval 2" 
+				checked=(%lua.blocked_roads.currentday.Range2.Start >= 0) onrelease=sc_BlockRoadTime_Check />
+		</SPRITE>
+
+	  	<BUTTON class="btn_main 25_33" left=0  y=66% repeat_delay=250 repeat_interval=100 onclick='sc_BlockRoadTime_StartTimeChange(2,-1)' enable=(%lua.blocked_roads.currentday.Range2.Start>0  && %lua.blocked_roads.currentday.Range2.Start!=%lua.blocked_roads.currentday.Range1.End)>
+			<SPRITE class="btn_map svg" img="ico_zoomout.svg" />
+	  	</BUTTON>
+
+	  	<BUTTON class="btn_main 25_33" x=25% y=66% repeat_delay=250 repeat_interval=100 onclick='sc_BlockRoadTime_StartTimeChange(2,1)' enable=(%lua.blocked_roads.currentday.Range2.Start>=0 && %lua.blocked_roads.currentday.Range2.Start<24 && %lua.blocked_roads.currentday.Range2.End>%lua.blocked_roads.currentday.Range2.Start)>
+			<SPRITE class="btn_map svg" img="ico_zoomin.svg" />
+	 	 </BUTTON>
+
+	  	<BUTTON class="btn_main 25_33" x=50% y=66% repeat_delay=250 repeat_interval=100 onclick='sc_BlockRoadTime_EndTimeChange(2,-1)' enable=(%lua.blocked_roads.currentday.Range2.Start>=0 && %lua.blocked_roads.currentday.Range2.End>0  && %lua.blocked_roads.currentday.Range2.End>%lua.blocked_roads.currentday.Range2.Start)>
+			<SPRITE class="btn_map svg" img="ico_zoomout.svg" />
+	  	</BUTTON>
+
+	  	<BUTTON class="btn_main 25_33" x=75% y=66% repeat_delay=250 repeat_interval=100 onclick='sc_BlockRoadTime_EndTimeChange(2,1)' enable=(%lua.blocked_roads.currentday.Range2.Start>=0 && %lua.blocked_roads.currentday.Range2.End<24 && %lua.blocked_roads.currentday.Range2.End!=%lua.blocked_roads.currentday.Range1.Start)>
+			<SPRITE class="btn_map svg" img="ico_zoomin.svg" />
+	  	</BUTTON>
+
+	   	 <TEXT class="blockingtime" left=5% right=55% combined_textmodel="$int:lua.blocked_roads.currentday.Range2.Start$:00" align="CENTER" visible=(%lua.blocked_roads.currentday.Range2.Start>=0) />
+	   	 <TEXT class="blockingtime" left=5% right=55% text="0:00" align="CENTER" visible=(%lua.blocked_roads.currentday.Range2.Start<0) />
+	   	 <TEXT class="blockingtime" left=45% right=45% text=L"-" align="CENTER" />
+	   	 <TEXT class="blockingtime" left=55% right=5% combined_textmodel="$int:lua.blocked_roads.currentday.Range2.End$:00" align="CENTER" visible=(%lua.blocked_roads.currentday.Range2.End>=0) />
+	   	 <TEXT class="blockingtime" left=55% right=5% text="0:00" align="CENTER" visible=(%lua.blocked_roads.currentday.Range2.End<0) />
+	</DIV>
+</layer>
+
+<layer ui_BlockedRoadOnMap z=24>
+	<DIV class="mapmain mapcontrol">
+		<HBOX class="fill" paddingleft=0 paddingright=0 align="left">; valign="BOTTOM" box_mapcontrol 
+			<BOX class="mapcontrol zoom">
+				<SPACER flex=1 />
+				<BUTTON class="btn_map drag zoomin" onclick='MODEL.map.primary.zoom_start(1)' onrelease='MODEL.map.primary.zoom_stop()' onmouseleave='MODEL.map.primary.zoom_stop()' enable=%lua.map.ZoomInEnabled >
+					<SPRITE class="btn_map zoomin icon svg" />
+				</BUTTON>
+			
+				<BUTTON class="btn_map drag fit" onrelease=sc_FitDefault enable=fitEnabled >
+					<SPRITE class="btn_map fit icon svg" />
+				</BUTTON>
+		
+				<BUTTON class="btn_map drag zoomout" onclick='MODEL.map.primary.zoom_start(-1)' onrelease='MODEL.map.primary.zoom_stop()' onmouseleave='MODEL.map.primary.zoom_stop()' enable=%lua.map.ZoomOutEnabled >
+					<SPRITE class="btn_map zoomout icon svg" />
+				</BUTTON>
+				<SPACER flex=1 />
+			</BOX>
+		</HBOX>
+	</DIV>
+
+	<DIV class="map">
+		<SPRITE fitbox_blockedroad class="fitbox blockedroad" />
+	</DIV>
+
+	<DIV class="zoomctrl">
+		<SPRITE class="zoomctrl">
+			<TEXT class="fill zoomctrl" text=( %lua.ZoomControlText ) />
+		</SPRITE>
+	</DIV>
+</layer>

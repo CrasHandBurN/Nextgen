@@ -1,0 +1,2 @@
+@import "~/common/ui/color_kia_green_bright.css" if (%interface.theme == L"the_bright");
+@import "~/common/ui/color_kia_green_dark.css" if (%interface.theme == L"the_dark");

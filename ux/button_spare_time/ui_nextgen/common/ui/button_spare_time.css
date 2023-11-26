@@ -16,6 +16,18 @@ TEXT.simple_clock {
 	color: (ui_Cockpit.font_color[SimpleTimeColor]);
 }
 
+TEXT.simple_date {
+	text:(format("%{date:*}", %gps.current_date, %regional.dateformat));
+	/*fixedwidthnumbers:1;*/
+	top:0; bottom:0;
+	right:0; left:0; 
+	align: "center"; 
+	valign:"CENTER";
+	font: "defaultbd"; 
+	fontsize:35;
+	color: (%lua.aCockpitTransparency > 4 ? notification_area_textcolor : (%lua.LatenessTime > 0 ? #FF0000 : #00FF00));
+}
+
 TIMESPANTEXT.arrive_plan {
 	left:0; bottom:0;
 	w: 100%;

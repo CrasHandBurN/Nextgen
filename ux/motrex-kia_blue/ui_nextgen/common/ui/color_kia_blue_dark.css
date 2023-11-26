@@ -1,0 +1,8 @@
+@params {
+	panel_mapheader_grad_blue: "vertical", #ff000000, 0.0, #ff000000, 0.97, #ff171e9e, 0.97, #ff171e9e, 1.0;
+	panel_map_grad_blue: "vertical", #ff000000, 0.0, #ff000000, 0.97, #ff171e9e, 0.97, #ff171e9e, 1.0;
+	listitem_route_blue: #ff171e9e;
+	listitem_route_start_blue:  "vertical", #ff171e9e, 0.0, #ff171e9e, 0.5, #00000000, 0.51, #00000000, 1.0;
+	listitem_route_dest_blue: "vertical", #00000000, 0.0, #00000000, 0.5, #ff171e9e, 0.51, #ff171e9e, 1.0;
+	listitem_route_dest_travelplanner_blue: "vertical", #ff171e9e, 0.0, #ff171e9e, 0.5, #ff171e9e, 0.51, #ff171e9e, 1.0;
+}

@@ -1,0 +1,47 @@
+
+
+
+
+.button_input{
+	top:(st_IQS_Center.isActive ? listitem_h : 0);
+	left:0; 
+	right:( 0 ); 
+}
+
+.button_input.iqs{
+	top:(st_IQS_Center.isActive ? 0 : listitem_h);
+	left:0; 
+	right:0; 
+}
+
+BUTTON.listitem.iqs_center{
+	top:(listitem_h + listitem_h);
+}
+
+LIST2.list_control.iqs_center{
+	top:(listitem_h + listitem_h);
+}
+
+SPRITE.inputfield{
+	h:(listitem_h + (st_IQS_Find.isActive || st_IQS_Center.isActive ? listitem_h : 0 ) + ( ui_PoiSearchCenter.isVisible ? listitem_h : 0));
+}
+
+LIST2.list_control.iqs_center {
+	top: ( listitem_h + listitem_h );
+}
+
+SPRITE.iqs_hint.search {
+	left: 55%;
+	top: ( observe( ui_Input.isVisible ); btn_inp.Y + btn_inp.H );
+	h: 45%;
+}
+
+SPRITE.iqs_hint.center {
+	left: 5%;
+	top: ( btn_iqs_center.Y + btn_iqs_center.H );
+	h: 60%;
+}
+
+TEXT.iqs_hint{
+	wordwrap: 13; leading:0.85;
+}

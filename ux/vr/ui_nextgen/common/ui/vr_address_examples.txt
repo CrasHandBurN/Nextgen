@@ -1,0 +1,428 @@
+﻿-- Warning! This is an UTF-8 encoded lua source, without a BOM.
+-- Don't use Visual Studio to edit this file.
+
+vPreferredLanguages = 
+{
+	["UPR"] = "080a",
+}
+
+vAEIndex = 
+{
+	long = 1,
+	short = 2,
+	city = 3,
+	other = 4
+}
+
+-- The country code has to be UPPERCASE.
+vAddressExamples =
+{
+	["a**"] = 
+	{
+		["0c09"] = {L"10, BLACKWOOD STREET, TOWNSVILLE", L"BLACKWOOD STREET, TOWNSVILLE", L"TOWNSVILLE", L""}
+	},
+	["AUT"] = 
+	{
+		["0407"] = {L"Wien, Petersplatz 5", L"Wien, Petersplatz", L"Wien", L""}
+	},
+	["AND"] = 
+	{
+		["040a"] = {L"Andorra La Vella, Carrer Gil Torres 25", L"Andorra La Vella, Carrer Gil Torres", L"Andorra La Vella", L""}
+	},
+	["BEL"] = 
+	{
+		["0407"] = {L"Crombach, Galhausener Weg 3", L"Crombach, Galhausener Weg", L"Crombach", L""},
+		["040c"] = {L"3 Rue de la Régence, Bruxelles", L"Rue de la Régence, Bruxelles", L"Bruxelles", L""},
+		["0413"] = {L"Antwerpen, Grote Markt 13", L"Antwerpen, Grote Markt", L"Antwerpen", L""}
+	},
+	["BRA"] = 
+	{
+		["0416"] = {L"Brasília, Rua Nova 15", L"Brasília, Rua Nova", L"Brasília", L""}
+	},
+	["C**"] = 
+	{
+		["0409"] = {L"955 Kingsway, Vancouver, BC", L"Kingsway, Vancouver, BC", L"Vancouver, BC", L""},
+		["0c0c"] = {L"35 Rue George, Bouctouche, NB", L"Rue George, Bouctouche, NB", L"Bouctouche, NB", L""}
+	},
+	["CAB"] = 
+	{
+		["0409"] = {L"900 Remington Rd NE, Calgary, AB", L"Remington Rd NE, Calgary, AB", L"Calgary, AB", L""},
+		["0c0c"] = {L"900 Remington Rd NE, Calgary, AB", L"Remington Rd NE, Calgary, AB", L"Calgary, AB", L""}
+	},
+	["CBC"] = 
+	{
+		["0409"] = {L"955 Kingsway, Vancouver, BC", L"Kingsway, Vancouver, BC", L"Vancouver, BC", L""},
+		["0c0c"] = {L"955 Kingsway, Vancouver, BC", L"Kingsway, Vancouver, BC", L"Vancouver, BC", L""}
+	},
+	["CMB"] = 
+	{
+		["0409"] = {L"500 Garwood Ave, Winnipeg, MB", L"Garwood Ave, Winnipeg, MB", L"Winnipeg, MB", L""},
+		["0c0c"] = {L"500 Garwood Ave, Winnipeg, MB", L"Garwood Ave, Winnipeg, MB", L"Winnipeg, MB", L""}
+	},
+	["CNB"] = 
+	{
+		["0409"] = {L"35 Rue George, Bouctouche, NB", L"Rue George, Bouctouche, NB", L"Bouctouche, NB", L""},
+		["0c0c"] = {L"35 Rue George, Bouctouche, NB", L"Rue George, Bouctouche, NB", L"Bouctouche, NB", L""}
+	},
+	["CNF"] = 
+	{
+		["0409"] = {L"4 Bridgewater Pl, Paradise, NL", L"Bridgewater Pl, Paradise, NL", L"Paradise, NL", L""},
+		["0c0c"] = {L"4 Bridgewater Pl, Paradise, NL", L"Bridgewater Pl, Paradise, NL", L"Paradise, NL", L""}
+	},
+	["CNT"] = 
+	{
+		["0409"] = {L"6 Forrest Dr, Yellowknife, NT", L"Forrest Dr, Yellowknife, NT", L"Yellowknife, NT", L""},
+		["0c0c"] = {L"6 Forrest Dr, Yellowknife, NT", L"Forrest Dr, Yellowknife, NT", L"Yellowknife, NT", L""}
+	},
+	["CNS"] = 
+	{
+		["0409"] = {L"10 Lemmon Hill Rd, Halifax, NS", L"Lemmon Hill Rd, Halifax, NS", L"Halifax, NS", L""},
+		["0c0c"] = {L"10 Lemmon Hill Rd, Halifax, NS", L"Lemmon Hill Rd, Halifax, NS", L"Halifax, NS", L""}
+	},
+	["CNU"] = 
+	{
+		["0409"] = {L"Airport Rd, Cambridge Bay, NU", L"Airport Rd, Cambridge Bay, NU", L"Cambridge Bay, NU", L""},
+		["0c0c"] = {L"Airport Rd, Cambridge Bay, NU", L"Airport Rd, Cambridge Bay, NU", L"Cambridge Bay, NU", L""}
+	},
+	["CON"] = 
+	{
+		["0409"] = {L"40 Parker Ave, Ottawa, ON", L"Parker Ave, Ottawa, ON", L"Ottawa, ON", L""},
+		["0c0c"] = {L"40 Parker Ave, Ottawa, ON", L"Parker Ave, Ottawa, ON", L"Ottawa, ON", L""}
+	},
+	["CPE"] = 
+	{
+		["0409"] = {L"45 2nd St, Charlottetown, PE", L"2nd St, Charlottetown, PE", L"Charlottetown, PE", L""},
+		["0c0c"] = {L"45 2nd St, Charlottetown, PE", L"2nd St, Charlottetown, PE", L"Charlottetown, PE", L""}
+	},
+	["CQP"] = 
+	{
+		["0409"] = {L"440 Rue De Fleurie, Gatineau, QC", L"Rue De Fleurie, Gatineau, QC", L"Gatineau, QC", L""},
+		["0c0c"] = {L"440 Rue De Fleurie, Gatineau, QC", L"Rue De Fleurie, Gatineau, QC", L"Gatineau, QC", L""}
+	},
+	["CSK"] = 
+	{
+		["0409"] = {L"102 Norman Ave, Aberdeen, SK", L"Norman Ave, Aberdeen, SK", L"Aberdeen, SK", L""},
+		["0c0c"] = {L"102 Norman Ave, Aberdeen, SK", L"Norman Ave, Aberdeen, SK", L"Aberdeen, SK", L""}
+	},
+	["CYT"] = 
+	{
+		["0409"] = {L"4211 4th Ave, Whitehorse, YT", L"4th Ave, Whitehorse, YT", L"Whitehorse, YT", L""},
+		["0c0c"] = {L"4211 4th Ave, Whitehorse, YT", L"4th Ave, Whitehorse, YT", L"Whitehorse, YT", L""}
+	},
+	["CZE"] = 
+	{
+		["0405"] = {L"Praha, Blešnovská 156", L"Praha, Blešnovská", L"Praha", L""}
+	},
+	["BEL"] = 
+	{
+		["0407"] = {L"Crombach, Galhausener Weg 3", L"Crombach, Galhausener Weg", L"Crombach", L""},
+		["040c"] = {L"3 Rue de la Régence, Bruxelles", L"Rue de la Régence, Bruxelles", L"Bruxelles", L""},
+		["0413"] = {L"Antwerpen, Grote Markt 13", L"Antwerpen, Grote Markt", L"Antwerpen", L""}
+	},
+	["ESP"] = 
+	{
+		["040a"] = {L"Madrid, Plaza de Colón 1", L"Madrid, Plaza de Colón", L"Madrid", L""}
+	},
+	["FRA"] = 
+	{
+		["040c"] = {L"25 Rue des Pyramides, Paris", L"Rue des Pyramides, Paris", L"Paris", L""}
+	},
+	["GBR"] = 
+	{
+		["0809"] = {L"27 Palace Street, London", L"Palace Street, London", L"London", L""}
+	},
+	["GER"] = 
+	{
+		["0407"] = {L"Berlin, Kantstraße 12", L"Berlin, Kantstraße", L"Berlin", L""}
+	},
+	["HUN"] = 
+	{
+		["040e"] = {L"Budapest, Szépvölgyi út 35", L"Budapest, Szépvölgyi út", L"Budapest", L""}
+	},
+	["I**"] = 
+	{
+		["4009"] = {L"F208 Lane No W5, Western Avenue Sainik Farms, New Delhi, Delhi NCR", L"Western Avenue Sainik Farms, New Delhi, Delhi NCR", L"New Delhi, Delhi NCR", L""}
+	},
+	["ITA"] = 
+	{
+		["0410"] = {L"Roma, Via di San Marco 1", L"Roma, Via di San Marco", L"Roma", L""}
+	},
+	["ISR"] = 
+	{
+		["040D"] = {L"הנדיב - 71 - הרצליה", L"הנדיב - הרצליה", L" הרצליה", L""}
+	},
+	["IRL"] = 
+	{
+		["0809"] = {L"10 Suffolk Street, Dublin", L"Suffolk Street, Dublin", L"Dublin", L""}
+	},
+	["LIE"] = 
+	{
+		["0407"] = {L"Vaduz, Zollstrasse 16", L"Vaduz, Zollstrasse", L"Vaduz", L""}
+	},
+	["LUX"] = 
+	{
+		["0407"] = {L"Luxemburg, Rue Notre-Dame 41", L"Luxemburg, Rue Notre-Dame", L"Luxemburg", L""},
+		["040c"] = {L"41 Rue Notre-Dame, Luxembourg", L"Rue Notre-Dame, Luxembourg", L"Luxembourg", L""}
+	},
+	["MON"] = 
+	{
+		["040c"] = {L"3, Avenue Du Port, Monaco", L"Avenue Du Port, Monaco", L"Monaco", L""}
+	},
+	["NED"] = 
+	{
+		["0413"] = {L"Amsterdam, Kalverstraat 92", L"Amsterdam, Kalverstraat", L"Amsterdam", L""}
+	},
+	["NZL"] = 
+	{
+		["0c09"] = {L"46, MCKENZIE ROAD, LIVINGSTONE", L"MCKENZIE ROAD, LIVINGSTONE", L"LIVINGSTONE", L""}
+	},
+	["POL"] = 
+	{
+		["0415"] = {L"Warszava, Ulica Dobra 37", L"Warszava, Ulica Dobra", L"Warszava", L""}
+	},
+	["POR"] = 
+	{
+		["0816"] = {L"Lisboa, Rua Augusta 20", L"Lisboa, Rua Augusta", L"Lisboa", L""}
+	},
+	["SMR"] = 
+	{
+		["0410"] = {L"Fiorina, Strada Di Paderna 4 ", L"Fiorina, Strada Di Paderna", L"Fiorina", L""}
+	},
+	["SUI"] = 
+	{
+		["0407"] = {L"Bern, Amthausgasse 4", L"Bern, Amthausgasse", L"Bern", L""},
+		["040c"] = {L"18 Rue du Mont-Blanc, Genève", L"Rue du Mont-Blanc, Genève", L"Genève", L""},
+		["0410"] = {L"Locarno, Largo Franco Zorzi 1", L"Locarno, Largo Franco Zorzi", L"Locarno", L""}
+	},
+	["TUR"] = 
+	{
+		["041f"] = {L"İSTANBUL, ÇIRAĞAN CADDESİ, NUMARA 20", L"BEŞİKTAŞ, ÇIRAĞAN CADDESİ, NUMARA 20", L"BEŞİKTAŞ", L""}
+	},
+	["U**"] = 
+	{
+		["0409"] = {L"121 Jackson St, Trenton, NJ", L"W Lake St, Chicago, IL", L"San Francisco, CA", L""},
+		["080a"] = {L"2 Calle Del Mercado, San Juan, PR", L"Calle Del Mercado, San Juan, PR", L"San Juan, PR", L""}
+	},
+	["UAL"] = 
+	{
+		["0409"] = {L"2370 Leonard Rd, Montgomery, AL", L"Leonard Rd, Montgomery, AL", L"Montgomery, AL", L""}
+	},
+	["UAK"] = 
+	{
+		["0409"] = {L"161 Farewell Ave, Fairbanks, AK", L"Farewell Ave, Fairbanks, AK", L"Fairbanks, AK", L""}
+	},
+	["UAZ"] = 
+	{
+		["0409"] = {L"1 E Victory St, Phoenix, AZ", L"E Victory St, Phoenix, AZ", L"Phoenix, AZ", L""}
+	},
+	["UAR"] = 
+	{
+		["0409"] = {L"36 Crawford Park, Daisy, AR", L"Crawford Park, Daisy, AR", L"Daisy, AR", L""}
+	},
+	["UCX"] = 
+	{
+		["0409"] = {L"236 Lincoln St, Bakersfield, CA", L"Lincoln St, Bakersfield, CA", L"Bakersfield, CA", L""}
+	},
+	["UCO"] = 
+	{
+		["0409"] = {L"7566 Heather Pl, Denver, CO", L"Heather Pl, Denver, CO", L"Denver, CO", L""}
+	},
+	["UCT"] = 
+	{
+		["0409"] = {L"53 Center St, Waterbury, CT", L"Center St, Waterbury, CT", L"Waterbury, CT", L""}
+	},
+	["UDE"] = 
+	{
+		["0409"] = {L"157 W Adams St, Georgetown, DE", L"W Adams St, Georgetown, DE", L"Georgetown, DE", L""}
+	},
+	["UDC"] = 
+	{
+		["0409"] = {L"2356 Green St SE, Washington, DC", L"Green St SE, Washington, DC", L"Washington, DC", L""}
+	},
+	["UFX"] = 
+	{
+		["0409"] = {L"1551 Steele St, Jacksonville, FL", L"Steele St, Jacksonville, FL", L"Jacksonville, FL", L""}
+	},
+	["UGX"] = 
+	{
+		["0409"] = {L"127 E Main St, Hoboken, GA", L"E Main St, Hoboken, GA", L"Hoboken, GA", L""}
+	},
+	["UHI"] = 
+	{
+		["0409"] = {L"1560 Davenport Pl, Honolulu, HI", L"Davenport Pl, Honolulu, HI", L"Honolulu, HI", L""}
+	},
+	["UID"] = 
+	{
+		["0409"] = {L"446 Madison St, Lewisville, ID", L"Madison St, Lewisville, ID", L"Lewisville, ID", L""}
+	},
+	["UIX"] = 
+	{
+		["0409"] = {L"309 W Lake St, Chicago, IL", L"W Lake St, Chicago, IL", L"Chicago, IL", L""}
+	},
+	["UIN"] = 
+	{
+		["0409"] = {L"3992 Baker Dr, Indianapolis, IN", L"Baker Dr, Indianapolis, IN", L"Indianapolis, IN", L""}
+	},
+	["UIA"] = 
+	{
+		["0409"] = {L"300 Terrace Dr, Burlington, IA", L"Terrace Dr, Burlington, IA", L"Burlington, IA", L""}
+	},
+	["UKS"] = 
+	{
+		["0409"] = {L"251 Sunset Dr, Toronto, KS", L"Sunset Dr, Toronto, KS", L"Toronto, KS", L""}
+	},
+	["UKY"] = 
+	{
+		["0409"] = {L"3199 Grand Lakes Dr, Louisville, KY", L"Grand Lakes Dr, Louisville, KY", L"Louisville, KY", L""}
+	},
+	["ULA"] = 
+	{
+		["0409"] = {L"7387 Amber St, New Orleans, LA", L"Amber St, New Orleans, LA", L"New Orleans, LA", L""}
+	},
+	["UME"] = 
+	{
+		["0409"] = {L"45 Princeton St, Portland, ME", L"Princeton St, Portland, ME", L"Portland, ME", L""}
+	},
+	["UMD"] = 
+	{
+		["0409"] = {L"56 Virginia Avenue, Bloomington, MD", L"Virginia Avenue, Bloomington, MD", L"Bloomington, MD", L""}
+	},
+	["UMA"] = 
+	{
+		["0409"] = {L"25 1st St, Boston, MA", L"1st St, Boston, MA", L"Boston, MA", L""}
+	},
+	["UMX"] = 
+	{
+		["0409"] = {L"1300 Village Dr, Detroit, MI", L"Village Dr, Detroit, MI", L"Detroit, MI", L""}
+	},
+	["UMN"] = 
+	{
+		["0409"] = {L"5678 Saint Andrews Ave, Minneapolis, MN", L"Saint Andrews Ave, Minneapolis, MN", L"Minneapolis, MN", L""}
+	},
+	["UMS"] = 
+	{
+		["0409"] = {L"442 Barnes Ave, Clarksdale, MS", L"Barnes Ave, Clarksdale, MS", L"Clarksdale, MS", L""}
+	},
+	["UMY"] = 
+	{
+		["0409"] = {L"5905 E Spring De, Springfield, MO", L"E Spring De, Springfield, MO", L"Springfield, MO", L""}
+	},
+	["UMT"] = 
+	{
+		["0409"] = {L"458 Central Ave, Stanford, MT", L"Central Ave, Stanford, MT", L"Stanford, MT", L""}
+	},
+	["UNE"] = 
+	{
+		["0409"] = {L"5022 Claire Ave, Lincoln, NE", L"Claire Ave, Lincoln, NE", L"Lincoln, NE", L""}
+	},
+	["UNV"] = 
+	{
+		["0409"] = {L"3888 W Russel Rd, Las Vegas, NV", L"W Russel Rd, Las Vegas, NV", L"Las Vegas, NV", L""}
+	},
+	["UNH"] = 
+	{
+		["0409"] = {L"82 Hewitt Rd, Claremont, NH", L"Hewitt Rd, Claremont, NH", L"Claremont, NH", L""}
+	},
+	["UNJ"] = 
+	{
+		["0409"] = {L"121 Jackson St, Trenton, NJ", L"Jackson St, Trenton, NJ", L"Trenton, NJ", L""}
+	},
+	["UNM"] = 
+	{
+		["0409"] = {L"43 Adams Rd, Edgewood, NM", L"Adams Rd, Edgewood, NM", L"Edgewood, NM", L""}
+	},
+	["UNX"] = 
+	{
+		["0409"] = {L"87 Mercer St, New York, NY", L"Mercer St, New York, NY", L"New York, NY", L""}
+	},
+	["UNC"] = 
+	{
+		["0409"] = {L"8600 Fergusson Rd, Charlotte, NC", L"Fergusson Rd, Charlotte, NC", L"Charlotte, NC", L""}
+	},
+	["UND"] = 
+	{
+		["0409"] = {L"1406 14th St, Jamestown, ND", L"14th St, Jamestown, ND", L"Jamestown, ND", L""}
+	},
+	["UOX"] = 
+	{
+		["0409"] = {L"2626 Archwood Ave, Cleveland, OH", L"Archwood Ave, Cleveland, OH", L"Cleveland, OH", L""}
+	},
+	["UOK"] = 
+	{
+		["0409"] = {L"141 N Richmond Ave, Tulsa, OK", L"N Richmond Ave, Tulsa, OK", L"Tulsa, OK", L""}
+	},
+	["UOR"] = 
+	{
+		["0409"] = {L"120 W Olive St, Newport, OR", L"W Olive St, Newport, OR", L"Newport, OR", L""}
+	},
+	["UPX"] = 
+	{
+		["0409"] = {L"1 Academy Cir, Philadelphia, PA", L"Academy Cir, Philadelphia, PA", L"Philadelphia, PA", L""}
+	},
+	["UPR"] = 
+	{
+		["0409"] = {L"2 Calle Del Mercado, San Juan, PR", L"Calle Del Mercado, San Juan, PR", L"San Juan, PR", L""},
+		["080a"] = {L"2 Calle Del Mercado, San Juan, PR", L"Calle Del Mercado, San Juan, PR", L"San Juan, PR", L""}
+	},
+	["URI"] = 
+	{
+		["0409"] = {L"6 James Rd, Bradford, RI", L"James Rd, Bradford, RI", L"Bradford, RI", L""}
+	},
+	["USC"] = 
+	{
+		["0409"] = {L"416 Walnut St, Lake View, SC", L"Walnut St, Lake View, SC", L"Lake View, SC", L""}
+	},
+	["USD"] = 
+	{
+		["0409"] = {L"200 Lake Ave S, Lake Preston, SD", L"Lake Ave S, Lake Preston, SD", L"Lake Preston, SD", L""}
+	},
+	["UTN"] = 
+	{
+		["0409"] = {L"964 Norman Dr, Clarksville, TN", L"Norman Dr, Clarksville, TN", L"Clarksville, TN", L""}
+	},
+	["UTX"] = 
+	{
+		["0409"] = {L"8602 Jourdan Way, Dallas, TX", L"Jourdan Way, Dallas, TX", L"Dallas, TX", L""}
+	},
+	["UVI"] = 
+	{
+		["0409"] = {L"33 5th St, St Thomas, VI", L"5th St, St Thomas, VI", L"St Thomas, VI", L""}
+	},
+	["UUT"] = 
+	{
+		["0409"] = {L"344 Erickson Ln, Salt Lake City, UT", L"Erickson Ln, Salt Lake City, UT", L"Salt Lake City, UT", L""}
+	},
+	["UVT"] = 
+	{
+		["0409"] = {L"5 Franklin Ave, Manchester, VT", L"Franklin Ave, Manchester, VT", L"Manchester, VT", L""}
+	},
+	["UVA"] = 
+	{
+		["0409"] = {L"9 Old Sellers Way, Richmond, VA", L"Old Sellers Way, Richmond, VA", L"Richmond, VA", L""}
+	},
+	["UWA"] = 
+	{
+		["0409"] = {L"889 S Adams St, Seattle, WA", L"S Adams St, Seattle, WA", L"Seattle, WA", L""}
+	},
+	["UWV"] = 
+	{
+		["0409"] = {L"355 Marion Ave, Charleston, WV", L"Marion Ave, Charleston, WV", L"Charleston, WV", L""}
+	},
+	["UWI"] = 
+	{
+		["0409"] = {L"100 E Florida St, Milwaukee, WI", L"E Florida St, Milwaukee, WI", L"Milwaukee, WI", L""}
+	},
+	["UWY"] = 
+	{
+		["0409"] = {L"123 River View Dr, Green River, WY", L"River View Dr, Green River, WY", L"Green River, WY", L""}
+	},
+	["VAT"] = 
+	{
+		["0410"] = {L"Città Del Vaticano, Viale Marconi ", L"Città Del Vaticano, Piazza Del Forno", L"Città Del Vaticano", L""}
+	},
+	["UKR"] = 
+	{
+		["0422"] = {L"дом 21, улица Сегедская, Одесса", L"улица Сегедская, Одесса", L"Одесса", L""},
+		["0419"] = {L"дом 21, улица Сегедская, Одесса", L"улица Сегедская, Одесса", L"Одесса", L""},
+	},
+}

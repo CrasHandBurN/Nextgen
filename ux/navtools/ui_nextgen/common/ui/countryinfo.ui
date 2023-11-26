@@ -1,0 +1,179 @@
+<layer ui_CountryInfo z=51>
+	<DIV class="list layerscroll">
+		<SPRITE class=list_panel>
+		<SECTIONMARKER class="layerscroll"/>
+		<LIST2 ls_CountryInfo class="list_control" SMOOTHSCROLLING>
+			<LISTMODEL Header class="list_control emergency_phone " listmodel="ui.lm_countryInfoEmergencyPhone" element_template="et_countryInfoEmergencyPhone" />
+			<LISTMODEL class="list_control countryinfo" top=24% Header listmodel="ui.lm_OneItemList" element_template="et_CountryInfoHeader" />
+			<LISTMODEL class="list_control" listmodel="ui.lm_countryInfoTrafficLawList" element_template="et_TrafficLaw" />
+			<VSMARTSCROLL> 
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<userlist lm_OneItemList field="bool">
+	 <row   field=0/>
+</userlist>
+
+<element_template et_CountryInfoHeader>
+	<TABLE class="countryinfo_speedlimits" left=2% right=2% top=2% bottom=2%>
+		<DIV> 
+			<HBOX box_align="stretch" bottom=20%>
+				<SPRITE class="speedlimit countryinfo svg" visible=(sc_SpeedLimitValid("in_city"))>
+					<TEXT class="speedlimit countryinfo" text=(sc_FormatCountryInfoSpeed("in_city")) visible=(sc_SpeedLimitValid("in_city")) />
+				</SPRITE>
+				<TEXT class="countryinfo_sign" text="n/a" visible=(!sc_SpeedLimitValid("in_city")) />
+			</HBOX>
+			<TEXT class="countryinfo_type" text="In City" />
+		</DIV>
+		
+		<DIV> 
+			<HBOX box_align="stretch" bottom=20% >
+				<SPRITE class="speedlimit countryinfo svg" visible=(sc_SpeedLimitValid("out_of_city"))>
+					<TEXT class="speedlimit countryinfo" text=(sc_FormatCountryInfoSpeed("out_of_city")) visible=(sc_SpeedLimitValid("out_of_city")) />
+				</SPRITE>
+				<TEXT class="countryinfo_sign" text="n/a" visible=(!sc_SpeedLimitValid("out_of_city")) />
+			</HBOX>
+			<TEXT class="countryinfo_type" text="Countryside" />
+		</DIV>
+		<DIV> 
+			<HBOX box_align="stretch" bottom=20% >
+				<SPRITE class="speedlimit countryinfo svg" visible=(sc_SpeedLimitValid("expressway"))>
+					<TEXT class="speedlimit countryinfo" text=(sc_FormatCountryInfoSpeed("expressway")) visible=(sc_SpeedLimitValid("expressway")) />
+				</SPRITE>
+				<TEXT class="countryinfo_sign" text="n/a" visible=(!sc_SpeedLimitValid("expressway")) />				
+			</HBOX>	
+			<TEXT class="countryinfo_type" text="Expressway" />
+		</DIV>
+		
+		<DIV> 
+			<HBOX box_align="stretch" bottom=20% >
+				<SPRITE class="speedlimit countryinfo svg" visible=(sc_SpeedLimitValid("motorway"))>
+					<TEXT class="speedlimit countryinfo" text=(sc_FormatCountryInfoSpeed("motorway")) visible=(sc_SpeedLimitValid("motorway")) />
+				</SPRITE>
+				<TEXT class="countryinfo_sign" text="n/a" visible=(!sc_SpeedLimitValid("motorway")) />				
+			</HBOX>	
+			<TEXT class="countryinfo_type" text="Motorway" />
+		</DIV>
+	</TABLE>
+</element_template>
+		
+<userlist lm_countryInfoEmergencyPhone icon="int" name="wstr" emergencynumber="wstr" emergencynumber_value="wstr" countrycode="wstr" countrycode_value="wstr">
+	<row 	icon=%other.country_info.list[current].flag_icon
+			name=%other.country_info.list[current].highlighted_name 
+			emergencynumber=(translate(m_i18n("Emergency Number"))) 
+			emergencynumber_value=%other.country_info.list[current].emergency_number 
+			countrycode=(translate(m_i18n("Phone Country Code"))) 
+			countrycode_value=%other.country_info.list[current].country_code />	
+</userlist>
+
+<element_template et_countryInfoEmergencyPhone>
+	<HBOX class="countryinfo_container" box_align="stretch">
+		<SPRITE class="listitem flag bg" >
+			<SPRITE class="listitem flag" iconid=%*.icon />
+		</SPRITE>
+		
+		<VBOX class="countryinfo">
+			<TEXT   class="listitem country_name" text=%*.name />
+			<BOX class="listitem countryinfo">
+				<HBOX class="countryinfo">
+					<TEXT   class="listitem countryinfo" text=%*.emergencynumber />
+					<TEXT   class="listitem countryinfo value" text=%*.emergencynumber_value />
+				</HBOX>
+				
+				<HBOX class="countryinfo">
+					<TEXT   class="listitem countryinfo" text=%*.countrycode />
+					<TEXT   class="listitem countryinfo value" text=%*.countrycode_value />
+				</HBOX>
+			</BOX>
+		</VBOX>
+	</HBOX>
+	
+</element_template>
+
+<userlist lm_countryInfoTrafficLawList text="wstr" iconphase="int" visible="bool">
+	<view visibility_filter=visible />
+	<row text=(translated_format( m_i18n( "Maximum blood alcohol content: %s permille" ), %other.country_info.list[current].alcohol)) iconphase=0 visible=(%other.country_info.list[current].alcohol) />
+	<row text=(translate("Visibility vest required."))            iconphase=1  visible=(%other.country_info.list[current].vest) />
+	<row text=(translate("Fire extinguisher required."))          iconphase=2  visible=(%other.country_info.list[current].exting) />
+	<row text=(translate("Headlights must be on at all times."))  iconphase=3  visible=(%other.country_info.list[current].light) />
+	<row text=(translate("Spare bulbs required."))                iconphase=5  visible=(%other.country_info.list[current].sparebulb) />
+	<row text=(translate("First aid kit required."))              iconphase=6  visible=(%other.country_info.list[current].first_aid_kit) />
+	<row text=(translate("Warning triangle required."))           iconphase=7  visible=(%other.country_info.list[current].warning_triangle) />
+	<row text=(translate("Helmets required for motorcyclists."))  iconphase=8  visible=(%other.country_info.list[current].motorcycle_helmet) />
+	<row text=(translate("Snow chains required in winter."))      iconphase=9  visible=(%other.country_info.list[current].snow_chains_mandatory) />
+	<row text=(translate("Snow chains recommended in winter."))   iconphase=9  visible=(%other.country_info.list[current].snow_chains_recommended) />
+	<row text=(translate("Winter tyres required in winter."))     iconphase=10 visible=(%other.country_info.list[current].winter_tyres_mandatory) />
+	<row text=(translate("Winter tyres recommended in winter."))  iconphase=10 visible=(%other.country_info.list[current].winter_tyres_recommended) />
+</userlist>
+
+<element_template et_TrafficLaw>
+	
+	<HBOX class="listitem r2l">
+		<SPRITE class="listitem svg" img="icon_countryinfo_smallicons.svg" phase=%*.iconphase />
+		<TEXT   class="listitem icon trafficlaw" textmodel_wstr="*.text" />
+	</HBOX>
+</element_template>
+
+<element_template et_TravelCountryInfo>
+	<BUTTON class="listitem"  onrelease=sc_TravelCountryInfo_OnRelease>
+		<HBOX class="listitem">
+			<SPRITE class="listitem country_flag bg" >
+				<SPRITE class="listitem country_flag" iconmodel="*.flag_icon" />
+			</SPRITE>
+			<TEXT class="listitem icon travelcountryinfo" text=%*.highlighted_name />
+			<SPACER flex=1 />
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_CountryInfoList z=30>
+	<DIV class="list">
+		<SECTIONMARKER/>
+		
+		<LIST2 lst_CountryInfoList class="list_control" SMOOTHSCROLLING>
+			<HEADER class="inputcontrol">
+				<USE_LAYER class=fill layer=(States.CurrentState.InputControlLayer) LAYER_Z=32 />
+			</HEADER>
+			<LISTMODEL lst_countryInfo listmodel="other.country_info.filtered_list" element_template="et_TravelCountryInfo" /> 
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+		
+		<EMPTYLISTTEXT visible=( !%other.country_info.filtered_list.size ) />
+		
+		<layer>
+			<DIV class="list">
+				<SPRITE class="panel list input" />
+			</DIV>
+		</layer>		
+	</DIV>
+</layer>
+
+
+<layer ui_MapSidePanel_CountryInfo z=99980 visible=( !%lua.DragMode && !%lua.MenuIsOpened && !%navigation.is_in_simulation )>
+	<implementation>
+		<property CountryFlag value=-1 />
+	</implementation>	
+	
+	<DIV class="cockpit">
+		<DIV class="map_messagebox">
+			<SPRITE class="map_messagebox svg country_info bg" left=0 top=8% right=0 bottom=60%>
+				<SPRITE class="map_messagebox svg country_info" left=2 top=2 right=2 bottom=2 iconid=(CountryFlag) iconindex=2 />
+			</SPRITE>
+			<TEXT class="font_sec color_inf_main" left=5% right=5% top=38% h=20% z=20 align="CENTER" wordwrap=3 leading=0.95 padding=0 twolinesmall=0 text=%screen.msgbox.on_screen.first_line />
+			<DIV class="dialog_buttons">
+				<DIALOGBUTTON class="dialog 2_1 mapmsgbox" z=101 text="Yes" onrelease=sc_BorderCross_CountryInfo_OnRelease> 
+ 	       			<SPRITE class="button map fill" />
+				</DIALOGBUTTON>
+				<DIALOGBUTTON class="dialog 2_2 mapmsgbox" z=101 text="No" onrelease='gCountryChangedMsgID = sc_RemoveMapPopupById(gCountryChangedMsgID)'>
+	 	       		<SPRITE class="button map fill" />
+				</DIALOGBUTTON>
+			</DIV>
+			<SPRITE class="panel map background" alpha=(%lua.gSidePanelPopupID ? 32 : %lua.aCockpitTransparency) />
+		</DIV>
+	</DIV>
+</layer>

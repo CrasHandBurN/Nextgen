@@ -1,5 +1,5 @@
 [words]
-plugin~MyHolidays="MyHolidays: празници и хороскоп"
+plugin~MyHolidays="MyHolidays: празници и хороскоп "
 Holidays List Settings="Настройки на списъка със събития"
 Events List="Списък на събитията"
 Genocide="Геноцид"
@@ -43,7 +43,7 @@ Ascension Ortodox="Възнесение!"
 
 St. Nicholas Day="Никулден!"
 Schedryk="С Маланкой"
-
+Pokrova="Покрова"
 Kreshenie="Кръщение"
 
 Zodiac signs="Графика на зодиакалните знаци"

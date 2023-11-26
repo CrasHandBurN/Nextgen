@@ -1,0 +1,8 @@
+<userlist lm_AppsAndTools text="str" onrelease="ui" icon="str" enable="bool" visible="bool">
+	<default onrelease=undef enable=1 visible=1 />
+	<view visibility_filter=visible />
+		<row text="Picture Viewer" icon="ico_picturenavigation.svg" onrelease=sc_Go_PicturePoiList enable=( !%poi.picturepoi.is_empty ) visible=( %lua.HasPictureViewerLic ) />
+		<row text="Debugger" icon="ico_debugger.svg" onrelease='sc_NextStateAnim(st_VW_Debugger, "fade", 1, "")' visible=(Plugin.isLoaded("debugger")) />	
+		<row text="Music Player" visible=0 />
+		<row text="Unit Converter" visible=0 />
+</userlist>

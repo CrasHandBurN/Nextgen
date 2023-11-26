@@ -1,0 +1,17 @@
+<modify lm_FindMenu>
+	<insert before=History>
+		<row text="Online Search" icon="ico_onlinesearch.svg" onrelease=sc_showLocalSearch enable=( sc_checkConnectedServiceEnability( "search", %services.activate_status // 0, %services.has_activated // 0 ) ) animate=( !Plugin.isLoaded( "grp_shop" ) && ( %services.activate_status == lua.EActivationStatus.SERVICE_OPERATION_PENDING // 0 ) )/>
+	</insert>
+</modify>
+
+<modify lm_PoiSort>
+	<insert after=show_all>
+		<row text="Show All on Map" onrelease=sc_showAllPoisOnMap enable=( %poi.local_search.list.size && %poi.local_search.ready ) visible=( observe( vActiveState ); %lua.SelectedProviderType == lua.EProviderTypes.Online && !st_PointOnMap.isEntered )>
+	</insert>
+</modify>
+
+<!if condition=(Plugin.isLoaded("iqs"))/>
+	<modify lm_Online_Providers>
+		<modify element="default" visible=( %poi[ %lua.PoiSearchList ].center != "route" || st_IQS_Find_Result.isActive )/>
+	</modify>
+<!end/>

@@ -1,0 +1,195 @@
+.btn_main.iqs_change{
+	left:75%; top:20%; right:0; h:20%;
+	r2l_invert:1;
+}
+
+SPRITE.iqs_center{
+	left:0; top:20%; right:0; bottom:60%; 
+	img:iqs_center_grad;
+}
+
+SPRITE.iqs_center_list{
+	left:0; top:0; right:0; bottom:0%; 
+	img:iqs_center_grad;
+}
+
+TEXT.iqs_center_title{
+	left:0; top:0; w:10%; h:100%; 
+	align: "RIGHT"; wordwrap: 2; padding: text_padding_small;
+	r2l_invert:1;
+}
+
+TEXT.iqs_center{
+	left:10%; top:0; right:30%; bottom:0; 
+	align: "LEFT";
+	r2l_invert:1;
+}
+
+HBOX.listitem.poigroup_container.iqs {
+	paddingtop: ( sc_isPoiBranded(%*.icon_id, 2) ? 0 : 0 );
+}
+
+SPRITE.listitem.poi_group.background.iqs {
+	left:0; top:0; right:0; bottom:0; position: "absolute";
+	img: ( sc_isPoiBranded(%*.icon_id, 2) ? "poi_background.svg" : "" ); phasename: "groupbrand";
+}
+
+SPRITE.listitem.poi_group.iqs{
+	desired_w: ( sc_isPoiBranded(%*.icon_id, 2) ? brand_poi_image_w : svg_listitem_image_w );
+	desired_h: ( sc_isPoiBranded(%*.icon_id, 2) ? brand_poi_image_h : svg_listitem_image_h );
+	ZOOM: ( sc_isPoiBranded(%*.icon_id, 2) ?  "ZOOMVISIBLE" : 100%);
+	iconindex:2;
+}
+
+TEXT.top.iqs{
+	bottom: ( %lua.IQS_CenterDescription == L"" ? 0 :58%) !important;
+	valign: ( %lua.IQS_CenterDescription == L"" ? "CENTER" :"BOTTOM") !important;
+}
+
+TEXT.listitem.top.iqs{
+	bottom: ( %*.description == L"" ? 0 :58%) !important;
+	valign: ( %*.description == L"" ? "CENTER" :"BOTTOM") !important;
+}
+
+TEXT.bottom.iqs{
+	top: 58% !important;
+	align:"LEFT";
+}
+
+BUTTON.listitem.iqs_center{
+	left:0; top:listitem_h; right:0; bottom:undef; h:listitem_h;
+}
+
+BUTTON.listitem.iqs_center>VBOX.listitem{
+	paddingleft:list_padding;
+}
+
+
+LIST2.list_control.iqs_find_result{
+	top:25%;
+}
+
+SPRITE.list_panel.iqs_find_result{
+	img:"";
+}
+
+LIST2.list_control.iqs_result_category{
+	left:0;	right: ( %lua.featured_provider_id == -1 ? 0 : (PARENT.W - (PARENT.W / (%address.multi.category_list.size + 1)) * %address.multi.category_list.size)); 
+	top:0; bottom:80%; z:2; 
+	row:1; col:(%address.multi.category_list.size); 
+	reversed:(%regional.current_language.is_r2l);
+	r2l_invert:1;
+}
+
+LIST2.list_control.iqs_result_poiproviders{
+	left:0; right:0; top:0; bottom:80%; z:2; row:1; col:(%poi.logical_providers.size + 1); 
+	reversed:(%regional.current_language.is_r2l);
+	r2l_invert:1;
+}
+
+
+DIV.panel.iqs {
+	y: (main_y + (main_h /5) + panel_margin);
+	h: (main_h - (main_h /5) - panel_margin - panel_margin);
+}
+
+DIV.panel.iqs > TABLE {
+	bottom: 50%;
+	COMPACT:1;
+}
+
+DIV.panel.history {
+	x: undef; left: 0;
+	y: undef; top: 50%;
+	w: undef; right:0;
+	h: undef; bottom:0;
+}
+
+#ui_EasyFindMenu > DIV > TABLE > BUTTON > TEXT.font_main{
+	fontsize: fontsize_sec !important;
+}
+
+#ui_EasyFindMenu DIV.panel.history BUTTON > TEXT.font_main{
+	fontsize: fontsize_sec !important;
+}
+
+#et_SmartHistory > BUTTON > TEXT.font_main{
+	top:(index == 0 ? 5% : 0 ) !important;
+	bottom:(index == 0 ? 0 : 5% ) !important;
+	fontsize: fontsize_sec !important;
+}
+
+SPRITE.hint > TEXT.hint {
+	left:5%; right:5%; top:5%; bottom:5%; z:10; wordwrap:3; valign:"CENTER"; align:"CENTER";
+	padding: text_padding;
+	fontsize: fontsize_sec;
+	color: inf_hint_color;
+}
+
+INPUTTEXT.iqs 
+{
+	MAXLENGTH:30;
+}
+
+TEXT.input_text_fake.iqs{
+	color:input_empty_color;
+}
+
+#et_IQS_CategoryList TEXT{
+	desired_w: 40;
+}
+
+#et_IQS_CategoryList BOX.listitem{
+	orientation:"vertical";
+	paddingleft: 16;
+	paddingright: 16;
+}
+
+SPRITE.iqs_hint {
+	img: "spr_hint_bubble_top.bmp";
+	resize_bmp: 1;
+	w: 43%
+}
+
+SPRITE.iqs_hint.search {
+	left: 5%;
+	top: ( observe( ui_Input.isVisible ); btn_inp.Y + btn_inp.H );
+	h: 50%;
+}
+
+SPRITE.iqs_hint.center {
+	left: 55%;
+	top: ( btn_iqs_center.Y + btn_iqs_center.H );
+	h: 70%;
+}
+
+SPRITE.iqs_hint.quickbar {
+	right: btn_scroll_w;
+	top: ( lst_QuickBarInList.Y - quickbarhint_arrow_top + ( lst_QuickBarInList.W / 2 ) );
+	h: 50%;
+	img: "spr_hint_bubble_right.spr";
+}
+
+SPRITE.inputfield.svg.iqs{
+	img:"ico_reticle_inputfield.svg";
+}
+
+SPRITE.inputfield.svg.search{
+	img:(%lua.IQS_SearchCenterFilter ? "ico_reticle_inputfield.svg" : "ico_search_inputfield.svg");
+}
+
+TEXT.iqs_hint{
+	top:text_padding; bottom:text_padding; left:text_padding; right:text_padding;
+	color: btn_main_color;
+	font: "default"; fontsize: fontsize_warning;
+	align: "CENTER"; valign:"CENTER";
+	wordwrap: 6; 
+	line_break_method: "auto";
+}
+
+#ui_IQS_Hint {
+	block_focus: 1;
+}
+
+@import "~/common/ui/iqs_landscape.css" landscape;
+@import "~/common/ui/iqs_portrait.css" portrait;

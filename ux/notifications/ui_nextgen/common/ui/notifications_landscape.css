@@ -1,0 +1,10 @@
+DIV.notification_area_cockpit {
+	left: ( ui_PropLayer.ShowRouteProgress ? %gps.valid ? ( route_progress_w + diricon_w ) : route_progress_w : diricon_w ); top: 0; 
+	right: ( %lua.ShowTimeInTitle ? headerclock_w : 0 ); 
+
+}
+
+TEXT.notification_area{
+	wordwrap:2;
+
+}

@@ -61,60 +61,86 @@
 	</modify>
 <!end/>
 
-<userlist lm_Tolerance country="str" tol_value="int" alt_toltype="bool" enable="bool" visible="bool" >
-	<default enable=1 visible=1 alt_toltype=1 />
+<userlist lm_Tolerance country="str" tol_value="int" alt_toltype="bool" type="str" haspopover="bool" enable="bool" visible="bool" >
+	<default enable=1 visible=1 haspopover=1 alt_toltype=1 type="_countryTolerance" />
 	<view visibility_filter=visible />
-	<row    country="_UKR" tol_value=20 /> ;21
-	<row    country="_RUS" tol_value=20 /> ;21
-	<row    country="_AUT" tol_value=3 /> ;4
-	<row    country="_ALB" tol_value=0 /> ;-
+	<row    country="_ALB" tol_value=-1 /> ;-
 	<row    country="_AND" tol_value=5 /> ;6
-	<row    country="_BLR" tol_value=10 /> ;11
+	<row    country="_AUT" tol_value=3 /> ;4
 	<row    country="_BEL" tol_value=5 /> ;6 
-	<row    country="_BGR" tol_value=3 /> ;4 
+	<row    country="_BUL" tol_value=3 /> ;4 
 	<row    country="_BIH" tol_value=10 /> ;11 
-	<row    country="_HUN" tol_value=3 /> ;4 
-	<row    country="_GER" tol_value=3 /> ;4 
-	<row    country="_GRC" tol_value=3 /> ;4 
+	<row    country="_BLR" tol_value=10 /> ;11
+	<row    country="_CZE" tol_value=3 /> ;4 
 	<row    country="_DEN" tol_value=8 /> ;9 
 	<row    country="_ESP" tol_value=7 /> ;8 
+	<row    country="_EST" tol_value=6 /> ;7
+	<row    country="_FIN" tol_value=9 /> ;10 
+	<row    country="_FRA" tol_value=5 /> ;6 
+	<row    country="_GER" tol_value=3 /> ;4 
+	<row    country="_GRE" tol_value=3 /> ;4 
+	<row    country="_CRO" tol_value=10 /> ;11 
+	<row    country="_HUN" tol_value=3 /> ;4 
 	<row    country="_ITA" tol_value=5 /> ;6 
 	<row    country="_LAT" tol_value=10 /> ;11 
-	<row    country="_LIT" tol_value=10 /> ;11 
 	<row    country="_LIE" tol_value=3 /> ;4 
+	<row    country="_LTU" tol_value=10 /> ;11 
 	<row    country="_LUX" tol_value=3 /> ;4 
-	<row    country="_MKD" tol_value=1 /> ;2 
 	<row    country="_MDA" tol_value=9 /> ;10 
+	<row    country="_MKD" tol_value=1 /> ;2 
+	<row    country="_CRG" tol_value=0 /> ;1 
 	<row    country="_NED" tol_value=6 /> ;7 
 	<row    country="_NOR" tol_value=3 /> ;4 
 	<row    country="_POL" tol_value=10 /> ;11 
 	<row    country="_POR" tol_value=19 /> ;20 
 	<row    country="_ROM" tol_value=9 /> ;10 
-	<row    country="_SRB" tol_value=0 /> ;1 
-	<row    country="_MNE" tol_value=0 /> ;1 
-	<row    country="_SVK" tol_value=3 /> ;4 
+	<row    country="_RUS" tol_value=19 /> ;20
+	<row    country="_SER" tol_value=0 /> ;1 
 	<row    country="_SLO" tol_value=5 /> ;6 
-	<row    country="_TUR" tol_value=109 alt_toltype=0 /> ;10% !!!!!!!!!!!!!!
-	<row    country="_FIN" tol_value=9 /> ;10 
-	<row    country="_FRA" tol_value=5 /> ;6 
-	<row    country="_HRV" tol_value=10 /> ;11 
-	<row    country="_CZE" tol_value=3 /> ;4 
 	<row    country="_SUI" tol_value=3 /> ;4 
+	<row    country="_SVK" tol_value=3 /> ;4 
 	<row    country="_SWE" tol_value=3 /> ;4 
-	<row    country="_EST" tol_value=6 /> ;7
+	<row    country="_TUR" tol_value=109 alt_toltype=0 /> ;10% !!!!!!!!!!!!!!
+	<row    country="_UKR" tol_value=19 /> ;20
 </userlist>
 
-<modify lm_SpeedWarnings>
+<modify lm_SpeedWarnings onrelease_extra="ui" >
 	<modify Speed_Tolerance enable=(%warning.speedlimit_warning_visual && %lua.Tolerance_Saved_Country == "") dtooltip="Automatic tolerance is working" />
 	<modify Outside_Town_Percent enable=(%warning.speedlimit_warning_visual && !%warning.speedwarn_toltype && %lua.Tolerance_Saved_Country == "") dtooltip="Automatic tolerance is working" />
 	<modify Within_Towns_Percent enable=(%warning.speedlimit_warning_visual && !%warning.speedwarn_toltype && %lua.Tolerance_Saved_Country == "") dtooltip="Automatic tolerance is working" />
 	<modify Outside_Town_Fixed enable=(%warning.speedlimit_warning_visual && %warning.speedwarn_toltype && %lua.Tolerance_Saved_Country == "") dtooltip="Automatic tolerance is working" />
 	<modify Within_Towns_Fixed enable=(%warning.speedlimit_warning_visual && %warning.speedwarn_toltype && %lua.Tolerance_Saved_Country == "") dtooltip="Automatic tolerance is working" />
 	<insert after=Within_Towns_Fixed>
-		<row text="Country Speed Tolerance Dependencies" type="ChkOnOff" isselected="lua.Country_Speed_Tolerance" enable=(%ui.lm_OtherLocation[0].position != lua.nilGCOOR) dtooltip="Please define \"Home\"" />
+		<row text="Country Speed Tolerance Dependencies" type="QuestChkOnOff_Icon" isselected="lua.Country_Speed_Tolerance" enable=(%ui.lm_OtherLocation[0].position != lua.nilGCOOR) dtooltip="Please define \"Home\"" 
+			onrelease_extra='sc_NextStateAnim(st_countryTolerance, "fade", 1, "" )' haspopover=1 />
 		<row text="Restore to \"Home\"" haspopover=1 onrelease=VW_RestoreHomeCountryAlert enable=(%lua.Country_Speed_Tolerance) />		
 	</insert>	
 </modify>
 
 <observer Country_Speed_Tolerance value=(%lua.Country_Speed_Tolerance) ondeselect=VW_RestoreHomeCountry onchange=VW_NewToleranceSet start="NO_TRIGGER" />
 ;<observer HomeGuard model="ui.lm_OtherLocation[0].position", "lua.Country_Speed_Tolerance" onchange=VW_NewToleranceSet start="NO_TRIGGER" />
+
+<element_template et_List_countryTolerance>
+	<implementation>
+		;<property country value=( %*.country ) />
+		<property country value=( VW_GetCountryField("highlighted_name", %*.country) ) />
+		;<property flag value=( VW_Country_for_Flag(%*.country) ) />
+		<property flag value=( "icon_flags" + %*.country + ".svg" ) />
+		<property value value=( %*.alt_toltype ? towstring(%*.tol_value + 1) + translate("km") : towstring(%*.tol_value - 100 + 1) + L"%" ) />
+		
+		<property haspopover value=( %*.haspopover // 0 )>
+	</implementation>
+	
+	<BUTTON class="listitem" onrelease={sc_TravelCountryInfo_OnRelease(%*.country)}>
+		<HBOX class="listitem">
+			<SPRITE class="listitem flag" img=flag />
+			<VBOX class="listitem">
+				<TEXT class="listitem top" text=country />
+				<TEXT class="listitem bottom" text=value />
+			</VBOX>
+			
+			<SPACER class="listitem popover" visible=haspopover>
+			<SPRITE class="listitem icon popover" visible=haspopover/>
+		</HBOX>
+	</BUTTON>
+</element_template>

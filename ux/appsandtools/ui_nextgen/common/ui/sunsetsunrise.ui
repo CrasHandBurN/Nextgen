@@ -1,0 +1,50 @@
+<element_template et_SunsetSunriseElement>
+	<SPRITE class="listitem info sunsetsunrise">
+		<HBOX class="listitem sunsetsunrise_container">
+			<DIV class="listitem sunsetsunrise destination" visible=(index && index == %route.list.navigated.waypoints.list.lastindex) >
+				<HBOX class="listitem route" >
+					<SPRITE class="listitem route" />
+				</HBOX>
+				<SPRITE class="listitem icon" visible=(index) />
+			</DIV>
+			<DIV class="listitem sunsetsunrise via" visible=(index && index != %route.list.navigated.waypoints.list.lastindex) >
+				<HBOX class="listitem route" >
+					<SPRITE class="listitem route" />
+				</HBOX>
+				<SPRITE class="listitem icon" />
+			</DIV>
+			<DIV class="listitem sunsetsunrise start" visible=(!index) >
+				<HBOX class="listitem route" >
+					<SPRITE class="listitem route" />
+				</HBOX>
+				<SPRITE class="listitem icon" />
+			</DIV>
+			
+			<HBOX class="listitem sunsetsunrise">
+				<TEXT class="listitem sunsetsunrise" text=(%*.time_label.valid ? sprintf(L"%s (%s)", %*.text_label, format(L"%{time:*}", %*.time_label.time, %regional.timeformat) ) : %*.text_label)/>
+				<BOX class="listitem sunsetsunrise_time">
+					<HBOX class="sunsetsunrise_time">
+						<SPRITE class="listitem icon_list svg" img="spr_sunrise.svg" />
+						<TEXT  class="listitem sunsetsunrise_time" textmodel_time="*.sunrise.time" dayperiod=1 visible=(%*.sunrise.valid) />
+					</HBOX>
+					<HBOX class="sunsetsunrise_time">
+						<SPRITE class="listitem icon_list svg" img="spr_sunset.svg" />
+						<TEXT  class="listitem sunsetsunrise_time" textmodel_time="*.sunset.time"  dayperiod=1 visible=(%*.sunset.valid) />
+					</HBOX>
+				</BOX>
+			</HBOX>		
+		</HBOX>
+	</SPRITE>
+</element_template>
+
+<layer ui_SunsetSunriseList z=40>
+	<DIV class="list layerscroll">
+		<SECTIONMARKER class="layerscroll"/>
+		
+		<LIST2 lst_SunsetSunrise class="list_control sunsetlist" element_template="et_SunsetSunriseElement" listmodel="oasis.sunset_sunrise.list" SMOOTHSCROLLING >
+			<VSMARTSCROLL class=header>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>

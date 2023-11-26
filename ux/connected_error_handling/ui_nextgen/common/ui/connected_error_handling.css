@@ -1,0 +1,7 @@
+TEXT.separator.connected_error{
+	align: "CENTER";	
+}
+
+
+@import "~/common/ui/connected_error_handling_landscape.css" landscape;
+@import "~/common/ui/connected_error_handling_portrait.css" portrait;

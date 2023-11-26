@@ -1,0 +1,7 @@
+
+<userlist lm_TriplogSettings text="ui" type="str" isselected="str" enable="bool" details="str" onrelease="ui">
+	<default enable=1 />
+	<row text="Enable auto-saving" type="ChkOnOff" isselected="mydata.tracks.record_auto_track" />
+	<row text="Save Track Log" type="ChkOnOff" isselected="mydata.tracks.data_record" onrelease=sc_TracklogDataRecordChanged />
+	<row text=(sprintf( translate( m_i18n( "Trip database size %s bytes" ) ), %mydata.tracks.track_size_all ) ) type="Subtitle" />
+</userlist>

@@ -1,0 +1,36 @@
+UNITTEXT.route_summary_text{
+	fontsize: fontsize_main;
+    font:"defaultbd";
+    color:#ffffff;
+	paddingleft:text_padding_small; paddingright:text_padding_small;
+	align:"LEFT";
+	flex:3; can_shrink:1; box_align:"stretch";
+}
+SPRITE.route_fuel_background{
+    left:0; top:0; h:100%; w:100%; z:10;
+    bmp:"btn_green.bmp#3"; resize_bmp:1;
+}
+SPRITE.route_summary.fuelgreen{
+    bmp:"ico_green_leaf.svg";  
+}
+SPRITE.route_summary.fuelprice{
+	bmp:"ico_green_price.svg"; 	
+}
+SPRITE.route_summary.fuelusage{
+	bmp:"ico_green_fuelcons.svg";	
+}
+SPRITE.route_summary.fuelco2{
+    bmp:"ico_green_co2.svg";	    
+}
+SPRITE.route_summary.fuel_per_100{
+    img:"ico_travel.svg";	    
+}
+VBOX.route_overview_destination{
+	box_align:"stretch"; flex:1;
+	align:"CENTER";
+	paddingleft:box_padding; paddingright:box_padding;
+}
+
+@import "~/common/ui/green_landscape.css" landscape;
+@import "~/common/ui/green_portrait.css" portrait;
+

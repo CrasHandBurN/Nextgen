@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="114px"
+	 height="114px" viewBox="0 0 114 114" enable-background="new 0 0 114 114" xml:space="preserve">
+<g id="normal">
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#A6A6A6" points="46.808,92.091 59.003,23.714 73.231,23.714 
+		73.231,92.091 46.808,92.091 	"/>
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#A6A6A6" points="79.356,92.091 79.356,23.714 93.583,23.714 
+		105.781,92.091 79.356,92.091 	"/>
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#A6A6A6" points="40.709,49.859 40.709,45.837 111.852,45.837 
+		111.852,49.859 40.709,49.859 	"/>
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#A6A6A6" points="4.253,72.764 34.689,57.306 6.579,38.009 4.253,72.764 	
+		"/>
+</g>
+<g id="active">
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#A6A6A6" points="46.808,92.091 59.003,23.714 73.231,23.714 
+		73.231,92.091 46.808,92.091 	"/>
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#A6A6A6" points="79.356,92.091 79.356,23.714 93.583,23.714 
+		105.781,92.091 79.356,92.091 	"/>
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#A6A6A6" points="40.709,49.859 40.709,45.837 111.852,45.837 
+		111.852,49.859 40.709,49.859 	"/>
+	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#A6A6A6" points="4.253,72.764 34.689,57.306 6.579,38.009 4.253,72.764 	
+		"/>
+</g>
+<g id="disabled" opacity="0.6">
+	<g>
+		<g>
+			<path fill-rule="evenodd" clip-rule="evenodd" fill="#A6A6A6" d="M111.852,45.837H97.53l-3.946-22.123H79.356v22.123h-6.124
+				V23.714H59.003l-3.946,22.123H40.709v4.021H54.34l-7.532,42.232h26.423V49.859h6.124v42.232h26.425l-7.533-42.232h13.605V45.837z
+				 M4.253,72.764l30.437-15.458L6.579,38.009L4.253,72.764z"/>
+		</g>
+	</g>
+</g>
+</svg>

@@ -1,0 +1,13 @@
+DIV.notification_area_cockpit {
+	left: 0;
+	right: 0; 
+
+}
+TEXT.notification_area{
+	wordwrap:(%lua.MenuIsOpened || !st_Cockpit.isActive ? 2 : 3);
+
+}
+
+.cockpit .notify_list{
+	top:(ui_Cockpit.MapPopupOnscreen ? (map_messagebox_h + next_street_h) : (ui_Cockpit.detect_gps || %navigation.has_route || %warning.notification.notification_area.size>0 ? next_street_h : next_street_h/2 ));
+}

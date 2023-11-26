@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 17.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   x="0px"
+   y="0px"
+   width="120px"
+   height="120px"
+   viewBox="0 0 120 120"
+   enable-background="new 0 0 120 120"
+   xml:space="preserve"
+   id="svg6223"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="ico_resume.svg"><metadata
+   id="metadata6255"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><defs
+   id="defs6253" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1600"
+   inkscape:window-height="1137"
+   id="namedview6251"
+   showgrid="false"
+   inkscape:zoom="1.9666667"
+   inkscape:cx="60"
+   inkscape:cy="60"
+   inkscape:window-x="-8"
+   inkscape:window-y="-8"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="svg6223" />
+<g
+   id="Layer_2"
+   display="none">
+	<circle
+   display="inline"
+   opacity="0.5"
+   fill="#DF1F26"
+   cx="60"
+   cy="60"
+   r="60"
+   id="circle6226" />
+	<rect
+   x="6.5"
+   y="6.5"
+   display="inline"
+   opacity="0.5"
+   fill="#3B4FA1"
+   width="107"
+   height="107"
+   id="rect6228" />
+</g>
+<g
+   id="normal">
+	<g
+   id="g6231">
+		<g
+   id="g6233">
+			<path
+   fill-rule="evenodd"
+   clip-rule="evenodd"
+   fill="#3A3A3A"
+   d="M60,6.5C30.453,6.5,6.5,30.453,6.5,60     c0,29.547,23.953,53.5,53.5,53.5s53.5-23.953,53.5-53.5C113.5,30.453,89.547,6.5,60,6.5z M87.095,61.912l-38.27,25.505     c-2.349,1.566-5.495-0.118-5.495-2.942V35.524c0-2.762,3.026-4.457,5.382-3.014l38.27,23.447     C89.182,57.305,89.243,60.481,87.095,61.912z"
+   id="path6235"
+   style="fill:#008000" />
+		</g>
+	</g>
+</g>
+
+
+</svg>

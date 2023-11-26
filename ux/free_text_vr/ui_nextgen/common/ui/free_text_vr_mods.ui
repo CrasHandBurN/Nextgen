@@ -1,0 +1,146 @@
+<!DISABLE COMPAT_UPCASE_ATTR_SELECTOR/>
+
+<modify ui_SideList>
+	<remove VRButton/>
+	<insert first_child after="BUTTON" into="TABLE">
+		;<BUTTON CLASS="btn_map" ONRELEASE=sc_VRButton_OnRelease ONLONGCLICK=sc_IQS_VR_onrelease ENABLE=(%lua.VRAvailable) VISIBLE=(!%navigation.is_in_simulation && vVROn)>
+		<BUTTON CLASS="btn_map" ONRELEASE=sc_IQS_VR_onrelease ONLONGCLICK=sc_VRButton_OnRelease ENABLE=(%lua.VRAvailable) VISIBLE=(!%navigation.is_in_simulation && vVROn) DTOOLTIP=(m_i18n("Please select the other TTS voice profile from the regional setting menu for enabling the VR option.\nFor example: you need to select - Lang Russian and Voice TTS Russian"))>
+			<SPRITE CLASS="button map fill"/>
+			<SPRITE CLASS="btn_map svg" IMG="ico_voicerecognition_map.svg"/>
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify ui_Cockpit>
+	<remove VRButton/>
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		;<BUTTON CLASS="btn_map" ONRELEASE=sc_VRButton_OnRelease ONLONGCLICK=sc_IQS_VR_onrelease ENABLE=(%lua.VRAvailable) VISIBLE=(!%navigation.is_in_simulation && vVROn)>
+		<BUTTON CLASS="btn_map" ONRELEASE=sc_IQS_VR_onrelease ONLONGCLICK=sc_VRButton_OnRelease ENABLE=(%lua.VRAvailable) VISIBLE=(!%navigation.is_in_simulation && vVROn) DTOOLTIP=(m_i18n("Please select the other TTS voice profile from the regional setting menu for enabling the VR option.\nFor example: you need to select - Lang Russian and Voice TTS Russian"))>
+			<SPRITE CLASS="button map fill"/>
+			<SPRITE CLASS="btn_map svg" IMG="ico_voicerecognition_map.svg"/>
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row visible=( !%navigation.is_in_simulation && vVROn ) />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row	visible=( !%navigation.is_in_simulation && vVROn ) />
+	</insert>
+</modify>
+
+<modify lm_QuickMenu  enable="bool" vr_enable="bool">
+	<insert>
+	;	<row icon="ico_vr.svg"  onrelease=sc_VRButton_OnRelease enable=(%lua.VRAvailable) visible=(!%navigation.is_in_simulation && vVROn) />
+		<row icon="ico_vr.svg"  onrelease=sc_VRButton_OnRelease visible=(!%navigation.is_in_simulation && vVROn && %lua.VRAvailable) />
+	</insert>
+</modify>
+
+<modify et_ListFakeInp>
+	<insert after="TEXT.input_text_fake">
+		<SPRITE CLASS="inputfield svg" ALIGN="right" ONRELEASE=sc_IQS_VR_onrelease IMG="ico_voicerecognition_input.svg" VISIBLE=(st_FindMenu.isActive && %lua.VRAvailable && vVROn )/>
+	</insert>
+</modify>
+
+<!if condition=(Plugin.isLoaded("vr"))>
+	<modify lm_IQS_SearchProgress >
+		<modify element="row:last-child" visible=(%lua.IQS_ResultListType == "ProviderFilter" && !%poi.IQS_provider_hack.ready && !%lua.VRTextMultipleCityResults) />
+	</modify>
+
+	<modify lm_VR_footer_pointonmap>
+		<remove element="row:last-child" />
+		<insert last_child>
+			<row text="Add Waypoint"  vrtext="VRTEXT_add waypoint" onrelease='gSkipRouteSummary = true MODEL.lua.RoutePlanType = ERoutePlanType.StopoverVR hook_StartRoutePlanning:trigger()' onvr_activate='gSkipRouteSummary = true MODEL.lua.RoutePlanType = ERoutePlanType.StopoverVR hook_StartRoutePlanning:trigger()' enable=(!%map.cursor.is_waypoint && %navigation.has_route) vr_enable=(!%map.cursor.is_waypoint && %navigation.has_route)/>
+		</insert>
+		<modify element="row[text=Go]" enable=1 vr_enable=1 />
+	</modify>
+<!end/>
+
+<!if condition=(Plugin.isLoaded("iqs"))>
+	<modify ui_IQS_Find>
+		<modify element = "BUTTON.listitem.iqs_center" VISIBLE = ( ( lua.E_IQS_SearchSetup.CityID != lua.qWord_0 ) && !st_IQS_VR_Find.isActive ) />
+	</modify>
+
+
+	<modify et_IQS_ResultList_Junction>
+		<insert>
+			<IMPLEMENTATION>
+				<PROPERTY listRowCount VALUE=(!%*._vlist.is_grabbed ? listpos - %*._vlist.first_visible_index + 1 : "-") />
+			</IMPLEMENTATION>
+		</insert>
+		<insert first_child into="HBOX" >
+			<TEXT CLASS="listitem vr rowcount" TEXT=(listRowCount) />
+		</insert>
+	</modify>
+	
+	<modify et_IQS_ResultList_Street>
+		<insert>
+			<IMPLEMENTATION>
+				<PROPERTY listRowCount VALUE=(!%*._vlist.is_grabbed ? listpos - %*._vlist.first_visible_index + 1 : "-") />
+			</IMPLEMENTATION>
+		</insert>
+		<insert first_child into="HBOX" >
+			<TEXT CLASS="listitem vr rowcount" TEXT=(listRowCount) />
+		</insert>
+	</modify>
+	
+	<modify et_IQS_ResultList_POI>
+		<insert>
+			<IMPLEMENTATION>
+				<PROPERTY listRowCount VALUE=(!%*._vlist.is_grabbed ? listpos - %*._vlist.first_visible_index + 1 : "-") />
+			</IMPLEMENTATION>
+		</insert>
+		<insert first_child into="HBOX" >
+			<TEXT CLASS="listitem vr rowcount" TEXT=(listRowCount) />
+		</insert>
+	</modify>
+	
+	<modify et_IQS_ResultList_PoiCategory>
+		<insert>
+			<IMPLEMENTATION>
+				<PROPERTY listRowCount VALUE=(!%*._vlist.is_grabbed ? listpos - %*._vlist.first_visible_index + 1 : "-") />
+			</IMPLEMENTATION>
+		</insert>
+		<insert first_child into="HBOX" >
+			<TEXT CLASS="listitem vr rowcount" TEXT=(listRowCount) />
+		</insert>
+	</modify>
+	
+	<modify et_IQS_ResultList_Favourites>
+		<insert>
+			<IMPLEMENTATION>
+				<PROPERTY listRowCount VALUE=(!%*._vlist.is_grabbed ? listpos - %*._vlist.first_visible_index + 1 : "-") />
+			</IMPLEMENTATION>
+		</insert>
+		<insert first_child into="HBOX" >
+			<TEXT CLASS="listitem vr rowcount" TEXT=(listRowCount) />
+		</insert>
+	</modify>
+	
+	<modify et_IQS_ResultList_History>
+		<insert>
+			<IMPLEMENTATION>
+				<PROPERTY listRowCount VALUE=(!%*._vlist.is_grabbed ? listpos - %*._vlist.first_visible_index + 1 : "-") />
+			</IMPLEMENTATION>
+		</insert>
+		<insert first_child into="HBOX" >
+			<TEXT CLASS="listitem vr rowcount" TEXT=(listRowCount) />
+		</insert>
+	</modify>
+
+	<modify et_IQS_ResultList_Gcoor>
+		<insert>
+			<IMPLEMENTATION>
+				<PROPERTY listRowCount VALUE=(!%*._vlist.is_grabbed ? listpos - %*._vlist.first_visible_index + 1 : "-") />
+			</IMPLEMENTATION>
+		</insert>
+		<insert first_child into="HBOX" >
+			<TEXT CLASS="listitem vr rowcount" TEXT=(listRowCount) />
+		</insert>
+	</modify>	
+<!end/>

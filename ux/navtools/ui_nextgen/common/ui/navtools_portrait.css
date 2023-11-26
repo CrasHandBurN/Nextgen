@@ -1,0 +1,56 @@
+
+
+TABLE.countryinfo_speedlimits {
+	row:2; col:2;
+}
+
+BOX.countryinfo{
+	orientation:"vertical";
+	flex:0;
+}
+
+TEXT.icon.listitem.travelcountryinfo, TEXT.listitem.country_name{
+	line_break_method:"auto"; leading:0.8;
+}
+
+
+
+
+DIV.gps_graph{
+	left:5%;
+	right:5%;
+	top:0;
+	bottom:47%;
+}
+
+DIV.gps_radar{
+	left:0;
+	right:0;
+	top:56%;
+	bottom:0;	
+}
+
+HBOX.GPSStatus_radar{
+	paddingright:0;
+}
+
+HBOX.GPSStatus_satnum{
+	top:6%; h:7%;
+}
+
+LIST2.GPSStatus_bars, TABLE.GPSStatus_bars{
+	top: (%lua.ShowGlonass ? 14% : 20%);
+	h: (%lua.ShowGlonass ? 31% : 60%);
+}
+
+LIST2.GPSStatus_bars.glonass, TABLE.GPSStatus_bars.glonass{
+	top:56%; h:31%;
+}
+
+HBOX.GPSStatus_satnum.glonass{
+	top:48%;
+}
+
+DIV.GPSStatus_information{
+	top:86%; bottom:0;
+}

@@ -1,0 +1,5 @@
+<modify lm_FindMenu>
+	<insert before=Places>
+		<row Address text="Address" icon="ico_address.svg" onrelease=sc_TriggerAddressSearch/>
+	</insert>
+</modify>

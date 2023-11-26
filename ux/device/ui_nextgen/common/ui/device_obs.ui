@@ -1,0 +1,6 @@
+<observer event="BATTERY_LOW_EVENT" onchange=hook_BatteryLow start="NO_TRIGGER">
+<observer event="BATTERY_CRITICAL_EVENT" onchange=hook_BatteryCritical start="NO_TRIGGER">
+<observer event="SHUTDOWN_BY_CRITICAL_BATTERY_EVENT" onchange=sc_ShutdownOnCriticalBattery start="NO_TRIGGER">
+<observer event="POWER_ON_AC_EVENT" onchange=sc_OnAC start="NO_TRIGGER">
+<observer event="POWER_ON_BATTERY_EVENT" onchange=sc_OnBattery start="NO_TRIGGER">
+<observer value=(%power.shutdown_in_progress) onchange=sc_ShutdownInProgressChange start="NO_TRIGGER">

@@ -1,0 +1,2 @@
+<observer event="HIGHWAY_INFO_ITEM_RESULT_READY" onchange='hook_HwyFilterList:trigger()' start>
+<observer model="other.highway_drive.list" onchange='hook_HwyFilterList:trigger()' start>

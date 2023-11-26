@@ -1,0 +1,16 @@
+<modify lm_UsefulInformation>
+	<insert>
+		<row SunriseSunset prio=1000 text="Sunrise & Sunset" icon="ico_Sunsetandrise.svg" onrelease='sc_NextStateAnim( st_SunsetSunrise, "fade", 1, "")' />
+		<row AppsAndTools prio=1002 text="Applications and Tools" icon="ico_applications.svg" onrelease=sc_AppsAndToolsOnrelease />
+	</insert>
+</modify>
+/*
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp="ico_picturenavigation.svg" text=(translate("Picture Viewer")) onrelease=sc_Go_PicturePoiList enable=( !%poi.picturepoi.is_empty ) visible=( %lua.HasPictureViewerLic ) /> 
+		</insert>
+	</modify>
+<!end/>
+*/

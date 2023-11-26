@@ -1,0 +1,32 @@
+<modify ui_Header>
+	<insert into="HBOX.header">
+		<BUTTON CLASS="header" ONRELEASE=sc_ShowNotifications ENABLE=(%warning.notification.notification_list.size && !(%lua.WizardModeActive || %lua.EulaIsVisible) && !(%lua.IsStartlang))>
+			<SPRITE CLASS="header icon svg" IMG="ico_header_notification.svg">
+				<TEXT CLASS="header notification_unread" TEXT=%lua.UnreadCount VISIBLE=((%lua.UnreadCount > 0) && !(%lua.WizardModeActive || %lua.EulaIsVisible) && !(%lua.IsStartlang)) />
+			</SPRITE>
+		</BUTTON>																
+	</insert>																	    
+</modify>
+
+<modify ui_HeaderCockpit>
+	<insert into="HBOX.header">
+		<BUTTON CLASS="header" ONRELEASE=sc_ShowNotifications ENABLE=(%warning.notification.notification_list.size)>
+			<SPRITE CLASS="header icon svg" IMG="ico_header_notification.svg">
+				<TEXT CLASS="header notification_unread" TEXT=%lua.UnreadCount VISIBLE=((%lua.UnreadCount > 0)) />
+			</SPRITE>
+		</BUTTON>																
+	</insert>																	    
+</modify>
+
+<modify ui_Cockpit>
+	<insert into="#div_cockpit_top">
+		<DIV CLASS="notification_area_cockpit">
+			<BUTTON BTN_NOTIFICATION_COCKPIT CLASS="notification_area cockpit" ONRELEASE=sc_Notification_Area_Onrelease >
+				<SPRITE CLASS="notification_area cockpit" />
+				<TEXT CLASS="notification_area cockpit" TEXT=(sc_GetNotificationAreaText(%warning.notification.notification_area)) />
+			</BUTTON>
+		</DIV>
+	</insert>
+</modify>
+
+

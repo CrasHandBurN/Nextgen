@@ -1,0 +1,7 @@
+SPRITE.inputfield{
+	h:(listitem_h + (st_IQS_Find.isActive || st_IQS_VR_Find.isActive || st_IQS_Center.isActive ? listitem_h : 0 ) + ( ui_PoiSearchCenter.isVisible ? listitem_h : 0));
+}
+
+#lst_IQS_VR_ResultList, LIST2.list_control {
+	top:( (st_IQS_VR_Find.isActive ? listitem_h : 0 ) + ( ui_Input.isVisible ? listitem_h : 0 ) + ( ui_PoiSearchCenter.isVisible ? listitem_h : 0) + ( ui_QuickBar.isVisible ? ( ui_Input.isVisible || ui_MapHeader_prop.isVisible ? quickbar_h : (quickbar_h + quickbar_top)) : header_overlap_h) );
+}

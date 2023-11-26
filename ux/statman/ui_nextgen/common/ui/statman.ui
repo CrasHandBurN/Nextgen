@@ -1,0 +1,8 @@
+<observer obs_DayCounter value=( %gps.current_date ) onchange=sc_statCheckDayCounter />
+<observer obs_HwyDriveTimer value=( %other.highway_drive.enabled ) onchange=sc_statHwyDriveTimer />
+<observer obs_MutedWithRoute value=( %navigation.has_route && !%lua.ptp_navigation && ( %sound.voice_muted || %sound.master_muted ) ) onselect=sc_statStartMutedTimer ondeselect=sc_statStopMutedTimer />
+<observer obs_StatVehicleChange value=( %route.list.navigated.settings.vehicle_type ) onchange=sc_statCheckVehicleDistance />
+<observer obs_StatViewMode value=( %lua.vEasyViewMode ) onchange=sc_statViewModeChange />
+<observer obs_StatWithRouteTimer value=( %gps.speed && %navigation.has_route ) onselect=sc_statStartWithRouteTimer ondeselect=sc_statStopWithRouteTimer />
+<observer obs_StatWithoutRouteTimer value=( %gps.speed && !%navigation.has_route ) onselect=sc_statStartWithoutRouteTimer ondeselect=sc_statStopWithoutRouteTimer />
+<observer obs_StatWeatherAutoDownload value=( %lua.QueryWeather && %lua.OnlineWeatherEnabled ) onchange=sc_statWeatherAutoDownload />

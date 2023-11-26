@@ -1,0 +1,7 @@
+<!if condition=(Plugin.isLoaded("Help"))/>
+	<modify lm_AboutList >
+		<insert after=Statistics>
+			<row netstat text="Network Statistics"  onrelease=sc_netstat_onrelease visible=(%exists:network.stats.list && %network.supported) enable=(!%network.stats.list.isempty) />
+		</insert>
+	</modify>
+<!end/>

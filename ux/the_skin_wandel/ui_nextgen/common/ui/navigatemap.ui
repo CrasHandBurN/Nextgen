@@ -147,7 +147,7 @@
 				</TABLE>
 	  		</DIV>
 		</DIV>	
-		<DIV div_cockpit_top class="fill" onrelease='MODEL.navigation.force_say_next_command()' z=100>
+		<DIV div_cockpit_top class="fill" z=100 > ;onrelease='MODEL.navigation.force_say_next_command()'
 			<DIV class="next_street" visible=( !( navigation_suspended && %navigation.has_route || %warning.notification.notification_area.size > 0) && detect_gps )>
 				<SPRITE class="panel map" z=10 />
 				<HBOX class="fill detect_gps">		

@@ -1,0 +1,298 @@
+<userlist lm_localmenu_IQSSort text="str" onrelease="ui" enable="bool" selected="bool" type="str">
+	<default type="Selection">
+	<row    text="Sort by Name"      onrelease='sc_IQS_ResultSortBy("name")'		enable=(%lua.IQS_ResultListType == "POI_Container_Result" || (%lua.SelectedProviderType == lua.EProviderTypes.Onboard )) selected=( (%lua.IQS_SortBy == "name" || %lua.IQS_ResultListType == "POI_Container_Result") && %lua.SelectedProviderType == lua.EProviderTypes.Onboard ) />
+	<row    text="Sort by Distance"  onrelease='sc_IQS_ResultSortBy("distance")'	enable=(%lua.IQS_ResultListType != "POI_Container_Result" && (%lua.SelectedProviderType == lua.EProviderTypes.Onboard )) selected=( (%lua.IQS_SortBy == "distance" && %lua.IQS_ResultListType != "POI_Container_Result") && %lua.SelectedProviderType == lua.EProviderTypes.Onboard ) />
+</userlist>
+
+<userlist lm_IQS_SearchProgress visible="bool">
+	<view visibility_filter=visible />
+	<row visible=(!%address.multi.category_list[current].ready && %lua.IQS_ResultListType != "ProviderFilter" ) />
+	<row visible=(%lua.IQS_ResultListType == "ProviderFilter" && !%poi.IQS_provider_hack.ready) />
+</userlist>
+
+<element_template et_IQS_SearchLocation>
+	<BUTTON class="listitem" onrelease=sc_IQS_SelectNewSearchCenter>
+		<VBOX class="listitem">
+			<TEXT class="listitem top" wordwrap=1 text=%*.name_highlighted />
+			<TEXT class="listitem bottom" wordwrap=1 text=%*.description />
+		</VBOX>
+	</BUTTON>  
+</element_template>
+
+<layer ui_IQS_Center z=32>
+	<implementation>
+		<property no_result value=( %address.multi.location_result_ready && !%address.multi.filtered_list.size && %address.multi.name_filter ) />
+	</implementation>
+	
+	<DIV class="list">
+		<BUTTON class="button_input iqs quickbar" z=9 onrelease=sc_IQS_ChangeBackToAddressInput>
+			<HBOX class="inputfield">
+				<SPRITE class="inputfield svg search" align="left" />
+				<TEXT class="input_text_fake" text=%lua.IQS_SavedInput wordwrap=1 />
+			</HBOX>
+		</BUTTON>
+	</DIV>
+	
+	<DIV class="list">
+		
+		<LIST2 lst_IQS_Center class="list_control iqs_center" SMOOTHSCROLLING>
+			<SECTIONMARKER/>
+			<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_IQS_Searching" visible=( !%address.multi.location_result_ready ) />
+			<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_TemplateList" text=%lua.IQS_CenterName details=%lua.IQS_CenterDescription onrelease='PREVSTATE()' visible=( !inp_Input.VALUE ) />
+			<LISTMODEL listmodel="address.multi.list" element_template="et_TemplateList" text=%*.name_highlighted details=%*.description onrelease=sc_IQS_SelectNewSearchCenter />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+		
+		<EMPTYLISTTEXT visible=( %address.multi.list.isempty && %address.multi.location_result_ready && inp_Input.VALUE ) />
+	</DIV>
+</layer>
+
+<layer ui_IQS_Find z=31>
+	<DIV class="list">
+		<BUTTON btn_iqs_center class="button_input iqs fake" onrelease=sc_IQS_ChangeSearchCenter >
+			<HBOX class="inputfield">
+				<SPRITE class="inputfield svg iqs" align="left" />
+				<TEXT class="input_text_fake" text=%lua.IQS_CenterInputName wordwrap=1 />
+			</HBOX>
+		</BUTTON>
+		
+		<BUTTON class="listitem iqs_center" onrelease=sc_IQS_GotoCityCenter visible=( lua.E_IQS_SearchSetup.CityID != lua.qWord_0 )>
+			<SECTIONMARKER/>
+			
+			<VBOX class="listitem">
+				<TEXT class="listitem top" text=( sprintf( translate(m_i18n( "%s city center" )), %lua.IQS_CenterName ) ) />
+				<TEXT class="listitem bottom" text=%lua.IQS_CenterDescription />
+			</VBOX>
+		</BUTTON>
+	</DIV>
+</layer>
+
+<layer ui_IQS_Hint z=10115 visible=( %lua.IQS_ShowHint )>
+	<DIV class="full iqs_hint">
+		<SPRITE class="fill" opaque=1 z=0 onrelease='MODEL.lua.IQS_ShowHint = false' />
+		
+		<SPRITE spr_iqs_hint_search class="iqs_hint search">
+			<TEXT class="iqs_hint search" text="Enter the search keywords e.g. '34 Main st' or 'pizza' here." />
+		</SPRITE>
+		
+		<SPRITE spr_iqs_hint_center class="iqs_hint center">
+			<TEXT class="iqs_hint center" text="The search is carried out around this town. Enter e.g. MUN, or GER MUN for Munich, Germany." />
+		</SPRITE>
+	</DIV>
+</layer>
+
+<layer ui_IQS_HintFade type="fade" alpha=26 color=#000000 z=10110 visible=( %lua.IQS_ShowHint || %lua.IQS_ShowQuickbarHint ) />
+
+<layer ui_IQS_QuickbarHint z=10115 visible=( %lua.IQS_ShowQuickbarHint )>
+	<DIV class="full iqs_hint">
+		<SPRITE class="fill" opaque=1 z=0 onrelease='MODEL.lua.IQS_ShowQuickbarHint = false' />
+		<SPRITE spr_iqs_hint_quickbar class="iqs_hint quickbar">
+			<TEXT class="iqs_hint quickbar" text="Tap to see results by destination type" />
+		</SPRITE>
+	</DIV>
+</layer>
+
+<element_template et_IQS_CategoryList>
+	<BUTTON class="listitem quickbar" onrelease='hook_QuickBarOnrelease:trigger( sc_IQS_FilterCategoryList )' >
+		<DIV class="fill">
+			<BOX class="listitem">
+				<SPACER flex=1 />
+				<DIV box_align="STRETCH" flex=2 visible=(%*.type != lua.E_IQS_CategoryTypes.All) >
+					<SPRITE class="listitem svg icon_list"  z=100 iconid=(sc_GetIQSCategoryIcon(%*.type)) visible=(%*.type != lua.E_IQS_CategoryTypes.All) />
+					<SPRITE class="icon_center"   z=100 bmp="ico_google.bmp" visible=(%*.original_name == "Google") />
+				</DIV>
+				<TEXT box_align="STRETCH" flex=2 class="font_sec textpadding_small_left r2l" text=%*.name visible=(%*.type == lua.E_IQS_CategoryTypes.All) />
+				<SPACER flex=1 />
+				<VBOX box_align="STRETCH" flex=2>
+					<TEXT box_align="CENTER" class="fill font_sec textpadding_small r2l" text=(%*.type != lua.E_IQS_CategoryTypes.All ? %*.items_count : %address.multi.category_list[0].items_count // 0) visible=(%*.ready) />
+					<SPRITE class="searchprogress" box_align="CENTER" z=120 align="CENTER" visible=(!%*.ready) />
+				</VBOX>
+				<SPACER flex=1 />
+			</BOX>
+			<SPRITE class="quickbar_selection fill" />
+		</DIV>
+	</BUTTON>
+</element_template>
+
+<element_template et_IQS_CategoryList_qbp>
+	<BUTTON class="listitem qbp" onrelease='hook_QuickBarOnrelease:trigger( sc_IQS_FilterCategoryList )'>
+		<HBOX class="listitem qbp">
+			<SPRITE class="listitem qbp searchprogress" visible=( !%*.ready ) />
+			<SPRITE class="listitem qbp" iconid=(sc_GetIQSCategoryIcon(%*.type)) visible=( %*.ready ) />
+			<VBOX class="listitem">
+				<TEXT class="listitem qbp top" text=%*.name />
+				<TEXT class="listitem qbp bottom" text=(%*.type != lua.E_IQS_CategoryTypes.All ? %*.items_count : %address.multi.category_list[0].items_count // 0) visible=(%*.ready) />
+			</VBOX>
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+
+<element_template et_IQS_POIProviderFilter_APP>
+	<BUTTON class="listitem quickbar" left=0 top=0 right=0 bottom=0 onrelease='hook_QuickBarOnrelease:trigger( function() sc_IQS_SetPoiProviderFilter( MODEL["*"].id() ) end )'  >
+		<DIV class="fill">
+			<VBOX class="listitem" desired_w=(CSS.Param.quickbar_item_w)>
+				<SPRITE class="quickbar_icon poi_provider" iconmodel="*.icon_id" />
+				<TEXT class="textpadding" text=%*.friendly_name visible=(%*.icon_id == -1) />
+			</VBOX>
+			<SPRITE class="quickbar_selection fill" />
+		</DIV>
+	</BUTTON>
+</element_template>
+
+<element_template et_IQS_POIProviderFilter_APP_qbp>
+	<BUTTON class="listitem qbp" onrelease='hook_QuickBarOnrelease:trigger( function() sc_IQS_SetPoiProviderFilter( MODEL["*"].id() ) end )'>
+		<HBOX class="listitem qbp">
+			<SPRITE class="listitem qbp" iconid=%*.icon_id />
+			<TEXT class="listitem qbp" text=%*.friendly_name />
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+
+
+
+<element_template et_IQS_Searching>
+	<SPRITE class="listitem info">
+		<VBOX class="listitem progress">
+			<TEXT class="listitem progress" text="Search in progress..." />
+			<SPRITE class="searchprogress wide" />
+		</VBOX>
+	</SPRITE>
+</element_template>
+
+
+
+<element_template et_IQS_ResultList_/>
+
+<element_template et_IQS_ResultList_Junction>
+	<BUTTON class="listitem" onrelease=sc_IQS_Select_Item>
+		<HBOX class="listitem">
+			<SPRITE class="listitem svg icon_list" iconid=(sc_GetIQSCategoryIcon(lua.E_IQS_CategoryTypes.Junction)) />
+			<VBOX class="listitem">
+				<TEXT class="listitem icon top" wordwrap=1 text=%*.override_name />
+				<TEXT class="listitem icon bottom"  wordwrap=1 text=%*.description />
+			</VBOX>
+		</HBOX>
+	</BUTTON>	
+</element_template>
+
+<element_template et_IQS_ResultList_Street>
+	<BUTTON class="listitem" onrelease=sc_IQS_Select_Item>
+		<HBOX class="listitem">
+			<SPRITE class="listitem svg icon_list" iconid=(sc_GetIQSCategoryIcon( %*.subtype == "City" ? lua.E_IQS_CategoryTypes.Mixed : lua.E_IQS_CategoryTypes.Address)) />
+			<VBOX class="listitem">
+				<TEXT class="listitem icon top" wordwrap=1 text=%*.name_highlighted />
+				<TEXT class="listitem icon bottom"  wordwrap=1 text=%*.description />
+			</VBOX>
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<element_template et_IQS_ResultList_POI>
+	<implementation>
+		<property show_dist_on_route value=(%*.distance_on_route.valid && %navigation.has_route) />
+		<property is_on_move         value=(%navigation.car.current_speed > 6) />
+		<property poi_direction      value=(direction(%navigation.car.position, %*.position, is_on_move ? %navigation.car.heading : 0) * 360.0 / 4096 ) />
+	</implementation>
+	
+	<BUTTON class="listitem" onrelease=sc_IQS_Select_Item>
+		<HBOX class="listitem">
+			<HBOX class="listitem poi_container">
+				<SPRITE class="listitem icon_list poi background" />
+				<SPRITE class="listitem icon_list svg poi" iconid=%*.icon />
+				<SPRITE class="listitem poi_provider_overlay" iconid=%*.provider_icon />
+			</HBOX>
+			
+			<VBOX class="listitem">
+				<TEXT class="listitem icon top" text=%*.highlighted_name />
+				<TEXT class="listitem icon bottom" text=(%address.multi.phone_search ? %*.phone : %*.address.long_format) />
+			</VBOX>
+			
+			<SPACER flex=1 />
+			
+			<BOX class="listitem detour" >
+				<SPRITE class="listitem svg" image_h=undef iconmodel="*.detour_icon" iconindex=0 />
+				<DISTTEXT class="listitem detour" text=(!show_dist_on_route && %*.detour_length.valid && %navigation.has_route ? "+" : "") distance=(show_dist_on_route ? %*.distance_on_route : %*.distance) />
+			</BOX>
+			
+		</HBOX>
+	</BUTTON>
+	
+</element_template>
+
+<element_template et_IQS_ResultList_PoiCategory>
+	<BUTTON class="listitem" onrelease=sc_IQS_Select_POIContainer>
+		<HBOX class="listitem">
+			<HBOX class="listitem poigroup_container iqs">
+				<SPRITE class="listitem icon_list poi_group background iqs" />
+				<SPRITE class="listitem poi_group iqs" iconid=%*.icon_id iconindex=3 />
+			</HBOX>
+			
+			<VBOX class="listitem">
+				<TEXT class="listitem icon top" text=(%*.highlightable ? (%address.multi.highlight(%*.override_name)) : %*.override_name) />
+				<TEXT class="listitem icon bottom" text=(sc_GetPoiPath(%*.poicontainer_index)) />
+			</VBOX>
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<element_template et_IQS_ResultList_Favourites>
+	<BUTTON class="listitem" onrelease=sc_IQS_Select_Item>
+		<HBOX class="listitem">
+			<SPRITE class="listitem svg" iconid=%*.icon iconindex=2 />
+			<TEXT class="font_main bd listitem icon" wordwrap=1 text=(%*.highlightable ? (%address.multi.highlight(%*.highlighted_name)) : %*.highlighted_name) clipstyle="LEFT" />
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<element_template et_IQS_ResultList_History>
+	<BUTTON class="listitem" onrelease=sc_IQS_Select_Item>
+		<HBOX class="listitem">
+			<SPRITE class="listitem svg icon_list" iconid=(sc_GetIQSCategoryIcon(lua.E_IQS_CategoryTypes.History)) />
+			<TEXT class="listitem icon history" text=(%*.highlightable ? (%address.multi.highlight(%*.override_name)) : %*.override_name) />
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<element_template et_IQS_ResultList_Gcoor>
+ 	<BUTTON class="listitem icon" onrelease=sc_IQS_Select_Item>
+		<HBOX class="listitem">
+			<SPRITE class="listitem svg icon_list" iconid=(sc_GetIQSCategoryIcon(lua.E_IQS_CategoryTypes.Address)) />
+			<TEXT class="font_main bd listitem icon" wordwrap=2 text=%*.override_name />
+		</HBOX>			
+	</BUTTON>
+</element_template>
+
+
+<layer ui_IQS_Find_Result visible=( %lua.SelectedProviderType == lua.EProviderTypes.Onboard ) z=30>
+	<DIV class="list">
+		<SECTIONMARKER />
+		<LIST2 lst_IQS_ResultList class="list_control" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.lm_IQS_SearchProgress"     element_template="et_IQS_Searching" />
+			<LISTMODEL class="separator" listmodel="ui.lm_Dummy" element_template="et_Separator" TEXT=(sc_GetIQSCategoryName(%address.multi.category_filter, %lua.IQS_ResultListType,%lua.IQS_POIProviderID)) />
+			<LISTMODEL listmodel="address.multi.filtered_list"  element_template="et_IQS_ResultList_" TEMPLATE_TYPE_MODEL="*.type"  visible=( %lua.IQS_ResultListType != "ProviderFilter" ) />
+			<LISTMODEL listmodel="poi.IQS_provider_hack.list"	element_template="et_POIItemList"								    visible=( %lua.IQS_ResultListType == "ProviderFilter" ) />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+		<EMPTYLISTTEXT visible=((%address.multi.category_list[current].ready && !%address.multi.category_list[current].items_count) || (%lua.IQS_ResultListType == "ProviderFilter" && %poi.IQS_provider_hack.ready && !%poi.IQS_provider_hack.count)) />
+    </DIV>
+</layer>
+
+<layer ui_IQS_POIFlatSearch z=30 visible=( %lua.SelectedProviderType == lua.EProviderTypes.Onboard )>
+	<DIV class="list">
+		<LIST2 lst_IQSPoiFlat class="list_control" SMOOTHSCROLLING>
+			<SECTIONMARKER/>
+			<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_POI_Searching" visible=( !%poi.flat_search.ready ) />
+			<LISTMODEL listmodel="poi.flat_search.list" element_template="et_POIItemList" />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+		<EMPTYLISTTEXT text=( !st_IQS_Find_Result.isEntered ? sprintf( translate(m_i18n( "No matching results: %s" )), %lua.PoiSearchCenterName ) : m_i18n( "No matching results" ) ) visible=( %poi.flat_search.ready && !%poi.flat_search.list.size ) />
+	</DIV>
+</layer>

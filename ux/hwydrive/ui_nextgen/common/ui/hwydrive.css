@@ -1,0 +1,115 @@
+#et_HighwaySettings SPRITE.listitem{
+	image_w:svg_listitem_image_w; image_h:svg_listitem_image_h;
+}
+
+.cockpit>.map_messagebox>.hwy_panel{
+	left:0;
+	right:0;
+	top:0;
+	bottom:0; 
+	row:3;
+	valign:"CENTER";
+	REVERSED: 1;
+}
+
+BOX.hwy_container{align:"CENTER"; box_align:"center";}
+HBOX.hwy_element{
+	flex:1; box_align:"stretch"; paddingleft:0; paddingright:0;
+}
+
+BOX.hwy_container>BUTTON.panel.map.fill{
+	img:"btn.bmp#3";
+	resize_bmp:1;
+}
+
+HBOX.hwy_element>VBOX{
+	box_align:"center"; can_shrink:0;
+}
+
+HBOX.hwy_element>VBOX>DISTTEXT{
+	paddingleft:0; paddingright:0;
+	box_align:"center";
+	align:"CENTER"; valign:"CENTER";
+}
+
+HBOX.hwy_element>VBOX>TEXT,
+HBOX.hwy_element>VBOX>TIMESPANTEXT{
+	fontsize:fontsize_hwy_element_time !important;
+	box_align:"center";
+	align:"CENTER"; valign:"CENTER";
+	z:10;
+}
+
+BOX.hwy_element.icons{
+	paddingleft:0; paddingright:0;
+	box_align:"center"; 
+	visible:(origlist->has_poi_category0 || origlist->has_poi_category1 || origlist->has_poi_category2 || origlist->has_poi_category3 );
+}
+
+BOX.hwy_element.icons>HBOX.svg{
+	paddingleft:0; paddingright:0; box_align:"stretch";
+}
+
+BOX.hwy_element.icons>HBOX>SPRITE.hwy_element.svg{
+	left:0; top:0; w:100%; h:100%; align:"center"; box_align:"center";
+	max_h:svg_hwy_element_icon_h;
+}
+
+BOX.hwy_container>#txtHWInfoTxt{
+	font: default; box_align:"center";
+}
+
+SPRITE.hwy_msgbox_background.svg{
+	left:0; top:0;  h:100%; w:100%; z:20;
+	img:"spr_hwy_messagebox_bg.svg";
+	align:"CENTER"; valign:"CENTER";
+}
+
+BOX.hwy_container>SPRITE>#txtHWInfoTxt{
+	left:0; top:0; bottom:0; right:0;
+	fontsize:fontsize_sec;
+	align:"center"; valign:"center";
+}
+
+BOX.hwy_container>BUTTON.panel.map.fill{
+	img:"btn_hwy_element_panel.bmp#3";
+	resize_bmp:1;
+}
+
+.cockpit>.map_messagebox>.background{
+	img:"spr_hwy_panel.svg";
+}
+
+.cockpit>.map_messagebox>.hwy_panel{
+	bottom:hwy_panel_bottom; 
+}
+
+BOX.hwy_container{
+	left:(index == 0 ? hwy_container_indent_cat0 : (index == 1 ? hwy_container_indent_cat1 : hwy_container_indent_cat2 ));
+	top:hwy_container_top;
+	bottom:(index == 0 ? 0 : hwy_container_bottom);
+	right:(index == 0 ? hwy_container_indent_cat0 : (index == 1 ? hwy_container_indent_cat1 : hwy_container_indent_cat2 ));
+	box_align:"STRETCH";
+	paddingleft:4;
+	paddingright:4;
+}
+
+HBOX.hwy_element{
+	paddingleft:box_padding;
+	paddingright:box_padding;
+	paddingtop:box_padding_small;
+	paddingbottom:box_padding_small;
+	flex:0;
+}
+
+SPRITE.hwy_element_header{
+	desired_w:undef;
+	desired_h:hwy_header_h;
+	z:100;
+	img:hwy_element_header_grad;
+	box_align:"stretch";
+}
+
+
+@import "~/common/ui/hwydrive_landscape.css" landscape;
+@import "~/common/ui/hwydrive_portrait.css" portrait;

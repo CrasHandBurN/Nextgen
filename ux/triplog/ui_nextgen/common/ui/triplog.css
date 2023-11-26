@@ -1,0 +1,95 @@
+
+DIV.tripinfoprofileheader{
+	top: 0; left:0; right:0; h: tripinfo_panel_header;
+}
+
+DISTTEXT.tripinfo.header, TIMESPANTEXT.tripinfo.header {
+	flex:0; box_align:"stretch";
+}
+
+BOX.tripinfo_header {
+	box_align:"STRETCH"; flex:1;
+	paddingleft: list_padding; 
+}
+
+
+HBOX.tripinfo {
+	box_align:"STRETCH"; flex:1;
+}
+
+CHECKBOX.btn_main.tripinfo {
+	box_align:"STRETCH";
+	paddingleft: button_padding; paddingright: button_padding;
+}
+
+SPRITE.panel.tripinfo {
+	left:margin_top; top:margin_top; right:margin_top; bottom:margin_top; 
+	img: tripinfo_panel_grad;
+}
+
+LIST2.list_control.tripcolor {
+	cellh: (menuitem_h);
+}
+
+RADIO.tripcolor_selector{
+	left:0; top:0; right:0; bottom:0;
+	img:"btn.bmp#3";
+	resize_bmp:1;
+}
+
+SPRITE.tripcolor_selector{
+	 left:tripcolor_padding; top:tripcolor_padding_small; right:tripcolor_padding; bottom:tripcolor_padding_small; z:110;
+	 resize_bmp:1; 
+	 img:"spr_tracklogcolors.spr";
+	 align:"CENTER"; valign:"CENTER";
+}
+
+SPRITE.tripinfo.svg{
+	top:0;bottom:0;left:0;right:0;
+	image_w: svg_listitem_image_w; image_h: svg_listitem_image_h;
+	align:"CENTER"; valign:"CENTER";
+}
+
+TEXT.tripinfo{
+	r2l_invert: 1;
+	color: btn_main_color; color2: btn_main_color2; color3: btn_main_color3;
+	font: "defaultbd"; fontsize: fontsize_main;
+	align: "LEFT"; valign:"CENTER";
+	box_align:"STRETCH";
+	paddingleft:( list_padding );
+	FLEX:1;
+}
+
+SPRITE.triprecord.svg{
+	top:0;left:0;w:100%;h:100%;
+	align:"CENTER"; valign:"CENTER"; box_align:"stretch"; 	
+	image_w:svg_triprecord_image_w;
+}
+
+TEXT.listitem.bottom.triprecord{
+	paddingleft:text_padding_small;
+}
+
+VBOX.pinch_zoom{
+	box_align:"stretch";
+	top:tripinfo_panel_header;
+	right:(tripinfo_panel_size - triplog_zoom_button_w);
+}
+
+VBOX.pinch_zoom>BUTTON{
+	box_align:"stretch"; z:50;
+	desired_h:triplog_zoom_button_h;
+	left:0; right:0; top:0; bottom:0;
+}
+
+CHART.triplog{
+	left: (triplog_zoom_button_w + tripinfo_panel_margin); top: tripinfo_panel_header; right:tripinfo_panel_margin; bottom: tripinfo_panel_margin;
+}
+
+SPRITE.btn_main.zoomin, SPRITE.btn_main.zoomout{
+	left:0; right:0; top:0; bottom:0; z:51; align:"CENTER";
+	image_w:svg_map_button_image_w; image_h:svg_map_button_image_h;
+}
+
+@import "~/common/ui/triplog_landscape.css" landscape;
+@import "~/common/ui/triplog_portrait.css" portrait;

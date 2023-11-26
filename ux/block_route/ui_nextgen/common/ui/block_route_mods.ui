@@ -1,0 +1,27 @@
+;------------ WANDEL™ ---- 05.02.2021 --------
+<modify ui_Cockpit_DragMode>
+	<insert into="#DragModeLeft_buttons">
+		<BUTTON CLASS="btn_map inbox" ONRELEASE=btn_AvoidRouteAhead_Onrelease ONLONGCLICK=btn_AvoidSpecRoad_Onrelease VISIBLE=(%navigation.has_route)> 			
+			<SPRITE CLASS="button map fill" />
+		 	<SPRITE CLASS="btn_map svg" IMG="ico_roadavoid.svg" />
+		</BUTTON>
+ 		<BUTTON CLASS="btn_map inbox" ONRELEASE={%lua.wBlockValid == -2 ? sc_wcursortoofarMSG() : (%lua.wBlockValid == -1 ? sc_LMBlockRoad() : sc_wDeleteSegmentMSG())} ONLONGCLICK={%lua.wBlockValid == -1 ? sc_LMBlockRoad_lc() : sc_LMBlockRoadCurrentUsage()} > 			
+			<SPRITE CLASS="button map fill" />
+ 		 	<SPRITE CLASS="btn_map svg" IMG=(%lua.wBlockValid == -2 ? "ico_configureblockedroads.svg" : (%lua.wBlockValid == -1 ? "ico_blockedroads_add.svg" : "ico_blockedroads_dell.svg")) />
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify lm_QuickMenu enabled="bool">
+	<insert after=MapMode>
+		<row  onrelease=sc_wBlockRoute icon="ico_blockedroads_add.svg" enable=(!%navigation.is_in_simulation && !%route.list.navigated.off_road) />
+		<row  onrelease=sc_SetBlockedRoads icon="ico_configureblockedroads.svg" enabled=(%mydata.blocked_roads.list.lastindex >= 0 && !%route.list.navigated.off_road) visible=(!%route.list.navigated.off_road) />
+	</insert>
+</modify>
+
+<modify lm_LocalMenuCockpit enabled="bool">
+	<insert after=show_cursor_position> 
+		<row text="Blocking with Direction" onrelease=sc_wBlockRoute enable=(!%navigation.is_in_simulation && !%route.list.navigated.off_road) />
+		<row text="Configure Blocked Roads" onrelease=sc_SetBlockedRoads enabled=(%mydata.blocked_roads.list.lastindex >= 0 && !%route.list.navigated.off_road) visible=(!%route.list.navigated.off_road) />
+	</insert>
+</modify>

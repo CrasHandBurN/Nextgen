@@ -1,0 +1,10 @@
+<svg viewBox="0 0 800 480">
+<radialGradient id="SVGID_1_" cx="402" cy="785" r="417.00479" gradientTransform="matrix(1 0 0 1 0 -320)" gradientUnits="userSpaceOnUse">
+	<stop offset="0" style="stop-color:#466A92"/>
+	<stop offset="0.10133" style="stop-color:#3F6287"/>
+	<stop offset="0.49462" style="stop-color:#28485F"/>
+	<stop offset="0.80787" style="stop-color:#1A3847"/>
+	<stop offset="1" style="stop-color:#15323E"/>
+</radialGradient>
+<rect fill="url(#SVGID_1_)" width="800" height="480"/>
+</svg>

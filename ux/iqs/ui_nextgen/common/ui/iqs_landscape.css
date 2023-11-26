@@ -1,0 +1,14 @@
+.button_input{
+	left:(st_IQS_Center.isActive ? 50% : 0); 
+	right:(st_IQS_Find.isActive ? 50% : ( %lua.SmallInput ? ( st_OpenKeyboardForSaveFavorite.isActive ? 20% : 40%) : ( 0 ) ) ); 
+	
+}
+
+.button_input.iqs{
+	left:(st_IQS_Center.isActive ? 0 : 50%); 
+	right:(st_IQS_Find.isActive ? 0 : 50%); 
+}
+
+LIST2.list_control.iqs_center {
+	top: listitem_h;
+}

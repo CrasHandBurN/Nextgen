@@ -1,0 +1,96 @@
+<modify ui_PropLayer>
+	<insert into="IMPLEMENTATION">
+		<PROPERTY VrAvailable VALUE=(%exists:vr && %vr.engine_available)/>
+		<PROPERTY WeatherLocationEntered VALUE=(Plugin.isLoaded( "weather" ) ? st_WeatherLocations.isEntered : 0 )>
+		<PROPERTY FuelPriceMenuEntered VALUE=(Plugin.isLoaded( "fuel_prices" ) ? st_FuelPricesMenu.isEntered : 0)>
+	</insert>
+</modify>
+
+<modify lm_Settings>
+	<insert after="default">
+		<row prio=700 text="Voice recognition" icon="ico_voicerecognition.svg" onrelease=sc_VRSettings/>
+	</insert>
+</modify>
+
+<modify ui_SideList>
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON VRButton CLASS="btn_map" ONRELEASE=sc_VRButton_OnRelease VISIBLE=(vVROn) ENABLE=(%lua.VRAvailable)>
+	       	<SPRITE CLASS="button map fill">
+			<SPRITE CLASS="btn_map vr icon svg">
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify ui_Cockpit>
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON  VRButton CLASS="btn_map" ONRELEASE=sc_VRButton_OnRelease VISIBLE=(vVROn) ENABLE=(%lua.VRAvailable)>
+	       	<SPRITE CLASS="button map fill">
+			<SPRITE CLASS="btn_map vr icon svg">
+		</BUTTON>
+	</insert>
+</modify>
+
+<!if condition=(Plugin.isLoaded("address_search_classic"))/>
+	<modify ui_FindAddress>
+	  <insert into="DIV.list">
+		<SPRITE CLASS="actionpanel vr" VISIBLE=(ui_PropLayer.VrAvailable && !st_PoiSearchCenter.isEntered && !ui_PropLayer.WeatherLocationEntered && !ui_PropLayer.FuelPriceMenuEntered )>
+			<VBOX CLASS="vrbutton">
+				;<BUTTON CLASS="action vr" ONRELEASE=sc_IQS_VR_onrelease >
+				<BUTTON CLASS="action vr" ONRELEASE=sc_VRAddress_onrelease >
+					<SPRITE CLASS="vr icon svg">
+				</BUTTON>
+			</VBOX>
+		</SPRITE>		
+	  </insert>  
+	</modify>
+<!end/>
+
+<modify ui_MessageBox>
+	<modify element="DIV.full" VISIBLE=(%lua.VRStatus == lua.eVRStatus.inactive || %lua.VRStatus == lua.eVRStatus.click)/>
+	<insert>
+		<DIV CLASS="full" VISIBLE=(%lua.VRStatus != lua.eVRStatus.inactive && %lua.VRStatus != lua.eVRStatus.click)>
+			<SPRITE CLASS="messagebox_cover">
+			<DIV CLASS="messagebox">
+				<SPRITE CLASS="messagebox vr">
+			
+				<HBOX CLASS="vr_messagebox_header">
+					<SPRITE CLASS="vr_messagebox header_bg">
+					<SPRITE CLASS="vr_header statusico">
+					<TEXT CLASS="vrprompt" TEXT=(vVRTitlePrompt)>
+				</HBOX>
+				
+				<DIV CLASS="messagebox_panel">
+					<VBOX CLASS="messagebox_text vr">
+						<TEXT   CLASS="messagebox_first_line color_inf_main vr"  TEXT=%screen.msgbox.on_screen.first_line>
+						<SPACER class="messagebox_text">
+						<TEXT   CLASS="messagebox_second_line color_inf_main vr" TEXT=%screen.msgbox.on_screen.second_line>
+					</VBOX>
+
+					<DIALOGBUTTON CLASS="dialog 1_1" ICONSPR=( showIcons ? %screen.msgbox.on_screen.button_icon_filename(1) : "" ) TEXT=(%screen.msgbox.on_screen.button_caption(1)) VISIBLE=(%screen.msgbox.on_screen.number_of_buttons == 1) ONRELEASE='sc_VRModeToClick() MODEL.screen.msgbox.on_screen.button_released(1)' RAWKEY=(1 == %screen.msgbox.on_screen.number_of_buttons ? 27 : 0 )>
+															 
+					<DIALOGBUTTON CLASS="dialog 2_1" ICONSPR=( showIcons ? %screen.msgbox.on_screen.button_icon_filename(1) : "" ) TEXT=(%screen.msgbox.on_screen.button_caption(1)) VISIBLE=(%screen.msgbox.on_screen.number_of_buttons == 2) ONRELEASE='sc_VRModeToClick() MODEL.screen.msgbox.on_screen.button_released(1)' RAWKEY=(1 == %screen.msgbox.on_screen.number_of_buttons ? 27 : 0 )>
+					<DIALOGBUTTON CLASS="dialog 2_2" ICONSPR=( showIcons ? %screen.msgbox.on_screen.button_icon_filename(2) : "" ) TEXT=(%screen.msgbox.on_screen.button_caption(2)) VISIBLE=(%screen.msgbox.on_screen.number_of_buttons == 2) ONRELEASE='sc_VRModeToClick() MODEL.screen.msgbox.on_screen.button_released(2)' RAWKEY=27>
+															 
+					<DIALOGBUTTON CLASS="dialog 3_1" ICONSPR=( showIcons ? %screen.msgbox.on_screen.button_icon_filename(1) : "" ) TEXT=(%screen.msgbox.on_screen.button_caption(1)) VISIBLE=(%screen.msgbox.on_screen.number_of_buttons == 3) ONRELEASE='sc_VRModeToClick() MODEL.screen.msgbox.on_screen.button_released(1)' RAWKEY=(1 == %screen.msgbox.on_screen.number_of_buttons ? 27 : 0 )>
+					<DIALOGBUTTON CLASS="dialog 3_2" ICONSPR=( showIcons ? %screen.msgbox.on_screen.button_icon_filename(2) : "" ) TEXT=(%screen.msgbox.on_screen.button_caption(2)) VISIBLE=(%screen.msgbox.on_screen.number_of_buttons == 3) ONRELEASE='sc_VRModeToClick() MODEL.screen.msgbox.on_screen.button_released(2)' RAWKEY=27>
+					<DIALOGBUTTON CLASS="dialog 3_3" ICONSPR=( showIcons ? %screen.msgbox.on_screen.button_icon_filename(3) : "" ) TEXT=(%screen.msgbox.on_screen.button_caption(3)) VISIBLE=(%screen.msgbox.on_screen.number_of_buttons == 3) ONRELEASE='sc_VRModeToClick() MODEL.screen.msgbox.on_screen.button_released(3)' RAWKEY=0>
+
+				</DIV>
+			</DIV>
+		</DIV>
+		<DIV VRTEXT=(%screen.msgbox.on_screen.button_asrtext(1) || undef) ONVR_ACTIVATE='MODEL.screen.msgbox.on_screen.button_released(1)'/>
+		<DIV VRTEXT=(%screen.msgbox.on_screen.button_asrtext(2) || undef) ONVR_ACTIVATE='MODEL.screen.msgbox.on_screen.button_released(2)'/>
+		<DIV VRTEXT=(%screen.msgbox.on_screen.button_asrtext(3) || undef) ONVR_ACTIVATE='MODEL.screen.msgbox.on_screen.button_released(3)'/>
+	</insert>
+</modify>
+
+<modify et_VoiceList>
+	<insert after=countryflag_voicelist_bg>
+		<SPRITE CLASS="icon svg vrcapable"/>
+	</insert>
+</modify>
+
+<modify ui_MapHeader_Avoid>
+	<modify element="TEXT.mapheader.avoid.prev" TEXT="QUANTITY~Less"/>
+	<modify element="TEXT.mapheader.avoid.next" TEXT="QUANTITY~More"/>
+</modify>

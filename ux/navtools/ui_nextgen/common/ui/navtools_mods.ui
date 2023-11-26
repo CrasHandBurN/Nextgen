@@ -1,0 +1,7 @@
+<modify lm_UsefulInformation>
+	<insert>
+		<row CountryInformation prio=800  text="Country Information" icon="ico_countryinformation.svg" onrelease='sc_NextStateAnim( st_Travel_CountryInfoList, "fade", 1, "")'/>
+		<row GPSInformation		prio=1100 text="GPS Information" 	 icon="ico_gpsinfo.svg"            onrelease='sc_NextStateAnim( st_GpsStatus, "fade", 1, "")' enable=( %gps.connection_status < 4) visible=( sc_GetSysEntry( "interface", "has_gps_info", 1 ) )/>
+  </insert>
+</modify>
+

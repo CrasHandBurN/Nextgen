@@ -1,0 +1,6 @@
+<observer obs_VRStatusChanged value=(%lua.VRStatus) onchange=sc_VRStatusChanged START="NO_TRIGGER">
+<observer obs_FlatSearchFinishedVR boolmodel="poi.vr_search.ready" onselect='sc_VRListenReadOutListModePOI() obs_FlatSearchFinishedVR:STOP()'>
+<observer obs_FindPlacesVR value=(%lua.VRStatus != lua.eVRStatus.inactive && %poi.accomodation_search.ready && %poi.parking_search.ready && %poi.petrol_search.ready && %poi.restaurant_search.ready) onselect=sc_FindPlacesVRSearchFinished>
+<observer value=(%exists:vr && %vr.engine_available) onchange=sc_VREngineAvailableChanged start>
+<observer event="VOICE_CHANGED_EVENT" onchange=sc_VREngineAvailableChanged start>
+<observer obs_MessageBoxTalking boolmodel="sound.speech.is_say_bool" onselect=sc_MessageBoxTalk_onselect ondeselect=sc_MessageBoxTalk_ondeselect START="NO_TRIGGER">

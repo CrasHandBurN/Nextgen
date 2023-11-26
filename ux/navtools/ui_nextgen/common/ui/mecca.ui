@@ -1,0 +1,48 @@
+<layer ui_MeccaCompass z=40>
+	<DIV class="cockpit">
+		<DIV class="drag_compass" left=12% right=72% top=12%>
+			<SPRITE  class=fill z=80 bmp="mapdrag_compass_btn.bmp#3" align="CENTER" valign="CENTER"> 
+			<SPRITE  class="fill rotatecompass icon svg" rotate=(%map.primary.rotate * 360.0 / 4096)>
+		</DIV>
+	</DIV>
+</layer>
+
+<layer ui_MeccaPointer z=35>
+	
+	<implementation>
+		<property mecca_direction value=((spheric_bearing(%lua.MeccaPosition, %navigation.car.position) + %navigation.car.heading + 4096) mod 4096)/> 
+		<property is_on_move      value=(1)/>
+	</implementation>
+	<DIV class="full">
+		<SPRITE left=0 right=0 top=10% bottom=0 align="CENTER" bmp="bg_mecca.bmp"/>
+		<SPRITE left=0 right=0 top=0   bottom=0 align="CENTER" bmp="mecca_arrow.bmp#32" phase=(mecca_direction/128) visible=(is_on_move)>
+	</DIV>
+	<DIV class="list">
+		<BUTTON class="mecca" onrelease=sc_ShowMeccaDirection>
+			<TEXT class="mecca" text="Direction On Map"/>
+		</BUTTON>
+	</DIV>
+</layer>  
+
+<layer ui_MeccaDirection z=35>
+	
+	<implementation>
+		<property mecca_direction value=(spheric_bearing(%lua.MeccaPosition, %navigation.car.position))/>
+		<property is_on_move      value=(1)/>
+	</implementation>
+	<DIV class="full">
+		<SPRITE class=fill align="CENTER" bmp="mecca_arrow.bmp#32" phase=(mecca_direction/128)/>
+	</DIV>
+	<DIV class="list">
+		<BUTTON class="mecca" onrelease=sc_ShowMeccaPointer enable=( is_on_move ) overmaplayer>
+			<TEXT class="mecca" text="Show Direction Compared To Heading"/>
+		</BUTTON>
+	</DIV>
+</layer> 
+
+<modify lm_UsefulInformation>
+	<insert>
+		<row prio=700 text="Qibla Compass" icon="ico_mecca.svg"              onrelease=sc_ShowMecca enable=( %navigation.car.position.valid && %lua.MeccaEnabled) visible=(!%lua.IsDemoMode && %lua.MeccaEnabled)/>
+  </insert>
+</modify>
+ 

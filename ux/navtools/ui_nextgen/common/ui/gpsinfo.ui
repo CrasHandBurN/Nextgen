@@ -1,0 +1,128 @@
+<layer ui_GPSStatus z=30>
+	<observer model="gps.satellites" onchange=sc_GpsListGlonass START>
+	<implementation>
+		<property accuracy value=( %gps.valid ? %gps.accuracy : "NONE")>
+		<property utc_time value=(%gps.valid && %gps.time.valid ? (%other.format_time_dayperiod(%gps.time, (%regional.timeformat==2 ? 0 : 1), 1)) : "Unavailable")>
+	</implementation>
+	<DIV class="main">
+	
+			<DIV class="gps_graph">
+				<LIST2 class="GPSStatus_bars">
+					<LISTMODEL listmodel="ui.lm_GpsSatellites" element_template="et_GPSStatus_bar" />
+					<LISTMODEL listmodel="gps.sbas_satellites" element_template="et_GPSStatus_DGPS_bar" />
+					<LISTMODEL listmodel="ui.lm_emptygpsstatusbar" element_template="et_GPSStatus_empty" />
+				</LIST2>
+				
+				<LIST2 class="GPSStatus_bars glonass" visible=(%lua.ShowGlonass)>
+					<LISTMODEL listmodel="ui.lm_GpsSatellitesGlonass" element_template="et_GPSStatus_bar"/>
+					<LISTMODEL listmodel="ui.lm_emptygpsstatusbar" element_template="et_GPSStatus_empty" />
+				</LIST2>
+				
+				<HBOX class="GPSStatus_satnum">
+					<SPRITE class="svg sats" img="sat.svg" />
+					<TEXT class="font_info color_inf_main" align="RIGHT" text=(%lua.ShowGlonass ? m_i18n("GPS:") : m_i18n("Available Satellites:")) />
+					<TEXT class="font_info color_inf_main" align="LEFT" text=(%lua.ShowGlonass ? %lua.SatellitesAvailable : %gps.satellites_in_view) />
+				</HBOX>
+				
+				<HBOX class="GPSStatus_satnum glonass" visible=(%lua.ShowGlonass)>
+					<SPRITE class="svg sats" img="sat_glonass.svg" />
+					<TEXT class="font_info color_inf_main" align="RIGHT" text="GLONASS:" />
+					<TEXT class="font_info color_inf_main" align="LEFT" text=(%lua.SatellitesAvailableGlonass) />
+				</HBOX>
+				
+				<DIV class="GPSStatus_information">
+					<VBOX>
+						<HBOX class="gps_status">
+							<TEXT class="font_info color_inf_main" paddingright=0 text="Accuracy:">
+							<TEXT class="font_info color_inf_sec"  text=accuracy>
+						</HBOX>
+						<HBOX class="gps_status">
+							<TEXT class="font_info color_inf_main" text="GPS UTC Time:">
+							<TEXT class="font_info color_inf_sec" text=utc_time>
+						</HBOX>
+					</VBOX>
+				</DIV>
+			</DIV>
+
+			<DIV div_GPSStatus_radar class="gps_radar">
+				<HBOX class="GPSStatus_radar">
+					<SPRITE class="GPSStatus container"> 
+						<DIV div_GPSStatus_sats class="GPSStatus_satellites">
+							<LIST2 left=0 top=0 w=100% h=100% col=1 cellh=1>
+								<LISTMODEL listmodel="ui.lm_GpsSatellites" element_template="et_GPSStatus" />
+								<LISTMODEL listmodel="ui.lm_GpsSatellitesGlonass" element_template="et_GPSStatus" />
+								<LISTMODEL listmodel="gps.sbas_satellites" element_template="et_GPSStatus" />
+							</LIST2>
+							<DIV class="GPSStatus_cardinal">
+								<TEXT class="font_main color_inf_main gps_info" left=45% top=0%  w=10% h=10% padding=0 align="CENTER" valign="CENTER" z=3 text="GECOOR_N"  >
+								<TEXT class="font_main color_inf_main gps_info" left=0%  top=45% w=10% h=10% padding=0 align="CENTER" valign="CENTER" z=3 text="GECOOR_W"  >
+								<TEXT class="font_main color_inf_main gps_info" left=45% top=90% w=10% h=10% padding=0 align="CENTER" valign="CENTER" z=3 text="GECOOR_S"  >
+								<TEXT class="font_main color_inf_main gps_info" left=90% top=45% w=10% h=10% padding=0 align="CENTER" valign="CENTER" z=3 text="GECOOR_E"  >
+							</DIV>
+						</DIV>
+					</SPRITE>
+				</HBOX>
+			</DIV>			
+
+			<layer>
+				<DIV class="main">
+					<DIV class="gps_radar" z=2>
+						<HBOX class="GPSStatus_radar">
+							<SPRITE class="GPSStatus container">
+								<SPRITE class="GPSStatus_bg"/> 
+							</SPRITE>
+						</HBOX>								
+					</DIV>
+				</DIV>
+			</layer>
+			
+	</DIV>
+</layer>
+<userlist lm_GPSStatus_footer text="str" onrelease="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1/>
+	<view visibility_filter=visible />
+	<row text="Show Glonass" isactionbutton=1 onrelease={invert(%lua.ShowGlonass)} visible=(!%lua.ShowGlonass)>
+	<row text="Only GPS" isactionbutton=1 onrelease={invert(%lua.ShowGlonass)} visible=(%lua.ShowGlonass)>
+</userlist>
+
+<userlist lm_GpsSatellites prn="int" valid="bool" used="bool" egnos="bool" waas="bool" snr="int" azimuth="int" elevation="int" posx="int" posy="int"/> 
+<userlist lm_GpsSatellitesGlonass prn="int" valid="bool" used="bool" egnos="bool" waas="bool" snr="int" azimuth="int" elevation="int" posx="int" posy="int"/>
+	
+<userlist lm_emptygpsstatusbar>
+	<row >
+	<row >
+	<row >
+	<row >
+	<row >
+	<row >
+	<row >
+	<row >
+	<row >
+	<row >
+	<row >
+	<row >
+</userlist>
+
+<element_template et_GPSStatus>
+	<implementation>
+		<property satposition_x value=((%*.posx + 100) / 2) />
+		<property satposition_y value=((%*.posy + 100) / 2) />
+	</implementation>
+    <SPRITE class="GPSStatus_sats">
+</element_template>
+
+<element_template et_GPSStatus_bar visible=(index<(12 - %gps.sbas_satellites.size))>
+    <SPRITE class="GPSStatus_bar">
+	<TEXT class="GPSStatus_bar font_info bd color_inf_sec" text=%*.prn>
+	<SPRITE class="GPSStatus_bar background">
+</element_template>
+
+<element_template et_GPSStatus_DGPS_bar>
+    <SPRITE class="GPSStatus_bar">
+	<TEXT class="GPSStatus_bar font_info bd color_inf_sec" text=%*.prn>
+	<SPRITE class="GPSStatus_bar background">
+</element_template>
+
+<element_template et_GPSStatus_empty>
+	<SPRITE class="GPSStatus_bar background">
+</element_template>

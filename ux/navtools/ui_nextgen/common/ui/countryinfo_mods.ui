@@ -1,0 +1,14 @@
+
+<!if condition=(Plugin.isLoaded("ttspro"))>
+	<modify lm_SoundSettings>
+		<insert after="default">
+			<row prio=1300 text="Announce Country Info" type="ChkOnOff" isselected="lua.ReadOutCountryInfo" enable=(sc_ReadOutCountryInfoSupported(%regional.voices.index) && %regional.current_voice.is_tts // 0)/>
+		</insert>
+	</modify>
+<!end/>
+
+<modify lm_LocalMenu_WhereAmI>
+	<insert last_child>
+		<row country_info text="Country Information" onrelease=sc_CountryInfo_SelectCurrentCountry/>
+	</insert>
+</modify>

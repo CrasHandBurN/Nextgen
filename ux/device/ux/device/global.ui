@@ -1,0 +1,9 @@
+import "~/common/ui/device.ui"
+import "~/common/ui/device.lua"
+
+import "~/common/ui/device_mods.ui"
+
+import "~/common/ui/device_hooks.lua"
+import "~/common/ui/device_obs.ui"
+
+

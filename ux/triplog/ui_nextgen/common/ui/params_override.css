@@ -1,0 +1,11 @@
+@params {
+	tripinfo_panel_margin: 12;
+	tripinfo_panel_header: 60;
+	triplog_zoom_button_h:120;
+	triplog_zoom_button_w:70;
+	tripinfo_panel_size: sidepanel_size;
+	tripcolor_padding:20;
+	tripcolor_padding_small:12;
+	
+	svg_triprecord_image_w:8;
+}

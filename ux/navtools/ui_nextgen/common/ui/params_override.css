@@ -1,0 +1,16 @@
+
+
+
+
+@params {
+	gpsstatus_margin: 12;
+	gpsstatus_text_margin: 0;
+	gpsstatusbar_margin_left: 18;
+	gpsstatusbar_margin_right: 42;	
+	gpsstatusbar_margin_bottom: 24;
+	gpssatellite_iconsize_w: 20;
+	gpssatellite_iconsize_h: 20;
+	
+	fontsize_gpsinfo_globe:22;
+	fontsize_gpsstatus_bars:14
+}

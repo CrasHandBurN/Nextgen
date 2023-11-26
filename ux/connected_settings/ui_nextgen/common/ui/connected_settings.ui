@@ -1,0 +1,34 @@
+
+<userlist lm_networkstatsubtitle text="str" value="str" type="str" details="str" onrelease="ui" enable="str" selectable="bool">
+	<default onrelease=undef enable=1 selectable=1 />
+	<row text="Network Usage Statistics" type="Subtitle" />
+</userlist>
+
+<element_template et_NetStat>
+	<SPRITE class="listitem info">
+		<VBOX class="listitem">
+			<TEXT  class="listitem top" text=%*.service_name />
+			<TEXT  class="listitem botton" text=(translated_format(m_i18n("%d kbytes"), (0 +((%*.sent_user + %*.received_user) / 1024)))) />
+		</VBOX>
+	</SPRITE>
+</element_template>
+
+<layer ui_NetStat z=51>
+	<DIV class="list">
+		<SECIONMARKER>
+		<SPRITE class=list_panel />
+		<LIST2 class="list_control" SMOOTHSCROLLING TEMPLATE_TYPE_MODEL="*.type">
+			<LISTMODEL listmodel="ui.lm_networkstatsubtitle" element_template="et_List" />
+			<LISTMODEL listmodel="network.stats.list" element_template="et_NetStat" />
+			<VSMARTSCROLL> 
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</LAYER>
+
+<userlist lm_localmenu_netstat text="str" onrelease="ui" enable="bool" visible="bool">
+	<view visibility_filter=visible />
+	<default onrelease=undef enable=1 visible=1 />
+		<row text="Reset" onrelease=sc_ResetNetStat />
+</userlist>

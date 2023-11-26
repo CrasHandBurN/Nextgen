@@ -1,0 +1,5 @@
+<userlist lm_ExtraSettingsList prio="int" text="str" icon="str" bmp="str" iconphase="int" bitvalue="int" isselected="str"  visible="bool" enable="bool" onrelease="ui" details="ui" type="str" haspopover="bool">
+	<view visibility_filter=visible />
+	<default visible=1 enable=1 dtooltip="" type="" />
+    <row text="Capture Screen" bmp="ico_capture.svg" isselected="lua.captureScreen" type="ChkOnOff_Icon" />
+</userlist>

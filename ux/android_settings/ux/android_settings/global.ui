@@ -1,0 +1,2 @@
+import "~/common/ui/android_settings.ui"
+import "~/common/ui/android_settings.lua"

@@ -1,0 +1,250 @@
+
+
+LISTMODEL.list_control.countryinfo {
+	cellh: listitem_double_h;
+}
+
+LISTMODEL.list_control.emergency_phone {
+	cellh: listitem_countryinfo_h;
+}
+
+
+SPRITE.countryinfo.svg{
+	top:0; left:0; w:100%; h:100%;
+	box_align:"STRETCH";
+	align:"CENTER"; valign:"CENTER";
+	flex:1;
+}
+
+SPRITE.speedlimit.countryinfo.svg {
+	img:( %lua.countryInfo_isUSACAN ? "spr_speedlimit_usa.svg" : "spr_speedlimit_eu.svg");
+	phase: 0;
+}
+
+TEXT.countryinfo_sign{
+	font:"defaultbd";
+	color:btn_main_color; color2:btn_main_color2; color3:btn_main_color3;
+	fontsize:fontsize_countryinfo_sign !important;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+	align:"CENTER"; valign:"CENTER"; 
+	box_align:"stretch";
+	flex:1;
+}
+
+TEXT.countryinfo_type{
+	font:"defaultbd";
+	color:btn_main_color; color2:btn_main_color2; color3:btn_main_color3;
+	fontsize:fontsize_sec !important;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+	align:"CENTER"; valign:"BOTTOM";
+	
+}
+
+TEXT.speedlimit.countryinfo{
+	left:0; right:0; top:(%lua.countryInfo_isUSACAN ? 50% : 0); bottom:(%lua.countryInfo_isUSACAN ? 20% : 0); z:100;
+	fontsize: 25; font: defaultbd;
+	color: speedlimit_color;
+	align:"CENTER"; valign:"CENTER"; 
+	glowsize:0;
+	z:101;
+}
+
+SPRITE.map_messagebox.svg.country_info{
+	align:"center"; valign:"center";
+	image_w:66; image_h:40;
+}
+
+SPRITE.map_messagebox.svg.country_info.bg{
+	image_w:70; image_h:44;
+	img: countryflag_bg_color;
+}
+
+SPRITE.listitem.flag{
+	left:0;top:0;right:0;bottom:0;
+	align:"center"; valign:"center";
+	image_h:44;
+}
+
+SPRITE.listitem.flag.bg{
+	image_h: svg_country_flag_detail_bg_image_h;
+	image_w: svg_country_flag_detail_bg_image_w;
+	img: countryflag_bg_color;
+}
+
+HBOX.countryinfo_container {
+	paddingright: list_padding; paddingleft: list_padding;
+}
+
+VBOX.countryinfo{
+	box_align:"stretch"; flex:1;
+}
+
+
+BOX.countryinfo, HBOX.countryinfo{
+	paddingleft:0; paddingright:0;
+	box_align:"stretch";
+	align:"LEFT";
+}
+
+TEXT.listitem.country_name{
+	paddingleft:text_padding; paddingright:text_padding_small;
+	valign:"center";
+}
+
+TEXT.listitem.countryinfo{
+	paddingleft:text_padding; paddingright:0;
+	fontsize: fontsize_sec;
+	color:inf_main_color;
+	box_align:"center";
+}
+
+TEXT.listitem.countryinfo.value{
+	paddingleft:text_padding; paddingright:text_padding;
+	color:btn_main_color;
+}
+
+TEXT.listitem.trafficlaw {	
+	font:"default";
+	color:inf_main_color;
+	fontsize:fontsize_sec;
+	left:0;
+	top:0;
+	right:0;
+	bottom:0;
+	z:50;
+	align:"LEFT";
+	valign:"CENTER";
+	line_break_method:"auto";
+	box_align:"STRETCH";
+	flex:1;
+}
+
+
+
+SPRITE.GPSStatus.container{
+	img:"spr_gpsstatus_container.svg"; 
+	align:"CENTER"; valign:"CENTER"; resize_bmp:0; 
+	Preserve_aspect_ratio:1;
+	box_align:"center";	
+}
+
+SPRITE.GPSStatus_bg{
+	img:"spr_gpsstatusbg.svg";
+	left:0; top:0; right:0; bottom:0;
+}
+
+
+
+DIV.GPSStatus_satellites{
+	left:gpsstatus_margin;
+	right:gpsstatus_margin;
+	top:gpsstatus_margin;
+	bottom:gpsstatus_margin;
+}
+
+DIV.GPSStatus_cardinal{
+	left:gpsstatus_text_margin;
+	right:gpsstatus_text_margin;
+	top:gpsstatus_text_margin;
+	bottom:gpsstatus_text_margin;
+}
+
+TEXT.font_main.color_inf_main.gps_info{
+	color:color_gps_info !important;
+	fontsize:fontsize_gpsinfo_globe !important;
+}
+
+SPRITE.GPSStatus_sats{
+	left:(((div_GPSStatus_sats.W - (2 * gpsstatus_margin)) * satposition_x / 100) + gpsstatus_margin - ( gpssatellite_iconsize_w / 2 ) );
+	top: (((div_GPSStatus_sats.H - (2 * gpsstatus_margin)) * satposition_y / 100) + gpsstatus_margin - index - ( gpssatellite_iconsize_h / 2 ) );
+	w: gpssatellite_iconsize_w;
+	h: gpssatellite_iconsize_h;
+	z:30;
+	img:(%*.prn < 64 || !%lua.ShowGlonass ? "sat.svg" : "sat_glonass.svg");
+	phase:(sc_SetGPS_Phase(%*.valid, %*.used, %*.egnos, %*.waas));
+}
+
+LIST2.GPSStatus_bars, TABLE.GPSStatus_bars{
+	left: gpsstatusbar_margin_left; 
+	right: (gpsstatusbar_margin_right / 2);
+	col:12; 
+	row:1;
+}
+
+LIST2.GPSStatus_bars.glonass, TABLE.GPSStatus_bars.glonass{
+	left:gpsstatusbar_margin_left;
+	right:(gpsstatusbar_margin_right / 2);
+	bottom: undef;
+	col:12;
+	row:1;
+}
+
+SPRITE.GPSStatus_bar{
+	left:0; h:(int((PARENT.H - gpsstatusbar_margin_bottom) * (%*.snr/50.0))); right:0; bottom:gpsstatusbar_margin_bottom; z:25;
+	img:(sc_SetGPSSignal_Bmp(%*.valid, %*.used, %*.egnos, %*.waas)); resize_bmp:1;
+}
+
+SPRITE.GPSStatus_bar.background{
+	h: (undef);
+	img:("spr_gpsstatus_progressbg.9.bmp");
+	z:20;
+}
+
+TEXT.GPSStatus_bar{
+	left:0; top:0; w:100%; h:100%;
+	align:"CENTER"; valign:"BOTTOM";
+	padding:0; z:30; 
+}
+
+TEXT.GPSStatus_bar.font_info.bd.color_inf_sec{
+	fontsize:fontsize_gpsstatus_bars !important;
+}
+
+HBOX.GPSStatus_satnum{
+	left:gpsstatusbar_margin_left; right:gpsstatusbar_margin_right; bottom:undef;
+}
+
+HBOX.GPSStatus_satnum.glonass TEXT{
+	box_align:"stretch";
+	paddingleft:text_padding_small;
+}
+
+HBOX.GPSStatus_satnum TEXT{
+	box_align:"stretch";
+	paddingleft:text_padding_small;
+}
+
+DIV.GPSStatus_information{
+	left:gpsstatusbar_margin_left; right:gpsstatusbar_margin_right;
+}
+
+HBOX.gps_status{
+	box_align:"stretch"; align:"center";
+}
+
+HBOX.gps_status>TEXT{
+	box_align:"stretch"; wordwrap:1;
+}
+
+HBOX.gps_status>TEXT.color_inf_sec{
+	paddingleft:text_padding_small;
+	paddingright:text_padding_small;
+}
+
+SPRITE.svg.sats{
+	image_w: gpssatellite_iconsize_w;
+	image_w: gpssatellite_iconsize_h;
+	box_align:"stretch";
+	Preserve_aspect_ratio:1;
+	align:"center";
+	valign:"center";
+}	
+
+@import "~/common/ui/navtools_landscape.css" landscape;
+@import "~/common/ui/navtools_portrait.css" portrait;

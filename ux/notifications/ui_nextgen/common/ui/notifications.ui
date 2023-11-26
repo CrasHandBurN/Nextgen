@@ -1,0 +1,69 @@
+<userlist lm_notification_footer text="ui" onrelease="ui" /> 
+
+<element_template et_notifications>
+	<BUTTON class="listitem" onrelease=sc_ShowNotificationDetails>
+		<HBOX class="listitem">
+			<SPRITE class="listitem" iconid=%*.icon_id />
+			<TEXT class="listitem notification" text=(%*.properties->summary) /> 
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_Notifications z=30>
+	<DIV class="list">
+		<SECTIONMARKER/>
+		
+		<LIST2 lst_notifications class="list_control" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="warning.notification.notification_list" element_template="et_notifications" />
+
+			<VSMARTSCROLL>
+  			<WHEEL>
+	  		<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<layer ui_NotificationDetails z=30>
+	<implementation>
+		<property notif />
+	</implementation>
+	
+	<DIV class="main">
+		<BOX class="fill">
+			<TEXT txt_test class="font_notification bd color_inf_main fill" text=(notif.long_text // "") wordwrap=0 flex=1 />
+		</BOX>
+	</DIV>
+</layer>
+
+<layer ui_Notification_Area_Cockpit visible=( !%lua.DragMode ) z=135>
+	<DIV div_notification_header class="header headercockpit">
+		<DIV class="notification_area">
+			<BUTTON class="notification_area" onrelease=sc_Notification_Area_Onrelease >
+				<SPRITE class="notification_area" />
+				<TEXT class="notification_area" text=(sc_GetNotificationAreaText(%warning.notification.notification_area)) />
+			</BUTTON>        
+		</DIV>
+	</DIV>
+</layer>
+
+<layer ui_Notification_Area z=135 visible=( !st_Cockpit.isActive && !%lua.ShowWizard )>
+	<DIV class="header">
+		<DIV class="notification_area">
+			<BUTTON btn_notification class="notification_area" onrelease=sc_Notification_Area_Onrelease >
+				<SPRITE class="notification_area" />
+				<TEXT class="notification_area" text=(sc_GetNotificationAreaText(%warning.notification.notification_area)) />
+			</BUTTON>        
+		</DIV>
+	</DIV>
+</layer>
+
+<layer ui_Notification_Area_DragMode z=36 visible=( st_Cockpit.isActive && %lua.DragMode )>
+	<DIV class="cockpit">
+		<DIV class="notification_area_dragmode">
+			<BUTTON btn_notification_dragmode class="notification_area cockpit" onrelease=sc_Notification_Area_Onrelease >
+				<SPRITE class="notification_area cockpit" />
+				<TEXT class="notification_area cockpit" text=(sc_GetNotificationAreaText(%warning.notification.notification_area)) />
+			</BUTTON>        
+		</DIV>
+	</DIV>
+</layer>

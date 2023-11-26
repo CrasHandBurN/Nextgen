@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 17.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 60 60" enable-background="new 0 0 60 60" xml:space="preserve">
+<g id="hwy_disabled">
+	
+		<path fill="#313131" stroke="#000000" stroke-width="1.0503" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+		M30,4.868l7.928,16.874l18.498,2.325L42.827,36.821l3.505,18.311L30,46.14l-16.332,8.992l3.505-18.311L3.575,24.067l18.497-2.325
+		L30,4.868z"/>
+</g>
+<g id="hwy">
+	
+		<path fill="#FFFFFF" stroke="#000000" stroke-width="1.0503" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+		M30,4.868l7.928,16.874l18.498,2.325L42.827,36.821l3.505,18.311L30,46.14l-16.332,8.992l3.505-18.311L3.575,24.067l18.497-2.325
+		L30,4.868z"/>
+</g>
+<g id="group">
+	<path fill="#FFFFFF" d="M30,4.868l7.928,16.874l18.498,2.325L42.827,36.821l3.505,18.311L30,46.14l-16.332,8.992l3.505-18.311
+		L3.575,24.067l18.497-2.325L30,4.868z"/>
+</g>
+<g id="disabled">
+	<path fill="#FFFFFF" d="M30,4.868l7.928,16.874l18.498,2.325L42.827,36.821l3.505,18.311L30,46.14l-16.332,8.992l3.505-18.311
+		L3.575,24.067l18.497-2.325L30,4.868z"/>
+</g>
+<g id="normal">
+	<path fill="#FFFFFF" d="M30,4.868l7.928,16.874l18.498,2.325L42.827,36.821l3.505,18.311L30,46.14l-16.332,8.992l3.505-18.311
+		L3.575,24.067l18.497-2.325L30,4.868z"/>
+</g>
+</svg>

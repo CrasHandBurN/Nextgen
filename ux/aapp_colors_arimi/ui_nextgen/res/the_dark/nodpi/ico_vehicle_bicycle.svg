@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 19.2.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1"
+	 id="svg3060" inkscape:version="0.48.5 r10040" sodipodi:docname="ico_vehicle_bicycle.svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:svg="http://www.w3.org/2000/svg"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 120 120"
+	 enable-background="new 0 0 120 120" xml:space="preserve">
+<sodipodi:namedview  bordercolor="#666666" borderopacity="1" gridtolerance="10" guidetolerance="10" id="namedview3076" inkscape:current-layer="svg3060" inkscape:cx="60" inkscape:cy="60" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-height="1137" inkscape:window-maximized="1" inkscape:window-width="1600" inkscape:window-x="-8" inkscape:window-y="-8" inkscape:zoom="1.9666667" objecttolerance="10" pagecolor="#ffffff" showgrid="false">
+	</sodipodi:namedview>
+<g id="Layer_4" display="none">
+	<circle id="circle3063" display="inline" opacity="0.5" fill="#DF1F26" enable-background="new    " cx="60" cy="60" r="60"/>
+	
+		<rect id="rect3065" x="6.5" y="6.5" display="inline" opacity="0.5" fill="#3B4FA1" enable-background="new    " width="107" height="107"/>
+</g>
+<g id="normal">
+	<linearGradient id="path3068_1_" gradientUnits="userSpaceOnUse" x1="6.5" y1="60.0001" x2="113.5" y2="60.0001">
+		<stop  offset="0" style="stop-color:#F2F2F2"/>
+		<stop  offset="0.1585" style="stop-color:#EBEBEB"/>
+		<stop  offset="0.3858" style="stop-color:#D9D9D9"/>
+		<stop  offset="0.6547" style="stop-color:#B9B9B9"/>
+		<stop  offset="0.9532" style="stop-color:#8F8F8F"/>
+		<stop  offset="1" style="stop-color:#878787"/>
+	</linearGradient>
+	<path id="path3068" fill="url(#path3068_1_)" d="M93.905,108.087c-10.823,0-19.596-8.791-19.596-19.634
+		c0-10.845,8.773-19.636,19.596-19.636S113.5,77.608,113.5,88.453C113.5,99.296,104.727,108.087,93.905,108.087L93.905,108.087z
+		 M93.905,74.417c-7.73,0-13.998,6.284-13.998,14.036s6.267,14.036,13.998,14.036s13.998-6.284,13.998-14.036
+		C107.902,80.701,101.635,74.417,93.905,74.417L93.905,74.417z M81.378,60.694l-14.06-15.766L53.705,63.745l12.343,8.366
+		c2.29,1.552,2.856,4.596,1.262,6.799c-0.156,0.215-0.337,0.401-0.52,0.584c-0.03,0.45-0.101,0.901-0.267,1.346l-5.999,16.031
+		c-0.946,2.529-3.843,3.826-6.469,2.896c-2.624-0.93-3.985-3.734-3.039-6.264l5.878-15.708l-11.138-7.549
+		c-0.545-0.369-0.985-0.827-1.329-1.334c-1.003-0.195-1.985-0.579-2.879-1.185c-3.437-2.329-4.286-6.897-1.894-10.2L56.97,33.596
+		c2.391-3.304,7.115-4.096,10.551-1.765c0.888,0.601,1.594,1.354,2.124,2.193c0.023,0.015,0.049,0.024,0.072,0.04l16.943,19
+		c2.079,1.473,2.581,4.374,1.123,6.48C86.323,61.652,83.456,62.166,81.378,60.694L81.378,60.694z M74.628,28.982
+		c-4.893-0.428-8.528-4.588-8.116-9.291c0.413-4.703,4.713-8.17,9.606-7.742c4.893,0.428,8.528,4.589,8.116,9.293
+		C83.821,25.945,79.521,29.411,74.628,28.982L74.628,28.982z M45.691,88.453c0,10.843-8.773,19.634-19.595,19.634
+		c-10.823,0-19.596-8.791-19.596-19.634c0-10.845,8.772-19.636,19.596-19.636C36.918,68.817,45.691,77.608,45.691,88.453
+		L45.691,88.453z M26.096,74.417c-7.73,0-13.998,6.284-13.998,14.036s6.267,14.036,13.998,14.036c7.73,0,13.998-6.284,13.998-14.036
+		C40.093,80.701,33.826,74.417,26.096,74.417L26.096,74.417z"/>
+</g>
+</svg>

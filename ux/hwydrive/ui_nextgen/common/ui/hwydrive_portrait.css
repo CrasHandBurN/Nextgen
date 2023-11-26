@@ -1,0 +1,112 @@
+/*-------------------hwy----------------*/
+SPRITE.hwy_element_header{
+	desired_h:undef;
+	desired_w:hwy_header_w;
+}
+
+HBOX.hwy_element{
+	desired_h:(((screen_h - screen_h*0.7) - hwy_panel_bottom - hwy_container_top*3 - hwy_container_bottom*3)/3);
+}
+
+VBOX.hwy_element.text, BOX.hwy_element.icons{
+	flex:0;
+}
+
+BOX.hwy_element.icons{
+	paddingleft:box_padding_small;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOX.hwy_container{
+	orientation:"horizontal";
+}
+
+HBOX.hwy_element{
+	 max_h:((screen_h - screen_h*0.7)/3);
+}
+
+HBOX.hwy_element>VBOX>DISTTEXT{
+	box_align:"center";
+}
+
+BOX.hwy_element.icons{
+	orientation:"horizontal"; 
+}

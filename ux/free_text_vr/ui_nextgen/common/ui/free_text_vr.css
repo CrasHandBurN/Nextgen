@@ -1,0 +1,29 @@
+SPRITE.voicerecognition {
+	img: "ico_voicerecognition.svg";
+	visible:(st_FindMenu.isActive);
+}
+
+DIV.list {
+	y: (st_IQS_VR_Find.isActive ? list_y + vr_mode_header_h : list_y);
+	h: ((!%lua.WizardModeActive && !%lua.ShowBackButton && !ui_Footer.localmenu_enabled && !(exists(States.CurrentState.footermenu) && %{States.CurrentState.footermenu}.size) ? list_h + footer_h : list_h) - (st_IQS_VR_Find.isActive ? vr_mode_header_h - footer_h + 2 * list_margin_bottom : 0));
+}
+
+#lst_IQS_VR_ResultList > VSMARTSCROLL{
+	bottom:0;
+}
+
+BUTTON.btn_main.vr_header.new_search {
+	align:"CENTER";
+	fontsize:fontsize_sec;
+}
+
+EMPTYLISTTEXTVR{
+	top:0; left:0;	w:100%; h:100%;
+}
+
+TEXT.listitem.vr.rowcount {
+	VISIBLE:(st_IQS_VR_Find.isActive && %lua.VRStatus == lua.eVRStatus.listen);
+}
+
+@import "~/common/ui/free_text_vr_landscape.css" landscape;
+@import "~/common/ui/free_text_vr_portrait.css" portrait;

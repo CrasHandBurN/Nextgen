@@ -36,6 +36,20 @@
 			<BUTTON_ICON left=undef w=50 right=2% top=undef h=50 bottom=1%
 				onrelease=VW_tween
 				icon=(TCMap_heading.heading_img[%lua.Show_NorthUp_HeadUp]) zoom=60% />
+				
+			<DIV left=undef w=120 right=0 top=0 h=120 bottom=undef > 
+				<DIV TOP=0 BOTTOM=0 LEFT=0 RIGHT=0 VISIBLE=(ui_Cockpit.height_direction == "") >
+					<SPRITE CLASS="btn_map rotatecompass icon svg" Z=40 ZOOM=65% IMAGE_H=(PARENT.H) IMAGE_W=(PARENT.W)
+							ROTATE=( %map.primary.rotate * 360.0 / 4096 ) />
+					<SPRITE CLASS="btn_map rotatedestarrow icon svg" Z=50 ZOOM=60% IMAGE_H=(PARENT.H) IMAGE_W=(PARENT.W)
+							ROTATE=( ui_Cockpit.rotate_destarrow ) VISIBLE=( %navigation.has_route ) />
+				</DIV>
+
+				<SPRITE	CLASS="btn_map icon svg" ZOOM=40% IMAGE_H=(PARENT.H) IMAGE_W=(PARENT.W)
+					IMG=(ui_Cockpit.height_direction == "ico_arrow_up.svg" ? "ico_car_up.svg" : ui_Cockpit.height_direction == "ico_arrow_down.svg" ? "ico_car_down.svg" : "") 
+					VISIBLE=( ui_Cockpit.height_direction != "" ) />
+			</DIV>				
+				
 		</USE_LAYER>			
 	</DIV>
 </layer>

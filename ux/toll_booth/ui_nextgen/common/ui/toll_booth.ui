@@ -1,0 +1,64 @@
+; ------- 30.09.2017-WANDEL™------   
+<observer obs_wtollboothwarning value=(%lua.wTollBoothWarningValid && %route.list.navigated.itiner.list[%lua.wTollBoothIndex].remaining_length <= %lua.wTollBoothDistanceWarning) 
+	onselect=sc_wShowTollBoothPopup 
+	ondeselect='if temp_value[2].ACTION[1] == "toll_booth" then sc_HideDiscoverySidePopup() end' />
+<observer obs_wtollboothwarning_itiner model="route.list.navigated.itiner.list" onchange=sc_wTollBoothSetIndex />
+<observer value=(%lua.wTollBoothWarningValid && (!%route.list.navigated.itiner.enable_update_list || !(%route.list.navigated.itiner.detailmode == "normal" || %route.list.navigated.itiner.detailmode == "verbose"))) onselect=sc_wTollBoothUpdateOn START="NO_TRIGGER" />
+
+<modify lm_WarningsSettings icon="str">
+	<insert>
+		<row prio=600 text="Toll Booth Warning" icon="ico_pay_s.svg" onrelease='sc_NextStateAnim(st_wTollBoothSettings, "fade", 1, "" )' />
+	</insert>
+</modify>
+
+<userlist tollboothsettings haspopover="bool" text="str" isselected="str" visible="bool" enable="bool" onrelease="ui" details="ui" type="str" dtooltip="str">
+	<view visibility_filter=visible />
+	<default onrelease=undef visible=1 enable=1 />
+		<row text="Toll Booth Warning" type="ChkOnOff" isselected="lua.wTollBoothWarning" />
+		<row text="Warning distance" haspopover=1 details=(sc_ShowDistanceTool(%lua.wTollBoothDistanceWarning)) onrelease='sc_SetPopoverListAndOpen("ui.lm_WarningdistSldPopover")' enable=(%lua.wTollBoothWarning) /> 
+		<row text="Choose Sound Toll Booth" haspopover=1 
+			details=(%lua.OwnWarningTollBooth == L"" ? %lua.AudioTollBooth : %lua.OwnWarningTollBooth) 
+			onrelease={%lua.SelectedAudioFile = %lua.AudioTollBooth; %lua.SelectedOwnWarning = %lua.OwnWarningTollBooth; sc_ScanAudioFiles()} 
+			enable=(%lua.wTollBoothWarning && !(%lua.MuteSoundWithTTS && %regional.current_voice.is_tts))  dtooltip="You have to Turn OFF 'Mute Sound With TTS'." />
+		<row text="Read Out Toll Booth Warning" type="ChkOnOff" isselected="lua.wTollBoothTTSVoice" enable=(%lua.wTollBoothWarning) dtooltip="In 'Regional Settings' select supported TTS Voice" />    
+		<row text="Phrase(distance)" type="ChkOnOff" isselected="lua.wTollBoothTTSVoiceDistancePhrase" enable=(%lua.wTollBoothWarning && %lua.wTollBoothTTSVoice) dtooltip="In 'Regional Settings' select supported TTS Voice" />
+</userlist>
+
+<userlist lm_WarningdistSldPopover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(100)) max_text=(sc_ShowDistanceTool(20000)) />
+		<row name="Warning distance" text=(sc_ShowDistanceTool(%lua.wTollBoothDistanceWarning)) type="Scroll" min=100 max=20000 step=10 valuemodel="lua.wTollBoothDistanceWarning" />
+</userlist>
+/*
+<userlist lm_wTollBooth_footer text="str" onrelease="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+		<row text="Test" onrelease=sc_wTollBoothTTS_play isactionbutton=(%lua.wTollBoothWarning && %lua.wTollBoothTTSVoice) enable=(%lua.wTollBoothWarning && %lua.wTollBoothTTSVoice) />
+</userlist>
+*/
+<views VW_routeinfolist_filtered_PAYMENT listmodel="route.list.navigated.itiner.list" >
+	<field filtered_types=(lua.ERouteinfoFilterTypes.PAYMENT) />
+	<view filter filter=(in_set($1.filter_type, views.filtered_types)) />
+</views>
+
+<layer ui_wMapSidePanel_TollBooth  z=40 visible=( ui_PropLayer.SidePanelVisible )>
+	<implementation>
+		<property icon_id value=(%route.list.navigated.itiner.list[%lua.wTollBoothIndex].icon_small_id != -1 ? %route.list.navigated.itiner.list[%lua.wTollBoothIndex].icon_small_id : %route.list.navigated.itiner.list[%lua.wTollBoothIndex].icon_id) />
+	</implementation>
+	<observer value=(%route.list.navigated.itiner.list[%lua.wTollBoothIndex].uid) onchange=sc_wTollBoothTrigger start />
+	<DIV class=cockpit>
+		<DIV class=map_messagebox>
+			<TEXT class="map_messagebox discovery_text" top=10% text=%route.list.navigated.itiner.list[%lua.wTollBoothIndex].text_enc /> 
+			<SPRITE class="map_messagebox listitem flag" iconid=(icon_id) phasename="blue" /> 
+			<SPRITE left=20% right=20% top=20% bottom=20% align="CENTER" valign="CENTER" z=50
+				iconid=(icon_id) phasename="blue"
+				visible=(%gps.blink) />
+			<DISTTEXT class="map_messagebox discovery_text" top=(%lua.IsLandscape ? 65% : 55%) distance=%route.list.navigated.itiner.list[%lua.wTollBoothIndex].remaining_length visible=1 />
+			<DIV class=dialog_buttons>
+				<DIALOGBUTTON class="dialog 1_1 mapmsgbox" text="Cancel" onrelease=sc_HideDiscoverySidePopup >
+					<SPRITE class="button map fill" />
+				</DIALOGBUTTON>
+			</DIV>
+			;<SPRITE class="panel map background" img="spr_map_messagebox_bg.bmp" onrelease=sc_wReadOutTollBooth />
+		</DIV>
+	</DIV>
+</layer>

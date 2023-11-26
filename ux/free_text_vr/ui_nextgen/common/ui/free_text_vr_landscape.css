@@ -1,0 +1,7 @@
+.button_input{
+	right:(st_IQS_VR_Find.isActive || st_IQS_Find.isActive ? 50% : ( %lua.SmallInput ? ( st_OpenKeyboardForSaveFavorite.isActive ? 20% : 40%) : ( 0 ) ) ); 
+}
+
+.button_input.iqs{
+	right:(st_IQS_VR_Find.isActive || st_IQS_Find.isActive ? 0 : 50%); 
+}

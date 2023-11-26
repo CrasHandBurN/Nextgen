@@ -1,0 +1,92 @@
+<modify lm_MapVisualSettings>
+	<insert>
+		<row prio=100 text="Enabled user settings" isselected="lua.Enabled_angle_zoom_user" type="ChkOnOff" />
+		<row prio=100 text="Tilt the map" haspopover=1 onrelease=sc_TiltTheMap visible=(%lua.Enabled_angle_zoom_user) />
+		<row prio=100 text="Speed control zoom and tilt" haspopover=1 onrelease=sc_MyZoomSetting visible=(%lua.Enabled_angle_zoom_user) />
+	</insert>
+</modify>
+
+<modify lm_VOverviewSettings>
+	<insert>
+		<row text="Overview distance" haspopover=1 details=(sc_ShowDistanceTool(%lua.wZoom_overview_distance)) onrelease='sc_SetPopoverListAndOpen("ui.lm_OverviewdistancePopover")' enable=(%lua.OverViewModeOn) />
+		<row text="Overview zoom in 2D" haspopover=1 details=(sc_ShowDistanceTool(%lua.wZoom_overview_zoom2d)) onrelease='sc_SetPopoverListAndOpen("ui.lm_OverviewZoom2dPopover")' enable=(%lua.OverViewModeOn) />
+		<row text="Overview zoom in 3D" haspopover=1 details=(sc_ShowDistanceTool(%lua.wZoom_overview_zoom3d)) onrelease='sc_SetPopoverListAndOpen("ui.lm_OverviewZoom3dPopover")' enable=(%lua.OverViewModeOn) />
+	</insert>
+</modify>
+
+<userlist lm_OverviewdistancePopover onchange="ui" name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(500)) max_text=(sc_ShowDistanceTool(5000)) />
+		<row	name="Overview distance" text=(sc_ShowDistanceTool(%lua.wZoom_overview_distance)) type="Scroll" min=500 max=5000 step=100 valuemodel="lua.wZoom_overview_distance" />
+</userlist>
+
+<userlist lm_OverviewZoom2dPopover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(1000)) max_text=(sc_ShowDistanceTool(10000)) />
+		<row name="Overview zoom in 2D" text=(sc_ShowDistanceTool(%lua.wZoom_overview_zoom2d)) type="Scroll"min=1000 max=10000 step=100 valuemodel="lua.wZoom_overview_zoom2d" />
+</userlist>
+
+<userlist lm_OverviewZoom3dPopover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(100)) max_text=(sc_ShowDistanceTool(3000)) />
+		<row name="Overview zoom in 3D" text=(sc_ShowDistanceTool(%lua.wZoom_overview_zoom3d)) type="Scroll" min=100 max=3000 step=100 valuemodel="lua.wZoom_overview_zoom3d" />
+</userlist>
+
+<layer ui_Tilt_the_map z=160>
+	<DIV class="main">
+		<SPRITE class="listitem"  left=0 top=0 w=100% h=25% alpha=22 bmp="btn.bmp#3" resize_bmp=1>
+			<CHECKBOX class="listitem chkonoff" boolmodel="lua.enableAPTilt" />
+			<TEXT class="listitem" z=45 top=30% left=2% right=29% align="LEFT" valign="CENTER" text="Tilt control" font="defaultbd" />
+		</SPRITE>
+
+		<SPRITE class="listitem" left=0 top=25% w=100% h=25% bmp="btn.bmp#3"  resize_bmp=1  alpha=22 visible=(%lua.enableAPTilt) onrelease=sc_APTilt>
+			<TEXT class="listitem" z=45 left=5% right=5% top=20% bottom=58% wordwrap=1 line_break_method="auto" text=(translated_format(m_i18n("\fnTilt Portrait max SP: \fb%s"), %lua.APTiltMaxP_SP)) visible=(%lua.IsPortrait) />
+   			<HSMARTSCROLL class=scroll min=45 max=80 left=1% right=1% top=40% valuemodel="lua.APTiltMaxP_SP" onchange=sc_APTiltMaxP_SP visible=(%lua.IsPortrait) />
+			<TEXT class="listitem" z=45 left=5% right=5% top=16% bottom=53% wordwrap=1 line_break_method="auto" text=(translated_format(m_i18n("\fnTilt Landscape max SP: \fb%s"), %lua.APTiltMaxL_SP)) visible=(%lua.IsLandscape) />
+   			<HSMARTSCROLL class=scroll min=45 max=90 left=1% right=1% top=40% valuemodel="lua.APTiltMaxL_SP" onchange=sc_APTiltMaxL_SP visible=(%lua.IsLandscape) />
+		</SPRITE>
+
+		<SPRITE class="listitem" left=0 top=50% w=100% h=25% bmp="btn.bmp#3"  resize_bmp=1  alpha=22 visible=(%lua.enableAPTilt) onrelease=sc_APTilt>
+			<TEXT class="listitem" z=45 left=5% right=5% top=20% bottom=58% wordwrap=1 line_break_method="auto" text=(translated_format(m_i18n("\fnTilt Portrait max: \fb%s"), %lua.APTiltMaxP)) visible=(%lua.IsPortrait) />
+   			<HSMARTSCROLL class=scroll min=45 max=80 left=1% right=1% top=40% valuemodel="lua.APTiltMaxP" onchange=sc_APTiltMaxP visible=(%lua.IsPortrait) />
+			<TEXT class="listitem" z=45 left=5% right=5% top=16% bottom=53% wordwrap=1 line_break_method="auto" text=(translated_format(m_i18n("\fnTilt Landscape max: \fb%s"), %lua.APTiltMaxL)) visible=(%lua.IsLandscape) />
+   			<HSMARTSCROLL class=scroll min=45 max=90 left=1% right=1% top=40% valuemodel="lua.APTiltMaxL" onchange=sc_APTiltMaxL visible=(%lua.IsLandscape) />
+		</SPRITE>
+
+		<SPRITE class="listitem" left=0 top=75% w=100% h=25% bmp="btn.bmp#3"  resize_bmp=1  alpha=22 visible=(%lua.enableAPTilt) onrelease=sc_APTilt>
+			<TEXT class="listitem" z=45 left=5% right=5% top=20% bottom=58% wordwrap=1 line_break_method="auto" text=(translated_format(m_i18n("\fnTilt Portrait min: \fb%s"), %lua.APTiltMinP)) visible=(%lua.IsPortrait) />
+   			<HSMARTSCROLL class=scroll min=45 max=80 left=1% right=1% top=40% valuemodel="lua.APTiltMinP" onchange=sc_APTiltMinP visible=(%lua.IsPortrait) />
+			<TEXT class="listitem" z=45 left=5% right=5% top=16% bottom=53% wordwrap=1 line_break_method="auto" text=(translated_format(m_i18n("\fnTilt Landscape min: \fb%s"), %lua.APTiltMinL)) visible=(%lua.IsLandscape) />
+   			<HSMARTSCROLL class=scroll min=45 max=90 left=1% right=1% top=40% valuemodel="lua.APTiltMinL" onchange=sc_APTiltMinL visible=(%lua.IsLandscape) />
+		</SPRITE>
+	</DIV>
+
+	<DIV class="footer">
+		<SPRITE class="background footer" />
+		<FOOTERBUTTON class="btn_footer left back icon svg" onrelease=sc_back onlongclick=sc_longBack rawkey=(%lua.LocalMenuOpen ? undef : 27) />
+		<FOOTERBUTTON  class="btn_footer localmenu icon svg" onrelease=sc_OpenCloseLocalMenu enable=(exists(States.CurrentState.localmenu) && %(%{States.CurrentState.localmenu}.size) && !(%lua.IsStartlang)) rawkey=(%lua.LocalMenuOpen ? 27 : undef) />
+	</DIV>
+</layer>
+
+<layer ui_My_Zoom_Setting z=160>
+	<DIV class="main">
+		<SPRITE class="listitem" left=0 top=0  w=100% h=25%>
+			<CHECKBOX class="listitem chkonoff" boolmodel="lua.Enabled_zoom_speed" />
+			<TEXT class="listitem" z=45 left=2% right=29%  top=35% align="LEFT" valign="CENTER" text="Enabled zoom speed control" font="defaultbd" />
+		</SPRITE>
+
+		<SPRITE class="listitem" left=0 top=25% w=100% h=25%>
+			<CHECKBOX class="listitem chkonoff" boolmodel="lua.Enabled_angle_speed" />
+			<TEXT class="listitem" z=45 left=2% right=29%  top=35% align="LEFT" valign="CENTER" text="Enabled tilt speed control" font="defaultbd" />
+		</SPRITE>
+
+		<SPRITE class="listitem"  left=0 top=50% w=100% h=25% bmp="btn.bmp#3" resize_bmp=1 alpha=22 enable=(%lua.Enabled_angle_speed || %lua.Enabled_zoom_speed)>
+			<TEXT class="listitem" left=4% right=60% top=10% bottom=53% z=45  wordwrap=1 text="Min speed:" />
+			<TEXT class="listitem" left=80% right=4% top=10% bottom=53% z=45  text=(format(L"%{speed[%D%U]:*}", %lua.wMinSpeedwZoom, 1)) />
+   			<HSMARTSCROLL class="scroll" left=3% right=3% top=40% z=50 min=10 max=50 step=1 valuemodel="lua.wMinSpeedwZoom" />
+		</SPRITE>
+
+		<SPRITE class="listitem" left=0 top=75% w=100% h=25% bmp="btn.bmp#3" resize_bmp=1 alpha=22 enable=(%lua.Enabled_angle_speed || %lua.Enabled_zoom_speed)>
+			<TEXT class="listitem" left=4% right=60% top=10% bottom=53% z=45  wordwrap=1 text="Max speed:" />
+			<TEXT class="listitem" left=80% right=4% top=10% bottom=53% z=45  text=(format(L"%{speed[%D%U]:*}", %lua.wMaxSpeedwZoom, 1)) />
+   			<HSMARTSCROLL class="scroll" left=3% right=3% top=40% z=50 min=55 max=130 step=1 valuemodel="lua.wMaxSpeedwZoom" />
+		</SPRITE>
+  	</DIV>
+</layer>

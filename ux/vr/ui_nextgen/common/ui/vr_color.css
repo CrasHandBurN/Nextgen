@@ -1,0 +1,12 @@
+@params {
+
+	btn_main_vr_color:#FFFFFF;		btn_main_vr_color2:#FFFFFF;		btn_main_vr_color3:#FFFFFF;		
+	btn_sec_vr_color:#FFFFFF;		btn_sec_vr_color2:#FFFFFF;		btn_sec_vr_color3:#FFFFFF;		
+	inf_main_vr_color:#FFFFFF;		inf_main_vr_color2:#FFFFFF;										
+	inf_sec_vr_color:#FFFFFF;		inf_sec_vr_color2:#000000;										
+	vr_avoid_btn_color:	#2d2d2d;
+	
+	vr_green:		 		"vertical", #ff0e651a, 0.0, #ff054b0d, 1.0;
+	vr_yellow:		 		"vertical", #ffc5b716, 0.0, #ff8d820a, 1.0;
+	vr_red:		 			"vertical", #ff7a0d0d, 0.0, #ff580606, 1.0;
+	vr_gray:		 		#ff2c2c2c;

@@ -1,0 +1,4 @@
+import "~/common/ui/block_route.lua"
+import "~/common/ui/block_route.css"
+import "~/common/ui/block_route.ui"
+import "~/common/ui/block_route_mods.ui"

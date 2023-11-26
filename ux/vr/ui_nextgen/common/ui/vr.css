@@ -1,0 +1,447 @@
+@params 
+{
+	vr_mode_y: (vr_mode_y // (screen_y + header_h + margin_top + vr_mode_header_h + panel_margin));
+	vr_mode_h: (vr_mode_h // (screen_h - header_h - margin_top - vr_mode_header_h - panel_margin - footer_h - margin_bottom));
+		
+	vr_main_x: (vr_main_x // (screen_x + vr_mode_w + panel_margin));
+	vr_main_w: (vr_main_w // (screen_w - vr_mode_w - panel_margin - panel_margin));
+
+	vr_list_x: (vr_list_x // (list_x + vr_mode_w));
+	vr_list_y: (vr_list_y // (list_y + margin_bottom / 2));
+	vr_list_w: (vr_list_w // (list_w - vr_mode_w));
+	vr_list_h: (vr_list_h // (list_h));
+	vr_listitem_h: (vr_listitem_h // (listitem_h));
+	vr_list_row: (min(6,vr_mode_h / vr_listitem_h));
+}
+
+TEXT.ovde{
+	color: btn_main_color; color2: btn_main_color2; color3: btn_main_color3;
+	font: "default"; fontsize: fontsize_sec;
+	align: "CENTER"; valign:"CENTER";
+	paddingleft: text_padding; paddingright: text_padding;
+	r2l_invert: 1;
+	wordwrap: 2;
+	line_break_method: "hard";
+	box_align:"stretch";
+}
+
+TEXT.ovde.example{
+	font:"defaultit";
+	wordwrap: 2;	
+}
+
+TEXT.ovde.country{
+	left:0; top:0; right:0; bottom:0;
+	wordwrap: 2;
+	line_break_method: "full";
+}
+
+TEXT.ovde.address{
+	fontsize: fontsize_info;
+	paddingright:10;
+	align:"RIGHT";
+	desired_w:vr_ovde_findaddress_text_w;
+	wordwrap:2;
+	line_break_method: "full";
+}
+
+SPRITE.icon.moreresults {
+	box_align:"CENTER";
+}
+
+BUTTON.btn_main.ovde {
+	box_align: "stretch";
+	desired_h: listitem_h;
+}
+
+SPACER.ovde{
+	flex:1
+	max_h:30;
+}
+
+SPRITE.ovde_flag {
+	left:0; top:0; right:0; bottom:0; z:115; align:"CENTER"; valign:"CENTER";
+	image_h:30; image_w:46;
+}
+
+DIV.vr_header {
+	x: screen_x;
+	y: main_y;
+	w: screen_w;
+	h: vr_mode_header_h;
+}
+
+HBOX.vr_messagebox_header {
+	top: 0; bottom: undef; h: vr_mode_header_h;
+	left: 0; right: 0;
+	paddingleft: messagebox_panel_margin; paddingright: messagebox_panel_margin;
+}
+
+HBOX.vr_messagebox_header > TEXT.vrprompt {
+	paddingright: 72;
+}
+
+BUTTON.btn_main.vr_header {
+	padding: button_padding;
+	box_align:"STRETCH";
+	align:"RIGHT";
+	flex:0;
+	z:12;
+}
+
+BUTTON.btn_main.vr_header.taphere{
+	align:"CENTER";
+	flex:1;
+	iconspr:"";
+	iconalign: "CENTER";
+	iconvalign: "CENTER";
+}
+
+BUTTON.btn_main.vr_header.test {
+	padding: button_padding;
+	box_align:"STRETCH";
+	align:"CENTER";
+	flex:1;
+	z:12;
+}
+
+SPRITE.vr_header.statusico {
+	left:0; top:0; right:0; bottom:0; z:115; align:"RIGHT"; valign:"CENTER";
+	img:(observe( %lua.VRStatus, %lua.VRError, %vr.engine_state ); sc_GetVRMode("listen") ? "spr_listen.svg" : (sc_GetVRMode("touch") ? "spr_touch.svg" : "") );
+	image_h:60; image_w:60; desired_w: 60;
+	flex:0;
+}
+
+SPRITE.vr_header.statusico.click {
+	image_h:48; image_w:48;
+	box_align:"CENTER";	
+	img:"ico_touch.svg";
+}
+
+DIV.vr_main {
+	x: main_x;
+	y: vr_mode_y;
+	w: main_w;
+	h: vr_mode_h; 
+}
+
+
+DIV.header {
+	
+}
+
+DIV.header.vr{
+	visible: (%lua.VRStatus != lua.eVRStatus.inactive);
+}
+
+LIST2{
+	STOP_POLICY:(%lua.VRStatus == lua.eVRStatus.inactive ? 0 : 2);
+}
+
+LIST2.list_control.vr {
+	extra_scroll:0;
+	bottom:0;
+	cellh:undef; row:vr_list_row;
+}
+
+LIST2.list_control.vr > VSMARTSCROLL, LIST2.list_control.vr > LISTCONTROL, LIST2.list_submenu.vr > VSMARTSCROLL, LIST2.list_submenu.vr > LISTCONTROL {
+	bottom: 0;
+}
+
+.vr .list_control.poi {
+	top: (%lua.VRStatus == lua.eVRStatus.inactive ? ((%lua.PoiProviderFiltering && %lua.picturepoi_groupid != %poi.vr_search.search_root) ? (int((PARENT.H - panel_margin - panel_margin) / 4) + panel_margin) : panel_margin) : (panel_margin + margin_bottom / 2));
+	row: ((%lua.PoiProviderFiltering && %lua.picturepoi_groupid != %poi.vr_search.search_root) && %lua.VRStatus == lua.eVRStatus.inactive ? 3 : 4);
+}
+
+.list_control.menu_vr {
+	row:5; col:1;cellh:undef;
+	box_align:"stretch"; flex:1;
+	showselection:1; 
+}
+
+HBOX.listitem.menu_vr {
+	paddingleft: list_padding;
+	paddingright: 6;
+}
+
+SPRITE.listitem.icon_menu.menu_vr {
+	img:"ico_right_menu.svg";
+	image_w: 18; image_h: 18;
+	visible: (%*.hassubmenu // 0);
+}
+
+SPRITE.background.menu_vr {
+	img: ""; flex:1;
+}
+
+SPRITE.background.menu_vr.submenu {
+	img: #44000000; flex:1;
+	visible:(%lua.VRMainMenuId == 0);
+}
+
+SPRITE.background.menu_vr.submenu.findplaces {
+	visible:(vSelectedPOICategoryVR != -1);
+}
+
+TEXT.listitem.menu_vr{
+	box_align: "stretch"; flex: 1;
+	paddingleft: 0; paddingright: text_padding;
+	minaspect: 80; line_break_method: "full";
+}
+
+LIST2.list_footermenu.vr {
+	top:0; left: 0; right: undef; w:(%{States.CurrentState.vr_footermenu}.size < 2 ? 50% : 100%);
+	col:(%{States.CurrentState.vr_footermenu}.size);
+}
+
+FOOTERBUTTON.btn_footer.vr{
+	w:100%;
+	img: "btn_footer.bmp#3";
+	font:"defaultbd";
+	color: footer_color; color2: footer_color2;
+}
+
+FOOTERBUTTON.btn_footer.vr.ovde{
+	w:50%;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.color_btn_main.vr		{color: btn_main_vr_color; color2: btn_main_vr_color2; color3: btn_main_vr_color3;}
+.color_btn_sec.vr		{color: btn_sec_vr_color; color2: btn_sec_vr_color2; color3:btn_sec_vr_color3;}
+.color_inf_main.vr		{color: inf_main_vr_color; color2: inf_main_vr_color2;}
+.color_inf_sec.vr		{color: inf_sec_vr_color; color2: inf_sec_vr_color2;}
+
+TEXT.listitem.progress.vr{
+	color: ( %lua.VRStatus == lua.eVRStatus.inactive ? btn_main_color : btn_main_vr_color);
+	color2: ( %lua.VRStatus == lua.eVRStatus.inactive ? btn_main_color2 : btn_main_vr_color2);
+	color3: ( %lua.VRStatus == lua.eVRStatus.inactive ? btn_main_color3 : btn_main_vr_color3);
+}
+
+.vr_main .font_title, #et_PoiVr .font_title{
+	color: btn_main_vr_color; color2: btn_main_vr_color2; color3: btn_main_vr_color3;
+}
+
+SPRITE.vu_level {
+	left: 0; top: 0; z: 100;
+	img:"spr_vumeter_vr_anim.spr";
+	phase: (%sound.VU_Level / 32);
+	flex:0; image_w:14; desired_w:26; box_align:"CENTER"; align:"CENTER";
+	visible: (%lua.VRStatus == lua.eVRStatus.listen && %vr.engine_state == 1);
+}
+
+SPRITE.vr_color {
+	img:"spr_vr_header.svg";
+	phasename: ( observe( %lua.VRStatus, %lua.VRError, %vr.engine_state ); sc_GetVRMode() );
+	preserve_aspect_ratio: 0; z:10;
+}
+
+SPRITE.vr_background {
+	img: panel_map_grad; z:5;
+}
+
+SPRITE.vrcapable {
+	left:vr_capable_icon_left;
+    bottom:vr_capable_icon_bottom;
+	image_w:vr_capable_icon_size;
+	image_h:vr_capable_icon_size;
+    position:"absolute";
+    z:200;
+    img:"ico_vr.svg";
+    visible:(%regional.current_language.lcid == %*.lcid && %*.is_tts && lua.VR.IsLCIDSupported(%*.lcid));
+}
+
+SPRITE.vr_footer_bg 
+{
+	img: vr_gray;
+}
+
+SPRITE.vr_messagebox.header_bg{
+	left:0; top:0; right:0; bottom:0; position: "absolute";
+	img: ( observe( %lua.VRStatus, %lua.VRError, %vr.engine_state ); sc_GetVRMode("error") ? "spr_msgbox_popup_vr_error.9.bmp" : ( sc_GetVRMode("listen") ? "spr_msgbox_popup_vr_listen.9.bmp" : ( sc_GetVRMode("touch") ? "spr_msgbox_popup_vr_touch.9.bmp" : "spr_msgbox_popup_vr_tts.9.bmp" )));
+	resize_bmp:1;
+}
+
+
+DIV.mapheader {
+	y: ( st_Cockpit.isActive && %lua.DragMode ? 0 : ( %lua.VRStatus != lua.eVRStatus.inactive ? (vr_mode_header_h + header_h) : header_h));
+}
+
+DIV.legend {
+	y: (%lua.VRStatus != lua.eVRStatus.inactive ? (header_h + mapheader_h + vr_mode_header_h) : (header_h + mapheader_h));
+}
+
+
+.btn_prev.avoid 
+{
+	onrelease: (%lua.VRStatus != lua.eVRStatus.inactive ? 'sc_VRModeToClick() sc_AvoidRouteAhead_Prev()' : 'sc_AvoidRouteAhead_Prev()');
+	vrtext: "VRTEXT_less";
+	onvr_activate: 'sc_AvoidRouteAhead_Prev() sc_VRListen()';
+}
+
+.btn_next.avoid 
+{
+	onrelease: (%lua.VRStatus != lua.eVRStatus.inactive ? 'sc_VRModeToClick() sc_AvoidRouteAhead_Next()' : 'sc_AvoidRouteAhead_Next()');
+	vrtext: "VRTEXT_more";
+	onvr_activate: 'sc_AvoidRouteAhead_Next() sc_VRListen()';
+}
+
+TEXT.avoid.prev  {
+	color:vr_avoid_btn_color;
+	align:"CENTER";
+	visible:(%lua.VRStatus != lua.eVRStatus.inactive);
+}
+
+TEXT.avoid.next {
+	color:vr_avoid_btn_color;
+	align:"CENTER";
+	visible:(%lua.VRStatus != lua.eVRStatus.inactive);
+}
+
+SPRITE.minus.avoid.svg, SPRITE.plus.avoid.svg {
+	visible:(%lua.VRStatus == lua.eVRStatus.inactive);
+}
+
+LIST2.avoidable_distances.vr {
+	left:0;top:0;right:0;bottom:0;
+	row:1;col:9;
+}
+
+TABLE.avoidable_distances_container.vr {
+	row:2; valign:"center";
+	top:20%; bottom:20%;
+}
+
+
+BOX.avoidable_distances.vr {
+	orientation:"HORIZONTAL";
+}
+
+BUTTON.btn_main.avoidable_distances {
+	desired_h: listitem_h;
+	max_w: 80;
+	flex:1;
+}
+
+BUTTON.btn_main.avoidable_distances_half {
+	desired_h: listitem_h;
+	flex:0;
+	min_w:80;
+	paddingleft:text_padding;
+	paddingright:text_padding;
+}
+
+
+LIST2.list_control.address.auto {
+	left:(ui_PropLayer.VrAvailable && st_FindAddress.isActive && !st_PoiSearchCenter.isEntered && !ui_PropLayer.WeatherLocationEntered && !ui_PropLayer.FuelPriceMenuEntered ? (vr_actionpanel_w + panel_margin) : panel_margin);
+}
+
+BUTTON.action.vr {
+	left:undef; right:0; w:vr_actionbutton_w; desired_h:vr_actionbutton_h; valign:"CENTER"; box_align:"STRETCH";
+	img:"btn.bmp#3";
+}
+
+SPRITE.actionpanel.vr{
+	left:0; right:undef; w:vr_actionpanel_w; top:0; bottom:0;
+	img: "spr_actionpanel_bg_vr_landscape.bmp";
+	resize_bmp: 1;
+}
+
+VBOX.vrbutton {
+	left:0; right:0; top:0; bottom:0;	
+	paddingleft:15;
+	paddingright:15;
+}
+
+SPRITE.vr.icon.svg {
+	top:0;bottom:0;left:0;right:0;
+	align: "CENTER"; valign: "CENTER";
+	img:"ico_vr.svg";
+}
+
+#ui_SideList SPRITE.vr.icon.svg {
+	img:"ico_vr_map.svg";
+}
+
+TEXT.listitem.vr {
+	color: btn_main_color; color2: btn_main_color2; color3: btn_main_color3;
+	left:0; top:0; right:0; bottom:0;
+	paddingleft: list_padding; paddingright: list_padding;
+}
+
+TEXT.listitem.vr.rowcount {
+	paddingleft:0; paddingright:0;
+	desired_w: 60; align: "center";
+	font: "defaultbd"; fontsize: vr_fontsize_rowcount;
+}
+
+TEXT.vrprompt {
+	flex:1;
+	paddingleft: text_padding;
+	paddingright: text_padding;
+	r2l_invert: 1;
+	color: btn_main_vr_color; color2: btn_main_vr_color2; color3: btn_main_vr_color3;
+	font: "default"; fontsize: fontsize_main;
+	align: "CENTER"; valign:"CENTER";
+	box_align:"STRETCH";
+	wordwrap: 1; 
+	line_break_method: "hard";
+	}
+
+
+SPRITE.fitbox.vr {
+	left:0; top:(vr_mode_header_h + mapheader_h) ; right:0; bottom:0;
+}
+
+SPRITE.fitbox.vr_avoid {
+	left:0; top:(vr_mode_header_h + mapheader_h + legend_h) ; right:0; bottom:0;
+}
+
+@import "~/common/ui/vr_landscape.css" landscape;
+@import "~/common/ui/vr_portrait.css" portrait;

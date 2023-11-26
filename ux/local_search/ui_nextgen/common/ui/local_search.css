@@ -1,0 +1,10 @@
+
+
+
+
+SPRITE.listitem.poi_provider_overlay{
+	visible: (%*.has_provider_icon && ( %lua.SelectedProviderType != lua.EProviderTypes.Online || ( %lua.SelectedProviderType == lua.EProviderTypes.Online && %ui.lm_Online_Providers.list[%ui.lm_Online_Providers.list.index].key != "here" ) ) );
+}
+
+@import "~/common/ui/local_search_landscape.css" landscape;
+@import "~/common/ui/local_search_portrait.css" portrait;

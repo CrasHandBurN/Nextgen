@@ -1,0 +1,36 @@
+<layer ui_AlpinePhoneSearch z=30>
+	<implementation>
+		<property HasValidResult value = false />
+	</implementation>
+
+	<DIV class="list">
+		<LIST2 lst_AlpinePhoneSearch class="list_control">
+			<SECTIONMARKER />
+			<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_POI_Searching" visible=( !%poi.flat_search.ready ) />
+			<LISTMODEL listmodel="poi.flat_search.list" element_template="et_POIItemList" />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+
+		<EMPTYLISTTEXT text=( HasValidResult ? m_i18n( "No matching results" ) : m_i18n( "Please enter at least 3 digits" ) ) visible=( %poi.flat_search.ready && !%poi.flat_search.list.size )/>
+
+		<layer>
+			<DIV class="list">
+				<SPRITE class="panel list input" />
+			</DIV>
+		</layer>
+	</DIV>
+</layer>
+
+<modify lm_PoiSearch_Main>
+	<insert>
+		<row icon="ico_search.svg" text="Search by Phone Number" onrelease='sc_NextStateAnim( st_AlpinePhoneSearch, "fade", 1, "" )' />
+	</insert>
+</modify>
+; -- ari add ---
+<modify lm_FindMenu>
+	<insert before=Coordinates>
+		<row icon="ico_search.svg" text="Search by Phone Number" onrelease='sc_NextStateAnim( st_AlpinePhoneSearch, "fade", 1, "" )' />
+	</insert>
+</modify>

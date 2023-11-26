@@ -1,0 +1,21 @@
+<!if condition=( Plugin.isLoaded("labs") && sc_GetSysEntry( "interface", "show_backlight", 1 ) )>
+	<modify lm_ExtraSettingsList>
+		<insert>
+			<row text="DEBUG~Backlight Details" isselected="lua.BacklightDetails" type="ChkOnOff">
+		</insert>
+	</modify>
+<!end/>
+
+<!if condition=( sc_GetSysEntry( "interface", "show_backlight", 1 ) )>
+	<modify lm_DisplayButtons haspopover="bool">
+		<insert after=Night_Skin_Theme>
+			<row text="Current Backlight" haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_Display_popover")' details=(sprintf( "%d%%", %power.current_backlight) )>
+			<row text="Backlight day" haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_backlight_day_popover")' details=(sprintf( "%d%%", %power.backlight_day) ) visible=(%lua.BacklightDetails)>
+			<row text="Backlight night" haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_backlight_night_popover")' details=(sprintf( "%d%%", %power.backlight_night) ) visible=(%lua.BacklightDetails)>
+			<row text="Backlight day battery" haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_day_battery_popover")' details=(sprintf( "%d%%", %power.backlight_day_battery) ) visible=(%lua.BacklightDetails)>
+			<row text="Backlight night battery" haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_night_battery_popover")' details=(sprintf( "%d%%", %power.backlight_night_battery) ) visible=(%lua.BacklightDetails)>
+			<row text="Backlight custom" haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_backlight_custom_popover")' details=(sprintf( "%d%%", %power.backlight_custom) ) visible=(!%power.auto_backlight && %lua.BacklightDetails)>
+			<row text="Backlight tunnel" haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_backlight_tunnel_popover")' details=(sprintf( "%d%%", %power.backlight_tunnel) ) visible=(%lua.BacklightDetails)>
+		</insert>
+	</modify>
+<!end/>

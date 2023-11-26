@@ -1,0 +1,53 @@
+DIV.notification_area {
+	left: headerbutton_w; top:0; right:headerbutton_w; bottom:0; z:14;
+	visible: (%warning.notification.notification_area.size > 0);
+}
+
+DIV.notification_area_cockpit {
+	left: ( ui_PropLayer.ShowRouteProgress ? %gps.valid ? ( route_progress_w + diricon_w ) : route_progress_w : diricon_w ); top: 0; 
+	right: ( %lua.ShowTimeInTitle ? headerclock_w : 0 ); h: next_street_h; z: 20;
+	visible: ( %warning.notification.notification_area.size > 0 );
+}
+
+DIV.notification_area_dragmode {
+	left: 0; top: 0; 
+	right: 0; h: mapheader_h; z: 20;
+	visible: ( %warning.notification.notification_area.size > 0 );
+}
+
+BUTTON.notification_area {
+	left:0; top:0; right:0; h:100%; z:21;
+}
+
+SPRITE.notification_area {
+	left:0; top:0; right:0; bottom:0; z:22;
+	img: panel_grad;
+}
+
+TEXT.notification_area {
+	left:0; top:0; right:0; bottom:0; z:23;
+	font: defaultbd; fontsize:(%lua.MenuIsOpened || !st_Cockpit.isActive ? fontsize_info: fontsize_warning); color: notification_area_textcolor; align:"CENTER"; valign:"CENTER";
+	paddingleft:0; paddingright:0;
+	visible: (%warning.notification.notification_area.size > 0);
+	leading: (%lua.MenuIsOpened ? 0.7 : 1);
+}
+
+BUTTON.btn_dismiss 	{
+	right:0; w:10%; top:0; h:10%;
+	img: "btn.bmp#3";
+}
+
+TEXT.notification_unread{
+	left:0;right:0;top:0;bottom:4;
+	font: "defaultbd";	fontsize: fontsize_info; 
+	color: error_red_color; color2: error_red_color; disabledcolor: error_red_color;
+	align:"CENTER"; valign:"CENTER";
+	z:101;
+}
+
+TEXT.listitem.notification{
+	font: (%*.properties->read_flag ? "default" : "defaultbd"); 
+}
+
+@import "~/common/ui/notifications_landscape.css" landscape;
+@import "~/common/ui/notifications_portrait.css" portrait;

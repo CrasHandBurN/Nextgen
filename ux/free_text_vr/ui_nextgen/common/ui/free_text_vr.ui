@@ -1,0 +1,72 @@
+<observer obs_IQS_VR_SearchCenter_Finished value=(%address.multi.location_result_ready) onselect=sc_IQS_VR_SearchCenter_PostEvent/>
+<observer obs_IQS_VR_ResultList_Finished value=(%address.multi.prio_search_ready) onselect=sc_IQS_VR_NoResult/>
+
+<observer obs_IQS_VR_StopPresearch value=(%address.multi.prio_search_ready) onselect='doDelayed(1, function () sc_PresearchNextCity() end)' />
+
+<layer ui_IQS_VR_Find_Result visible = ( !%address.multi.category_list.isempty )  z=30>
+	<DIV class="list">
+	;	<SECTIONMARKER/>
+		<LIST2 lst_IQS_VR_ResultList class="list_control" SMOOTHSCROLLING row=3 bottom=0 extra_scroll=0 cellh=undef>
+			<LISTMODEL listmodel="ui.lm_IQS_SearchProgress"     element_template="et_IQS_Searching" visible=(!%lua.VRResultIsCityCenter) />
+			<LISTMODEL listmodel="address.multi.list"  element_template="et_IQS_ResultList_" TEMPLATE_TYPE_MODEL="*.type"  visible=( %lua.IQS_ResultListType != "ProviderFilter" && !%lua.VRTextMultipleCityResults && !%lua.VRResultIsCityCenter) />
+			
+			<LISTMODEL listmodel="address.multi.list"  element_template="et_IQS_ResultList_City"  text=%*.name_highlighted details=%*.description onrelease=sc_VR_IQS_CityResultOnrelease  visible=(%lua.VRTextMultipleCityResults || %lua.VRResultIsCityCenter) />
+			<LISTMODEL listmodel="poi.IQS_provider_hack.list"	element_template="et_POIItemList"								    visible=( %lua.IQS_ResultListType == "ProviderFilter" )/>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+
+			<OBSERVER boolmodel="ui.PARENT.is_grabbed" onselect=sc_IncPhaseCounter ondeselect='sc_VRListen()'  start="NO_TRIGGER">
+			<DIV vrtext="VRTEXT_line 1" onvr_activate='sc_IQSSearchItem_OnvrActivate(MODEL.ui.PARENT.first_visible_index())'     visible=(%ui.PARENT.last_visible_index >= 0)>
+			<DIV vrtext="VRTEXT_line 2" onvr_activate='sc_IQSSearchItem_OnvrActivate(MODEL.ui.PARENT.first_visible_index() + 1)' visible=(%ui.PARENT.last_visible_index >= 1)>
+			<DIV vrtext="VRTEXT_line 3" onvr_activate='sc_IQSSearchItem_OnvrActivate(MODEL.ui.PARENT.first_visible_index() + 2)' visible=(%ui.PARENT.last_visible_index >= 2)>
+			
+		</LIST2>
+		
+		<EMPTYLISTTEXTVR text="There is no result for your search. Please try again!" visible=((%address.multi.category_list[current].ready && !%address.multi.category_list[current].items_count) || (%lua.IQS_ResultListType == "ProviderFilter" && %poi.IQS_provider_hack.ready && !%poi.IQS_provider_hack.count))/>
+    </DIV>
+</layer>
+
+<element_template et_IQS_ResultList_City details="" >
+	<IMPLEMENTATION>
+		<PROPERTY listRowCount VALUE=(!%*._vlist.is_grabbed ? listpos - %*._vlist.first_visible_index + 1 : "-") />
+	</IMPLEMENTATION>
+	<BUTTON class="listitem" onrelease=ONRELEASE>
+		<HBOX class="listitem">
+			<TEXT CLASS="listitem vr rowcount" TEXT=(listRowCount) />
+			<VBOX class="listitem">
+				<TEXT class="listitem top" text=(%*.name_highlighted) wordwrap=( DETAILS ? 1 : 2 ) />
+				<TEXT class="listitem bottom" text=DETAILS visible=( DETAILS ) />
+			</VBOX>
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_IQS_VR_Footer z=80>
+	<DIV class="full">
+		<DIV class="footer">
+	;		<SECTIONMARKER class="footer"/>
+			<SPRITE class="background footer">
+			
+			<FOOTERBUTTON class="btn_footer left back" text="Back" onrelease=sc_back  onlongclick=sc_longBack rawkey=(%lua.LocalMenuOpen ? undef : 27) visible=(%lua.VRStatus != lua.eVRStatus.listen) />
+			<DIV vrtext="VRTEXT_back" onvr_activate=sc_VRback />
+		</DIV>
+	</DIV>
+</layer>
+
+<define_element EMPTYLISTTEXTVR fontsize font text="" wordwrap=1>
+	<HBOX class="emptylist_text">
+		<HBOX class="emptylist_text_container">
+			<SPRITE class="panel fill emptylist_text" position="absolute"/>
+			<TEXT  class="noitems" text=(OWNER.TEXT) wordwrap=(OWNER.WORDWRAP)/>
+		</HBOX>
+	</HBOX>
+</define_element>
+
+<userlist lm_IQS_VR_Citylist name="wstr" description="wstr" city_id="qword" position="gcoor" has_result="bool">
+	<view has_result visibility_filter=has_result />
+</userlist>
+
+<layer ui_VR_command_exit>
+	<DIV vrtext="Exit" onvr_activate='CLEARTOMARKER(gEnterVRMarker-1)' />
+</layer>

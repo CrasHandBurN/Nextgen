@@ -1,0 +1,32 @@
+<modify lm_NavigationMap>
+	<insert after="default">
+		<row HwyDrive	 prio=400 text="Offer Motorway Services"  isselected="other.highway_drive.enabled" type="ChkOnOff" />
+		<row HwyFacility prio=450 text="Services Displayed"        onrelease=sc_GoToHighwaySettings enable=(%other.highway_drive.enabled) />
+	</insert>
+</modify>
+
+<modify ui_PropLayer>
+	<insert into="IMPLEMENTATION">
+		<PROPERTY HwyPoiListIsAvailable VALUE=( %exists:other.highway_drive && %other.highway_drive.available && %navigation.car.is_on_highway && %ui.lm_hwd_filtered.size && ( !%navigation.has_junctionview || JunctionViewHiddenByUser ) ) />
+		<PROPERTY ShowHwyOpenBtn 		VALUE=( ui_PropLayer.HwyPoiListIsAvailable && %other.highway_drive.enabled && !JunctionViewVisible && !ui_Cockpit.p2p_valid ) />
+	</insert>
+	<modify HwyPoiListIsVisible VALUE=(!%lua.DragMode && %lua.HwyPoiListIsVisible && !%lua.MenuIsOpened && !ui_PropLayer.SignpostVisible && ui_PropLayer.HwyPoiListIsAvailable) />
+	<insert>
+		<OBSERVER VALUE=( ui_PropLayer.HwyPoiListIsVisible && %lua.CockpitMapMode ) ONCHANGE=sc_SetNavCarPos START />
+	</insert>
+</modify>
+
+<modify ui_Cockpit>
+	<insert last_child into="#CockpitBTNTable">    
+		<BUTTON  CLASS="btn_map" ONRELEASE=sc_OpenCloseHwyPanel VISIBLE=(ui_PropLayer.ShowHwyOpenBtn && ui_PropLayer.HwyPoiListIsAvailable)> 
+			<SPRITE CLASS="button map fill" />
+			<SPRITE CLASS="btn_map svg" IMG=(ui_PropLayer.HwyPoiListIsVisible ? (%lua.IsLandscape ? "ico_HWServiceClose.svg" : "ico_HWServiceClose_portrait.svg") : (%lua.IsLandscape ? "ico_HWServiceOpen.svg" : "ico_HWServiceOpen_portrait.svg")) /> 
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row	visible=( (ui_PropLayer.ShowHwyOpenBtn // 0) && (ui_PropLayer.HwyPoiListIsAvailable // 0) ) /> 
+	</insert>
+</modify>

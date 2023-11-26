@@ -1,0 +1,52 @@
+
+
+TABLE.countryinfo_speedlimits {
+	row:1; col:4;
+}
+
+BOX.countryinfo{ flex:1;}
+
+
+
+
+DIV.gps_graph{
+	left:0;
+	right:47%;
+	top:0;
+	bottom:0;
+}
+
+DIV.gps_radar{
+	left:50%;
+	right:0;
+	top:0;
+	bottom:0;	
+}
+
+HBOX.GPSStatus_radar{
+	paddingleft:gpsstatusbar_margin_right;
+	paddingright:gpsstatusbar_margin_right;
+}
+
+HBOX.GPSStatus_satnum{
+	top:6%; h:10%;
+}
+
+LIST2.GPSStatus_bars, TABLE.GPSStatus_bars{
+	top:(%lua.ShowGlonass ? 16% : 21%);
+	h:(%lua.ShowGlonass ? 28% : 58%);
+}
+
+LIST2.GPSStatus_bars.glonass, TABLE.GPSStatus_bars.glonass{
+	top:58%;
+	h:28%;
+}
+
+HBOX.GPSStatus_satnum.glonass{
+	top:48%;
+}
+
+DIV.GPSStatus_information{
+	top:84%;
+	bottom:0;
+}

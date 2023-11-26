@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Generator: Adobe Illustrator 17.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="120px"
+	 height="120px" viewBox="0 0 120 120" enable-background="new 0 0 120 120" xml:space="preserve">
+<g id="Layer_2" display="none">
+	<circle display="inline" opacity="0.5" fill="#DF1F26" cx="60" cy="60" r="60"/>
+	<rect x="6.5" y="6.5" display="inline" opacity="0.5" fill="#3B4FA1" width="107" height="107"/>
+</g>
+<g id="normal">
+	<path fill-rule="evenodd" clip-rule="evenodd" fill="#D7D7D7" d="M85.254,113.471V68.914h11.884h5.942h8.911v44.562L85.254,113.471
+		L85.254,113.471z M85.254,62.972V39.205v-5.942H67.428V21.379h29.709v41.593H85.254L85.254,62.972z M79.312,39.205v23.767v5.942
+		v44.556l-23.577-0.004l2.68-0.01l0.1-56.425v-5.942H43.661V39.205h5.942h2.971h5.942h8.913H79.312L79.312,39.205z M37.719,36.234
+		v2.971v11.884H19.894V6.525h29.709v26.738H37.719V36.234L37.719,36.234z M37.719,57.03h5.942h8.913v56.433l-44.558-0.008
+		L8.01,57.03h8.913h2.971H37.719L37.719,57.03z"/>
+</g>
+<g id="active">
+	<path fill-rule="evenodd" clip-rule="evenodd" fill="#D7D7D7" d="M85.254,113.471V68.914h11.884h5.942h8.911v44.562L85.254,113.471
+		L85.254,113.471z M85.254,62.972V39.205v-5.942H67.428V21.379h29.709v41.593H85.254L85.254,62.972z M79.312,39.205v23.767v5.942
+		v44.556l-23.577-0.004l2.68-0.01l0.1-56.425v-5.942H43.661V39.205h5.942h2.971h5.942h8.913H79.312L79.312,39.205z M37.719,36.234
+		v2.971v11.884H19.894V6.525h29.709v26.738H37.719V36.234L37.719,36.234z M37.719,57.03h5.942h8.913v56.433l-44.558-0.008
+		L8.01,57.03h8.913h2.971H37.719L37.719,57.03z"/>
+</g>
+<g id="disabled" opacity="0.2">
+	<path fill-rule="evenodd" clip-rule="evenodd" fill="#D7D7D7" d="M85.254,113.471V68.914h11.884h5.942h8.911v44.562L85.254,113.471
+		L85.254,113.471z M85.254,62.972V39.205v-5.942H67.428V21.379h29.709v41.593H85.254L85.254,62.972z M79.312,39.205v23.767v5.942
+		v44.556l-23.577-0.004l2.68-0.01l0.1-56.425v-5.942H43.661V39.205h5.942h2.971h5.942h8.913H79.312L79.312,39.205z M37.719,36.234
+		v2.971v11.884H19.894V6.525h29.709v26.738H37.719V36.234L37.719,36.234z M37.719,57.03h5.942h8.913v56.433l-44.558-0.008
+		L8.01,57.03h8.913h2.971H37.719L37.719,57.03z"/>
+</g>
+</svg>

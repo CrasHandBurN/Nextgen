@@ -1,0 +1,8 @@
+VBOX.messagebox_text.vr{
+	top: ( vr_mode_header_h - messagebox_panel_margin);
+	bottom:dialog_button_h;
+}
+
+TEXT.listitem.menu_vr {
+	wordwrap: 1;
+}

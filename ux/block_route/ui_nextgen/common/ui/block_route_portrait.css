@@ -1,0 +1,10 @@
+SPRITE.fitbox.blockedroad {
+	left:25%; top:7%; right:10%; bottom:2%;
+}
+
+.row2row{
+	row:1;
+	cellw: (16%,16%,16%,16%,) ; bottom:5%; top:(-5);
+}
+
+.50_20  { w: 50%; h: 18%;}

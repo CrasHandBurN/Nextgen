@@ -1,0 +1,73 @@
+<!if condition=( Plugin.isLoaded( "fuel_prices" ) )/>
+	<modify ui_FuelPricesSearch>
+		<insert first_child into="LIST2">
+			<LISTMODEL LISTMODEL="ui.lm_Dummy" ELEMENT_TEMPLATE="et_PartialConnectedError" VISIBLE=( %poi.fuel_prices.list.size && %services.fuel_prices.last_bingo_error.main_error_code != lua.EConnectedMainErrorTypes.ERROR_NO_ERROR )/>
+		</insert>
+	</modify>
+	
+	<modify ui_FuelPricesProviderInfoMap>
+		<insert first_child into="LIST2">
+			<LISTMODEL LISTMODEL="ui.lm_Dummy" ELEMENT_TEMPLATE="et_PartialConnectedError" VISIBLE=( %poi.fuel_prices.list.size && %services.fuel_prices.last_bingo_error.main_error_code != lua.EConnectedMainErrorTypes.ERROR_NO_ERROR )/>
+		</insert>
+	</modify>
+<!end/>
+
+<!if condition=( Plugin.isLoaded( "local_search" ) )/>
+	<modify ui_LocalSearch>
+		<insert first_child into="LIST2">
+			<LISTMODEL LISTMODEL="ui.lm_Dummy" ELEMENT_TEMPLATE="et_PartialConnectedError" VISIBLE=( %poi.local_search.list.size && %services.netlocalsearch_bingo.last_bingo_error.main_error_code != lua.EConnectedMainErrorTypes.ERROR_NO_ERROR )/>
+		</insert>
+	</modify>
+<!end/>
+
+<!if condition=( Plugin.isLoaded( "online_parking" ) )/>
+	<modify ui_ParkingAroundHereListView>
+		<insert first_child into="LIST2">
+			<LISTMODEL LISTMODEL="ui.lm_Dummy" ELEMENT_TEMPLATE="et_PartialConnectedError" VISIBLE=( %poi.online_parking.list.size && %services.online_parking.last_bingo_error.main_error_code != lua.EConnectedMainErrorTypes.ERROR_NO_ERROR )/>
+		</insert>
+	</modify>
+	
+	<modify ui_ParkingSearch>
+		<insert first_child into="LIST2">
+			<LISTMODEL LISTMODEL="ui.lm_Dummy" ELEMENT_TEMPLATE="et_PartialConnectedError" VISIBLE=( %poi.online_parking.list.size && %services.online_parking.last_bingo_error.main_error_code != lua.EConnectedMainErrorTypes.ERROR_NO_ERROR )/>
+		</insert>
+	</modify>
+	
+	<modify ui_ParkingProviderInfoMap>
+		<insert first_child into="LIST2">
+			<LISTMODEL LISTMODEL="ui.lm_Dummy" ELEMENT_TEMPLATE="et_PartialConnectedError" VISIBLE=( %poi.online_parking.list.size && %services.online_parking.last_bingo_error.main_error_code != lua.EConnectedMainErrorTypes.ERROR_NO_ERROR )/>
+		</insert>
+	</modify>
+<!end/>
+
+<!if condition=( Plugin.isLoaded( "weather" ) )/>
+	<modify ui_WeatherMenu>
+		<insert first_child into="LIST2">
+			<LISTMODEL LISTMODEL="ui.lm_Dummy" ELEMENT_TEMPLATE="et_PartialConnectedError" VISIBLE=( %services.weather.weather_at_location.list[0].hourly_forecast.size && %services.weather.last_bingo_error.main_error_code != lua.EConnectedMainErrorTypes.ERROR_NO_ERROR )/>
+		</insert>
+	</modify>
+	
+	<modify ui_WeatherProviderInfoMap>
+		<insert first_child into="LIST2">
+			<LISTMODEL LISTMODEL="ui.lm_Dummy" ELEMENT_TEMPLATE="et_PartialConnectedError" VISIBLE=( %services.weather.alongroute_forecasts.list.size && %services.weather.last_bingo_error.main_error_code != lua.EConnectedMainErrorTypes.ERROR_NO_ERROR )/>
+		</insert>
+	</modify>
+	
+	<modify ui_WeatherLocations>
+		<insert first_child into="LIST2">
+			<LISTMODEL LISTMODEL="ui.lm_Dummy" ELEMENT_TEMPLATE="et_PartialConnectedError" VISIBLE=( %services.weather.favourite_forecasts.list.size && %services.weather.last_bingo_error.main_error_code != lua.EConnectedMainErrorTypes.ERROR_NO_ERROR )/>
+		</insert>
+	</modify>
+<!end/>
+
+<modify lm_WizardSteps>
+	<insert after=RouteSettings>
+		<row onrelease=sc_ShowConnectedActivation visible=( st_WizardInit.IsFirstStart && !Plugin.isLoaded( "grp_shop" ) && ( %services.check_activatable_services_status == lua.EActivationStatus.SERVICE_OPERATION_SUCCEEDED // 0 ) && ( %services.has_activatable_service // 0 ) && ( !%services.has_activated // 0 ) )>
+	</insert>
+</modify>
+
+<modify lm_Settings >
+	<insert after="default">
+		<row prio=1200 text="Online Services" icon="ico_connectedservices.svg" onrelease=sc_ShowConnectedServicesSetting onlongclick=sc_connectedtraficlog_message>
+	</insert>
+</modify>

@@ -1,0 +1,4 @@
+<observer obs_gps_lost value=(%gps.valid) onselect=sc_GPSSignalRegained ondeselect='gGPSSignalTimerRunning = true obs_gps_lost_timer:START()' start="NO_TRIGGER" />
+<observer obs_gps_regained_timer value=(%gps.since_last) onchange=sc_GPSSignalRegainedTimer />
+<observer obs_gps_lost_timer value=(%ui._up_time) onchange=sc_GPSSignalLostTimer />
+<observer obs_count_unread value=(%warning.notification.notification_list.size) onchange=sc_Count_Unread start />

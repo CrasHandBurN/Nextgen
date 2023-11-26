@@ -1,0 +1,21 @@
+<modify lm_UsefulInformation>
+	<insert>
+		<row TripMonitor prio=900 text="Trip Monitor" icon="ico_tripcomputer.svg" onrelease='sc_NextStateAnim( st_TripLogList, "fade", 1, "")'/>
+  </insert>
+</modify>
+
+<modify ui_TripInfo>
+	<insert first_child into="BOX.tripinfo">
+		<BOX CLASS="tripinfo_header" VISIBLE=(st_TripLogDetails.isActive)>
+			<HBOX CLASS="tripinfo">
+				<SPRITE CLASS="tripinfo svg" IMG="trackinglist.svg" PHASE=%int:mydata.tracks.list.current.color VISIBLE=(%mydata.tracks.list[current].data_record) />
+				<SPRITE CLASS="tripinfo icon svg" IMG="ico_Tripcomputer.svg" VISIBLE=(!%mydata.tracks.list[current].data_record & !%mydata.tracks.list[current].auto_saved) />
+				<SPRITE CLASS="tripinfo icon svg" IMG="ico_Tripcomputer_auto.svg" VISIBLE=(!%mydata.tracks.list[current].data_record & %mydata.tracks.list[current].auto_saved) />	
+				<TEXT CLASS="tripinfo" TEXT=(sc_TrackLogDeEnterizer()) />
+			</HBOX>
+			<CHECKBOX CLASS="btn_main tripinfo" TEXT="Visible on Map" BOOLMODEL="bool:mydata.tracks.list.current.visible" VISIBLE=(%bool:mydata.tracks.list.current.data_record) /> 
+			<SPACER class="current_trip">		
+			<SECTIONMARKER class="current_trip"/>			
+		</BOX>
+	</insert>
+</modify>

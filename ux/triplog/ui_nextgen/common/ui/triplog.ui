@@ -1,0 +1,144 @@
+<userlist lm_TripLogFootermenu text="str" onrelease="ui" visible="bool" isactionbutton="bool">
+	<view visibility_filter=visible />
+	<row text="Start New Recording" onrelease=sc_StartTripLog  visible=(%mydata.tracks.tracking_index ==-1 && !%mydata.tracks.record_auto_track && !%lua.EditMode)/>
+	<row text="Stop Recording"		onrelease=sc_StopTripLog   visible=(%mydata.tracks.tracking_index !=-1 && !%mydata.tracks.record_auto_track && !%lua.EditMode)/>
+	
+	<row text="Split Recording"		onrelease=sc_SplitTripLog   visible=(%mydata.tracks.record_auto_track && !%lua.EditMode)/>
+	<row text="Done" isactionbutton=1 onrelease='sc_EditModeDone()' visible=(%lua.EditMode)/>
+</userlist>
+
+<layer ui_TripLogList z=30>
+	<DIV class="list">
+		<SECTIONMARKER/>
+		<LIST2 lst_TripLogList class="list_control list_threelines" SMOOTHSCROLLING>
+			<LISTMODEL listmodel=( %mydata.tracks.list == 0 ? "ui.lm_Dummy" : "mydata.tracks.list" ) element_template="et_TripLogList" >
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+		<EMPTYLISTTEXT text="No trip data saved." visible=(%mydata.tracks.list.isempty)>
+	</DIV>
+</layer>
+
+<element_template et_TripLogList>
+	<BUTTON class="listitem icon" onrelease='sc_SelectTripLogItem( index )' > 
+		<HBOX class="listitem">
+			<SPRITE class="listitem svg" img="trackinglist.svg" phase=%*.color visible=%*.data_record>
+			<SPRITE class="listitem icon_list svg" img="ico_triplog.svg" visible=(!%*.data_record & !%*.auto_saved)>
+			<SPRITE class="listitem icon_list svg" img="ico_Tripcomputer_auto.svg" visible=(!%*.data_record & %*.auto_saved)>
+			<VBOX box_align="stretch">
+				<TEXT flex=(index==%mydata.tracks.tracking_index ? 2 : 0) class="listitem icon top textpadding_small" top=10%  leading=80% text=%*.name>
+				<HBOX flex=(index==%mydata.tracks.tracking_index ? 1 : 0) class="listitem" box_align="stretch">
+					<SPRITE class="triprecord icon_list svg" img="ico_rec.svg" phasename="active" visible=(index==%mydata.tracks.tracking_index & !(%gps.valid & %gps.fast_blink))>
+					<TEXT class="listitem bottom triprecord" text=( %gps.valid ? "Recording..." : "Waiting for GPS signal..." ) visible=(index==%mydata.tracks.tracking_index & !(%gps.valid & %gps.fast_blink))>
+				</HBOX>
+			</VBOX>
+			<SPACER flex=1/>
+			<VBOX box_align="stretch" visible=(!%lua.EditMode)>
+				<TEXT class="r2l font_info color_btn_sec" align="RIGHT" textmodel_date="*.start_time.date" formatmodel="regional.dateformat" visible=(%*.start_time.valid)>
+				<TEXT class="r2l font_info color_btn_sec" align="RIGHT" text=(format(L"(%{timespan:1})",%*.time_total))        visible=(%*.time_total.valid)>		
+			</VBOX>
+			<SPRITE class="listitem icon popover" visible=(%lua.EditMode)>
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<userlist lm_localmenu_triplog text="str" onrelease="ui" enable="bool" visible="bool">
+	<view visibility_filter=visible />
+	<default text="" onrelease=undef enable=1 visible=1 >
+		<row edit	   text="Edit" onrelease=sc_EditTripLog visible=( !%lua.EditMode )/>
+		<row deleteall text="Delete All" onrelease=sc_DeleteAllTripLogMSGbox enable=(!%mydata.tracks.list.isempty)  visible=( %lua.EditMode )>
+		<row exportall text="Export All" onrelease=sc_ExportAllTripLogMSGbox enable=( %mydata.tracks.list.size && %mydata.tracks.list[0].data_record && %mydata.tracks.list[0].time_total ) visible=( !%lua.EditMode )>
+</userlist>
+
+<userlist lm_TripLogListPopover text="str" onrelease="ui" enable="bool">
+	<default enable=1/>
+	<row text="Delete" onrelease=sc_DeleteTripLogMSGbox />
+	<row text="Rename" onrelease=sc_OpenRenameTripLog/>
+	<row text="Change Colour" onrelease=sc_OpenChangeTripColor enable=(%mydata.tracks.list[current].data_record) />
+</userlist>
+
+<userlist lm_localmenu_triplog_details text="str" onrelease="ui" enable="bool" visible="bool">
+	<view visibility_filter=visible />
+	<default text="" onrelease=undef enable=1 visible=1 >
+		<row text="View on Map" onrelease=sc_TripLogOverviewMapFull enable=(%lua.CurrentTracklogDataRecord && %mydata.tracks.list[current].time_total)/>
+		<row text="Export Track Log" onrelease=sc_ExportTrackLog enable=(%lua.CurrentTracklogDataRecord && %mydata.tracks.list[current].time_total) visible=( %other.device.platform != lua.EDevicePlatform.IOS )/>
+		<row text="Elevation Profile" onrelease='sc_TriplogProfile() MODEL.lua.triplog.profile = 1' enable=(%lua.CurrentTracklogDataRecord && %mydata.tracks.list[current].time_total)/>
+		<row text="Speed Profile" onrelease='sc_TriplogProfile() MODEL.lua.triplog.profile = 2' enable=(%lua.CurrentTracklogDataRecord && %mydata.tracks.list[current].time_total)/>
+</userlist>
+
+<layer ui_TripColorSelector z=30>
+	<DIV class="list">
+		<LIST2 class="list_control tripcolor" col=4 row=4 listmodel="ui.lm_tripColor" element_template="et_TripColorSelector">
+	</DIV>
+</layer>
+
+<userlist lm_tripColor/>
+
+<element_template et_TripColorSelector>
+	<RADIO class="tripcolor_selector" groupmodel="lua.triplogColor" var=(index + 2) onrelease=sc_ChangeTripColor >
+		<SPRITE class="tripcolor_selector" phase=(index + 2)/>
+	</RADIO>
+</element_template>
+
+<layer ui_TriplogProfile z=50>
+	<DIV class="mapmain"> 
+		<DIV class="sidepanel triplog">
+			<DIV class="tripinfoprofileheader">
+				<SPRITE class="panel fill">
+				<HBOX box_align="stretch" flex=1 paddingleft=0 paddingright=0>	
+					<DISTTEXT class="tripinfo header" distance=(%mydata.tracks.list[current].distance_total) >
+					<TIMESPANTEXT class="tripinfo header" timespan=(%mydata.tracks.list[current].time_total) >
+				</HBOX>
+			</DIV>
+					
+			<layer>
+				<DIV class="mapmain"> 
+					<DIV class="sidepanel triplog">
+						<SPRITE class="panel fill">
+						
+							<VBOX class="pinch_zoom">
+								<BUTTON class="btn_main zoomin" onclick='chart_ElevationGraph:ZOOM(1)'  REPEAT_DELAY=50 REPEAT_INTERVAL=50 enable=(%{"ui.chart_ElevationGraph.can_zoom_in"}) visible=(%lua.triplog.profile == 1)>
+									<SPRITE class="btn_main icon svg zoomin graph"/>
+								</BUTTON>
+							
+								<BUTTON class="btn_main zoomout" onclick='chart_ElevationGraph:ZOOM(-1)'  REPEAT_DELAY=50 REPEAT_INTERVAL=50 enable=(%{"ui.chart_ElevationGraph.can_zoom_out"}) visible=(%lua.triplog.profile == 1)>
+									<SPRITE class="btn_main icon svg zoomout graph"/>
+								</BUTTON>
+								
+								<BUTTON class="btn_main zoomin" onclick='chart_SpeedGraph:ZOOM(1)'  REPEAT_DELAY=50 REPEAT_INTERVAL=50 enable=(%{"ui.chart_SpeedGraph.can_zoom_in"}) visible=(%lua.triplog.profile == 2)>
+									<SPRITE class="btn_main icon svg zoomin graph"/>
+								</BUTTON>
+							
+								<BUTTON class="btn_main zoomout" onclick='chart_SpeedGraph:ZOOM(-1)' REPEAT_DELAY=50 REPEAT_INTERVAL=50 enable=(%{"ui.chart_SpeedGraph.can_zoom_out"}) visible=(%lua.triplog.profile == 2)>
+									<SPRITE class="btn_main icon svg zoomout graph"/>
+								</BUTTON>
+								
+							</VBOX>
+							
+							<CHART chart_ElevationGraph class="triplog"
+								scale_x=%mydata.tracks.get_distance_scale_info
+								scale_y=%mydata.tracks.get_elevation_scale_info
+								formatter_x={ %mydata.tracks.format_distance($1, undef, $2, $3) }
+								formatter_y={ %mydata.tracks.format_elevation($1, undef, $2, $3) }
+								data = %mydata.tracks.list[current].altitude_by_distance
+								follow_range = 180
+								follow = (! %mydata.tracks.list[current].finished)
+								visible = (%lua.triplog.profile == 1)/>
+						
+							<CHART chart_SpeedGraph class="triplog"
+								scale_x = %mydata.tracks.get_time_scale_info
+								scale_y = %mydata.tracks.get_speed_scale_info
+								formatter_x={ %mydata.tracks.format_time($1, undef, $2, $3) }
+								formatter_y={ %mydata.tracks.format_speed($1, undef, $2, $3) }
+								data = %mydata.tracks.list[current].speed_by_time
+								follow_range = 180
+								follow = (! %mydata.tracks.list[current].finished)
+								visible = (%lua.triplog.profile == 2)/>
+
+					</DIV>	
+				</DIV>	
+			</layer>
+		</DIV>
+	</DIV>
+</layer>

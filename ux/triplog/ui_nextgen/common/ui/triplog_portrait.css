@@ -1,0 +1,23 @@
+BOX.tripinfo_header {
+	orientation: "vertical";
+}
+
+CHECKBOX.btn_main.tripinfo  {
+	flex:1;
+}
+
+
+DIV.sidepanel.triplog{
+	h: tripinfo_panel_size;
+}
+
+DIV.mapmain.mapcontrol{
+	top: (header_h + (ui_MapHeader_prop.isVisible ? 
+					( Plugin.isLoaded("tmc") && st_TrafficMap.isActive  ? mapheader_h_tmc : mapheader_h) : 0)
+					 + (%lua.MapHeaderMode == "avoid" || %lua.MapHeaderMode == "avoid_ahead" ? legend_h : 0 ));
+	bottom:((!%lua.ShowBackButton && Plugin.isLoaded("tmc") && st_CurrentTraffic.isActive ? 0 : footer_h) + (st_WhereAmI.isActive ? whereami_panel_size : 0 ) + (st_RouteMethod.isActive ? routemethod_panel_size : 0 ) + (st_TriplogProfile.isActive ? tripinfo_panel_size : 0 )); 
+}
+
+VBOX.pinch_zoom{
+	right:(screen_w - triplog_zoom_button_w);
+}

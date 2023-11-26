@@ -1,0 +1,49 @@
+
+<userlist lm_Display_popover text="str" onrelease="ui" type="str" min="int" max="int" step="int" valuemodel="str" name="str" min_text="str" max_text="str">
+	<row name="Current Backlight" text=(sprintf( "%d%%", %power.current_backlight) ) min=0 max=100 step=5 valuemodel="power.current_backlight" type="Scroll" min_text="Min" max_text="Max" />
+</userlist>
+
+<userlist lm_backlight_day_popover text="str" onrelease="ui" type="str" min="int" max="int" step="int" valuemodel="str" name="str" min_text="str" max_text="str">
+	<row name="Backlight day" text=(sprintf( "%d%%", %power.backlight_day) ) min=0 max=100 step=1 valuemodel="power.backlight_day" type="Scroll" min_text="Min" max_text="Max" />
+</userlist>
+
+<userlist lm_backlight_night_popover text="str" onrelease="ui" type="str" min="int" max="int" step="int" valuemodel="str" name="str" min_text="str" max_text="str"> 
+	<row name="Backlight night" text=(sprintf( "%d%%", %power.backlight_night) ) min=0 max=100 step=1 valuemodel="power.backlight_night" type="Scroll" min_text="Min" max_text="Max" />
+</userlist>
+
+<userlist lm_day_battery_popover text="str" onrelease="ui" type="str" min="int" max="int" step="int" valuemodel="str"name="str" min_text="str" max_text="str">
+	<row name="Backlight day battery" text=(sprintf( "%d%%", %power.backlight_day_battery) ) min=0 max=100 step=1 valuemodel="power.backlight_day_battery" type="Scroll" min_text="Min" max_text="Max" />
+</userlist>
+
+<userlist lm_night_battery_popover text="str" onrelease="ui" type="str" min="int" max="int" step="int" valuemodel="str" name="str" min_text="str" max_text="str">
+	<row name="Backlight night battery" text=(sprintf( "%d%%", %power.backlight_night_battery) ) min=0 max=100 step=1 valuemodel="power.backlight_night_battery" type="Scroll" min_text="Min" max_text="Max" />
+</userlist>
+
+<userlist lm_backlight_custom_popover text="str" onrelease="ui" type="str" min="int" max="int" step="int" valuemodel="str" name="str" min_text="str" max_text="str">
+	<row name="Backlight custom" text=(sprintf( "%d%%", %power.backlight_custom) ) min=0 max=100 step=1 valuemodel="power.backlight_custom" type="Scroll" min_text="Min" max_text="Max" />
+</userlist>
+
+<userlist lm_backlight_tunnel_popover text="str" onrelease="ui" type="str" min="int" max="int" step="int" valuemodel="str" name="str" min_text="str" max_text="str">
+	<row name="Backlight tunnel" text=(sprintf( "%d%%", %power.backlight_tunnel) ) min=0 max=100 step=1 valuemodel="power.backlight_tunnel" type="Scroll" min_text="Min" max_text="Max" />
+</userlist>
+
+
+<layer ui_ShutdownTimer class="messagebox">
+	<implementation>
+		<property shutdown_timer value=(%power.shutdown_timer > 0 ? %power.shutdown_timer : 0) />
+	</implementation>  
+	<DIV class="full">
+		<SPRITE class="messagebox_cover" />
+		<DIV class="messagebox">
+			<SPRITE class="messagebox" />
+			<DIV class="messagebox_panel">
+				<VBOX class="messagebox_text">
+					<TEXT class="messagebox_first_line color_inf_main"  text=(translated_format(m_i18n("Shutting down in %d seconds..."), shutdown_timer)) />
+					<SPACER class="messagebox_text" />
+					<TEXT class="messagebox_second_line color_inf_main" text="Battery level is critically low. Please recharge the battery." />
+				</VBOX>
+				<DIALOGBUTTON class="dialog 1_1" text="Cancel" iconspr="" onrelease=sc_CancelShutdown rawkey=27 />
+			</DIV>
+		</DIV>
+	</DIV>
+</layer>
