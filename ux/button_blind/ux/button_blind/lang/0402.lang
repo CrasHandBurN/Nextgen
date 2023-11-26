@@ -1,5 +1,5 @@
 [words]
 Invisible buttons="Невидими бутони"
-Additional invisible buttons (Zoom, Route editing)="Допълнителни невидими бутони (мащабиране, редактиране на маршрут)"
-Time to restore Zoom="Време за възстановяване"
-plugin~button_blind="button_blind: бутон за активиране на невидимите бутони"
+Additional invisible buttons (Zoom, Route editing)="Допълнителни невидими бутони (мащаб, маршрут)"
+Time to restore Zoom="Предишен мащаб след"
+plugin~button_blind="button_blind: активиране на невидимите бутони"
