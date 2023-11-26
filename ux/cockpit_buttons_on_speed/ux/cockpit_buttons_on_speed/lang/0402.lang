@@ -1,11 +1,11 @@
 [words]
-plugin~cockpit_buttons_on_speed="cockpit_buttons_on_speed: настройки за изчезване на бутоните в кабината"
+plugin~cockpit_buttons_on_speed="cockpit_buttons_on_speed: настройки за скриване на бутоните в кокпита"
 
-The Cockpit buttons is not dependent on the speed.="Бутоните в кабина са независими от скоростта."
-The Cockpit buttons is depending on the speed %s.="Бутоните в кабината зависят от скоростта %s."
-Hide the 'Cockpit' buttons depending on the speed settings="Настройки за изчезване на бутоните в кабината"
-Delay before hide after show="Забавяне преди да се скрият, след като се покажат"
-Speed to hide button="Скорост на скриване"
+The Cockpit buttons is not dependent on the speed.="Бутоните в кокпита не зависят от скоростта."
+The Cockpit buttons is depending on the speed %s.="Бутоните в кокпита зависят от скоростта %s."
+Hide the 'Cockpit' buttons depending on the speed settings="Настройки за скриване на бутоните в кокпита"
+Delay before hide after show="Забавяне преди скриване, след като се покажат"
+Speed to hide button="Скорост за скриване на бутоните"
 Never="Никога"
 Hide the 'Cockpit' buttons depending on the speed="Скрий бутоните в кокпита въз основа на скоростта"
 "Hide the 'Cockpit' buttons depending on side panel"="Скрий бутоните в кокпита въз основа на страничната лента"
