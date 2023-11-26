@@ -1,4 +1,4 @@
 [words]
 Mapview changer="Изглед на картата"
-'Mapview changer' Button="Изглед на картата - бутон"
-plugin~button_mapview_changer="button_mapview_changer: Бутон за достъп до цветовата конфигурация на картата"
+'Mapview changer' Button="Бутон за изглед на картата"
+plugin~button_mapview_changer="button_mapview_changer: бутон за достъп до цветовата конфигурация на картата"
