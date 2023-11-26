@@ -1,9 +1,9 @@
 [words]
-Show Favorites="Фаворити - бутон"
+Show Favorites="Покажи фаворитите"
 Favorites="Фаворити"
 
 Add Favorite on fly="Добави фаворит в движение"
 'Add Favorite on fly' Button="Добави Фаворит в движение - бутон"
 Sample="Пример"
 This field is just an example="Това поле е само пример"
-plugin~button_favorites="button_favorites:фаворити - бутон"
+plugin~button_favorites="button_favorites: бутон фаворити"
