@@ -1,6 +1,6 @@
 [words]
-Split Screen Close Timer="Таймер за затваряне на разделен екран"
-POI selector="POI селектор"
+Split Screen Close Timer="Таймер за затваряне на прозореца с интересни обекти"
+POI selector="ПОИ прозорец"
 Select Categories="Изберете категории"
-plugin~poi_splitscreen="poi_splitscreen: POI разделен екран"
-POI with Address="POI с адрес"
+plugin~poi_splitscreen="poi_splitscreen: ПОИ разделен екран"
+POI with Address="Интересни обекти с адрес"
