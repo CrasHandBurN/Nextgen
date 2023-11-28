@@ -1,5 +1,5 @@
 [words]
-plugin~fuel_consumption="fuel_consumption: Разход на гориво"
+plugin~fuel_consumption="fuel_consumption: разход на гориво"
 Tank="Резервоар"
 'Tank' Button="Бутон за резервоар"
 Edit Tank Value="Редактиране на горивото в резервоара"
@@ -9,4 +9,4 @@ Recommended gas station %s after %s="Препоръчителна бензино
 After refueling the tank do not forget also to clear the travel statistics="След като заредите резервоара, не забравяйте да изчистите и статистиката за пътуването"
 The trip statistics that affected the choice of refueling was cleared. Set the remaining fuel in the tank again.="Изчистена е статистиката за пътуването, повлияла на избора на бензиностанция. Посочете отново нивото на гориво в резервоара."
 
-Show Left Side RouteHistory="История на изминатия маршрут"
+Show Left Side RouteHistory="История на маршрута отляво"
