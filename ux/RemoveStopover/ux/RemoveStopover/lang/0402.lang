@@ -1,5 +1,5 @@
 [words]
 plugin~RemoveStopover="RemoveStopover: инструмент за премахване на точки"
-Click to remove VIA="Докоснете - за да изтриете избраното"
-Long Click to remove all above="Задръжте - за да изтриете всички предишни и тази"
-"WARNING! Do not use this tool while driving and read the first line carefully."="ВНИМАНИЕ! Не използвайте този инструмент, докато шофирате и прочетете внимателно първия ред.
+Click to remove VIA="Докоснете за да изтриете избраната точка."
+Long Click to remove all above="Задръжте, за да изтриете всички предишни и тази."
+"WARNING! Do not use this tool while driving and read the first line carefully."="ВНИМАНИЕ! Не използвайте този инструмент, докато шофирате и прочетете внимателно първия ред."
