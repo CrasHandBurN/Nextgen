@@ -1,10 +1,10 @@
 [words]
 not exist="не съществува"
-plugin~google_preview="google_preview: преглед на мястото с помощта на Google Maps"
-"'Google preview' Button"="'Google preview' бутон"
+plugin~google_preview="google_preview: преглед на мястото с помощта на Google карти"
+"'Google preview' Button"="'Google преглед' бутон"
 Current point="Текуща позиция"
-VIA point="Междинна точка"
-Destination point="Крайна цел"
+VIA point="Спирка"
+Destination point="Дестинация"
 TMC point="TMC позиция"
 View type="Тип преглед"
 
@@ -16,5 +16,5 @@ roadmap="Карта"
 satellite="Спътник"
 terrain="Пейзаж"
 
-Google map View="Google map преглед"
+Google map View="Google карти преглед"
 Wiki info="Описание на местоположението"
