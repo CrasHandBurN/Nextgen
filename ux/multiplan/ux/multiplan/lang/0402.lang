@@ -1,4 +1,4 @@
 [words]
-Multiplan Route="Многопланов маршрут"
-plugin~multiplan="multiplan: избор на маршрут(мултиплан)"
+Multiplan Route="Избор на маршрут"
+plugin~multiplan="multiplan: избор на маршрут (мултиплан)"
 'Alternatives' Button="Алтернативи - бутон"
