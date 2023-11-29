@@ -1,11 +1,11 @@
 [words]
 NOT SAVED YET="ОЩЕ НЕ Е ЗАПАЗЕНО"
-"'LuaJava' should be loaded"="„LuaJava“ трябва да се зареди"
+"'LuaJava' should be loaded"="«LuaJava» трябва да се зареди"
 Save or Restore Settings="Запазване или възстановяване на настройките"
 Restore="Възстанови"
 "Restoring will be canceled in %s seconds.\nPlease select \"Restore\" or \"Cancel\""="Възстановяването ще бъде отменено след %s секунди. \nИзберете \"Възстанови\" или \"Отмени\""
 "Saving will be canceled in %s seconds.\nPlease select \"Save\" or \"Cancel\""="Запазването ще бъде отменено след %s секунди. \nИзберете \"Запази\" или \"Отмени\""
-"Save/Restore Settings"="Настройки за запазване/възстановяване на настройките"
+"Save/Restore Settings"="Настройки за запазване/възстановяване"
 plugin~save_restore="save_restore: запазване или възстановяване на настройките"
 
 If done, the program will restart in two seconds="Ако се изпълни, програмата ще се рестартира след две секунди"
