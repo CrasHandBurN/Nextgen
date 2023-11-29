@@ -1,11 +1,11 @@
 [words]
 plugin~screen_saver="screen_saver: скрийнсейвър"
-Plain panel="Монохромен панел"
+Plain panel="Обикновен панел"
 List of User Pictures="Списък с потребителски изображения"
 Screen Saver settings="Настройки на скрийнсейвъра"
 Screen Saver conditions settings="Настройки на условията"
-POI Pictures Viewer="Преглед на POI изображения"
-User Pictures Viewer="Преглед на потребителски снимки"
+POI Pictures Viewer="Преглед на снимки с географски етикети"
+User Pictures Viewer="Снимки с географски етикети"
 Folder Up="Папката нагоре"
 
 Speed dependency="В зависимост от скоростта: по-малко от текущото ограничение"
