@@ -15,13 +15,13 @@ Town Exit Point="Изход от населено място"
 Read Out \"In City\"="Кажи за вход в населено място"
 Read Out \"Out of City\"="Кажи за изход от населено място"
 
-Read Out \"In City\" Voice="Съобщи \"In City\" с глас"
-Read Out \"In City\" Message="Съобщи \"In City\" със съобщение"
-Read Out \"Out of City\" Voice="Съобщи \"Out of City\" с глас"
-Read Out \"Out of City\" Message="Съобщи \"Out of City\" със съобщение"
+Read Out \"In City\" Voice="Кажи за вход в населено място с глас"
+Read Out \"In City\" Message="Кажи за вход в населено място със съобщение"
+Read Out \"Out of City\" Voice="Кажи за изход от населено място с глас"
+Read Out \"Out of City\" Message="Кажи за изход от населено място със съобщение"
 
 Tolerance Speed Limit %s="Максимално разрешената скорост е %s"
-You are overspeed.="Вие значително превишавате скоростта."
+You are overspeed.="Значително превишавате скоростта."
 Read Out Tolerance Overspeed="Съобщи при превишена максимална скорост"
 
 Attention!="Внимание!"
