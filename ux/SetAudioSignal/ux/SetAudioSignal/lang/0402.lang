@@ -1,7 +1,7 @@
 [words]
-Set your own warning="Задайте своя личен сигнал"
+Set your own warning="Изберете собствено известие"
 Enter your own warning text="Въведете текста на вашето предупреждение"
-"<Enter your own warning text>"="<Въведете текста на вашето предупреждение>"
+"<Enter your own warning text>"="<Въведете текста на предупреждението си>"
 Not required in this case="Не се изисква в този случай"
-Common Audio and Warning Signals Settings="Общи настройки за сигнали и предупреждения"
+Common Audio and Warning Signals Settings="Настройки на сигналите за предупреждения"
 plugin~SetAudioSignal="SetAudioSignal: плъгин инструмент"
