@@ -1,6 +1,6 @@
 [words]
 plugin~send_message="send_message: известие с координати"
-"'Send Message' Button"="'Изпрати съобщение"
+"'Send Message' Button"="Изпрати съобщение - бутон"
 Send type="Тип месинджър"
 Will be there: %s at %s="Ще бъда там: %s в %s"
 "I`m here: %s"="Сега съм тук: %s"
