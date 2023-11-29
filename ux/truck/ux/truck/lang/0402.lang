@@ -1,6 +1,6 @@
 [words]
-plugin~Truck="Truck: Всичко за камиона"
-Truck turn restriction alarm="Сигнал за забранените маневри за Камион"
-Truck turn restriction alarm Settings="Аудио настройки на забранените маневри за камион"
-Truck turn restriction alarm Settings. Audio Signal Setting="Аудио настройки на забранените маневри за камион"
-Choose Truck turn restriction Sound="Изберете аудио за забранените маневри за камион"
+plugin~Truck="Truck: всичко за камиона"
+Truck turn restriction alarm="Сигнал за забранените маневри за камион"
+Truck turn restriction alarm Settings="Сигнал на забранените маневри за камион"
+Truck turn restriction alarm Settings. Audio Signal Setting="Сигнал на забранените маневри за камион."
+Choose Truck turn restriction Sound="Сигнал на забранените маневри за камион"
