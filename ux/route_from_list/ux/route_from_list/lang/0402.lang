@@ -1,6 +1,6 @@
 [words]
-Route from list="Маршрут от списъка"
+Route from list="Маршрут от списък"
 plugin~route_from_list="route_from_list: изграждане на маршрут от списък с точки"
 Route step by step="Маршрут стъпка по стъпка"
-Route all at once="Маршрут наведнъж"
+Route all at once="Целият маршрут наведнъж"
 "Please define destinatiom!"="Първо определете дестинацията!"
