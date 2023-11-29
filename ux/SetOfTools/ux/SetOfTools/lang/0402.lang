@@ -1,8 +1,8 @@
 [words]
-Left back="Отзад вляво"
+Left back="Зад вас отляво"
 Left="Отляво"
 Right="Отдясно"
-Right back="Отзад вдясно"
-Back="Отзад"
-Straight="Отпред"
+Right back="Зад вас отдясно"
+Back="Зад вас"
+Straight="Пред вас"
 plugin~SetOfTools="SetOfTools: плъгин инструмент"
