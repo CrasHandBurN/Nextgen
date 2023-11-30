@@ -1,3 +1,9 @@
+/* mod skin.css */
+DIV.next_street > SPRITE.panel.map {
+	onrelease: ( !( navigation_suspended && %navigation.has_route ) && !%screen.msgbox.is_onscreen && ui_Cockpit.detect_gps ? 'sc_NextStateAnim( st_GpsStatus, "fade", 1, "" )' : ( SimpleTimeBTNCockpit ? undef : 'ui.SimpleTimeFormat = (SimpleTimeFormat() + 1) % 4' ) );
+	onlongclick: 'ui.SimpleTimeBTNCockpit = not SimpleTimeBTNCockpit()';
+}
+
 SPRITE.panel.map.arrive {
 	left: 0 ; top:0; right: 0 ; bottom:0; z:1; 
 	img:(%lua.LatenessTime > 0 ? "btn_arrive_plan_red.bmp" : "btn_arrive_plan_green.bmp");

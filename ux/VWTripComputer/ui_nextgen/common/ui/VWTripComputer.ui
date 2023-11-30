@@ -259,8 +259,8 @@
 
 	<observer model="gps.satellites" onchange=sc_GpsListGlonass START />
 	<implementation>
-		<property accuracy value=( %gps.valid ? %gps.accuracy : "NONE") />
-		<property utc_time value=(%gps.valid && %gps.time.valid ? (%other.format_time_dayperiod(%gps.time, (%regional.timeformat==2 ? 0 : 1), 1)) : "Unavailable") />
+		;<property accuracy value=( %gps.valid ? %gps.accuracy : "NONE") />
+		;<property utc_time value=(%gps.valid && %gps.time.valid ? (%other.format_time_dayperiod(%gps.time, (%regional.timeformat==2 ? 0 : 1), 1)) : "Unavailable") />
 	</implementation>
 	
 	<DIV class=cockpit>

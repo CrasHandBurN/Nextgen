@@ -141,6 +141,14 @@
 	<view visibility_filter=visible />
 		<row text="Reset Holidays" onrelease='MODEL.lua.LastDATE = DATETYPE.new(0); sc_back(); obs_DateValid:trigger(); WNDL_ListHolidays()' onlongclick=undef isactionbutton=1 />
 </userlist>
+
+<userlist lm_HolidaysSettings_localmenu text="str" onrelease="ui" enable="bool"  visible="bool">
+	<view visibility_filter=visible />
+	<default enable=1 visible=1 />
+	<row	text="Previous year" onrelease='MODEL.lua.DATE_ofset = -1; MODEL.lua.LastDATE = DATETYPE.new(0); sc_back(); obs_DateValid:trigger(); WNDL_ListHolidays()  MODEL.lua.DATE_ofset = 0' />	
+	<row	text="Current year" onrelease='MODEL.lua.DATE_ofset = 0; MODEL.lua.LastDATE = DATETYPE.new(0); sc_back(); obs_DateValid:trigger(); WNDL_ListHolidays()' />	
+	<row	text="Next year" onrelease='MODEL.lua.DATE_ofset = 1; MODEL.lua.LastDATE = DATETYPE.new(0); sc_back(); obs_DateValid:trigger(); WNDL_ListHolidays()  MODEL.lua.DATE_ofset = 0' />	
+</userlist>
 ;----------------------------------------------------------------------------------
 <modify ui_Cockpit> 
 	<insert first_child after="BUTTON" into="#CockpitBTNTable">

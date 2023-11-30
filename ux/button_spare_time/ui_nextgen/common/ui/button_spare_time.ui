@@ -48,11 +48,10 @@
 			</SPRITE>
 		</BUTTON>
 	</insert>
-	
-	<modify element="DIV.current_time SPRITE.current_time" ONRELEASE=( SimpleTimeBTNCockpit ? '' : 'ui.SimpleTimeFormat = (SimpleTimeFormat() + 1) % 4' ) 
-		ONLONGCLICK='ui.SimpleTimeBTNCockpit = not SimpleTimeBTNCockpit()' />
+
+	<modify element="DIV.current_time" ONRELEASE=( SimpleTimeBTNCockpit ? '' : 'ui.SimpleTimeFormat = (SimpleTimeFormat() + 1) % 4' ) ONLONGCLICK='ui.SimpleTimeBTNCockpit = not SimpleTimeBTNCockpit()' />	
 	<modify element="DIV.current_time TIMETEXT.current_time" FORMATMODEL=( SimpleTimeFormat ) VISIBLE=( !SimpleTimeBTNCockpit ) />
-	<insert into="DIV.current_time" after="TIMETEXT">
+	<insert into="DIV.current_time" after="TIMETEXT.current_time">
 		<TEXT CLASS="simple_date" VISIBLE=( SimpleTimeBTNCockpit ) Z=25 />
 	</insert>
 </modify>

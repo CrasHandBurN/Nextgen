@@ -1,7 +1,7 @@
 ;---------------WANDEL™---16.09.2021----------------
 <var Panel_Type = 0 permanent >
 
-<layer ui_screen_saver z=3 visible=( !%lua.DragMode && (%lua.screen_saver_mode && ( (Maneuver_dependency ? !%lua.SSNextManeuverValid : 1) && (Place_dependency ? !%navigation.car.is_incity : 1) && (Speed_dependency && %navigation.car.current_speed.valid ? %navigation.car.current_speed <= sc_GetToleranceSpeed(%lua.SpeedLimitValue) : 1) ) ) ) >
+<layer ui_screen_saver z=2 visible=( !%lua.DragMode && (%lua.screen_saver_mode && ( (Maneuver_dependency ? !%lua.SSNextManeuverValid : 1) && (Place_dependency ? !%navigation.car.is_incity : 1) && (Speed_dependency && %navigation.car.current_speed.valid ? %navigation.car.current_speed <= sc_GetToleranceSpeed(%lua.SpeedLimitValue) : 1) ) ) ) >
 	<implementation>
 		<property speed_overspeed  value=( %lua.SpeedLimitValue && %navigation.car.current_speed.valid && %navigation.car.current_speed > %lua.SpeedLimitValue ) />
 	</implementation>

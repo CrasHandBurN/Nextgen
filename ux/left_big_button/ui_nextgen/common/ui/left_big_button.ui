@@ -1,4 +1,4 @@
-; -- WANDEL™ -- 31.08.2021 -- 
+; -- WANDEL™ -- 29.11.2023 -- 
 ;--modification and dependency--
 <modify ui_PropLayer> 
     <modify SplPoiListIsVisible VALUE=(!ui_LeftSide_Free_Button.ShowLeftSidePOI_Info_VISIBLE && %ui.lm_splitpoi.list.size > 0 && %lua.SplPoiListIsVisible && ui_PropLayer.SplPoiListIsAvailable && !ui_PropLayer.SignpostVisible && !%lua.DragMode && !%lua.MenuIsOpened ) />
@@ -29,10 +29,15 @@
 
 <var CityOrTolerance = 1 />
 <var Tachograph = 1 />
+<var ShowLeftSideDetect_gps  = 0 permanent />
+<var ShowSateliteGraph  = 1 />
+<var ShowSateliteDelayed  = 1 />
 ;--------------------------------------------------------------------------------
 <userlist lm_LeftButtonsSettings text="str" bmp="str" prio="int" isselected="str" onrelease="ui" enable="bool" visible="bool" type="str" dtooltip="ui" haspopover="bool" >
 	<view visibility_filter=visible />
 	<default onrelease=undef visible=1 enable=1 type="ChkOnOff_Icon" prio=100 />
+	
+		<row prio=-1 bmp="ico_gpsinfo.svg" text="Show Left Side GPS detect" isselected="ui.ShowLeftSideDetect_gps" />
 		<row prio=0 bmp="ico_speedcams_menu.svg" text="Show Left Side Speedcam" isselected="lua.ShowLeftSideSpeedcam" />
 		<row prio=1 bmp="ico_tolerance.svg" text="Show Left Side ToleranceOverspeed" isselected="lua.ShowLeftSideToleranceOverspeed" visible=(%warning.speedcam_warning && %warning.speedcam_enabled) /> ;dtooltip="Speedcam Warning is Off" enable=(%warning.speedcam_warning && %warning.speedcam_enabled)
 		<row prio=2 visible=0 />
@@ -58,8 +63,9 @@
 	<view visibility_filter=visible />
 	<default enable=1 visible=1 />
 	
+		<row prio=-1 name="ShowLeftSideDetect_gps_VISIBLE" visible=(ShowSateliteDelayed) />
 		<row prio=0 name="ShowLeftSpeedCamera_VISIBLE" 		visible=(%lua.ShowLeftSideSpeedcam && %navigation.curr_speedcam.category.valid) />
-		<row prio=1 name="ShowLeftSideToleranceOverspeed_VISIBLE" 	visible=(%lua.ShowLeftSideToleranceOverspeed && ui_Cockpit.AdvancedSpeedLimitPhase == 2) />
+		<row prio=1 name="ShowLeftSideToleranceOverspeed_VISIBLE" 	visible=(%lua.ShowLeftSideDistorsher && %lua.ShowLeftSideToleranceOverspeed && ui_Cockpit.AdvancedSpeedLimitPhase == 2) />
 		<row prio=2 visible=0 />
 		<row prio=3 visible=0 />
 		<row prio=4 name="ShowLeftSideTCMap_VISIBLE" 		visible=(%route.list.navigated.has_navigable_path && (Plugin.isLoaded("screen_saver") ? %lua.screen_saver_mode : 0)) />
@@ -76,6 +82,18 @@
 <layer ui_hide_second_button z=30 visible=((ui_Cockpit.MapPopupOnscreen && (%lua.IsPortrait ? 1 : %lua.screen4x3)) || is_map_free_area_busy)
 	onshow='MODEL.lua.current_buttons = 1'
 	onhide='MODEL.lua.current_buttons = MODEL.lua.possible_buttons()'>
+</layer>
+
+<layer ui_button_map_fill z=1>
+	<DIV left=0 right=0 top=0 bottom=0 >
+		<SPRITE class="button map fill" />
+	</DIV>
+</layer>
+
+<layer ui_GPSStatus_bg z=1>
+	<DIV left=0 right=0 top=0 bottom=0 >
+		<SPRITE class="GPSStatus_bg" zoom=97% /> 
+	</DIV>
 </layer>
 ;--------------------------------------------------------------------------------
 <layer ui_LeftSide_Free_Button z=30
@@ -101,10 +119,84 @@
 	</implementation>
 	
 	<observer value=(%gps.blink) onselect={CityOrTolerance = !CityOrTolerance} start="NO_TRIGGER" />
+	<observer value=(ShowLeftSideDetect_gps && ui_Cockpit.detect_gps) 
+		onselect='doDelayed(100, "ui.ShowSateliteDelayed = 1; MODEL.gps.autoupdate_satellite_display = true")' 
+		ondeselect='doDelayed(100, "ui.ShowSateliteDelayed = 0; MODEL.gps.autoupdate_satellite_display = false")' start />
 
 	<DIV class=cockpit >
 		<DIV LeftSideFreeArea class=left_side_free_area >
 			<TABLE table_left_big_buttons>
+				
+				<BUTTON class="left_big"
+					visible=((%ui.lm_N_buttons.size && %ui.lm_N_buttons.list[0].name == "ShowLeftSideDetect_gps_VISIBLE") ||
+						(%ui.lm_N_buttons.size > 1 && %ui.lm_N_buttons.list[1].name == "ShowLeftSideDetect_gps_VISIBLE" && %lua.current_buttons == 2))
+
+					onlongclick='sc_NextStateAnim(st_LeftButtonsSettings, "fade", 1, "" )'
+					onrelease='ui.ShowSateliteGraph = not ShowSateliteGraph()' >
+
+					<observer model="gps.satellites" onchange=sc_GpsListGlonass START />
+					
+					<USE_LAYER left=0 right=0 top=0 bottom=0 layer=(ui_button_map_fill) layer_z=2 />
+					
+					<DIV div_GPSStatus_sats left=0 top=0 w=100% h=100% visible=(!ShowSateliteGraph) >
+					
+						<USE_LAYER left=0 right=0 top=0 bottom=0 layer=(ui_GPSStatus_bg) layer_z=3 />
+						
+						<LIST2 left=0 top=0 w=100% h=100% col=1 cellh=1 z=6>
+							<LISTMODEL listmodel="ui.lm_GpsSatellites" element_template="et_GPSStatus" z=6 />
+							<LISTMODEL listmodel="ui.lm_GpsSatellitesGlonass" element_template="et_GPSStatus" z=6 />
+							<LISTMODEL listmodel="gps.sbas_satellites" element_template="et_GPSStatus" z=6 />
+						</LIST2>
+						<DIV left=0 top=0 w=100% h=100% z=4>
+							<TEXT class="font_main color_inf_main gps_info" left=45% top=0%  w=10% h=10% padding=0 align="CENTER" valign="CENTER" z=4 text="GECOOR_N" />
+							<TEXT class="font_main color_inf_main gps_info" left=0%  top=45% w=10% h=10% padding=0 align="CENTER" valign="CENTER" z=4 text="GECOOR_W" />
+							<TEXT class="font_main color_inf_main gps_info" left=45% top=90% w=10% h=10% padding=0 align="CENTER" valign="CENTER" z=4 text="GECOOR_S" />
+							<TEXT class="font_main color_inf_main gps_info" left=90% top=45% w=10% h=10% padding=0 align="CENTER" valign="CENTER" z=4 text="GECOOR_E" />
+						</DIV>
+						
+					</DIV>
+
+					<DIV class=VW_gps_graph left=0 right=0 top=0 bottom=0 visible=(ShowSateliteGraph) >
+						
+						<implementation>
+							<property accuracy value=( %gps.valid ? %gps.accuracy : "NONE") />
+						</implementation>
+	
+						<LIST2 class="GPSStatus_bars">
+							<LISTMODEL listmodel="ui.lm_GpsSatellites" element_template="et_GPSStatus_bar" />
+							<LISTMODEL listmodel="gps.sbas_satellites" element_template="et_GPSStatus_DGPS_bar" />
+							<LISTMODEL listmodel="ui.lm_emptygpsstatusbar" element_template="et_GPSStatus_empty" />
+						</LIST2>
+						
+						<LIST2 class="GPSStatus_bars glonass" visible=(%lua.ShowGlonass)>
+							<LISTMODEL listmodel="ui.lm_GpsSatellitesGlonass" element_template="et_GPSStatus_bar" />
+							<LISTMODEL listmodel="ui.lm_emptygpsstatusbar" element_template="et_GPSStatus_empty" />
+						</LIST2>
+						
+						<HBOX class="GPSStatus_satnum">
+							<SPRITE class="svg sats" img="sat.svg" zoom=700 />
+							<TEXT class="font_info color_inf_main top" align="RIGHT" text="GPS:" />
+							<TEXT class="font_info color_inf_main top" align="LEFT" text=(%lua.ShowGlonass ? %lua.SatellitesAvailable : %gps.satellites_in_view) />
+						</HBOX>
+						
+						<HBOX class="GPSStatus_satnum glonass" visible=(%lua.ShowGlonass)>
+							<SPRITE class="svg sats" img="sat_glonass.svg" zoom=700 />
+							<TEXT class="font_info color_inf_main top" align="RIGHT" text="GLONASS:" />
+							<TEXT class="font_info color_inf_main top" align="LEFT" text=(%lua.SatellitesAvailableGlonass) />
+						</HBOX>
+						
+						<DIV class="GPSStatus_information">
+							<VBOX>
+								<HBOX class="gps_status">
+									<TEXT class="font_info color_inf_main" paddingright=0 text="Accuracy:" />
+									<TEXT class="font_info color_inf_sec"  text=accuracy />
+								</HBOX>
+							</VBOX>
+						</DIV>
+						
+					</DIV>
+			
+				</BUTTON>
 
 				<BUTTON class="left_big" 
 					visible=((%ui.lm_N_buttons.size && %ui.lm_N_buttons.list[0].name == "ShowLeftSpeedCamera_VISIBLE") ||

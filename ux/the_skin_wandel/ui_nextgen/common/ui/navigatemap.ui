@@ -147,7 +147,7 @@
 				</TABLE>
 	  		</DIV>
 		</DIV>	
-		<DIV div_cockpit_top class="fill" z=100 > ;onrelease='MODEL.navigation.force_say_next_command()'
+		<DIV div_cockpit_top class="fill" onrelease='MODEL.navigation.force_say_next_command()' z=100>
 			<DIV class="next_street" visible=( !( navigation_suspended && %navigation.has_route || %warning.notification.notification_area.size > 0) && detect_gps )>
 				<SPRITE class="panel map" z=10 />
 				<HBOX class="fill detect_gps">		
@@ -182,7 +182,7 @@
 					</HBOX>
 				</TABLE>
 			</DIV>	
-			<DIV class="current_time" visible=( !(!%navigation.has_route && ui_PropLayer.SignpostVisible) && %lua.ShowTimeInTitle && !%warning.notification.notification_area.size > 0) >
+			<DIV class="current_time" visible=( !(!%navigation.has_route && ui_PropLayer.SignpostVisible) && %lua.ShowTimeInTitle && !%warning.notification.notification_area.size > 0 ) >
 				<SPRITE class="current_time" z=25 />
 				<TIMETEXT class="current_time" time=(%gps.current_time) formatmodel=0 z=25 />
 			</DIV>	
@@ -196,7 +196,7 @@
 					<TEXT class="next_street fill" text="Route recalculation!" />
 				</DIV>
 			</DIV>
-		</DIV>				
+		</DIV>
 		<DIV div_cockpit_bottom class="fill">
 			<DIV class="current_city">
 				<HBOX class="current_city">
