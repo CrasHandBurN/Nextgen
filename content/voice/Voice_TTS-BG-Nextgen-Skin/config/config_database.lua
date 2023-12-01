@@ -217,7 +217,7 @@ patterns = {
 	L"След %dist %poi продължете направо %destname  %then4",
 	L"След %dist на втория светофар продължете направо %destname  %then5",
 	L"След %dist на светофара продължете направо %destname  %then5",
-	L"След %dist продължете направо по %streetname  %then",
+	L"След %dist продължете направо %streetname  %then",
 	L"След %dist продължете направо %then",
 	L"Продължете направо %then",
 	L"след %poi завийте %1 %destname",
@@ -343,7 +343,7 @@ patterns = {
 	L"След това, влезте в магистралата %destname.",
 	L"След %dist влезте в магистралата %destname.",	-- далече
 ---	L"След %dist излезте на %streetname %then3",			--- на основа от wwt-bull: иначе два пъти "на на"
-	L"След %dist продължете по %streetname %then3",			--- на основа от wwt-bull: иначе два пъти "на на"
+	L"След %dist продължете %streetname %then3",			--- на основа от wwt-bull: иначе два пъти "на на"
 	L"След %dist влезте в магистралата %then3",
 	L"Влезте в магистралата %then3",
 	L"След това, излезте %destname",
