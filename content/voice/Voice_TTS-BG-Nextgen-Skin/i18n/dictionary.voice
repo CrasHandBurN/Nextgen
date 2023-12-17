@@ -1,7 +1,7 @@
 [info]
 brand="iGO_Nextgen"
 timestamp="1701410415"
-//Сглобено от CrasHandBurN за поддържане на скиновете на iGO Primo NextGen
+//Сглобено от CrasHandBurN™ за поддържане на скиновете на iGO Primo NextGen
 //Поправено и допълнено от .....
 
 [words]
@@ -1664,9 +1664,9 @@ SPARETIME~Time: %1$s%2$s="Време: %1$s%2$s"
 SPEEDLIMIT~no limit="Без ограничения"
 SSE="Южно Юго Източно."
 SSW="Южно Юго Западно."
-STOP Speedcam ahead. Reduce your speed.="Впереди камера контроля проезда без остановки."
-STOP Speedcam ahead.="Впереди камера контроля проезда без остановки."
-STOP Speedcam.="Камера контроля проезда без остановки."
+STOP Speedcam ahead. Reduce your speed.="Предстои камера за знак Стоп. Намалете скоростта."
+STOP Speedcam ahead.="Предстои камера за знак Стоп."
+STOP Speedcam.="Камера за знак Стоп."
 SW="Юго Западно."
 Sat="Суббота"
 Saturday="Събота"
@@ -1758,7 +1758,7 @@ Stop Prohibited Camera.="Камера за контрол на спиране и
 Stop Prohibited Camera="Камера за контрол на спиране и паркиране"
 Stop ahead.="Предстои знак Стоп."
 Stop guidance="Командите за маневриране са изпълнени."
-Stop sign="Спри! Пропусни движещите се по пътя с предимство "
+Stop sign="Стоп "
 Stop!="Стоп!"
 Stop.="Стоп." 
 Storm, whole gale="Силна буря."
