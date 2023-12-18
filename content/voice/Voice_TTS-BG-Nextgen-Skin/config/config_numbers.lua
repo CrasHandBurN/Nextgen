@@ -1,4 +1,4 @@
-﻿module("VOICE")
+module("VOICE")
 
 distances = {}
 
@@ -57,7 +57,6 @@ distances.patterns = {
 	L"шестдесет",
 	L"шестстотин",
 	L"ярда",
----	L"десети",	--- Излишно - garigor 09.06.19
 	L"една десета",
 	L"две десети",
 	L"3 десети",
