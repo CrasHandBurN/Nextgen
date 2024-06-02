@@ -1,5 +1,6 @@
 [words]
-plugin~MyHolidays="MyHolidays: празници и хороскоп "
+plugin~MyHolidays="MyHolidays: празници и хороскоп"
+Show Left Side Hollydays="Паметни дати"
 Holidays List Settings="Настройки на списъка със събития"
 Events List="Списък на събитията"
 Genocide="Геноцид"
@@ -16,6 +17,7 @@ Intellectual="Интелектуален"
 Previous year="Миналата година"
 Current year="Тази година"
 Next year="Следващата година"
+Any Data Biorhythm="На дадена дата"
 
 Forthrightly="Откровено"
 Tolerantly="Толерантно"
@@ -37,6 +39,7 @@ Ukraine Independence Day="Ден на независимостта на Укра
 
 Easter="Великден католически!"
 Trinity="Католическа троица!"
+War="Война"
 
 Easter Ortodox="Великден!"
 Trinity Ortodox="Троица!"

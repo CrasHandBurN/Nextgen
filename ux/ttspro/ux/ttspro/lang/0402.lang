@@ -1,5 +1,5 @@
 [words]
-Near Town="Следващото населено място"
+The next transit settlement %s through %s.= "Следващият транзитен град %s е след %s."
 City on way="Транзитни градове"
 City on way Button="Транзитни градове - бутон"
 plugin~ttspro="ttspro: гласов информатор за места и събития"
@@ -81,7 +81,6 @@ Read the town name or district outside the town="Кажи името на гра
 Read the town district name="Кажи общината на града"
 Announce System Messages="Кажи системните съобщения"
 Read Out Message at Exit="Съобщение при изход от програмата"
-Read Out Speed Limit Increasing="Кажи кога може да се увеличи скоростта"
 
 "Read Out 'Battery Low'"="Кажи при нисък заряд на батерията"
 "Read Out 'Battery Critical'"="Кажи при критичен заряд на батерията"

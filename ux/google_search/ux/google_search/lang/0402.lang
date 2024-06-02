@@ -3,4 +3,4 @@ Long press to use Google Search result="Задръжте, за да използ
 "You can use \"New Route\" and the following data to quickly find your destination by long pressing the input field"="Можете да използвате \"Нов маршрут\" и следните данни, за да намерите бързо вашата дестинация чрез продължително натискане на полето за въвеждане"
 plugin~google_search="google_search: Google онлайн търсене"
 Google Online Search="Google онлайн търсене"
-"Please select only the coordinates to be used as waypoints or destinations!"="Моля, изберете само координатите, които да се използват като спирки или дестинация!"
+Please select the coordinate or postal address to be used as waypoint or destination="Изберете координатите или пощенския адрес, които ще се използват като спирка или дестинация"

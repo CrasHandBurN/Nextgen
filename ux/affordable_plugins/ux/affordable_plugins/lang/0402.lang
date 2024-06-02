@@ -1,17 +1,18 @@
 [words]
 Sort by Availability="Сортиране по наличност"
-Plugin selector="Създайте свой мини-скин"
+Plugins selector="Създайте свой мини-скин"
+"Plugins selected: %s"="Выбрано плагинов: %s"
 "Attention!!! Unloaded %s Plugins. "="Внимание!!! Премахнати са %s добавки."
 Unloaded="Деактивирани"
 Unload="Изключени"
+impossible="невъзможно"
 
-Mark Speedcam group="Маркирай групата Speedcam"
-Mark Junction group="Маркирай групата Junction"
-Mark Button group="Маркирай групата Button"
+Long - to Remove="Дълго докосване - изтриване"
 Mark VR group="Маркирай групата VR"
-Mark Track&Trip group="Маркирай групата Track&Trip"
-Mark LuaJava group="Изключи групата LuaJava"
-Make minimal set="Минимален набор"
+Mark LuaJava group="Маркирай групата LuaJava"
+Make minimal set="Минимален избор"
+
+Are you sure you want to permanently remove these items from the list?="Сигурни ли сте, че искате да премахнете за постоянно тези елементи от списъка?"
 
 plugin~affordable_plugins="affordable_plugins: изключване на добавки"
 plugin~bapp_colors_arimi="bapp_colors_arimi: цветни икони"
