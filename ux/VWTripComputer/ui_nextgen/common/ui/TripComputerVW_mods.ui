@@ -147,8 +147,8 @@
 	</VBOX>
 </element_template>
 ;=======================================================================================================================
-<modify ui_Cockpit>
-	<modify element="TABLE.ari_ext" VISIBLE=(!%ui.is_map_free_area_busy) />
+<modify ui_Cockpit> ;it is importante: so visible
+	<modify element="TABLE.ari_ext" VISIBLE=(%ui.is_map_free_area_busy ? (ui_Cockpit.MapPopupOnscreen || !ui_Cockpit.cockpit_buttons_visible) : 1) />
 	<modify element="#div_DA_freeAtTheMoment" VISIBLE=((%lua.IsPortrait ? !%ui.is_map_free_area_busy : 1) && ui_PropLayer.DA_freeAtTheMoment) />
 
 	<modify element="DIV.cockpit DIV.roundabout" VISIBLE=(!%ui.is_map_free_area_busy && roundabout_show) />	

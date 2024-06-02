@@ -213,7 +213,10 @@
 			--MODEL.map.discoverysidepanel.center_follow = true
 			doDelayed(3, function() MODEL.map.discoverysidepanel.center = g end)
 			'
-	onhide='MODEL.map.discoverysidepanel.show_pois = 1; MODEL.poi.resultpoi.clear()' >
+	onhide='
+		MODEL.map.discoverysidepanel.show_pois = 1 
+		MODEL.poi.resultpoi.clear()
+		' >
 	/*
 	<implementation>
 		<property onroute value=(%lua.POIOnRoute && %route.list.navigated.has_navigable_path && %poi.flat_search.position == %lua.current_entry_position) />

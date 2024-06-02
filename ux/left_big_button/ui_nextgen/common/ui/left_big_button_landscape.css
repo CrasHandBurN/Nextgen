@@ -2,7 +2,7 @@ DIV.cockpit DIV.left_side_free_area {
   	left:( ui_PropLayer.ShowRouteProgress ? (%lua.aColorCockpitInterface_Set == lua.SkinInterfaceColor.DEFAULT ? route_progress_w : route_progress_bg_w) : 0 );
 	h:((2*cockpit_da_warning_w)*(%lua.screen4x3 ? 1 : 5)/(%lua.screen4x3 ? 1 : 8));
 	w:( ((2*cockpit_da_warning_w)*(%lua.screen4x3 ? 1 : 5)/(%lua.screen4x3 ? 1 : 8)) * (%ui.lm_N_buttons.size > 1 ? %lua.current_buttons : 1) );
-	bottom:( Plugin.isLoaded( "speedcam" ) ? (3*datafield_h + 2*cockpit_margin + speedcam_h + cockpit_margin) : (3*datafield_h + 2*cockpit_margin + cockpit_warning_h + cockpit_margin) );
+	bottom:( (Plugin.isLoaded( "speedcam" ) ? (3*datafield_h + 2*cockpit_margin + speedcam_h + cockpit_margin) : (3*datafield_h + 2*cockpit_margin + cockpit_warning_h + cockpit_margin) ) + (%lua.aHomeWork && !%route.list.navigated.has_navigable_path ? datafield_h : 0) );
 	visible:( !((Plugin.isLoaded( "driveralerts" ) && %lua.DAEnabled && %ui.lm_alert_views.driver_alerts.size) && !%lua.screen4x3) && !%lua.DragMode && !(ui_PropLayer.JunctionViewVisible || ui_PropLayer.MiniJunctionViewVisible || ui_PropLayer.TunnelOverviewVisible) );
 }
 
@@ -19,6 +19,6 @@ DIV.left_big, BUTTON.left_big, BUTTON_ICON.left_big, USE_LAYER.left_big {
 
 /* modify */
 DIV.driver_alert {
-	bottom:( (Plugin.isLoaded( "speedcam" ) ? (3*datafield_h + 2*cockpit_margin + speedcam_h + cockpit_margin ) : (3*datafield_h + 2*cockpit_margin + cockpit_warning_h + cockpit_margin)) + cockpit_margin + (%ui.lm_N_buttons.size && %lua.screen4x3 ? ((2*cockpit_da_warning_w)*(%lua.screen4x3 ? 1 : 5)/(%lua.screen4x3 ? 1 : 8)) : 0) );
+	bottom:( (Plugin.isLoaded( "speedcam" ) ? (3*datafield_h + 2*cockpit_margin + speedcam_h + cockpit_margin ) : (3*datafield_h + 2*cockpit_margin + cockpit_warning_h + cockpit_margin)) + (%lua.aHomeWork && !%route.list.navigated.has_navigable_path ? datafield_h : 0) + cockpit_margin + (%ui.lm_N_buttons.size && %lua.screen4x3 ? ((2*cockpit_da_warning_w)*(%lua.screen4x3 ? 1 : 5)/(%lua.screen4x3 ? 1 : 8)) : 0) );
 /*																																																												becouse of NO visibility for 16x9 */
 }

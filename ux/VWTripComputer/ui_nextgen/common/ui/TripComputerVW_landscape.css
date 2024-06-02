@@ -2,7 +2,8 @@ DIV.map_free_area, USE_LAYER.map_free_area {
 	left:( ( ui_PropLayer.ShowRouteProgress ? (%lua.aColorCockpitInterface_Set == lua.SkinInterfaceColor.DEFAULT ? route_progress_w : route_progress_bg_w) : 0 ) + (2*cockpit_da_warning_w) );
 	top: (ui_PropLayer.SignpostVisible ? %ui.vLaneInfoSignpostHeight : ui_Cockpit.notify_list_landscape_top);
 	right: (ui_Cockpit.NotifyListCol * notify_list_w);
-	bottom:( (Plugin.isLoaded( "speedcam" ) ? (3*datafield_h + 2*cockpit_margin + speedcam_h + cockpit_margin ) : (3*datafield_h + cockpit_margin + cockpit_margin)) + (%lua.screen4x3 ? cockpit_warning_h : (-1) * cockpit_warning_h) );
+/*	bottom:( (Plugin.isLoaded( "speedcam" ) ? (3*datafield_h + 2*cockpit_margin + speedcam_h + cockpit_margin ) : (3*datafield_h + cockpit_margin + cockpit_margin)) + (%lua.screen4x3 ? cockpit_warning_h : (-1) * cockpit_warning_h) );*/
+	bottom:((100 - %map.primary.center_posy + 10)*screen_h/100);
 	visible:( !%lua.DragMode && !(ui_PropLayer.JunctionViewVisible || ui_PropLayer.MiniJunctionViewVisible || ui_PropLayer.TunnelOverviewVisible || ui_Cockpit.MapPopupOnscreen ) );
 }
 

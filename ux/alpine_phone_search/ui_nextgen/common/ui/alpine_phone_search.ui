@@ -28,9 +28,9 @@
 		<row icon="ico_search.svg" text="Search by Phone Number" onrelease='sc_NextStateAnim( st_AlpinePhoneSearch, "fade", 1, "" )' />
 	</insert>
 </modify>
-; -- ari add ---
+
 <modify lm_FindMenu>
 	<insert before=Coordinates>
-		<row icon="ico_search.svg" text="Search by Phone Number" onrelease='sc_NextStateAnim( st_AlpinePhoneSearch, "fade", 1, "" )' />
+		<row Phone icon="ico_search.svg" text="Search by Phone Number" onrelease='sc_NextStateAnim( st_AlpinePhoneSearch, "fade", 1, "" )' />
 	</insert>
 </modify>

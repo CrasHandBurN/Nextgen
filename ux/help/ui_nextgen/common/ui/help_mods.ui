@@ -1,8 +1,7 @@
 <modify lm_MainMenu>
 	<insert after=Settings>
 		<row SupportForum text="Support Forum" icon="ico_connectedservices.svg" onrelease='java:call("android.open_webpage", sc_GetSysEntry("feature", "web_site", L"http://4pna.com/showthread.php?t=14298"))' visible=(sc_GetSysEntry("feature", "support_forum", false)) />
-		<row text="Help" icon="owl.svg" onrelease='java:call("android.open_webpage", sc_GetSysEntry("feature", "web_site", L"http://4pna.com/showpost.php?p=517224&postcount=2"))' visible=(sc_GetSysEntry("feature", "online_help", true) && !LuaJava.LuaJavaActive) />
-		<row text="Help" icon="owl.svg" onrelease='W_DefaultWebBrowser(sc_GetSysEntry("feature", "web_site", "http://4pna.com/showpost.php?p=517224&postcount=2"))' visible=(sc_GetSysEntry("feature", "online_help", true) && LuaJava.LuaJavaActive) />
+		<row text="Help" icon="owl.svg" onrelease='VW_DefaultWebBrowser(sc_GetSysEntry("feature", "web_site", L"https://4pna.com/showthread.php?p=517224#post517224"))' visible=(sc_GetSysEntry("feature", "online_help", true)) />
 		<row text="Car insurance policy" icon="ico_car_insurance.svg" 
 			onrelease='java:call("android.open_webpage", gPublicInfoSite[VW_Country_code("name", MODEL.ui.lm_OtherLocation[0].position())])' 
 			onlongclick='java:call("android.open_webpage", L"https://policy-web.mtsbu.ua/")' 

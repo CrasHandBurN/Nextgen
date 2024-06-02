@@ -1,8 +1,8 @@
-<observer obs_Guide_Attractions value=(%gps.current_time) onchange=sc_Guide_Attractions />
+<observer obs_Guide_Attractions value=(%gps.blink) onselect=sc_Guide_Attractions />
 
 <observer obs_AttractionsSTART_STOP value=(%lua.Attraction_ON_OFF && %lua.SplPoiListIsVisible) onselect=sc_AttractionsSTART ondeselect=sc_AttractionsSTOP START="NO_TRIGGER" /> 
 
-<observer obs_wOnSplitScreenPOI_reset value=(%gps.current_time) onchange=sc_wOnSplitScreenPOI_reset />
+<observer obs_wOnSplitScreenPOI_reset value=(%gps.blink) onselect=sc_wOnSplitScreenPOI_reset />
 
 <observer obs_Rerouting_reset value=(%lua.wSplitScreenPOIOnRoute && %route.list.navigated.calculation_finished) onselect=sc_Attractions_Reset START="NO_TRIGGER" /> ;moved from poi_search
 

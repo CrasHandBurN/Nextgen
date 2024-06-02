@@ -4,7 +4,7 @@
 		<BUTTON_ICON google_maps_button_cockpit 
 			ONRELEASE=VW_ShowGoogleMapsObject
 			ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_QMapsObjects_Popover", MODEL.lua.QMapsObjects())'
-			VISIBLE=(%lua.google_maps_button_cockpit && LuaJava.LuaJavaActive) 
+			VISIBLE=(%lua.google_maps_button_cockpit) 
 			ZOOM=80%
 			ICON="ico_GoogleMaps.svg" 
 			T_TEXT=(VW_Return_button_text(translate(%lua.QMapsObjects), L"%s", 1))
@@ -16,7 +16,7 @@
 
 <modify lm_CockpitSideList>
 	<insert>
-		<row 	visible=(%lua.google_maps_button_cockpit && LuaJava.LuaJavaActive) />
+		<row 	visible=(%lua.google_maps_button_cockpit) />
 	</insert>
 </modify>
 
@@ -29,7 +29,7 @@
 <modify ui_SideList>           
 	<insert first_child after="BUTTON" into="TABLE">
 		<BUTTON_ICON ONRELEASE='ui.google_maps_button_cockpit.ONRELEASE()()' ONLONGCLICK='ui.google_maps_button_cockpit.ONLONGCLICK()()' 
-			VISIBLE=(%lua.google_maps_button_quick && LuaJava.LuaJavaActive) 
+			VISIBLE=(%lua.google_maps_button_quick) 
 			ZOOM=80%
 			ICON=(google_maps_button_cockpit.ICON)
 			T_TEXT=(google_maps_button_cockpit.T_TEXT)
@@ -41,7 +41,7 @@
 
 <modify lm_QuickSideList>
 	<insert>
-		<row 	visible=(%lua.google_maps_button_quick && LuaJava.LuaJavaActive) />
+		<row 	visible=(%lua.google_maps_button_quick) />
 	</insert>
 </modify>
 
@@ -55,30 +55,39 @@
 <!if condition=(Plugin.isLoaded("quick_tip"))>
 	<modify lm_QuickBattonList>
 		<insert>
-			<row  bmp=(google_maps_button_cockpit.ICON) text=(translate("'Google preview' Button")) onrelease='ui.google_maps_button_cockpit.ONRELEASE()()' onlongclick='ui.google_maps_button_cockpit.ONLONGCLICK()()' enable=(LuaJava.LuaJavaActive) />
+			<row  bmp=(google_maps_button_cockpit.ICON) text=(translate("'Google preview' Button")) onrelease='ui.google_maps_button_cockpit.ONRELEASE()()' onlongclick='ui.google_maps_button_cockpit.ONLONGCLICK()()' />
 		</insert>
 	</modify>
 <!end/>
 ;------------------modifications--------------
 <modify lm_LocalMenuCockpit>
 	<insert>
-		<row text="Google map View" onrelease='VW_GoogleMaps("https://www.google.com/maps/search/?api=1&map_action=map&query=" .. string.gsub(tostring(MODEL.my.map.selected_item.position()), "longitude = (-?%d+.%d+), latitude = (-?%d+.%d+)", "%2,%1")); sc_ClosePopover()' visible=(LuaJava.LuaJavaActive) />
+		<row text="Google map View" onrelease='VW_GoogleMaps("https://www.google.com/maps/search/?api=1&map_action=map&query=" .. string.gsub(tostring(MODEL.my.map.selected_item.position()), "longitude = (-?%d+.%d+), latitude = (-?%d+.%d+)", "%2,%1")); sc_ClosePopover()' />
 	</insert>
 </modify>
-
+ 
+<var ShowSpeack_wiki = 0 /> ;permanent
 <modify ui_Cockpit_DragMode>
 	<insert first_child into="#DragModeCenter_buttons">
 		<BUTTON CLASS="btn_map inbox" ONRELEASE='VW_ShowGoogleMapsObject("Selected point", nil, nil, MODEL.my.map.selected_item.position())' 
-			ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_QMapsTypes_Popover", MODEL.lua.QMapsTypes())'
-			VISIBLE=(LuaJava.LuaJavaActive)> 
+			ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_QMapsTypes_Popover", MODEL.lua.QMapsTypes())' > 
 			<SPRITE CLASS="button map fill" />
 			<SPRITE CLASS="btn_map svg" IMG="ico_GoogleMaps.svg" />
 		</BUTTON>
 		<BUTTON CLASS="btn_map inbox" ONRELEASE='
 			local Destination_City, Destination_District = VW_TownDistrict_by_GCOOR(MODEL.my.map.selected_item.position())
-			java:call("android.open_webpage", L"https://" .. towstring(string.sub(MODEL.navigation.car.current_country(), 2, 3)) .. L".wikipedia.org/wiki/Special:Search?search=" .. Destination_City)' > 
+			if Destination_City then
+				if ui.LuaJava.LuaJavaActive() and ShowSpeack_wiki() then
+					VW_WiKi_TTS(Destination_City)
+				else
+					java:call("android.open_webpage", L"https://" .. towstring(string.sub(MODEL.navigation.car.current_country(), 2, 3)) .. L".wikipedia.org/wiki/Special:Search?search=" .. Destination_City) 
+				end
+			end
+			' 
+			ONLONGCLICK={ShowSpeack_wiki = !ShowSpeack_wiki}
+			>
 			<SPRITE CLASS="button map fill" />
-			<SPRITE CLASS="btn_map svg" IMG="ico_wiki.svg" />
+			<SPRITE CLASS="btn_map svg" IMG=(ShowSpeack_wiki ? "Wikispeech_logo.svg" : "ico_wiki.svg") />
 			<TEXT CLASS="BTN_top_text" TEXT=(VW_Return_button_text(translate("Wiki info"), L"%s", 1)) />
 			<TEXT CLASS="BTN_bottom_text" TEXT=(VW_Return_button_text(translate("Wiki info"), L"%s", 99)) />
 		</BUTTON>
@@ -87,20 +96,20 @@
 
 <modify lm_PointOnMap>
 	<insert>
-		<row text="Google map View" onrelease='VW_GoogleMaps("https://www.google.com/maps/search/?api=1&map_action=map&query=" .. string.gsub(tostring(MODEL.my.map.selected_item.position()), "longitude = (-?%d+.%d+), latitude = (-?%d+.%d+)", "%2,%1")); sc_ClosePopover()' visible=(LuaJava.LuaJavaActive) />
+		<row text="Google map View" onrelease='VW_GoogleMaps("https://www.google.com/maps/search/?api=1&map_action=map&query=" .. string.gsub(tostring(MODEL.my.map.selected_item.position()), "longitude = (-?%d+.%d+), latitude = (-?%d+.%d+)", "%2,%1")); sc_ClosePopover()' />
 	</insert>
 </modify>
 
 <modify lm_LocalMenuCurrentTraffic>
 	<insert>
 		<row text="Google map View" onrelease='VW_GoogleMaps("https://www.google.com/maps/search/?api=1&map_action=map&query=" .. string.gsub(tostring(MODEL.traffic.events[ sc_GetTmcListName() ][current].position()), "longitude = (-?%d+.%d+), latitude = (-?%d+.%d+)", "%2,%1"))'
-			enable=(%map.primary.clicked_tmc_id.valid && ( %map.primary.cursor_icon == "cursor_tmc" || %map.primary.cursor_icon == "cursor_tmc_pacific" ) ) visible=( !%lua.useHistSpeedColors && LuaJava.LuaJavaActive ) />
+			enable=(%map.primary.clicked_tmc_id.valid && ( %map.primary.cursor_icon == "cursor_tmc" || %map.primary.cursor_icon == "cursor_tmc_pacific" ) ) visible=( !%lua.useHistSpeedColors ) />
 	</insert>
 </modify>
 
 <modify lm_ParkingAroundDest_localmenu>
 	<insert>
-		<row text="Google map View" onrelease='VW_GoogleMaps("https://www.google.com/maps/search/?api=1&map_action=map&query=" .. string.gsub(tostring(MODEL.my.map.selected_item.position()), "longitude = (-?%d+.%d+), latitude = (-?%d+.%d+)", "%2,%1")); sc_ClosePopover()' enable=(%navigation.parking_ad.list.size && LuaJava.LuaJavaActive) />	
+		<row text="Google map View" onrelease='VW_GoogleMaps("https://www.google.com/maps/search/?api=1&map_action=map&query=" .. string.gsub(tostring(MODEL.my.map.selected_item.position()), "longitude = (-?%d+.%d+), latitude = (-?%d+.%d+)", "%2,%1")); sc_ClosePopover()' enable=(%navigation.parking_ad.list.size) />	
 	</insert>
 </modify>
 ;=====================================================================================================
@@ -127,3 +136,9 @@
 	<row text="satellite" img="ico_satellite.svg" />
 	<row text="terrain" img="ico_terrain.svg" />
 </userlist>
+;----------modification-----------
+<modify ui_Cockpit>
+	<modify element="#CityName_Plate" ONRELEASE=(LuaJava.LuaJavaActive && ShowSpeack_wiki ? 'VW_WiKi_TTS(MODEL.lua.IN_City())' : 'java:call("android.open_webpage", L"https://" .. towstring(string.sub(MODEL.navigation.car.current_country(), 2, 3)) .. L".wikipedia.org/wiki/Special:Search?search=" .. MODEL.lua.IN_City())') />
+	<modify element="#DA_freeAtTheMoment_City" ONRELEASE=(LuaJava.LuaJavaActive && ShowSpeack_wiki ? 'VW_WiKi_TTS(MODEL.lua.IN_City())' : 'java:call("android.open_webpage", L"https://" .. towstring(string.sub(MODEL.navigation.car.current_country(), 2, 3)) .. L".wikipedia.org/wiki/Special:Search?search=" .. MODEL.lua.IN_City())') />
+	<modify element="#Sprite_City_ico" IMG=(LuaJava.LuaJavaActive && ShowSpeack_wiki ? "Wikispeech_logo.svg" : "ico_city.svg") ZOOM=(ShowSpeack_wiki ? 60% : 100%) />
+</modify>

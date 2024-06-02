@@ -1,5 +1,5 @@
 ;============================================contacts=================================================
-<userlist lm_contacts text="wstr" phone="wstr" email="wstr" enable="bool" visible="bool">
+<userlist lm_contacts text="wstr" phone="wstr" email="wstr" contactid="wstr" enable="bool" visible="bool">
 	<view visibility_filter=(inp_Input.VALUE ? VW_Filter_contacts($1.text) && (%lua.ContactType == "Email" ? ($1.email == L"" ? 0 : 1 ) : ($1.phone == L"" ? 0 : 1)) : (%lua.ContactType == "Email" ? ($1.email == L"" ? 0 : 1 ) : ($1.phone == L"" ? 0 : 1)) ) />
 	<default enable=1 visible=1 >
 	<default FILENAME="contacts.txt" />
@@ -15,7 +15,8 @@
 			if MODEL.lua.ContactType() == "Email" then
 				MODEL.lua[gContact_phrase .. "_Email"] = MODEL["*"].email()
 			end
-			' 
+			'
+			onlongclick='VW_android_contact_show(MODEL["*"].contactid())'
 			text=%*.text />
 		<BUTTON class="listitem" onrelease='
 			MODEL.lua[gContact_phrase .. "_Name"] = MODEL["*"].text()
@@ -23,6 +24,7 @@
 			st_SimpleInputContact.contact_index = ((st_SimpleInputContact.contact_index + 1) % (#t+1)) or 1
 			MODEL.lua[gContact_phrase .. "_Phone"] = wsplit(MODEL["*"].phone(), L",%s?")[st_SimpleInputContact.contact_index]
 			' 
+			onlongclick='VW_android_contact_show(MODEL["*"].contactid())'
 			text=(VW_PhoneMark(%*.phone, %{"lua." + lua.gContact_phrase + "_Phone"})) visible=(%lua.ContactType != "Email") />
 		<BUTTON class="listitem" onrelease='
 			MODEL.lua[gContact_phrase .. "_Name"] = MODEL["*"].text()
@@ -30,6 +32,7 @@
 			st_SimpleInputContact.contact_index = ((st_SimpleInputContact.contact_index + 1) % (#t+1)) or 1
 			MODEL.lua[gContact_phrase .. "_Email"] = wsplit(MODEL["*"].email(), L",%s?")[st_SimpleInputContact.contact_index]
 			'
+			onlongclick='VW_android_contact_show(MODEL["*"].contactid())'
 			text=(VW_EmailMark(%*.email, %{"lua." + lua.gContact_phrase + "_Email"})) visible=(%lua.ContactType == "Email") /> ;%exists:
 	</HBOX>
 </element_template>
@@ -58,5 +61,5 @@
 <userlist lm_Contacts_footer text="str" onrelease="ui"  onlongclick="ui" enable="bool" visible="bool" isactionbutton="bool" dtooltip="str" >
 	<default enable=1 visible=1 />
 	<view visibility_filter=visible />
-	<row  text="Click - 'Reset', Long Click - Reload"  isactionbutton=1  onrelease='MODEL.lua[gContact_phrase .. "_Phone"] = L""' onlongclick=sc_ReloadContactsList dtooltip="No LuaJava" enable=(LuaJava.LuaJavaActive) />
+	<row  text="Click - 'Reset', Long Click - Reload"  isactionbutton=1  onrelease='MODEL.lua[gContact_phrase .. "_Phone"] = L""' onlongclick='sc_ReloadContactsList(MODEL.ui.lm_contacts.list[0].contactid())' dtooltip="No LuaJava" enable=(LuaJava.LuaJavaActive) />
 </userlist>

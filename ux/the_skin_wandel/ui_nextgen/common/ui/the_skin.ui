@@ -276,20 +276,14 @@
 			onrelease='ui_aVersionInformation:tween("Y", 0, -ui.ui_aVersionInformation.H, 300, { on_complete = function() ui_aVersionInformation:HIDE(); MODEL.lua.SkinVersionShowTime = 0 end})' /> 
 	</DIV>
 	<DIV class="main">
-		;<SPRITE class="logo svg" visible=(%lua.aColorCockpitInterface_Set == lua.SkinInterfaceColor.DEFAULT) />
-		;<SPRITE class="logo svg" img=(%lua.aColorCockpitInterface_Set == lua.SkinInterfaceColor.GOLD ? "horseshoe.svg" : "MyLogo.svg") 
-		<SPRITE class="logo svg" img="Ukrainian_Armed_Forces.svg" top=0 bottom=70% zoom=90% />
-		;<SPRITE class="logo svg" img="ico_100pc.svg" top=0 bottom=70% visible=(%lua.aColorCockpitInterface_Set != lua.SkinInterfaceColor.DEFAULT)  zoom=90% />
-		<TEXT class="font_main bd color_inf_main" left=10% right=10% top=(%lua.IsPortrait ? 30% : 30%)  align="CENTER" 
-			text=(%lua.aSkinVersionTXT) />
-		<TEXT class="font_main bd color_inf_main" left=10% right=10% top=(%lua.IsPortrait ? 40% : 40%) align="CENTER" 
-			text=(L"version " + %lua.aSkinVersionNo + L" | " + %lua.aSkinVersionDate) />
-		;<TEXT class="font_main bd color_inf_main" left=10% right=10% top=(%lua.IsPortrait ? 50% : 55%) align="CENTER" 
-		;	text="Thanks to everyone who provided and assists in the development of the skin." />
-		<TEXT class="font_main bd color_inf_main" left=10% right=10% top=(%lua.IsPortrait ? 70% : 75%) align="CENTER" 
-			text=(sc_translate_VoiceOrLang("Total plugins loaded: %s", %lua.Loaded_Plugins)) />
-		<TEXT class="font_main bd color_inf_main" left=10% right=10% top=(%lua.IsPortrait ? 80% : 85%) align="CENTER" 
-			text=("@ " + lua.ColorCockpitInterface_Table[%lua.aColorCockpitInterface_Set][2]) />
+		<VBOX class="fill about_vesion">
+			<SPRITE class="logo svg" img="icon_flags_ukr.svg" /> ;"Ukrainian_Armed_Forces.svg"
+			<TEXT class="about_vesion font_info bd color_inf_main" text=(%lua.aSkinVersionTXT) />
+			<TEXT class="about_vesion font_info bd color_inf_main" text=(%lua.ApplicationLabel) visible=(LuaJava.LuaJavaActive) />
+			<TEXT class="about_vesion font_info bd color_inf_main" text=(sc_translate_VoiceOrLang("Total plugins loaded: %s", %lua.Loaded_Plugins)) />
+			<TEXT class="about_vesion font_info bd color_inf_main" text=("@ " + lua.ColorCockpitInterface_Table[%lua.aColorCockpitInterface_Set][2]) />
+			<TEXT class="about_vesion font_info bd color_inf_main" text=(L"version " + %lua.aSkinVersionNo + L" | " + %lua.aSkinVersionDate) />
+		</VBOX>
 	</DIV>
 </layer>
 

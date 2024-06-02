@@ -1,16 +1,19 @@
-<define_element INFORMATION_PLATE onrelease='' onlongclick='' text='' bg_index=0 fontsize=( %lua.IsShortLayout ? 19 : 31 )>
+<define_element INFORMATION_PLATE onrelease='' onlongclick='' onclick='' text='' bg_index=0 fontsize=( %lua.IsShortLayout ? 19 : 31 )>
 	<implementation>
-		;blue, green, red, orange
-		<property bg_colors value=#ff1762AD, #ff008000, #ffff0000, #ffffa500 />
+		;							blue, 		green, 		red, 	orange, 	gold, 		
+		<property bg_colors value=#ff1762AD, #ff008000, #ffff0000, #ffffa500, #ffffd700, #ff008B8B />
 	</implementation>
+
 	<SPRITE left=0 right=0 top=0 bottom=0 
-		onrelease={OWNER.ONRELEASE->()} onlongclick={OWNER.ONLONGCLICK->()} 
-		;img="INFORMATION_PLATE.bmp" resize_bmp=1 alpha=32 >
+		onrelease={OWNER.ONRELEASE->()} onlongclick={OWNER.ONLONGCLICK->()} onclick={OWNER.ONCLICK->()}
+		;img="INFORMATION_PLATE.bmp" resize_bmp=1 alpha=32 
 		;OPAQUE=1
-		;img=(OWNER.BG_INDEX == 0 ? "signpost_template_bg.bmp" : bg_colors[OWNER.BG_INDEX]) resize_bmp=1 alpha=32 >
+		;img=(OWNER.BG_INDEX == 0 ? "signpost_template_bg.bmp" : bg_colors[OWNER.BG_INDEX]) resize_bmp=1 alpha=32 
 		img=(bg_colors[OWNER.BG_INDEX]) resize_bmp=1 alpha=32 >
-		<TEXT right=5% left=5% top=5% h=90% 
-			flex=3 can_shrink=1 box_align="stretch"
+		<TEXT right=5% left=5% top=0 bottom=0
+			;flex=3 
+			;can_shrink=1 
+			;box_align="stretch"
 			text=( OWNER.TEXT // "" )
 			font="defaultbd" 
 			fontsize=( OWNER.FONTSIZE )
@@ -18,30 +21,71 @@
 			align="center" valign="center" wordwrap=3 
 			line_break_method="AUTO" ;"full" "hard"
 			;leading=0.85 
-			leading=90%
+			;leading=100%
 			;minaspect=90
 			;twolinesmall=1
-			;twolinesize=( %lua.IsShortLayout ? 10 : 15 )
+			;twolinesize=15
 			/>
 	</SPRITE>
-	<SPRITE left=0 right=0 top=0 bottom=0 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 z=100 /> ;overmaplayer
+	<SPRITE top=-1 bottom=-1 left=-1 right=-1 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 z=100 /> ;overmaplayer
+
 </define_element>
 
-<define_element GRAPH full current invert=0 invert_r=1 orientation="vertical">
+<define_element INFORMATION_PLATE_EXT onrelease='' onlongclick='' onclick='' text='' bg_index=0 fontsize=( %lua.IsShortLayout ? 19 : 31 )>
+	<implementation>
+		;							blue, 		green, 		red, 	orange, 	gold, 		
+		<property bg_colors value=#ff1762AD, #ff008000, #ffff0000, #ffffa500, #ffffd700, #ff008B8B />
+	</implementation>
+
+	<HBOX class="plate"> ; ці два HBOX дають можливість підлаштовувати розмір панелі під розмір самого повідомлення
+		<HBOX class="plate">
+			<SPRITE left=0 right=0 top=0 bottom=0 
+				position="absolute" ;!!!!!!!!!!!!!!!!!
+				onrelease={OWNER.ONRELEASE->()} onlongclick={OWNER.ONLONGCLICK->()} onclick={OWNER.ONCLICK->()}
+				;img="INFORMATION_PLATE.bmp" resize_bmp=1 alpha=32 
+				;OPAQUE=1
+				;img=(OWNER.BG_INDEX == 0 ? "signpost_template_bg.bmp" : bg_colors[OWNER.BG_INDEX]) resize_bmp=1 alpha=32 
+				img=(bg_colors[OWNER.BG_INDEX]) resize_bmp=1 alpha=32 >
+				<SPRITE top=-1 bottom=-1 left=-1 right=-1 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 z=100 /> ;overmaplayer
+			</SPRITE>
+			
+			<TEXT left=0 right=0 top=0 bottom=0
+				paddingleft=5 paddingright=5
+				;right=5% left=5% top=5% h=90%
+				;flex=3 can_shrink=1 
+				;box_align="stretch"
+				text=( OWNER.TEXT // "" )
+				font="defaultbd" 
+				fontsize=( OWNER.FONTSIZE )
+				color=#ffffff color2=#000000 ;glowsize=2 
+				align="center" valign="center" wordwrap=3 
+				line_break_method="AUTO" ;"full" "hard"
+				;leading=0.85 
+				;leading=90%
+				;minaspect=90
+				;twolinesmall=1
+				;twolinesize=( %lua.IsShortLayout ? 10 : 15 )
+				/>
+		</HBOX>
+	</HBOX>
+
+</define_element>
+
+<define_element GRAPH img="graph.svg" full current invert=0 invert_r=1 orientation="vertical">
 	<implementation>
 		<property delta value=( OWNER.FULL / 10 ) />
 	</implementation>
-	<BOX orientation=(OWNER.ORIENTATION)> ; it was removed left=0 right=0 top=0 bottom=0
-		<SPRITE class="graph" img="graph.svg" phase=(delta*(OWNER.INVERT_R ? 9 : 0) < OWNER.CURRENT ? (OWNER.INVERT ? 9 : 0) : 10) />
-		<SPRITE class="graph" img="graph.svg" phase=(delta*(OWNER.INVERT_R ? 8 : 1) < OWNER.CURRENT ? (OWNER.INVERT ? 8 : 1) : 10) />
-		<SPRITE class="graph" img="graph.svg" phase=(delta*(OWNER.INVERT_R ? 7 : 2) < OWNER.CURRENT ? (OWNER.INVERT ? 7 : 2) : 10) />
-		<SPRITE class="graph" img="graph.svg" phase=(delta*(OWNER.INVERT_R ? 6 : 3) < OWNER.CURRENT ? (OWNER.INVERT ? 6 : 3) : 10) />
-		<SPRITE class="graph" img="graph.svg" phase=(delta*(OWNER.INVERT_R ? 5 : 4) < OWNER.CURRENT ? (OWNER.INVERT ? 5 : 4) : 10) />
-		<SPRITE class="graph" img="graph.svg" phase=(delta*(OWNER.INVERT_R ? 4 : 5) < OWNER.CURRENT ? (OWNER.INVERT ? 4 : 5) : 10) />
-		<SPRITE class="graph" img="graph.svg" phase=(delta*(OWNER.INVERT_R ? 3 : 6) < OWNER.CURRENT ? (OWNER.INVERT ? 3 : 6) : 10) />
-		<SPRITE class="graph" img="graph.svg" phase=(delta*(OWNER.INVERT_R ? 2 : 7) < OWNER.CURRENT ? (OWNER.INVERT ? 2 : 7) : 10) />
-		<SPRITE class="graph" img="graph.svg" phase=(delta*(OWNER.INVERT_R ? 1 : 8) < OWNER.CURRENT ? (OWNER.INVERT ? 1 : 8) : 10) />
-		<SPRITE class="graph" img="graph.svg" phase=(delta*(OWNER.INVERT_R ? 0 : 9) < OWNER.CURRENT ? (OWNER.INVERT ? 0 : 9) : 10) />
+	<BOX orientation=(OWNER.ORIENTATION)> 
+		<SPRITE class="graph" img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 9 : 0) < OWNER.CURRENT ? (OWNER.INVERT ? 9 : 0) : 10) />
+		<SPRITE class="graph" img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 8 : 1) < OWNER.CURRENT ? (OWNER.INVERT ? 8 : 1) : 10) />
+		<SPRITE class="graph" img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 7 : 2) < OWNER.CURRENT ? (OWNER.INVERT ? 7 : 2) : 10) />
+		<SPRITE class="graph" img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 6 : 3) < OWNER.CURRENT ? (OWNER.INVERT ? 6 : 3) : 10) />
+		<SPRITE class="graph" img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 5 : 4) < OWNER.CURRENT ? (OWNER.INVERT ? 5 : 4) : 10) />
+		<SPRITE class="graph" img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 4 : 5) < OWNER.CURRENT ? (OWNER.INVERT ? 4 : 5) : 10) />
+		<SPRITE class="graph" img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 3 : 6) < OWNER.CURRENT ? (OWNER.INVERT ? 3 : 6) : 10) />
+		<SPRITE class="graph" img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 2 : 7) < OWNER.CURRENT ? (OWNER.INVERT ? 2 : 7) : 10) />
+		<SPRITE class="graph" img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 1 : 8) < OWNER.CURRENT ? (OWNER.INVERT ? 1 : 8) : 10) />
+		<SPRITE class="graph" img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 0 : 9) < OWNER.CURRENT ? (OWNER.INVERT ? 0 : 9) : 10) />
 	</BOX>
 </define_element>
 

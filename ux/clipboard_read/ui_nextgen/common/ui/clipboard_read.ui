@@ -1,9 +1,8 @@
 <modify ui_Cockpit>           
 	<insert first_child after="BUTTON" into="#CockpitBTNTable">
 		<BUTTON_ICON ClipboardRead ONRELEASE=W_ReadClipboard
-			ONLONGCLICK='W_DefaultWebBrowser("http://4pna.com/showpost.php?p=535663&postcount=1036")'
-			;ONLONGCLICK='java:call("android.open_webpage", L"http://4pna.com/showpost.php?p=535663&postcount=1036")'
-			VISIBLE=(%lua.ClipboardReadCockpit)
+			ONLONGCLICK='VW_DefaultWebBrowser(L"http://4pna.com/showpost.php?p=535663&postcount=1036")'
+			VISIBLE=(LuaJava.LuaJavaActive && %lua.ClipboardReadCockpit)
 			ICON="ico_voiceout.svg" 
 			ZOOM=80%
 			C_R_ICON="Lua_Logo.svg"
@@ -15,7 +14,7 @@
 
 <modify lm_CockpitSideList>
 	<insert>
-		<row 	visible=(%lua.ClipboardReadCockpit) />
+		<row 	visible=(LuaJava.LuaJavaActive && %lua.ClipboardReadCockpit) />
 	</insert>
 </modify>
 
@@ -28,7 +27,7 @@
 <modify ui_SideList>           
 	<insert first_child after="BUTTON" into="TABLE">
 		<BUTTON_ICON ONRELEASE='ui.ClipboardRead.ONRELEASE()()' ONLONGCLICK='ui.ClipboardRead.ONLONGCLICK()()' 
-			VISIBLE=(%lua.ClipboardReadQuick)
+			VISIBLE=(LuaJava.LuaJavaActive && %lua.ClipboardReadQuick)
 			ICON=(ClipboardRead.ICON) 
 			ZOOM=80%
 			C_R_ICON=(ClipboardRead.C_R_ICON) 
@@ -40,7 +39,7 @@
 
 <modify lm_QuickSideList>
 	<insert>
-		<row 	visible=(%lua.ClipboardReadQuick) />
+		<row 	visible=(LuaJava.LuaJavaActive && %lua.ClipboardReadQuick) />
 	</insert>
 </modify>
 
@@ -54,7 +53,8 @@
 <!if condition=(Plugin.isLoaded("quick_tip"))>
 	<modify lm_QuickBattonList>
 		<insert>
-			<row  bmp=(ClipboardRead.ICON) text=(translate("Clipboard Read")) onrelease='ui.ClipboardRead.ONRELEASE()()' onlongclick='ui.ClipboardRead.ONLONGCLICK()()' />
+			<row  bmp=(ClipboardRead.ICON) text=(translate("Clipboard Read")) onrelease='ui.ClipboardRead.ONRELEASE()()' onlongclick='ui.ClipboardRead.ONLONGCLICK()()' 
+				enable=(LuaJava.LuaJavaActive && %lua.ClipboardReadQuick) />
 		</insert>
 	</modify>
 <!end/>

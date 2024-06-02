@@ -1,2 +1,6 @@
 import "~/common/ui/google_contacts.ui"
 import "~/common/ui/google_contacts.lua"
+
+import "~/common/ui/google_contacts_mods.ui"
+import "~/common/ui/google_contacts_mods.lua"
+

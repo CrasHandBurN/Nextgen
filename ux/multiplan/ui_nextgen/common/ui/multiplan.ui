@@ -19,7 +19,7 @@
 
 		<RADIO class="routemethod" flex=1 groupmodel="lua.alternativeModes" var=(index+1) onrelease='sc_RouteMethod_DrawSelectedAlternative(); sc_RefreshShowedRouteModel()' onlongclick=sc_HideSelectedAlternative
 			img=(%lua.FindAlternativesOriginal || (index + 1) > 5 ? "btn_listitem.bmp#3" : ui_RouteMethod.routecolors[index]) >
-			<SPRITE left=0 right=0 top=0 bottom=0 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 z=100 />
+			<SPRITE top=-1 bottom=-1 left=-1 right=-1 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 z=100 />
 			<HBOX class="listitem routemethod" flex=1>
 				<SPRITE class="routemethod routecolor" />
 				<HBOX class="routemethod container" flex=1 >	

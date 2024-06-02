@@ -220,9 +220,12 @@
 
 ;---------------------------------------------LABEL SETTINGS----------------------------------------
 <modify ui_Cockpit>
-	<insert last_child into="DIV.notify_list_ext TABLE.ari_ext">
+	<insert first_child after="BUTTON" into="DIV.notify_list_ext TABLE.ari_ext">
 		<BUTTON CLASS="btn_map" 
-			ONRELEASE='MODEL.lua.SkinVersionShowTime = sc_GetSysEntry("interface", "skin_version_show_time", 200); ui_aVersionInformation:tween("Y", -ui.ui_aVersionInformation.H, 0, 300); ui_aVersionInformation:SHOW()' 
+			ONRELEASE='
+				MODEL.lua.SkinVersionShowTime = sc_GetSysEntry("interface", "skin_version_show_time", 200); ui_aVersionInformation:tween("Y", -ui.ui_aVersionInformation.H, 0, 300); ui_aVersionInformation:SHOW()
+				VW_LongTextToSay( sc_translate_VoiceOrLang("Today %s : %s", sc_ShowDateTool(MODEL.gps.current_date()), sc_translate_VoiceOrLang(eDaysOfWeekFull[MODEL.gps.current_date().dayOfWeek + 1])) )
+				' 
 			ONLONGCLICK='MODEL.lua.label_in_cockpit = false'
 			VISIBLE=( (%lua.label_in_cockpit ? %lua.label_in_cockpit : %lua.aCockpitTransparency == 32) && LuaJava.LuaJavaActive ) >
 			<SPRITE CLASS="button map fill" />

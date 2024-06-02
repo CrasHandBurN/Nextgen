@@ -1,7 +1,6 @@
 ;------- 20.08.2020 ---- TURN RESTRICTION --WANDEL™--
 <observer value=(%lua.TurnRestrictionIsVisible) onselect='doDelayed(25, sc_wsay_aboutturnrestriction)' START="NO_TRIGGER" />
 <!if condition=( Plugin.isLoaded( "driveralerts" ) )/>
-
 	<modify lm_DA_freeAtTheMoment>
 		<insert>
 			<row TurnRestriction visible=( %lua.TurnRestrictionIsVisible && !%gps.blink ) />
@@ -46,7 +45,6 @@
 	<default enable=1 type="" name="" min_text="No limit" max_text=(sc_ShowSpeedTool(250)) />
 	   <row name="Speed limit to alert" text=(%lua.TurnRestrictions_speed_limit ? sc_ShowSpeedTool(%lua.TurnRestrictions_speed_limit) : translate("No limit")) type="Scroll" min=0 max=250 step=10 valuemodel="lua.TurnRestrictions_speed_limit" />
 </userlist>
-
 
 <userlist lm_SetTurnRest_Popover text="str" var="wstr" onrelease="ui" enable="str" value="str">
 	<default text enable=1 />

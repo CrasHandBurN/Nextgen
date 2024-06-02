@@ -21,23 +21,19 @@
 			<observer model="screen.current_orientation", "lua.Show_NorthUp_HeadUp" onchange=sc_ShowTCMap_reset start="NO_TRIGGER" />
 			<observer model="map.primary.rotate", "lua.Show_NorthUp_HeadUp" onchange=sc_ShowTCMap_rotate start="NO_TRIGGER" />
 			<observer value=(%lua.TCNextManeuverValid) onselect='killDelayed(gShowTCMap_ID); sc_ShowTCMap_reset_Maneuver()' ondeselect='sc_ShowTCMap_reset(); VW_CheckFitForTCMap()' start />
-			<observer model="ui.lm_splitpoi.list.size", "lua.wSplitScreenPOIReady"
-				onchange='
-						if MODEL.lua.wSplitScreenPOIReady() then 
-							MODEL.map.tcmap.show_pois = 2
-							sc_FillSmartPois_bySplitScreen()
-						else
-							MODEL.map.tcmap.show_pois = 1
-						end' start />
-			
-			;<SPRITE ShowTCMap_route TOP=4% BOTTOM=4% LEFT=4% RIGHT=4% /> ;for route on map
 
-			<SPRITE TOP=-1 BOTTOM=-1 LEFT=-1 RIGHT=-1 IMG="signpost_template_border.bmp" RESIZE_BMP=1 ALPHA=32 />
+			<SPRITE top=-1 bottom=-1 left=-1 right=-1 IMG="signpost_template_border.bmp" RESIZE_BMP=1 ALPHA=32 />
+			
+			<SPRITE class="listitem flag" left=2% w=50 right=undef top=1% h=50 bottom=undef img=(ui_Cockpit.country_flag) zoom=70% />
+
 			<BUTTON_ICON left=undef w=50 right=2% top=undef h=50 bottom=1%
 				onrelease=VW_tween
-				icon=(TCMap_heading.heading_img[%lua.Show_NorthUp_HeadUp]) zoom=60% />
+				icon=(TCMap_heading.heading_img[%lua.Show_NorthUp_HeadUp]) zoom=70% />
 				
-			<DIV left=undef w=120 right=0 top=0 h=120 bottom=undef > 
+			<BUTTON_ICON right=undef w=50 left=2% top=undef h=50 bottom=1%
+				onrelease='VW_show_pois("tcmap")' icon="ico_POIonMAP.svg" zoom=70% visible=(%lua.wSplitScreenPOIReady) />
+				
+			<DIV left=undef w=60 right=0 top=0 h=60 bottom=undef > 
 				<DIV TOP=0 BOTTOM=0 LEFT=0 RIGHT=0 VISIBLE=(ui_Cockpit.height_direction == "") >
 					<SPRITE CLASS="btn_map rotatecompass icon svg" Z=40 ZOOM=65% IMAGE_H=(PARENT.H) IMAGE_W=(PARENT.W)
 							ROTATE=( %map.primary.rotate * 360.0 / 4096 ) />

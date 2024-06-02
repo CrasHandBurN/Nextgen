@@ -117,7 +117,7 @@
 						<LISTMODEL listmodel="services.weather.waypoint_forecasts.list" element_template="et_weatherWaypoints" visible=(%navigation.has_route) />
 						<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_TemplateList" text="Weather Along Route" onrelease=sc_showWeatherOverview enable=( %navigation.has_route && %route.list.navigated.calculation_finished && !%lua.ptp_navigation && %lua.OnlineWeatherEnabled ) />
 						<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_TemplateList" text="Saved Weather Locations" onrelease=sc_showWeatherLocations />
-						<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_TemplateList" text="Close" onrelease='ui_WeatherMenu_mini:HIDE()' />
+						<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_TemplateList" text="Close" onrelease='ui.WeatherMenu_mini.ONRELEASE()()' />
 						<VSMARTSCROLL>
 						<WHEEL>
 						<LISTCONTROL>

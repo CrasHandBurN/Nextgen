@@ -70,7 +70,6 @@
 <userlist lm_Externalappconfig text="str" onrelease="ui" enable="bool" visible="bool">
 	<default enable=1 visible=1 />
 	<view visibility_filter=visible />
-	;<row text="Help" onrelease='W_DefaultWebBrowser("https://4pna.com/showpost.php?p=525162&postcount=265")' />
 	<row text="Help" onrelease='VW_Show_xhtmlQuest("i18n/Help/externalappconfig/Externalappconfig_Help.xhtml", "Externalappconfig")' />
 </userlist>
 

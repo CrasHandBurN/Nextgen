@@ -125,7 +125,7 @@
 	</modify>
 
 	<modify ui_LeftSide_Free_Button>
-		<insert into="IMPLEMENTATION">
+		<insert into="IMPLEMENTATION"> ;it`s used in others places
 			<PROPERTY ShowLeftSideUmweltZone_VISIBLE VALUE=((%ui.lm_N_buttons.size && %ui.lm_N_buttons.list[0].name == "ShowLeftSideUmweltZone_VISIBLE") ||
 						(%ui.lm_N_buttons.size > 1 && %ui.lm_N_buttons.list[1].name == "ShowLeftSideUmweltZone_VISIBLE" && %lua.current_buttons == 2)) />
 		</insert>

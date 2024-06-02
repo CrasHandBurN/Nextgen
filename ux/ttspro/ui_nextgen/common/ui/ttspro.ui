@@ -24,7 +24,7 @@
 <observer value=(%navigation.remaining_tunnel_length.valid) onselect='hook_Remaining_tunnel_length:trigger()' start="NO_TRIGGER" />
 
 <observer obs_hook_Street_changed value=(%navigation.car.current_street) onchange='hook_Street_changed:trigger()' />
-<observer obs_hook_TownDistrict_changed model="navigation.car.current_street", "navigation.car.address.zip" onchange='if MODEL.navigation.car.is_incity() then hook_TownDistrict_changed:trigger() end' />
+<observer obs_hook_TownDistrict_changed model="navigation.car.current_street", "navigation.car.address.zip", "navigation.car.is_incity" onchange='if MODEL.navigation.car.is_incity() then hook_TownDistrict_changed:trigger() end' />
 
 <observer obs_hook_City_changed value=(%navigation.car.address.city) onchange='hook_City_changed:trigger()' /> 
 <observer obs_HeadlightsOn value=(%navigation.car.position.valid && !%navigation.car.is_incity) onselect='hook_HeadlightsOn:trigger()' /> ;; && %navigation.is_in_simulation
@@ -52,12 +52,9 @@
 	</insert>
 </modify>
 
-<observer obs_DueToCarNearCity value=(%navigation.has_route && %navigation.car.near_city_cos.valid && !%navigation.car.in_city && %navigation.car.near_city) 
-	onselect=VW_CarNearCityNegotiation ondeselect=VW_CarNearCity
-	start="NO_TRIGGER" />
 <observer obs_DueToCarInCity model="navigation.car.is_incity" onchange=VW_CarInCity_change />
 <observer obs_DueToRouteChange value=(%route.list.navigated.calculation_finished && %route.list.navigated.has_navigable_path && %lua.pwion == 2 && %lua.tts_by_Wiman) onselect=sc_wi_wReadOutDestinationInfo_Start start="NO_TRIGGER" />
-<observer obs_DueToTimeChange value=(%gps.current_time) onchange=sc_DueToTimeChange START="NO_TRIGGER">
+<observer obs_DueToTimeChange value=(%gps.blink) onselect=sc_DueToTimeChange START="NO_TRIGGER">
 <observer obs_DueToDistanceChange value=(%navigation.distance_to_destination) onchange=sc_DueToDistanceChange start="NO_TRIGGER" />
 
 <userlist lm_tts_settings prio="int" text="str" haspopover="bool" type="str" isselected="str" enable="bool" visible="bool" onrelease="ui" onrelease_extra="ui" >
@@ -77,6 +74,14 @@
 	<row text="Read Out \"In City\"" isselected="lua.CarInCity" onrelease_extra='sc_NextStateAnim(st_ShowInCitySettings, "fade", 1, "" )' type="SetChkOnOff_Icon" />
 	<row text="Read Out \"Out of City\"" isselected="lua.CarOutofCity" onrelease_extra='sc_NextStateAnim(st_ShowOutofCitySettings, "fade", 1, "" )' type="SetChkOnOff_Icon" />	
 </userlist>
+
+<userlist lm_LocalMenu_TTSProSettings text="ui" onrelease="ui" onlongclick="ui" visible="bool" enable="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+	
+	<row text="Ten Commandments for true iGOists" onrelease='VW_Show_xhtmlQuest("TenCommandmentstrueiGOists.xhtml", "Ten Commandments for true iGOists")' />
+</userlist>
+
 ;---tts by WANDEL™ like Wiman---------------------
 <userlist WittswiSettingsList haspopover="bool" prio="int" text="str" bmp="str" iconphase="int" bitvalue="int" isselected="str" model="str"  visible="bool" enable="bool" onrelease="ui" details="ui" type="str">
 	<view visibility_filter=visible />
@@ -241,7 +246,7 @@
 		<BUTTON CLASS="btn_map" ONRELEASE='hook_nearest_town:trigger()' ONLONGCLICK='sc_NextStateAnim(st_ShowNearestTownSettings, "fade", 1, "" )'
 				VISIBLE=(%lua.hook_nearest_town && !%navigation.car.is_incity && %navigation.car.near_city_cos.valid) >
 			<SPRITE CLASS="button map fill" />
-			<TEXT CLASS="BTN_top_text" TEXT=(VW_NearestTownName(%navigation.car.near_city_cos)) />  
+			<TEXT CLASS="BTN_top_text" TEXT=(VW_City(%navigation.car.near_city_cos)) />  
 			<SPRITE CLASS="listitem flag" IMG="visit.svg" ROTATE=(-direction(%navigation.car.position, %navigation.car.near_city_cos, %navigation.car.heading, true)) /> 
 			<TEXT CLASS="BTN_bottom_text" TEXT=(builtin.format("%{distance:3}", distance(%navigation.car.position, %navigation.car.near_city_cos))) />
 		</BUTTON>

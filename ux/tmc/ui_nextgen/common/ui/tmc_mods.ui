@@ -13,7 +13,7 @@
 ;-------
 <observer boolmodel="route.list.traffic_detour.valid" ondeselect=sc_Traffic_CancelDetourAnnouncement start />
 
-<observer value=(%gps.current_time) onchange=sc_w_timer START /> 
+<observer value=(%gps.blink) onselect=sc_w_timer START /> 
 
 <!ENABLE OVERRIDE>
 

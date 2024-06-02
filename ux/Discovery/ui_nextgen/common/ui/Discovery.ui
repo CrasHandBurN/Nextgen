@@ -254,6 +254,7 @@
 <layer ui_zoomctr z=100 visible=( ui_PropLayer.SidePanelVisible )>
 	<DIV class=cockpit>
 		<DIV class=map_messagebox >
+			<SPRITE class="btn_map svg" img="ico_drag.svg" align="LEFT" valign="BOTTOM" bottom=2% left=5% visible=(%gps.blink) />
 			<SPRITE class="zoomctrl_sp">
 				<TEXT class="fill zoomctrl_sp" text=( %lua.ZoomControlText ) /> 
 			</SPRITE>

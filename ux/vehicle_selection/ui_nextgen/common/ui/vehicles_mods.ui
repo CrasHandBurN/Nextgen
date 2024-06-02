@@ -11,8 +11,6 @@
 	</insert>
 </modify>
 
-<userlist lm_localmenu_empty_settingvehicle text="str" icon="str" onrelease="ui" enable="bool" />
-; ---------------- ari vehicle zoom --------------------
 <!ENABLE OVERRIDE>
 <layer ui_VisualCarModels z=41>
 	<implementation>

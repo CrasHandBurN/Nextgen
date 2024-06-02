@@ -1,9 +1,4 @@
-/*------- VW -- 29.11.2017  ------ */
-SPRITE.detour_icon {
-	left: 1%; w: 35%; top:1%; h:35%; z:60; valign:"CENTER";  align:"CENTER"; zoom:80%;
-	ROTATE:(-(direction(%navigation.car.position, ui_Cockpit.splitpoi_position, %navigation.car.heading) + 1024) * 360.0 / 4096);
-}
-
+/*------- VW -- 29.01.2024  ------ */
 SPRITE.poi_branded {
 	left:0; right:0; top:0; bottom:0;
 	valign:"CENTER"; align:"CENTER"; 

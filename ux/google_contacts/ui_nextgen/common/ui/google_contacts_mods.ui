@@ -1,0 +1,62 @@
+<var AndroidContactsCockpit = 0 permanent />
+<var AndroidContactsQuick = 0 permanent />
+<modify ui_Cockpit>           
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON AndroidContacts ONRELEASE='java:call("android.contacts.set_callback", "sc_contact_callback") java:call("android.contact.showAll")'
+			;ONLONGCLICK=(%lua.contactid ? 'java:call("android.contact.show", MODEL.lua.contactid())' : undef)
+			ONLONGCLICK=(%lua.contactid ? 'VW_android_contact_show(MODEL.lua.contactid())' : undef)
+			VISIBLE=(AndroidContactsCockpit)
+			ICON="ico_contacts.svg" ZOOM=80%
+			T_TEXT=(VW_Return_button_text(%lua.contactid ? st_SelectContactAddress.title : translate("Android contacts"), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(%lua.contactid ? st_SelectContactAddress.title : translate("Android contacts"), L"%s", 99)) />
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=(AndroidContactsCockpit) />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'Android contacts' Button" bmp=(AndroidContacts.ICON) isselected="ui.AndroidContactsCockpit" />
+	</insert>
+</modify>
+;---- Quick Menu -----
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE='ui.AndroidContacts.ONRELEASE()()' ONLONGCLICK='ui.AndroidContacts.ONLONGCLICK()()' 
+			VISIBLE=(AndroidContactsQuick)
+			ICON=(AndroidContacts.ICON) ZOOM=80%
+			T_TEXT=(AndroidContacts.T_TEXT)
+			B_TEXT=(AndroidContacts.B_TEXT) />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=(AndroidContactsQuick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'Android contacts' Button" bmp=(AndroidContacts.ICON) isselected="ui.AndroidContactsQuick" />
+	</insert>
+</modify>
+
+;---insert into QuickTip---AndroidContacts
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=(AndroidContacts.ICON) text=(translate("Android contacts")) onrelease='ui.AndroidContacts.ONRELEASE()()' 
+				onlongclick='ui.AndroidContacts.ONLONGCLICK()()' />
+		</insert>
+	</modify>
+<!end/>
+<modify lm_FindMenu>
+	<insert after=Places>
+		<row contact_poi text="Android contacts" icon=(AndroidContacts.ICON) onrelease='ui.AndroidContacts.ONRELEASE()()' /> 
+	</insert>
+</modify>

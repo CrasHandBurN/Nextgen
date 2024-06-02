@@ -347,13 +347,15 @@
 	<DIV class="main">
 		<VBOX class="fill about_vesion">
 			<SPRITE class="logo svg" z=1>
-			<TEXT Release class="about_vesion font_info bd color_inf_main" text=L"$release$" REPLACETAGS>
-			<TEXT Buildnum class="about_vesion font_info bd color_inf_main" text=L"$buildnum$" REPLACETAGS>
-			<TEXT Date class="about_vesion font_info color_inf_main" text=L"$date$" REPLACETAGS>
+			<TEXT Release class="about_vesion font_info bd color_inf_main" text=L"$release$" REPLACETAGS />
+			<TEXT Buildnum class="about_vesion font_info bd color_inf_main" text=L"$buildnum$" REPLACETAGS />
+			<TEXT BuildLabel class="about_vesion font_info bd color_inf_main" text=(%lua.ApplicationLabel) visible=(LuaJava.LuaJavaActive) />
+			<TEXT class="about_vesion font_info bd color_inf_main" text=(sc_translate_VoiceOrLang("Total plugins loaded: %s", %lua.Loaded_Plugins)) />
+			<TEXT Date class="about_vesion font_info color_inf_main" text=L"$date$" REPLACETAGS />
 			<TEXT SkinVersion class="about_vesion font_info bd color_inf_main" text=(%lua.aSkinVersionTXT) />
-			<TEXT class="about_vesion font_info bd color_inf_main" text=(tostring(L"version " + %lua.aSkinVersionNo + L" | " + %lua.aSkinVersionDate)) />
-			<TEXT class="about_vesion font_info bd color_inf_main" text="<Web Address> | <Support E-mail>">
-			<TEXT Copyright class="about_vesion font_info color_inf_main" text=L"$copyright$" REPLACETAGS>
+			<TEXT class="about_vesion font_info bd color_inf_main" text=(L"version " + %lua.aSkinVersionNo + L" | " + %lua.aSkinVersionDate) />
+			<TEXT class="about_vesion font_info bd color_inf_main" text="<Web Address> | <Support E-mail>" />
+			<TEXT Copyright class="about_vesion font_info color_inf_main" text=L"$copyright$" REPLACETAGS />
 		</VBOX>
 	</DIV>
 </layer>

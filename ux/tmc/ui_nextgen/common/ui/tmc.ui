@@ -448,12 +448,8 @@
 	       			<SPRITE class="button map fill" />
 					<SPRITE class="listitem svg" img="ico_traffic.svg" zoom=70% />
 				</DIALOGBUTTON>
-				<DIALOGBUTTON class="dialog 1_1_1 mapmsgbox" text="TMC~Ignore" onrelease=sc_HideDiscoverySidePopup visible=(!LuaJava.LuaJavaActive) > 
-					<SPRITE class="button map fill" />
-				</DIALOGBUTTON>
 				<DIALOGBUTTON class="dialog 1_1_1 mapmsgbox" 
-					onrelease='VW_GoogleMaps("https://www.google.com/maps/search/?api=1&map_action=map&query=" .. string.gsub(tostring(MODEL.traffic.events.significant_events[sc_GetClosestEventData()].position()), "longitude = (-?%d+.%d+), latitude = (-?%d+.%d+)", "%2,%1"))'
-					visible=(LuaJava.LuaJavaActive) >
+					onrelease='VW_GoogleMaps("https://www.google.com/maps/search/?api=1&map_action=map&query=" .. string.gsub(tostring(MODEL.traffic.events.significant_events[sc_GetClosestEventData()].position()), "longitude = (-?%d+.%d+), latitude = (-?%d+.%d+)", "%2,%1"))' >
 					<SPRITE class="button map fill" />
 					<SPRITE class="listitem svg" img="ico_GoogleMaps.svg" zoom=70% />
 				</DIALOGBUTTON>
@@ -571,7 +567,7 @@
 			<TEXT class="map_messagebox detour discovery_text" z=20 text=%screen.msgbox.on_screen.first_line />
 			<DIV class="dialog_buttons">
 				<DIALOGBUTTON class="dialog 1_1 mapmsgbox" bottom=(CSS.Param.notify_list_h) img=#ffff8800 z=101 text="Accept" onrelease=sc_AcceptTrafficDetour enable=( %traffic.detour_recalculation_status == 2 ) >  
-					<SPRITE left=0 right=0 top=0 bottom=0 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 z=102 />
+					<SPRITE top=-1 bottom=-1 left=-1 right=-1 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 z=102 />
 				</DIALOGBUTTON>	
 				<DIALOGBUTTON class="dialog 2_1 mapmsgbox" z=101 iconspr="ico_done.svg" text="Preview" onrelease='ui.st_TrafficDetourPreview_hasStarted=1; sc_OpenDetourPreview()' >
 					<SPRITE class="button map fill" />

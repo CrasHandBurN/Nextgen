@@ -24,7 +24,7 @@
 	</insert>
 
 	<insert after="SPRITE.speedlimit_bg">
-		<SPRITE CLASS="speedcam_bg" OPAQUE=1 VISIBLE=( ui_PropLayer.ShowSpeedCamera ) 
+		<SPRITE CLASS="speedcam_bg" OPAQUE=1 VISIBLE=( LuaJava.LuaJavaActive && ui_PropLayer.ShowSpeedCamera ) 
 			ONRELEASE='MODEL.sound.playchanneltest("ding", L"!button"); sc_ToggleSpeedcamSound()'
 			ONLONGCLICK='MODEL.sound.playchanneltest("ding", L"!button"); VW_HideCountrySpeedCams()' />
 	</insert>
@@ -57,7 +57,7 @@
 	<modify lm_QuickBattonList>
 		<insert>
 			<row  bmp="ico_delspeedcam.svg" text=(translate("Hide Country SpeedCams")) onrelease=VW_HideCountrySpeedCams
-				enable=(sc_GetSysEntry("speedcam", "speedcam_types", "0,1,2,3,4,5,7,11,17,23,24,26,27,30") != sc_GetSysEntry("speedcam.disabled_countries", %other.get_country_by_position(%navigation.car.position), "")) />
+				enable=(LuaJava.LuaJavaActive && sc_GetSysEntry("speedcam", "speedcam_types", "0,1,2,3,4,5,7,11,17,23,24,26,27,30") != sc_GetSysEntry("speedcam.disabled_countries", %other.get_country_by_position(%navigation.car.position), "")) />
 		</insert>
 	</modify>
 <!end/>

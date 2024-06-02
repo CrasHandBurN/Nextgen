@@ -206,17 +206,12 @@
 				<DIALOGBUTTON class="dialog 2_1_2 mapmsgbox" onrelease=sc_NotArrivedAtParking text="Parking" visible=(parking_ad_enabled)> 
 					<SPRITE class="button map fill" />
 				</DIALOGBUTTON>
-				<DIALOGBUTTON class="dialog 1_1_1 mapmsgbox" onrelease=sc_HideDiscoverySidePopup text="Close" visible=(!LuaJava.LuaJavaActive)> 
-					<SPRITE class="button map fill" />
-				</DIALOGBUTTON>
 				<DIALOGBUTTON class="dialog 2_2_1 mapmsgbox" text="Google Map" 
-					;onrelease='VW_GoogleMaps("google.streetview:cbll=" .. string.gsub(tostring(MODEL.route.list.navigated.waypoints.list[MODEL.route.list.navigated.waypoints.list.lastindex()].strapped_position()), "longitude = (-?%d+.%d+), latitude = (-?%d+.%d+)", "%2,%1"))' visible=(LuaJava.LuaJavaActive) > 
-					onrelease='VW_GoogleMaps("https://www.google.com/maps/search/?api=1&map_action=map&query=" .. string.gsub(tostring(MODEL.route.list.navigated.waypoints.list[MODEL.route.list.navigated.waypoints.list.lastindex()].strapped_position()), "longitude = (-?%d+.%d+), latitude = (-?%d+.%d+)", "%2,%1"))' visible=(LuaJava.LuaJavaActive) >
+					onrelease='VW_GoogleMaps("https://www.google.com/maps/search/?api=1&map_action=map&query=" .. string.gsub(tostring(MODEL.route.list.navigated.waypoints.list[MODEL.route.list.navigated.waypoints.list.lastindex()].strapped_position()), "longitude = (-?%d+.%d+), latitude = (-?%d+.%d+)", "%2,%1"))' >
 					<SPRITE class="button map fill" />
 				</DIALOGBUTTON>
 				<DIALOGBUTTON class="dialog 2_2_2 mapmsgbox" text=(lua.gDestination_City) 
-					;onrelease='VW_GoogleMaps("https://www.google.com/maps/search/?api=1&map_action=map&query=" .. string.gsub(tostring(MODEL.route.list.navigated.waypoints.list[MODEL.route.list.navigated.waypoints.list.lastindex()].strapped_position()), "longitude = (-?%d+.%d+), latitude = (-?%d+.%d+)", "%2,%1"))' visible=(LuaJava.LuaJavaActive) > 
-					onrelease='java:call("android.open_webpage", L"https://" .. towstring(string.sub(MODEL.navigation.car.current_country(), 2, 3)) .. L".wikipedia.org/wiki/Special:Search?search=" .. gDestination_City)' visible=(LuaJava.LuaJavaActive) >
+					onrelease='java:call("android.open_webpage", L"https://" .. towstring(string.sub(MODEL.navigation.car.current_country(), 2, 3)) .. L".wikipedia.org/wiki/Special:Search?search=" .. gDestination_City)' >
 					<SPRITE class="button map fill" />
 				</DIALOGBUTTON>
 			</DIV>

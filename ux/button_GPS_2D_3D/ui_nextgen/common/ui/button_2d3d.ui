@@ -8,7 +8,7 @@
 
 <modify ui_Cockpit>
    	<insert into="IMPLEMENTATION"> 
-		<PROPERTY height_direction VALUE=(observe(%navigation.current_altitude); VW_Altitute_dir()) />
+		<PROPERTY height_direction VALUE=(observe(%navigation.current_altitude); VW_Altitude_dir()) />
 	</insert>	
 
 	<insert first_child after="BUTTON" into="#CockpitBTNTable">
@@ -38,8 +38,8 @@
 	<modify element="#QuickMenuBtnCompass" ZOOM=( !%lua.Button2d3dInCockpit ? 65% : 100% ) />
 	<modify element="#QuickMenuBtnDestarrow" ZOOM=( !%lua.Button2d3dInCockpit ? 70% : 100% )/>
 	
-	<insert last_child into="DIV.notify_list_ext TABLE.ari_ext">
-		<BUTTON AltitudeBTN CLASS="btn_map" ONRELEASE='sc_NextStateAnim( st_GpsStatus, "fade", 1, "" )'	ONLONGCLICK='VW_Altitute_dir() ui.ui_Cockpit.height_direction = ""' VISIBLE=( %lua.altitude_in_cockpit ) >
+	<insert first_child after="BUTTON" into="DIV.notify_list_ext TABLE.ari_ext">
+		<BUTTON AltitudeBTN CLASS="btn_map" ONRELEASE='sc_NextStateAnim( st_GpsStatus, "fade", 1, "" )'	ONLONGCLICK='VW_Altitude_dir() ui.ui_Cockpit.height_direction = ""' VISIBLE=( %lua.altitude_in_cockpit ) >
 			<SPRITE CLASS="button map fill" />
 			<SPRITE	CLASS="gps_2d3d_height_ico svg" TOP=1 BOTTOM=8 LEFT=2 IMAGE_W=30 IMAGE_H=(PARENT.H) />
 			<ALTITUDETEXT CLASS="listitem" W=undef H=undef LEFT=10 RIGHT=10 TOP=0 BOTTOM=0 FONT="defaultbd" FONTSIZE=30 Z=60 ALIGN="CENTER" VALIGN="CENTER" ALTITUDE=(%navigation.current_altitude) />
@@ -49,7 +49,7 @@
 </modify>
 
 <modify ui_MapHeader>
-	<insert last_child into="DIV.notify_list_ext TABLE.ari_ext">
+	<insert first_child after="BUTTON" into="DIV.notify_list_ext TABLE.ari_ext">
 		<BUTTON CLASS="btn_map" ONRELEASE='sc_NextStateAnim( st_GpsStatus, "fade", 1, "" )'	VISIBLE=( %lua.IsPortrait ? 1 : %lua.screen4x3 ) > ; %lua.altitude_in_cockpit  (%screen.dpi >= 320) 
 			<SPRITE CLASS="button map fill" />
 			<SPRITE	CLASS="gps_2d3d_height_ico svg" TOP=1 BOTTOM=8 LEFT=2 IMAGE_W=30 IMAGE_H=(PARENT.H) />

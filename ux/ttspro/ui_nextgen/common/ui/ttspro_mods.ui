@@ -10,7 +10,7 @@
 
 <modify ui_Cockpit>
 	<insert into="IMPLEMENTATION"> 
-		<PROPERTY city_arm VALUE=(VW_City_by_city(%lua.IN_City)) />
+		<PROPERTY city_arm VALUE=(VW_City_by_city(%lua.IN_City) // "ico_city.svg") />
 	</insert>
 </modify>
 

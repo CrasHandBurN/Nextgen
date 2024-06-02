@@ -1,5 +1,9 @@
 ﻿[words]
 plugin~the_skin_wandel="the_skin_wandel: WANDEL™ скин"
+
+Share an online search on Google="Поделитесь онлайн-поиском в Google"
+Find your object here and share it through Map2Geo="Ищите ваш объект здесь и поделитесь им через приложение мап то гео"
+
 City announce="Объявлять населенный пункт"
 District announce="Объявлять район"
 "Announce \"Welcome Home\""="Объявлять \"Welcome Home\""
@@ -102,3 +106,5 @@ Scenic="Живописный"
 MostHwy="По автострадам"
 LeastHwy="Избегая автострад"
 Twisty="Извилистый"
+
+Level="Уровень"

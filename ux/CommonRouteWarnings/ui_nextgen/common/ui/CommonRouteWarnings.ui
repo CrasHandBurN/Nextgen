@@ -1,5 +1,5 @@
 ;---------------WANDEL™---22.11.2018------------------
-<observer obs_RouteWarningRotation value=(%gps.current_time) onchange=sc_RouteWarningRotation />
+<observer obs_RouteWarningRotation value=(%gps.blink) onselect=sc_RouteWarningRotation />
 
 <observer boolmodel="lua.wNextWarningValid" onselect=sc_WarningAndRotationStart ondeselect=sc_WarningAndRotationStop start />
 
@@ -132,13 +132,8 @@
 						<SPRITE class="button map fill" />
 						<SPRITE class="listitem svg" img="ico_traffic.svg" zoom=70% />
 					</DIALOGBUTTON>
-					<DIALOGBUTTON class="dialog 1_1_1 mapmsgbox" onrelease=sc_HideDiscoverySidePopup text="Close" visible=(!LuaJava.LuaJavaActive)> 
-						<SPRITE class="button map fill" />
-						;<SPRITE class="listitem svg" img="ico_close.svg" zoom=70% />
-					</DIALOGBUTTON>
 					<DIALOGBUTTON class="dialog 1_1_1 mapmsgbox" 
-						onrelease='VW_GoogleMaps("https://www.google.com/maps/search/?api=1&map_action=map&query=" .. string.gsub(tostring(MODEL.traffic.events.significant_events[sc_GetClosestEventData()].position()), "longitude = (-?%d+.%d+), latitude = (-?%d+.%d+)", "%2,%1"))'
-						visible=(LuaJava.LuaJavaActive) >
+						onrelease='VW_GoogleMaps("https://www.google.com/maps/search/?api=1&map_action=map&query=" .. string.gsub(tostring(MODEL.traffic.events.significant_events[sc_GetClosestEventData()].position()), "longitude = (-?%d+.%d+), latitude = (-?%d+.%d+)", "%2,%1"))' >
 						<SPRITE class="button map fill" />
 						<SPRITE class="listitem svg" img="ico_GoogleMaps.svg" zoom=70% />
 					</DIALOGBUTTON>

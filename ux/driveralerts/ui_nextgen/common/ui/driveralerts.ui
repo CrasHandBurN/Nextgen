@@ -351,7 +351,7 @@
 	<row    text="crossing with priority from the right"/> ;039
 	<row    text="pedestrian crossing"/> ;040
 	<row    text="yield"/> ;041
-	<row    text="toll gate"/> ;42
+	<row    text="toll gate"/> ;042
 	<row    text="25kph zone isr"/> ;043
 	<row    text="traffic light isr"/> ;044
 	<row    text="road narrows on left"/> ;045

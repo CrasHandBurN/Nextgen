@@ -12,7 +12,7 @@
 	</insert>
 	<modify HwyPoiListIsVisible VALUE=(!%lua.DragMode && %lua.HwyPoiListIsVisible && !%lua.MenuIsOpened && !ui_PropLayer.SignpostVisible && ui_PropLayer.HwyPoiListIsAvailable) />
 	<insert>
-		<OBSERVER VALUE=( ui_PropLayer.HwyPoiListIsVisible && %lua.CockpitMapMode ) ONCHANGE=sc_SetNavCarPos START />
+		<OBSERVER VALUE=( ui_PropLayer.HwyPoiListIsVisible ) ONCHANGE=sc_SetNavCarPos START />
 	</insert>
 </modify>
 

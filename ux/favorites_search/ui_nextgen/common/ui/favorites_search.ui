@@ -154,10 +154,10 @@
 <userlist lm_SaveFavoriteNamemodifier text="str" type="str" haspopover="bool" isselected="str" visible="bool" enable="bool" onrelease="ui" details="ui" dtooltip="str">
 	<view visibility_filter=visible />
 	<default type="" onrelease='st_OpenKeyboardForSaveFavorite.InputControl.value = MODEL["*"].details() .. L" " .. st_OpenKeyboardForSaveFavorite.InputControl.value' visible=1 enable=1 />
-		<row    text="Insert Address" details=(%my.map.selected_item.address.short_format) haspopover=1 />
-		<row    text="Insert City" details=(%my.map.selected_item.address.city) haspopover=1 />
-		<row    text="Insert Country" details=(translate(%my.map.selected_item.address.country)) haspopover=1 />
-		<row  	text="Insert today date" details=(builtin.format("%{date:*}", %gps.current_date, 0)) haspopover=1 />
+		<row  Address  text="Insert Address" details=(%my.map.selected_item.address.short_format) haspopover=1 />
+		<row  City  text="Insert City" details=(%my.map.selected_item.address.city) haspopover=1 />
+		<row  Country  text="Insert Country" details=(translate(%my.map.selected_item.address.country)) haspopover=1 />
+		<row  Date	text="Insert today date" details=(builtin.format("%{date:*}", %gps.current_date, 0)) haspopover=1 />
 </userlist>
 
 <element_template et_OpenKeyboardForSaveFavorite>

@@ -49,8 +49,3 @@
 	</insert>
 </modify>
 
-<userlist lm_VisualTravelPlanner_Footer text="str" onrelease="ui" visible="bool" isactionbutton="bool"> 
-	<view visibility_filter=visible>
-	<row text="Calculate Route" isactionbutton=1 onrelease='sc_StartCalculating() sc_back()' visible=( %route.list.navigated.waypoints.list.size > 1 ) /> ;;sc_GetDirections()
-	<row text="Continue Without Route" isactionbutton=1 onrelease=sc_GetDirections_NoRoute visible=( %route.list.navigated.waypoints.list.size < 2 ) />
-</userlist>

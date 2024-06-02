@@ -1,12 +1,25 @@
 ;------car in city------
 <modify ui_Cockpit>
-	<insert last_child into="DIV.notify_list_ext TABLE.ari_ext">
-	
-		<INFORMATION_PLATE LEFT=0 RIGHT=0 TOP=0 BOTTOM=0 TEXT=(%lua.IN_City) FONTSIZE=(VW_Return_button_text(%lua.IN_City, L"%s", 99) == L"" ? 31 : 20)
+	<insert first_child after="BUTTON" into="DIV.notify_list_ext TABLE.ari_ext">
+		<INFORMATION_PLATE CityName_Plate LEFT=0 RIGHT=0 TOP=0 BOTTOM=0 TEXT=(%lua.IN_City) 
+			FONTSIZE=(VW_Return_button_text(%lua.IN_City, L"%s", 99) == L"" ? 31 : 20)
 			ONRELEASE='java:call("android.open_webpage", L"https://" .. towstring(string.sub(MODEL.navigation.car.current_country(), 2, 3)) .. L".wikipedia.org/wiki/Special:Search?search=" .. MODEL.lua.IN_City())'
 			ONLONGCLICK='sc_NextStateAnim(st_ShowInCitySettings, "fade", 1, "" )' 
 			VISIBLE=( %navigation.car.is_incity && %lua.CarInCity && (%lua.CarInCity_inCockpit == 2 || %lua.CarInCity_inCockpit == 3) && %lua.IN_City != L"" ) />
-
+			
+		<INFORMATION_PLATE Next_CityName BOX_ALIGN="STRETCH" BG_INDEX=5 LEFT=0 RIGHT=0 TOP=0 BOTTOM=0 
+			TEXT=(%route.list.navigated.has_navigable_path ? (%gps.blink ? VW_City(%ui.city_onway_list_filtered.filter[0].position // 0L) : sc_ShowDistanceTool(%route.list.navigated.itiner.detailmode == "road" ? %ui.city_onway_list_filtered.filter[0].length : %ui.city_onway_list_filtered.filter[0].remaining_length)) : L"") 
+			FONTSIZE=(VW_Return_button_text(VW_City(%ui.city_onway_list_filtered.filter[0].position // 0L), L"%s", 99) == L"" ? 31 : 20)
+			ONRELEASE='java:call("android.open_webpage", L"https://" .. towstring(string.sub(MODEL.navigation.car.current_country(), 2, 3)) .. L".wikipedia.org/wiki/Special:Search?search=" .. VW_City(MODEL.ui.city_onway_list_filtered.filter[0].position()))'
+			ONLONGCLICK='sc_NextStateAnim(st_ShowInCitySettings, "fade", 1, "" )' 
+			VISIBLE=( %route.list.navigated.has_navigable_path && !%navigation.car.is_incity && %ui.city_onway_list_filtered.filter.size && %lua.CarInCity && (%lua.CarInCity_inCockpit == 2 || %lua.CarInCity_inCockpit == 3) ) >
+			;<GRAPH LEFT=0 RIGHT=0 BOTTOM=1 TOP=75% Z=100 IMG="graph_w.svg" FULL=(100) CURRENT=(%gps.blink ? 0 : 100) ORIENTATION="HORIZONTAL" INVERT=1 />
+			;<GRAPH CLASS="graph_btn" Z=100 LEFT=2 RIGHT=85% IMG="graph_t.svg" FULL=(100) CURRENT=(Gif_Direction.Delta) INVERT=1 />
+			;<GRAPH CLASS="graph_btn" Z=100 LEFT=95% RIGHT=2 IMG="graph_t.svg" FULL=(100) CURRENT=(Gif_Direction.Delta) INVERT=1 />	
+			<SPRITE	CLASS="gps_2d3d_height_ico svg" TOP=0 BOTTOM=0 LEFT=1 RIGHT=undef IMAGE_W=50 IMAGE_H=(PARENT.H) IMG="ico_arrow_up_red.svg" VISIBLE=(%gps.blink) />
+			<SPRITE	CLASS="gps_2d3d_height_ico svg" TOP=0 BOTTOM=0 LEFT=undef RIGHT=9 IMAGE_W=50 IMAGE_H=(PARENT.H) IMG="ico_arrow_up_red.svg" VISIBLE=(%gps.blink) />
+			<LAYER ONSHOW='sc_InfoNotification(sc_translate_VoiceOrLang("The next transit settlement %s through %s.", VW_City(MODEL.ui.city_onway_list_filtered.filter[0].position() or 0), sc_ShowDistanceTool(MODEL.route.list.navigated.itiner.detailmode() == "road" and MODEL.ui.city_onway_list_filtered.filter[0].length() or MODEL.ui.city_onway_list_filtered.filter[0].remaining_length())))' />
+		</INFORMATION_PLATE>
 	</insert>
 </modify>
 
@@ -28,13 +41,13 @@
 	<insert before="DIV.speedlimit">
 		<DIV div_DA_freeAtTheMoment CLASS="driver_alert" VISIBLE=( ui_PropLayer.DA_freeAtTheMoment ) W=( %ui.lm_DA_freeAtTheMoment.size * CSS.Param.cockpit_da_warning_w ) >
 			<BOX box_DA_freeAtTheMoment CLASS="driver_alert" >
-				<BUTTON BOX_ALIGN="stretch" DESIRED_W=(CSS.Param.cockpit_da_warning_w) 
+				<BUTTON DA_freeAtTheMoment_City BOX_ALIGN="stretch" DESIRED_W=(CSS.Param.cockpit_da_warning_w) 
 					ONRELEASE='java:call("android.open_webpage", L"https://" .. towstring(string.sub(MODEL.navigation.car.current_country(), 2, 3)) .. L".wikipedia.org/wiki/Special:Search?search=" .. MODEL.lua.IN_City())'
 					ONLONGCLICK='sc_NextStateAnim(st_ShowInCitySettings, "fade", 1, "" )' 
 					VISIBLE=( %navigation.car.is_incity && %lua.CarInCity && %lua.IN_City != L"" && (%lua.CarInCity_inCockpit == 1 || %lua.CarInCity_inCockpit == 3) ) >
 					<SPRITE CLASS="button map fill" IMG="INFORMATION_PLATE.bmp" ALPHA=32 />
 						
-					<SPRITE TOP=10% BOTTOM=10% LEFT=10% RIGHT=10% ALIGN="center" VALIGN="center" IMG="ico_city.svg" VISIBLE=(!ui_Cockpit.city_arm) />
+					<SPRITE Sprite_City_ico TOP=10% BOTTOM=10% LEFT=10% RIGHT=10% ALIGN="center" VALIGN="center" IMG="ico_city.svg" VISIBLE=(!ui_Cockpit.city_arm) />
 					<SPRITE TOP=20% BOTTOM=20% LEFT=20% RIGHT=20% ALIGN="center" VALIGN="center" IMG=(ui_Cockpit.city_arm) VISIBLE=(ui_Cockpit.city_arm) />
 						
 					<TEXT CLASS="BTN_top_text" TEXT=(VW_Return_button_text(%lua.IN_City, L"%s", 1)) FONT="defaultbd" COLOR=#ffffff COLOR2=#000000 />
@@ -63,18 +76,17 @@
 
 <element_template et_city_onway_list>
 	<implementation>
-		<property city_arm value=(VW_City_by_city(VW_City( %*.position ))) />
+		<property city_arm value=(VW_City_by_city(VW_City( %*.position )) // "ico_city.svg") />
 	</implementation>
 	<BUTTON class="listitem"  onrelease=VW_CityOnWayList_OnRelease onlongclick='java:call("android.open_webpage", L"https://" .. towstring(string.sub(MODEL.navigation.car.current_country(), 2, 3)) .. L".wikipedia.org/wiki/Special:Search?search=" .. VW_City(MODEL["*"].position()))'>
 		<HBOX class="listitem">
 		
-			<SPRITE  class="btn_map fit icon svg" img=(city_arm) visible=(city_arm) />
-			<SPRITE  class="btn_map fit icon svg" img=("ico_city.svg") visible=(!city_arm) />
+			<SPRITE  class="btn_map fit icon svg" img=(city_arm) />
 			
 			;<SPRITE  class="listitem icon_list svg" iconid=%*.icon_small_id visible=(%*.icon_small_id != -1)>
 			;<SPRITE  class="listitem icon_list svg" iconid=%*.icon_id iconindex=0 visible=(%*.icon_small_id == -1)>
 			<ROADSHIELDEDTEXT class="color_btn_main listitem itiner" text=(VW_City( %*.position )) />
-			<ROADSHIELDEDTEXT class="color_btn_main listitem itiner" text=(VW_District( %*.position )) FLEX=4/>
+			<ROADSHIELDEDTEXT class="color_btn_main listitem itiner" text=(VW_District( %*.position )) />
 			;<TEXT class="listitem" text=(VW_City( %*.position )) />
 			;<ROADSHIELDEDTEXT class="color_btn_main listitem itiner" textmodel_wstr="*.text_enc">
 			<SPACER flex=1>
@@ -97,22 +109,32 @@
 
 <var CityOnWayCockpit = 0 permanent />
 <var CityOnWayQuick = 0 permanent />
+
+<data Gif_Direction>
+	<property Delta value = (VW_MovPos(%gps.fast_blink)) />
+</data>
+
 <modify ui_Cockpit>
 	<insert first_child after="BUTTON" into="#CockpitBTNTable">
 		<BUTTON_ICON CityOnWay 
 			ONRELEASE=VW_CityOnWay 
 			ONLONGCLICK='sc_NextStateAnim(st_CityOnWay, "fade", 1, "")'
-			VISIBLE=(CityOnWayCockpit && %navigation.has_route)
+			VISIBLE=(CityOnWayCockpit && %navigation.has_route && %ui.city_onway_list_filtered.filter.size)
 			ICON="ico_urban.svg" 
-			ZOOM=80%
-			T_TEXT=(VW_Return_button_text(translate("City on way"), L"%s", 1))
-			B_TEXT=(VW_Return_button_text(translate("City on way"), L"%s", 99)) />
+			ZOOM=50%
+			T_TEXT=( %route.list.navigated.has_navigable_path && !%navigation.car.is_incity && %ui.city_onway_list_filtered.filter.size ? VW_City(%ui.city_onway_list_filtered.filter[0].position // 0L) : VW_Return_button_text(translate("City on way"), L"%s", 1) )
+			B_TEXT=( %route.list.navigated.has_navigable_path && !%navigation.car.is_incity && %ui.city_onway_list_filtered.filter.size ? sc_ShowDistanceTool(%route.list.navigated.itiner.detailmode == "road" ? %ui.city_onway_list_filtered.filter[0].length : %ui.city_onway_list_filtered.filter[0].remaining_length) : VW_Return_button_text(translate("City on way"), L"%s", 99) )
+			>
+			;img="graph.svg" full current invert=0 invert_r=1 orientation="vertical"
+			<GRAPH CLASS="graph_btn" Z=100 LEFT=2 RIGHT=85% IMG="graph_t.svg" FULL=(100) CURRENT=(Gif_Direction.Delta) INVERT=1 VISIBLE=(%route.list.navigated.has_navigable_path && !%navigation.car.is_incity && %ui.city_onway_list_filtered.filter.size) />
+			<GRAPH CLASS="graph_btn" Z=100 IMG="graph_t.svg" FULL=(100) CURRENT=(Gif_Direction.Delta) INVERT=1 VISIBLE=(%route.list.navigated.has_navigable_path && !%navigation.car.is_incity && %ui.city_onway_list_filtered.filter.size) />
+		</BUTTON_ICON>
 	</insert>
 </modify>
 
 <modify lm_CockpitSideList>
 	<insert>
-		<row 	visible=(CityOnWayCockpit && %navigation.has_route) />
+		<row 	visible=(CityOnWayCockpit && %navigation.has_route && %ui.city_onway_list_filtered.filter.size) />
 	</insert>
 </modify>
 
@@ -125,8 +147,8 @@
 <modify ui_SideList>           
 	<insert first_child after="BUTTON" into="TABLE">
 		<BUTTON_ICON ONRELEASE='ui.CityOnWay.ONRELEASE()()' ONLONGCLICK='ui.CityOnWay.ONLONGCLICK()()' 
-			VISIBLE=(CityOnWayQuick && %navigation.has_route)
-			ICON=(CityOnWay.ICON) ZOOM=80%
+			VISIBLE=(CityOnWayQuick && %navigation.has_route && %ui.city_onway_list_filtered.filter.size)
+			ICON=(CityOnWay.ICON) ZOOM=50%
 			T_TEXT=(CityOnWay.T_TEXT)
 			B_TEXT=(CityOnWay.B_TEXT) />
 	</insert>
@@ -134,7 +156,7 @@
 
 <modify lm_QuickSideList>
 	<insert>
-		<row 	visible=(CityOnWayQuick && %navigation.has_route) />
+		<row 	visible=(CityOnWayQuick && %navigation.has_route && %ui.city_onway_list_filtered.filter.size) />
 	</insert>
 </modify>
 

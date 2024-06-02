@@ -6,8 +6,8 @@
 		
 		<row text="Route Preferences" onrelease=sc_RouteSettings>
 		<row text="Itinerary"  onrelease=sc_ShowRouteItiner enable=(!%lua.ptp_navigation)/>
-		<row text="Save Route"  onrelease=sc_SaveRouteToMyData enable=(%route.list.navigated.waypoints.list.size > 1)>
-		<row text="Places Along Route" onrelease=sc_ShowPOIsAlongRoute enable=(!%lua.ptp_navigation && %route.list.navigated.waypoints.list.size <= 5)>
+		<row text="Save Route"  onrelease=sc_SaveRouteToMyData enable=(%route.list.navigated.waypoints.list.size > 1) />
+		<row text="Places Along Route" onrelease=sc_ShowPOIsAlongRoute enable=(!%lua.ptp_navigation && %route.list.navigated.has_navigable_path) /> ;&& %route.list.navigated.waypoints.list.size <= 5)>
 		<row text="Simulation" onrelease=sc_Simulate_NavigatedRoute enable=(!%lua.ptp_navigation && !%navigation.calculation_todo && %route.list.navigated.has_navigable_path)>
 </userlist>
 

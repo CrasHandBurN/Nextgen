@@ -57,7 +57,7 @@
 
 	<row  bmp=(ui_Cockpit.weather_icon1) text=(translate("Weather menu mini")) onrelease='ui.WeatherMenu_mini.ONRELEASE()()' 
 		onlongclick='ui.WeatherMenu_mini.ONLONGCLICK()()' enable=(%lua.WeatherIconSVG && %lua.OnlineWeatherEnabled) />
-	<row  bmp="owl.svg" text=(translate("Help")) onrelease=(LuaJava.LuaJavaActive ? 'W_DefaultWebBrowser("http://4pna.com/showpost.php?p=517224&postcount=2")' : 'java:call("android.open_webpage", sc_GetSysEntry("feature", "web_site", L"http://4pna.com/showpost.php?p=517224&postcount=2"))' ) /> 
+	<row  bmp="owl.svg" text=(translate("Help")) onrelease='VW_DefaultWebBrowser(L"https://4pna.com/showthread.php?p=517224#post517224")' /> 
 	<row  bmp="ico_loadroute.svg" text=(translate("loadroute")) onrelease=sc_ShowSavedRoutesList enable=(%mydata.routes.list.size) /> 
 	<row  bmp="ico_addStopover.svg" text=(translate("addStopover")) onrelease=sc_OpenAddStopover enable=(%navigation.has_route) />
 	<row  bmp="ico_detour.svg" text=(translate("detour")) onrelease=sc_AvoidancesMenu enable=(%navigation.has_route) />
@@ -91,7 +91,7 @@
 		enable=(LuaJava.LuaJavaActive && sc_GetSysEntry("speedcam", "speedcam_types", "0,1,2,3,4,5,7,11,17,23,24,26,27,30") != sc_GetSysEntry("speedcam.disabled_countries", %other.get_country_by_position(%navigation.car.position), "")) />
 	<row  bmp="ico_coordinates.svg" text=(translate("Coordinates")) onrelease=sc_ShowCoordinate />
 	<row  bmp="ico_urban.svg" text=(translate("City on way")) onrelease=VW_CityOnWay onlongclick='sc_NextStateAnim(st_CityOnWay, "fade", 1, "")' enable=(%navigation.has_route) />
-	<row  bmp="fuel_gun.svg" text=(translate("Fuel Map")) onrelease=(LuaJava.LuaJavaActive ? 'W_DefaultWebBrowser("https://misto.lun.ua/help?ls=okko,wog,socar")' : 'java:call("android.open_webpage", sc_GetSysEntry("feature", "web_site", L"https://misto.lun.ua/help?ls=okko,wog,socar"))' ) enable=(%regional.current_voice.lcid == 1058) /> 
+	<row  bmp="fuel_gun.svg" text=(translate("Fuel Map")) onrelease='VW_DefaultWebBrowser(L"https://misto.lun.ua/help?ls=okko,wog,socar")' enable=(%regional.current_voice.lcid == 1058) /> 
 </userlist>
 
 <userlist lm_QuickBattonList_visibility bmp="str" text="wstr" enable="bool" visible="bool">

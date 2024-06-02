@@ -68,8 +68,6 @@
 <layer ui_Cockpit z=35 visible=( !%lua.DragMode )>
 	<implementation>
 		<property MapPopupOnscreen value=(sc_IsMapPopupOnscreen(%screen.msgbox.is_onscreen) || ui_PropLayer.HwyPoiListIsVisible || ui_PropLayer.SplPoiListIsVisible || ui_PropLayer.SidePanelVisible) />
-		<property spl_poi_quick_menu value=0 />
-		<property spl_poi_quick_menu2 value=0 />
   		<property detect_gps value=( !%navigation.is_in_simulation && ( %gps.connection_status > 2 || %gps.connection_status < 3 && !%gps.valid && !%navigation.car_pos_valid && !%navigation.dead_reckoning ) ) />
 		<property p2p_valid value=(%lua.ptp_navigation && %route.list.navigated.waypoints.list.size >= 2) />
 		<property navigation_suspended value=( %route.list.navigated.waypoints.start_is_user_selected && !%navigation.is_in_simulation ) />
@@ -143,7 +141,7 @@
 			</DIV>
 			<DIV div_notify_list_ext class="notify_list_ext" visible=notify_list_ext_visibility >
 				<TABLE class="ari_ext" >
-
+					<BUTTON class="btn_map" img="owl.svg" visible=0 /> ;dummy
 				</TABLE>
 	  		</DIV>
 		</DIV>	
@@ -204,7 +202,7 @@
 						<SPRITE class="panel map fill" z=10 position="absolute" onrelease=sc_WhereAmI />
 						<ROADSHIELDEDTEXT class="current_city" textmodel_wstr=(%lua.Full_CityDistrict != L"" && %navigation.car.is_incity ? "lua.Full_CityDistrict" : "navigation.car.address.city") />
 						<ROADSHIELDEDTEXT class="current_city zip" combined_textmodel=(%lua.Full_CityDistrict != L"" && %navigation.car.is_incity ? "\fb$navigation.car.address.zip$ \fn$lua.Full_CityDistrict$" : "\fb$navigation.car.address.zip$ \fn$navigation.car.address.city$") />
-						<SPRITE class="listitem flag" img=(country_flag) zoom=60% z=11>
+						<SPRITE class="listitem flag" img=(country_flag) zoom=60% z=11 />
 					</HBOX>
 				</HBOX>
 			</DIV>
@@ -452,9 +450,7 @@
 			<DIV class="notify_list">
 				<TABLE visible=(%lua.arQuickMenu && !%lua.DragMode && !ui_PropLayer.SignpostVisible && !%lua.MenuIsOpened)>
 					<BUTTON class="btn_map" 
-						onrelease=(LuaJava.LuaJavaActive ? 'W_DefaultWebBrowser("http://4pna.com/showpost.php?p=517224&postcount=2")' : 'java:call("android.open_webpage", sc_GetSysEntry("feature", "web_site", L"http://4pna.com/showpost.php?p=517224&postcount=2")); sc_back_to_cockpit()' )  
-						;onlongclick='W_DefaultWebBrowser(sc_GetSysEntry("feature", "Help", "files:///storage/0000-0000/Help.html"))' 
-						>
+						onrelease='VW_DefaultWebBrowser(L"https://4pna.com/showthread.php?p=517224#post517224")' >
 						<SPRITE class="button map fill" />
 						<SPRITE class="btn_map icon svg" img="owl.svg" zoom=80% /> 
 						<TEXT class="BTN_top_text" text=(VW_Return_button_text(translate("Help"), L"%s", 1)) />
@@ -463,6 +459,15 @@
 					<BUTTON class="btn_map" onrelease=sc_GotoDestinationMenu visible=( ui_PropLayer.is_destination_near )>
 						<SPRITE class="button map fill" />
 						<SPRITE class="btn_map svg" img="ico_destination_cockpit.svg" />
+					</BUTTON>
+					<BUTTON class="btn_map" 
+						onrelease='MODEL.sound.voice.verbosity_level = (MODEL.sound.voice.verbosity_level() + 1) % 3' 
+						onlongclick='sc_NextStateAnim(st_TTSProSettings, "fade", 1, "")'
+						visible=(%sound.voice.verbosity_level_setting_supported) >
+						<SPRITE class="button map fill" />
+						<SPRITE class="btn_map icon svg" img="ico_announce.svg" />
+						<TEXT class="BTN_top_text" text="Level" />
+						<TEXT class="BTN_bottom_text" text=(lua.EVerbosityLevel[%sound.voice.verbosity_level]) />
 					</BUTTON>
 				</TABLE>
 			</DIV>
@@ -475,6 +480,7 @@
 	<default enable=1 visible=1 />
 		<row 	visible=1 /> ;Help
 		<row 	visible=( ui_PropLayer.is_destination_near // 0 ) />
+		<row 	visible=( %sound.voice.verbosity_level_setting_supported ) />
 </userlist>
 
 <userlist lm_CockpitSideList visible="bool" enable="bool" >

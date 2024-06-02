@@ -54,11 +54,10 @@ TEXT.BTN_left_top_text {
 
 /* -- mod -- */
 
-
-CHECKBOX.listitem.chkonoff TEXT {
+CHECKBOX.listitem.chkonoff > TEXT {
 	binding: (CHECKBOX.listitem > TEXT);
 	left: (PARENT.ICONSPR == "" ? 0 : (svg_chkbox_image_w + text_padding));
-	right: ((svg_chkbox_image_w + text_padding)*2 + 4*text_padding);
+	right: ((svg_chkbox_image_w + text_padding)*2 + 5*text_padding);
 }
 
 BUTTON.btn_main.extra {
@@ -70,13 +69,13 @@ BUTTON.btn_main.extra {
 }
 /*
 et_ListQuestChkOnOff_Icon {
-	binding: #et_ListSetChkOnOff_Icon;
-	IMG:"diricon_036.svg";
+	binding: et_ListSetChkOnOff_Icon;
+	img:"ico_quest.svg";
 }
 
 et_ListPlayChkOnOff_Icon {
-	binding: #et_ListSetChkOnOff_Icon;
-	IMG:"ico_announce.svg";
+	binding: et_ListSetChkOnOff_Icon;
+	img:"ico_announce.svg";
 }
 */
 @import "~/common/ui/SetOfTools_landscape.css" landscape;

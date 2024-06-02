@@ -1,6 +1,6 @@
 <modify lm_FindMenu>
 	<insert before=History>
-		<row text="Online Search" icon="ico_onlinesearch.svg" onrelease=sc_showLocalSearch enable=( sc_checkConnectedServiceEnability( "search", %services.activate_status // 0, %services.has_activated // 0 ) ) animate=( !Plugin.isLoaded( "grp_shop" ) && ( %services.activate_status == lua.EActivationStatus.SERVICE_OPERATION_PENDING // 0 ) )/>
+		<row Online text="Online Search" icon="ico_onlinesearch.svg" onrelease=sc_showLocalSearch enable=( sc_checkConnectedServiceEnability( "search", %services.activate_status // 0, %services.has_activated // 0 ) ) animate=( !Plugin.isLoaded( "grp_shop" ) && ( %services.activate_status == lua.EActivationStatus.SERVICE_OPERATION_PENDING // 0 ) )/>
 	</insert>
 </modify>
 

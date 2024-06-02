@@ -77,9 +77,9 @@
 	<default enable=1 type="Icon" onrelease='MODEL.lua.ContactType = "Phone"; MODEL.lua.SendType = MODEL["*"].text(); MODEL.lua.SendTypeIndex = index; sc_ClosePopover()' />
 	<row text="Email" img="ico_Gmail.svg" onrelease='MODEL.lua.ContactType = "Email"; MODEL.lua.SendType = MODEL["*"].text(); MODEL.lua.SendTypeIndex = index; sc_ClosePopover()' />
 	<row text="SMS" img="ico_sms.svg" />
+	<row text="WhatsApp" img="ico_WhatsApp.svg" />
 	;<row text="Viber" img="ico_Viber.svg" />
 	;<row text="Skype" img="ico_Skype.svg" />
-	<row text="WhatsApp" img="ico_WhatsApp.svg" />
 	;<row text="Telegram" img="ico_Telegram.svg" />
 </userlist>
 

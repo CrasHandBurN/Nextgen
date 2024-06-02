@@ -1,16 +1,34 @@
 <observer obs_AC_ResolveAddressMS boolmodel="address.multi.address_result_ready" onselect=sc_AC_ResolveAddressMS_Completed />
 <observer obs_AC_ResolveIncommingAddress_finished boolmodel="other.android_utils.structured_address_result_ready" onselect=sc_AC_ResolvedIncommingAddress />
 
-<userlist lm_android_contacts street="wstr" city="wstr" postcode="wstr" state="wstr" country="wstr" gcoor="gcoor" />
+<userlist lm_android_contacts place_name="str" street="wstr" city="wstr" postcode="wstr" state="wstr" country="wstr" gcoor="gcoor" />
 
 <element_template et_SelectContactAddress>
-	<BUTTON  class="listitem icon" onrelease='sc_AC_ResolveContactAddress(MODEL["*"])'>
-		<TEXT class="listitem icon" text=(%*.country + L" " + %*.state + L" " + %*.postcode + L" " + %*.city + L" " + %*.street) />
+	<implementation>
+		<property Text value=(trim(%*.country + L" " + %*.state + L" " + %*.postcode + L" " + %*.city + L" " + %*.street)) />
+	</implementation>
+	<BUTTON  class="listitem" onrelease='sc_AC_ResolveContactAddress(MODEL["*"])' 
+		onlongclick=(%lua.contactid ? 'VW_android_contact_show(MODEL.lua.contactid())' : undef) >
+		<VBOX class="listitem">
+			<TEXT class="listitem top" text=%*.place_name />
+			<TEXT class="listitem bottom" text=(Text ? Text : "Please long click to Edit") />
+		</VBOX>
 	</BUTTON>
 </element_template>
 
-<modify ui_SavedLocation>
-	<insert into="LIST2">
-		<LISTMODEL LISTMODEL="ui.lm_android_contacts" ELEMENT_TEMPLATE="et_SelectContactAddress" />
-	</insert>
-</modify>
+<layer ui_SelectContactAddress z=30>
+	<DIV class=list>
+		<SPRITE class=list_panel />
+		<LIST2  class="list_control" listmodel="ui.lm_android_contacts" element_template="et_SelectContactAddress" SMOOTHSCROLLING>
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+	    </LIST2>
+	</DIV>
+</layer>
+
+<userlist lm_SelectContactAddress_Footer text="str" onrelease="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+	<row text="Reload if need" isactionbutton=1 onrelease='sc_longBack() sc_contact_callback(true, MODEL.lua.contactid())' />
+</userlist>

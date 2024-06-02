@@ -253,7 +253,7 @@
 			
 			<DIV class="dialog_buttons">
 				<DIALOGBUTTON class="dialog 2_1 mapmsgbox" z=101 text="Accept" img=#ffff8800 onrelease='sc_HideDiscoverySidePopup() sc_AcceptQuickDetour()' enable=%navigation.quickdetour_calculated> 
-					<SPRITE left=0 right=0 top=0 bottom=0 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 z=102 />
+					<SPRITE top=-1 bottom=-1 left=-1 right=-1 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 z=102 />
 				</DIALOGBUTTON>
 				<DIALOGBUTTON class="dialog 2_2 mapmsgbox" z=101 text="Preview" onrelease='sc_HideDiscoverySidePopup() sc_ShowQuickDetourPreview()' enable=%navigation.quickdetour_calculated> 
 			       	<SPRITE CLASS="button map fill" />

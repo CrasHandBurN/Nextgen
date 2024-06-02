@@ -70,6 +70,7 @@
 		onrelease='MSG_Table.line[1]="Settings"; ui.lm_VW_TripCompSettings_filtered.filter:refresh(); MSG_Table.layer = ui_TripCompSettingsVW; VW_TripComputerSwitch(); VW_TripComputerSwitch()' />
 	<row  icon="ico_supportcenter.svg" text="Help"
 		onrelease='MSG_Table.line[1]="Help"; MSG_Table.layer = ui_TripCompHelpVW; VW_TripComputerSwitch(); VW_TripComputerSwitch()' />
+	;<row  icon="ico_cancel.svg" text="Turn Off" onrelease=sc_ShowTripComputerSidePanel />
 
 </userlist>
 
@@ -422,7 +423,7 @@
 	;---------------------------Point on map--------------------
 	<row	text="Orientation" details=(%ui.lm_Orientation_Popover[%lua.Show_NorthUp_HeadUp].text) owner="Point on map" onrelease='sc_SetPopoverListAndOpen("ui.lm_Orientation_Popover", ui.lm_Orientation_Popover[MODEL.lua.Show_NorthUp_HeadUp()].text())' />
 	<row	text="SplitScreen POI on map" type="ChkOnOff" owner="Point on map" isselected="lua.poi_around_for_TC" />
-	<row	type="ChkOnOff" text="Announce System Messages" isselected="ui.vReadOutSystemMessages" owner="Settings" /> ;12/11/2023
+	<row	type="ChkOnOff" text="Announce System Messages" isselected="ui.vReadOutSystemMessages" owner="Settings" />
 </userlist>
 
 <userlist lm_Orientation_Popover text="str" onrelease="ui" enable="bool">
@@ -468,13 +469,11 @@
 	
 	<observer model="screen.current_orientation", "lua.Show_NorthUp_HeadUp" onchange=sc_Point_on_mapSidePanel_replace START />
 	<observer model="map.primary.rotate", "lua.Show_NorthUp_HeadUp" onchange=sc_Point_on_mapSidePanel_rotate START />
-	<observer obs_TC_poi_around model="lua.poi_around_for_TC", "ui.lm_splitpoi.list.size", "lua.wSplitScreenPOIReady", "lua.gSidePanelPopupID"
+	<observer obs_TC_poi_around model="lua.poi_around_for_TC", "ui.lm_splitpoi", "lua.wSplitScreenPOIReady", "lua.gSidePanelPopupID"
 		onchange='
-				if MODEL.lua.poi_around_for_TC() and ui.ui_PropLayer.SplPoiListIsVisible() and MODEL.lua.wSplitScreenPOIReady() and MSG_Table.line[1] == "Point on map" and not MODEL.lua.gSidePanelPopupID() then 
+				if MODEL.lua.poi_around_for_TC() and MODEL.lua.wSplitScreenPOIReady() and MSG_Table.line[1] == "Point on map" and not MODEL.lua.gSidePanelPopupID() then 
 					MODEL.map.point_on_mapsidepanel.show_pois = 2
 					sc_FillSmartPois_bySplitScreen()
-				elseif MSG_Table.line[1] == "Point on map" then
-					MODEL.map.point_on_mapsidepanel.show_pois = 1
 				end' start />
 	
 	<DIV class=cockpit>
@@ -623,7 +622,7 @@
 				</HBOX>
 
 			
-				<HBOX  class="fill" paddingleft=0 paddingright=0 align="left" visible=(routecontrolVisible && %lua.IsLandscape && LuaJava.LuaJavaActive)>
+				<HBOX  class="fill" paddingleft=0 paddingright=0 align="left" visible=(routecontrolVisible && %lua.IsLandscape)>
 					<BOX class="mapcontrol zoom">
 						<SPACER flex=1>
 						
@@ -668,6 +667,13 @@
 							t_text=(VW_Return_button_text(translate("TMC point"), L"%s", 1))
 							b_text=(VW_Return_button_text(translate("TMC point"), L"%s", 99))
 							visible=(sc_GetClosestEventData() != -1 && vRoutecontrolDetails) />
+							
+						<BUTTON_ICON class="btn_map routecontrol" onrelease='VW_show_pois("point_on_mapsidepanel")'
+							onlongclick='ui.vRoutecontrolDetails = not vRoutecontrolDetails()'
+							icon="ico_POIonMAP.svg"
+							t_text=(VW_Return_button_text(translate("Show POI"), L"%s", 1))
+							b_text=(VW_Return_button_text(translate("Show POI"), L"%s", 99))
+							visible=(%lua.wSplitScreenPOIReady && HasRoute && vRoutecontrolDetails) />
 		
 						<SPACER flex=1>
 					</BOX>
@@ -783,13 +789,13 @@
 <!if condition=(Plugin.isLoaded("quick_tip"))>
 	<modify lm_QuickBattonList>
 		<insert>
-			<row  bmp="ico_GoogleRoute.svg" text=(translate("Google Route")) onrelease=VW_GoToDestinationByGoogle enable=(LuaJava.LuaJavaActive && %navigation.has_route) />
+			<row  bmp="ico_GoogleRoute.svg" text=(translate("Google Route")) onrelease=VW_GoToDestinationByGoogle enable=(%navigation.has_route) />
 		</insert>
 	</modify>
 <!end/>
 
 <modify lm_myroutemenu>
 	<insert>
-		<row text="Google Route" onrelease=VW_GoToDestinationByGoogle enable=(LuaJava.LuaJavaActive) />
+		<row text="Google Route" onrelease=VW_GoToDestinationByGoogle enable=(%navigation.has_route) />
 	</insert>
 </modify>

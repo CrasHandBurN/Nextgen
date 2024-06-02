@@ -1,4 +1,4 @@
-;----------------------WANDEL™-- 04.06.2023----------------
+;----------------------WANDEL™-- 23.01.2024----------------
 <var HideCockpitButtonsOnSidePanel = 0 permanent />
 <var HideCockpitButtonsOnSidePanelTemp = HideCockpitButtonsOnSidePanel />
 
@@ -8,26 +8,78 @@
 		<PROPERTY notify_list_visibility_main VALUE=(!%lua.arQuickMenu && !%lua.DragMode && !(ui_PropLayer.JunctionViewVisible || ui_PropLayer.MiniJunctionViewVisible || ui_PropLayer.TunnelOverviewVisible) && !ui_PropLayer.SignpostVisible && !%lua.MenuIsOpened) /> 
 	</insert>
 
-	<insert into="DIV.cockpit">
-		<DIV button_show_speed CLASS="fill" Z=10000 VISIBLE=(!ui_Cockpit.cockpit_buttons_visible) >
-			<DIV CLASS="notify_list" VISIBLE=(ui_Cockpit.notify_list_visibility_main) >
-				<BUTTON TOP=0 BOTTOM=0 RIGHT=0 LEFT=0 ONRELEASE=VW_QuickCockpit_button_show ONLONGCLICK=VW_QuickCockpit_button_switch >
-					<SPRITE TOP=25% BOTTOM=0 RIGHT=0 LEFT=80% IMG="ico_cockpit_buttons_back.svg" />
-				</BUTTON>
-			</DIV>
-		</DIV>
-	</insert>
-
 	<modify notify_list_visibility VALUE=( ui_Cockpit.cockpit_buttons_visible && ui_Cockpit.notify_list_visibility_main ) />
 	<modify element=box_speedlimit_table ONRELEASE=VW_QuickCockpit_button_switch ONLONGCLICK='sc_NextStateAnim(st_Hide_cockpit_btn_Settings, "fade", 1, ""); MODEL.sound.playchanneltest("ding", L"!button")' />
-</modify>
 
+	<insert last_child into="DIV.notify_list_ext TABLE.ari_ext">
+		<BUTTON CLASS="btn_map" ONRELEASE=VW_QuickCockpit_button_show ONLONGCLICK=VW_QuickCockpit_button_switch VISIBLE=( !ui_Cockpit.cockpit_buttons_visible ) >
+			<SPRITE CLASS="button map fill" />
+			<SPRITE CLASS="btn_map svg" IMG="ico_cockpit_buttons_back.svg" />
+		</BUTTON>
+		
+		<BUTTON CLASS="btn_map" ONRELEASE=sc_ShowParkingAroundDest VISIBLE=(!ui_Cockpit.cockpit_buttons_visible && %navigation.parking_ad_enabled && %{"navigation.parking_ad.visible"} && !vParkingMessageVisible) >
+			<SPRITE CLASS="button map fill" />
+			<SPRITE CLASS="btn_map svg" IMG="ico_parkingaround_dest.svg" />
+		</BUTTON>
+		
+		<BUTTON CLASS="btn_map" ONRELEASE='MODEL.lua.daylight_been = not MODEL.lua.daylight_been() sc_Voice_TTS(sc_translate_VoiceOrLang("I hope the daytime running lights are on."))' VISIBLE=(!ui_Cockpit.cockpit_buttons_visible && %lua.hook_HeadlightsOn && !%navigation.car.is_incity && VW_DayLightCondition(%gps.blink)) >
+			<SPRITE CLASS="button map fill" />
+			<SPRITE CLASS="listitem flag" IMG=(%gps.blink ? "icon_countryinfo_smallicons.svg" : "warning-icon.svg") PHASE=3 /> 
+		</BUTTON>
+
+		<BUTTON CLASS="btn_map" ONRELEASE=VW_Clean_Voice_queue_onrelease ONLONGCLICK='sc_NextStateAnim(st_gLongTextTableToSay, "fade", 1, "" )' VISIBLE=( !ui_Cockpit.cockpit_buttons_visible && %lua.gLongTextTableToSay_size ) >
+			<SPRITE CLASS="button map fill" />
+			<HBOX ALIGN="LEFT">
+				<SPRITE CLASS="btn_map svg" IMG="mute.svg" />
+			</HBOX>
+			<VBOX ALIGN="RIGHT">
+				<TEXT CLASS="listitem bottom" BOX_ALIGN="RIGHT" PADDINGRIGHT=10 TEXT="Queue" />
+				<TEXT CLASS="listitem top" BOX_ALIGN="RIGHT" PADDINGRIGHT=30 TEXT=(%lua.gLongTextTableToSay_size) FONTSIZE=20 />
+			</VBOX>
+		</BUTTON>
+
+		<BUTTON CLASS="btn_map" ONRELEASE='hook_nearest_town:trigger()' ONLONGCLICK='sc_NextStateAnim(st_ShowNearestTownSettings, "fade", 1, "" )' VISIBLE=(!ui_Cockpit.cockpit_buttons_visible && %lua.hook_nearest_town && !%navigation.car.is_incity && %navigation.car.near_city_cos.valid) >
+			<SPRITE CLASS="button map fill" />
+			<HBOX ALIGN="LEFT">
+				<SPRITE CLASS="listitem flag" IMG="visit.svg" ROTATE=(-direction(%navigation.car.position, %navigation.car.near_city_cos, %navigation.car.heading, true)) /> 
+			</HBOX>
+			<VBOX ALIGN="RIGHT" BOX_ALIGN="STRECH">
+				<TEXT CLASS="listitem bottom" ALIGN="CENTER" PADDINGLEFT=35 TEXT=(builtin.format("%{distance:3}", distance(%navigation.car.position, %navigation.car.near_city_cos))) />
+				<TEXT CLASS="listitem top" ALIGN="CENTER" PADDINGLEFT=35 TEXT=(VW_City(%navigation.car.near_city_cos)) FONTSIZE=20 />
+			</VBOX>
+		</BUTTON>
+		
+		<BUTTON CLASS="btn_map" ONRELEASE=sc_ShowQuickDetourPopup ONLONGCLICK=sc_NavigationMap VISIBLE=(!ui_Cockpit.cockpit_buttons_visible && (%navigation.quickdetour_calculated || %navigation.quickdetour_continuous_calculation) && %navigation.quickdetour_enabled) >
+			<SPRITE CLASS="button map fill" />
+			<HBOX ALIGN="LEFT">
+				<SPRITE CLASS="btn_map svg" ICONID=%navigation.quickdetour_icon VISIBLE=(%gps.blink) />
+			</HBOX>
+			<VBOX ALIGN="RIGHT" >
+				<TEXT CLASS="listitem bottom" BOX_ALIGN="RIGHT" PADDINGRIGHT=10 TEXT=(%navigation.quickdetour_calculated ? builtin.format("%{distance:3}", %navigation.quickdetour_dist) : L"") FONTSIZE=20 />
+				<TEXT CLASS="listitem top" BOX_ALIGN="RIGHT" PADDINGRIGHT=20 TEXT=(%navigation.quickdetour_calculated ? builtin.format("%{timespan:5}", %navigation.quickdetour_time) : L"") FONTSIZE=20 />
+			</VBOX>
+		</BUTTON>
+		
+		<BUTTON CLASS="btn_map" ONRELEASE=sc_CongestionOn ONLONGCLICK=sc_NavigationMap VISIBLE=(!ui_Cockpit.cockpit_buttons_visible && %navigation.congestion_ad_enabled && %{"navigation.congestion_ad_icon.valid"}) >
+			<SPRITE CLASS="button map fill" />
+			<HBOX ALIGN="LEFT">
+				<SPRITE CLASS="btn_map svg" ICONID=%navigation.congestion_ad_icon VISIBLE=(%gps.blink) />
+			</HBOX>
+			<VBOX ALIGN="RIGHT" >
+				<TEXT CLASS="listitem bottom" BOX_ALIGN="RIGHT" PADDINGRIGHT=10 TEXT=(%exists:route.list.cong_ad_detour.spare_distance ? builtin.format("%{distance:3}", %{"route.list.cong_ad_detour.spare_distance"}) : L"") FONTSIZE=20 />
+				<TEXT CLASS="listitem top" BOX_ALIGN="RIGHT" PADDINGRIGHT=20 TEXT=(%exists:route.list.cong_ad_detour.spare_time ? builtin.format("%{timespan:5}", %{"route.list.cong_ad_detour.spare_time"}) : L"") FONTSIZE=20 />
+			</VBOX>
+		</BUTTON>
+	</insert>
+
+</modify>
+/*
 <modify ui_PropLayer> 
 	<insert>
 		<OBSERVER MODEL="ui.lm_CockpitSideList.list.size" ONCHANGE=VW_QuickCockpit_button_show START="NO_TRIGGER" />
 	</insert>
 </modify>
-
+*/
 <userlist lm_btn_map_in_cockpit_on_speed text="str" type="str" haspopover="bool" isselected="str" visible="bool" enable="bool" onrelease="ui" details="ui" dtooltip="str">
   <view visibility_filter=visible />
 	<default onrelease=undef visible=1 enable=1 />
@@ -50,5 +102,11 @@
 		<row text="Hide the 'Cockpit' buttons depending on the speed" haspopover=1 onrelease='sc_NextStateAnim(st_Hide_cockpit_btn_Settings, "fade", 1, "")'
 			details=(%lua.btn_map_in_cockpit_speed_limit ? sc_ShowSpeedTool(%lua.btn_map_in_cockpit_speed_limit) : translate("Never")) />
 		<row text="Hide the 'Cockpit' buttons depending on side panel" type="ChkOnOff" isselected="ui.HideCockpitButtonsOnSidePanel" />
+	</insert>
+</modify>
+
+<modify lm_VW_TripCompSettings>
+	<insert>
+		<row	type="ChkOnOff" text="Hide the 'Cockpit' buttons depending on side panel" isselected="ui.HideCockpitButtonsOnSidePanel" owner="Settings" />
 	</insert>
 </modify>

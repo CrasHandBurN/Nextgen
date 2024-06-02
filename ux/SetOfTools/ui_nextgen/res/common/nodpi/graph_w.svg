@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" width="150" height="150" >
+	<g id="phase10" width="150" height="150">
+		<rect x="0" y="0" width="0" height="0" fill="#FFFFFF" />
+	</g>
+	<g id="phase9" >
+		<polygon points="75,3 3,147 147,147" fill="#FFFFFF" />
+	</g>
+	<g id="phase8" >
+		<polygon points="75,3 3,147 147,147" fill="#FFFFFF" />
+	</g>
+	<g id="phase7" >
+		<polygon points="75,3 3,147 147,147" fill="#FFFFFF" />
+	</g>
+	<g id="phase6" >
+		<polygon points="75,3 3,147 147,147" fill="#FFFFFF" />
+	</g>
+	<g id="phase5" >
+		<polygon points="75,3 3,147 147,147" fill="#FFFF00" />
+	</g>
+	<g id="phase4" >
+		<polygon points="75,3 3,147 147,147" fill="#FFFFFF" />
+	</g>
+	<g id="phase3" >
+		<polygon points="75,3 3,147 147,147" fill="#FFFFFF" />
+	</g>
+	<g id="phase2" >
+		<polygon points="75,3 3,147 147,147" fill="#FFFFFF" />
+	</g>
+	<g id="phase1" >
+		<polygon points="75,3 3,147 147,147" fill="#FFFFFF" />
+	</g>
+	<g id="phase0" >
+		<polygon points="75,3 3,147 147,147" fill="#FFFFFF" />
+	</g>
+</svg>

@@ -1,5 +1,5 @@
 <data LuaJava>
-	<property LuaJavaActive value=(Plugin.isLoaded("luajava") && (%lua.ApplicationLabel // "") != "") />
+	<property LuaJavaActive value=(Plugin.isLoaded("luajava") && (%exists:lua.ApplicationLabel ? (%lua.ApplicationLabel != "" && %lua.ApplicationLabel != "WAIT") : 0) ) />
 </data>
 
 <modify lm_Settings>
@@ -116,8 +116,10 @@
 
 <modify lm_FindMenu>
 	<insert before=Coordinates>
-		;<row text="Cursor Location" icon="ico_cursorhead_place.svg" onrelease='sc_NextStateAnim(st_PointOnMap, "fade", 1, "")' />
-		<row text="Find on Map" icon="ico_findonmap.svg" onrelease='sc_NextStateAnim(st_PointOnMap, "fade", 1, "" )' />
+		<row FindonMap text="Find on Map" icon="ico_findonmap.svg" onrelease='sc_NextStateAnim(st_PointOnMap, "fade", 1, "" )' />
+	</insert>
+	<insert before=History>
+		<row ShareGoogle text="Share an online search on Google" icon="ico_Map2Geo.svg" onrelease=VW_GoogleOnlineSearch_by_GM />
 	</insert>
 </modify>
 
@@ -239,7 +241,7 @@
 						<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_TemplateList" text=(%route.list.navigated.itiner.detailmode == "normal" ? VW_InsertShield("blue", translate("Normal"), %gps.blink) : "Normal") onrelease='sc_SetItinerDetailedMode( "normal" )' />
 						<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_TemplateList" text=(%route.list.navigated.itiner.detailmode == "verbose" ? VW_InsertShield("blue", translate("Detailed Instructions"), %gps.blink) : "Detailed Instructions") onrelease='sc_SetItinerDetailedMode( "verbose" )' />
 						<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_TemplateList" text=(%route.list.navigated.itiner.detailmode == "road" ? VW_InsertShield("blue", translate("Road List"), %gps.blink) : "Road List") onrelease='sc_SetItinerDetailedMode( "road" )' />
-						<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_TemplateList" text="Close" onrelease='ui_RouteItiner_mini:HIDE()' />
+						<LISTMODEL listmodel="ui.lm_Dummy" element_template="et_TemplateList" text="Close" onrelease='ui.Itinerary_Mini.ONRELEASE()()' />
 						;<row    text="Normal"      onrelease='sc_SetItinerDetailedMode( "normal" )' selected=(%route.list.navigated.itiner.detailmode == "normal") type="Selection">
 						;<row    text="Detailed Instructions"    onrelease='sc_SetItinerDetailedMode( "verbose" )' selected=(%route.list.navigated.itiner.detailmode == "verbose") type="Selection">
 						;<row    text="Road List"   onrelease='sc_SetItinerDetailedMode( "road" )' selected=(%route.list.navigated.itiner.detailmode == "road") type="Selection">
@@ -318,3 +320,9 @@
 	</modify>
 <!end/>
 */
+
+<modify lm_QuickMenu>
+	<insert>
+		<row icon="ico_capture.svg" onrelease=sc_CaptureScreen visible=(%lua.captureScreen) />
+	</insert>
+</modify>

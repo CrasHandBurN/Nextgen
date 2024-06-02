@@ -171,10 +171,12 @@
 		</insert>
 		<insert last_child into="#table_left_big_buttons"> 
 					<DIV CLASS="left_big" 
-							ONRELEASE={HistotyGreen = !HistotyGreen; doDelayed(500, "ui.HistotyGreen = 1")} 
-							ONLONGCLICK='sc_NextStateAnim(st_LeftButtonsSettings, "fade", 1, "" )' 
-							VISIBLE=((%ui.lm_N_buttons.size && %ui.lm_N_buttons.list[0].name == "ShowLeftSideRouteHistory_VISIBLE") ||
-								(%ui.lm_N_buttons.size > 1 && %ui.lm_N_buttons.list[1].name == "ShowLeftSideRouteHistory_VISIBLE" && %lua.current_buttons == 2)) >
+						VISIBLE=((%ui.lm_N_buttons.size && %ui.lm_N_buttons.list[0].name == "ShowLeftSideRouteHistory_VISIBLE") ||
+							(%ui.lm_N_buttons.size > 1 && %ui.lm_N_buttons.list[1].name == "ShowLeftSideRouteHistory_VISIBLE" && %lua.current_buttons == 2))
+							
+						ONRELEASE={HistotyGreen = !HistotyGreen; doDelayed(500, "ui.HistotyGreen = 1")} 
+						ONLONGCLICK='sc_NextStateAnim(st_LeftButtonsSettings, "fade", 1, "" )' >
+								
 						<BUTTON_ICON LEFT=0 RIGHT=0 TOP=0 BOTTOM=0 VISIBLE=(HistotyGreen || (%lua.screen4x3 ? 0 : %lua.IsLandscape))
 								ICON=""
 								T_L_ICON="ico_itinerary_currentpoint_distance.svg"

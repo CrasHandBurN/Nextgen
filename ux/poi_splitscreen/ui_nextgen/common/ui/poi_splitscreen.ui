@@ -1,5 +1,5 @@
-;-------WANDEL™ 20.02.2021--------- 
-<observer obs_rmsplit_timer value=(%gps.current_time) onchange=sc_SplitScreen_timer START="NO_TRIGGER" /> 
+;-------WANDEL™ 30.01.2024--------- 
+<observer obs_POIsplit_timer value=(%gps.blink) onselect=sc_SplitScreen_timer START="NO_TRIGGER" /> 
 <observer obs_wSplitScreenPOI_search_done boolmodel="poi.flat_search.ready" onselect=sc_wOnSplitScreenPOI_reset_doneOK />
 
 <var distance_onroute=0 />
@@ -20,6 +20,7 @@
 		onlongclick='
 			if selected_group_id() == -1 then
 				ui.selected_group_id = MODEL["*"].group_id()
+				sc_InfoNotification(sc_translate_VoiceOrLang("Group %s is selected", MODEL["*"].name()))
 			else
 				ui.selected_group_id = -1
 			end
@@ -50,10 +51,10 @@
 	</BUTTON>
 </element_template>
 
-<layer ui_SplitscreenInfo z=15 visible=(ui_PropLayer.SplPoiListIsVisible && !(ui_PropLayer.SignpostVisible && bLaneInfoSignpostAtManeuver) && !%screen.msgbox.is_onscreen) >
+<layer ui_SplitscreenInfo z=15 visible=(ui_PropLayer.SplPoiListIsVisible && !(ui_PropLayer.SignpostVisible && bLaneInfoSignpostAtManeuver) && !%screen.msgbox.is_onscreen && !(ui_PropLayer.SignpostVisible || ui_PropLayer.JunctionViewVisible) ) >
 	<DIV class="cockpit">
 		<DIV class="map_messagebox splitscreeninfo">
-			<LIST2 lst_SplitscreenInfo class="spl_panel" SMOOTHSCROLLING REVERSED=0>
+			<LIST2 class="spl_panel" SMOOTHSCROLLING >
 				<LISTMODEL listmodel="ui.lm_splitpoi.list" element_template="et_splitscreeninfo" />
 				<VSMARTSCROLL>
 				<WHEEL>
@@ -217,7 +218,6 @@
 <userlist wSplitScreenPOISettingsList haspopover="bool" text="str" bmp="str" iconphase="int" bitvalue="int" isselected="str"  visible="bool" enable="bool" onrelease="ui" details="ui" type="str">
     <view visibility_filter=visible />
     <default text="" details=undef onrelease=undef enable=1 visible=1>
-	<row	text="Always show Split POI in Cockpit" type="ChkOnOff" isselected="lua.ShowSplitpoiInCockpit" />
 	<row    text="Split Screen Close Timer" details=(%lua.SplitScreenCloseTimer ? sc_ShowTimeTool(%lua.SplitScreenCloseTimer) : translate("Never")) haspopover=1 onrelease='sc_SetPopoverListAndOpen( "ui.lm_SplitScreenCloseTimer" )' />
 	<row  	text="POI provider" haspopover=1 details=(sc_wSplitScreenPOISettingsProviderName(%lua.wSplitScreenPOIProvider)) onrelease='sc_NextStateAnim(st_wSplitScreenPOISettingsProvider, "fade", 1, "" )' visible=(%lua.PoiProviderFiltering && %poi.initialized) />
 	<row  	text="POI category list" haspopover=1 details=(%ui.lm_splitpoi_groups.list.isempty ? translate("All Places") : translate("Quantity") + L": " + (%ui.lm_splitpoi_groups.list.size)) onrelease='sc_NextStateAnim(st_wSplitScreenPOISettingsGroupList, "fade", 1, "" )' />
@@ -243,16 +243,30 @@
 	start />
 	
 ;-----------modification-------------
+<modify lm_MapVisualSettings>
+	<insert after="default">
+		<row prio=910 text="Split Screen(POI Page) Settings" haspopover=1 onrelease='sc_NextStateAnim(st_wSplitScreenPOISettings, "fade", 1, "" )' />
+	</insert>
+</modify>
+
+<!if condition=(Plugin.isLoaded("labs"))>
+	<modify lm_ExtraSettingsList>
+		<insert>
+			<row text="Split Screen(POI Page) Settings" icon="ico_SplitOpen_sml_landscape.svg" haspopover=1 onrelease='sc_NextStateAnim(st_wSplitScreenPOISettings, "fade", 1, "" )' />
+		</insert>
+	</modify>
+<!end>
+
 <modify ui_PropLayer> 
 	<insert into="IMPLEMENTATION"> 
 		<PROPERTY SplPoiListIsAvailable VALUE=( !(ui_PropLayer.JunctionViewVisible || (ui_PropLayer.MiniJunctionViewVisible && %lua.IsPortrait) || ui_PropLayer.TunnelOverviewVisible || (%navigation.tunnel_view.overview.available && %navigation.tunnel_view.enabled)) ) />
-		<PROPERTY ShowSplOpenBtn VALUE=(!SignpostVisible && !JunctionViewVisible && !%screen.msgbox.is_onscreen && !ui_Cockpit.p2p_valid) />
 	</insert>
     <modify SplPoiListIsVisible VALUE=(%ui.lm_splitpoi.list.size > 0 && %lua.SplPoiListIsVisible && ui_PropLayer.SplPoiListIsAvailable && !ui_PropLayer.SignpostVisible && !%lua.DragMode && !%lua.MenuIsOpened ) />
 	<insert>
-		<OBSERVER  VALUE=( ui_PropLayer.SplPoiListIsVisible && %lua.CockpitMapMode ) ONCHANGE=sc_SetNavCarPos START />
+		<OBSERVER  VALUE=( ui_PropLayer.SplPoiListIsVisible ) ONCHANGE=sc_SetNavCarPos START />
 	</insert>
 </modify>
+
 <modify ui_Cockpit >
 	<insert into="IMPLEMENTATION"> 
 		<PROPERTY splitpoi_icon_id VALUE=( %ui.lm_splitpoi.list[0].icon_id // -1 ) /> 
@@ -264,28 +278,33 @@
 		;<PROPERTY splitpoi_distance VALUE=( distance(%navigation.car.position, splitpoi_position) ) /> 
 		<PROPERTY splitpoi_distance VALUE=( splitpoi_onroute && distance_onroute ? %ui.lm_splitpoi.list[0].distance : distance(%navigation.car.position, splitpoi_position) ) /> ;it is possible only at searching start
 	</insert>
-	<modify spl_poi_quick_menu VALUE=( !%lua.ShowSplitpoiInCockpit && %lua.ShowSplOpenBtn && %lua.SplPoiListIsVisible ) />
-	<modify spl_poi_quick_menu2 VALUE=( %lua.ShowSplitpoiInCockpit && %lua.ShowSplOpenBtn ) />
 
 	<insert first_child after="BUTTON" into="#CockpitBTNTable">
 		<BUTTON SplitPoiBtn CLASS="btn_map" ONRELEASE='
-			if MODEL.lua.SplPoiListIsVisible() then
-				if MODEL.screen.msgbox.is_onscreen() then 
-					MODEL.screen.msgbox.pause_tags("popup", true) 
-				else
-					if MODEL.screen.msgbox.list.size() > 0 then
-						MODEL.screen.msgbox.resume_tags("popup")
+			if MODEL.gps.valid() or 1 then --1 to be active always ... for now
+				if MODEL.lua.SplPoiListIsVisible() then
+					if MODEL.screen.msgbox.is_onscreen() then 
+						MODEL.screen.msgbox.pause_tags("popup", true) 
 					else
-						sc_OpenCloseSplPanel()
-						ui.selected_group_id = -1
+						if MODEL.screen.msgbox.list.size() > 0 then
+							MODEL.screen.msgbox.resume_tags("popup")
+						else
+							sc_OpenCloseSplPanel()
+							ui.selected_group_id = -1
+						end
 					end
+				else
+					sc_OpenCloseSplPanel()
+					ui.selected_group_id = -1
 				end
 			else
-				sc_OpenCloseSplPanel()
-				ui.selected_group_id = -1
-			end' 
+				VW_LongTextToSay("GPS Signal is lost.")
+				VW_LongTextToSay("Please wait...")
+			end
+			' 
 			ONLONGCLICK='sc_NextStateAnim(st_wSplitScreenPOISettings, "fade", 1, "")' 
-			VISIBLE=( spl_poi_quick_menu || spl_poi_quick_menu2 ) >
+			VISIBLE=( %lua.ShowSplOpenBtn ) >
+			
 	       	<SPRITE CLASS="button map fill" />
 			<SPRITE CLASS="btn_map svg" IMG=(%lua.SplPoiListIsVisible ? (%lua.IsLandscape ? "ico_SplitClose_sml_landscape.svg" : "ico_SplitClose_sml_portrait.svg") : (%lua.IsLandscape ? "ico_SplitOpen_sml_landscape.svg" : "ico_SplitOpen_sml_portrait.svg"))  ZOOM="ZOOMVISIBLE" VISIBLE=(%ui.lm_splitpoi.list.size == 0 || !%lua.SplPoiListIsVisible) />
 			
@@ -308,9 +327,11 @@
 <modify ui_SideList>       
 	<insert first_child after="BUTTON" into="TABLE">
 		<BUTTON CLASS="btn_map" 
-			ONRELEASE='sc_OpenCloseSplPanel(); ui.selected_group_id = -1' 
+			;ONRELEASE='sc_OpenCloseSplPanel(); ui.selected_group_id = -1' 
+			ONRELEASE='ui.SplitPoiBtn.ONRELEASE()()'
 			ONLONGCLICK='ui.SplitPoiBtn.ONLONGCLICK()()'
-			VISIBLE=(%lua.ShowSplOpenBtn)>
+			VISIBLE=( %lua.ShowSplOpenBtnQuick )>
+			
 	       	<SPRITE CLASS="button map fill" />
 			<SPRITE CLASS="btn_map svg" IMG=(%lua.SplPoiListIsVisible ? (%lua.IsLandscape ? "ico_SplitClose_sml_landscape.svg" : "ico_SplitClose_sml_portrait.svg") : (%lua.IsLandscape ? "ico_SplitOpen_sml_landscape.svg" : "ico_SplitOpen_sml_portrait.svg"))  ZOOM="ZOOMVISIBLE" VISIBLE=(%ui.lm_splitpoi.list.size == 0 || !%lua.SplPoiListIsVisible) />
 			
@@ -331,33 +352,22 @@
 
 <modify lm_CockpitSideList>
 	<insert>
-		<row 	visible=( (ui_Cockpit.spl_poi_quick_menu2 // 0) || (ui_Cockpit.spl_poi_quick_menu // 0) ) />
+		<row 	visible=( %lua.ShowSplOpenBtn ) />
 	</insert>
 </modify>
 <modify lm_QuickSideList>
 	<insert>
-		<row 	visible=( %lua.ShowSplOpenBtn ) />
-	</insert>
-</modify>
-
-<modify lm_MapVisualSettings>
-	<insert after="default">
-		<row prio=910 text="Split Screen(POI)" isselected="lua.ShowSplOpenBtn" type="ChkOnOff" />
-		<row prio=910 text="Split Screen(POI Page) Settings" haspopover=1 onrelease='sc_NextStateAnim(st_wSplitScreenPOISettings, "fade", 1, "" )' visible=(%lua.ShowSplOpenBtn) />
+		<row 	visible=( %lua.ShowSplOpenBtnQuick ) />
 	</insert>
 </modify>
 
 <modify lm_VCockpitMenuButtons >
 	<insert>
-		<row  text="Split Screen(POI Page) Button in Cockpit" haspopover=1 type="" icon="ico_SplitOpen_sml_landscape.svg"
-			onrelease=(!%lua.ShowSplOpenBtn ? 'sc_NextStateAnim(st_MapVisualSettings, "fade", 1, "" )' : 'sc_NextStateAnim(st_wSplitScreenPOISettings, "fade", 1, "" )') 
-			details=(%lua.ShowSplOpenBtn ? (%lua.ShowSplitpoiInCockpit ? "On" : "Off") : "Turn ON it in 'Map Settings'") />
+		<row text="Split Screen(POI)" bmp="ico_SplitOpen_sml_landscape.svg" isselected="lua.ShowSplOpenBtn" />
 	</insert>
 </modify>
 <modify lm_VQuickMenuButtons>
 	<insert>
-		<row  text="Split Screen(POI Page) Button in Cockpit" haspopover=1 type="" icon="ico_SplitOpen_sml_landscape.svg"
-			onrelease=(!%lua.ShowSplOpenBtn ? 'sc_NextStateAnim(st_MapVisualSettings, "fade", 1, "" )' : 'sc_NextStateAnim(st_wSplitScreenPOISettings, "fade", 1, "" )') 
-			details=(%lua.ShowSplOpenBtn ? (%lua.ShowSplitpoiInCockpit ? "On" : "Off") : "Turn ON it in 'Map Settings'") />
+		<row text="Split Screen(POI)" bmp="ico_SplitOpen_sml_landscape.svg" isselected="lua.ShowSplOpenBtnQuick" />
 	</insert>
 </modify>

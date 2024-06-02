@@ -6,7 +6,7 @@
 		<PROPERTY CalcSpeedLimitPercent VALUE=( sc_CalcSpeedLimitPercent(%lua.average_speed_calculated, %{"other.trips.@0"}.speed_total_avg) ) /> 
 		<PROPERTY CalcSpeedLimitDelta VALUE=( sc_CalcSpeedLimitDelta(%lua.average_speed_calculated, %{"other.trips.@0"}.speed_total_avg) ) /> 
 	</insert>
-	<insert last_child into="DIV.notify_list_ext TABLE.ari_ext">
+	<insert first_child after="BUTTON" into="DIV.notify_list_ext TABLE.ari_ext">
 		<BUTTON CLASS="btn_map" ONRELEASE={invert(average_speed_delta_dif)} ONLONGCLICK=VW_Calculate_average_speed VISIBLE=(%lua.average_speed_in_cockpit && %navigation.has_route) >
 			<SPRITE CLASS="button map fill" />
 			<HBOX ALIGN="LEFT">

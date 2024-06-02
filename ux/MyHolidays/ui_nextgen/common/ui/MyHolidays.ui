@@ -1,6 +1,6 @@
 ;----------------------WANDEL™-- 03.07.2020 ----------------
 <data Holiday_iconProp>
-	<property svg_Only value="Ukraine Independence Day", "Telecom Day", "Happy BirthDay to You", "Genocide", "Resurrection of a Pious Ortodox", "Resurrection of a Pious", "Ascension Ortodox", "Ascension", "Trinity Ortodox", "Trinity", "Easter Ortodox", "Easter" />
+	<property svg_Only value="Ukraine Independence Day", "Telecom Day", "Happy BirthDay to You", "Genocide", "Resurrection of a Pious Ortodox", "Resurrection of a Pious", "Ascension Ortodox", "Ascension", "Trinity Ortodox", "Trinity", "Easter Ortodox", "Easter", "War", "Pesach" />
 	<property Holyday_type value=(observe(%gps.current_date, %lua.selebrations_type, %lua.birthday, %lua.IMGTrigger); !in_set(sc_MySelebration(), svg_Only)) />
 	;<property value=( observe(%gps.current_date); VW_ifFileExist(L"%app%/ui_nextgen/res/common/nodpi", sc_MySelebration(%gps.current_date, %lua.birthday) + ".spr", "FileExistence", L"diricon_000.svg") ) />
 	<property Holyday_visibility value=(%lua.selebrations_type == "Holidays" && (sc_MySelebration(%gps.current_date, %lua.birthday) == "Happy New Year" || sc_MySelebration(%gps.current_date, %lua.birthday) == "Marry Christmas" || sc_MySelebration(%gps.current_date, %lua.birthday) == "St. Nicholas Day" || sc_MySelebration(%gps.current_date, %lua.birthday) == "Schedryk")) />
@@ -136,24 +136,28 @@
 	<row text="Events List" onrelease='WNDL_ListHolidays(); sc_ClosePopover()' />
 </userlist>
 
-<userlist lm_HolidaysSettings_footer text="str" onrelease="ui" onlongclick="ui" enable="bool" visible="bool" isactionbutton="bool">
+<userlist lm_HolidaysSettings_footer text="wstr" onrelease="ui" onlongclick="ui" enable="bool" visible="bool" isactionbutton="bool">
 	<default enable=1 visible=1 />
 	<view visibility_filter=visible />
-		<row text="Reset Holidays" onrelease='MODEL.lua.LastDATE = DATETYPE.new(0); sc_back(); obs_DateValid:trigger(); WNDL_ListHolidays()' onlongclick=undef isactionbutton=1 />
+	<implementation>
+		<property ListHolidays_Date value=(footer_ListHolidays(%lua.DATE_ofset)) />
+	</implementation>
+		<row text=(ListHolidays_Date)
+			onrelease='MODEL.lua.DATE_ofset = 0; MODEL.lua.LastDATE = DATETYPE.new(0); obs_DateValid:trigger()' isactionbutton=1 />
 </userlist>
 
 <userlist lm_HolidaysSettings_localmenu text="str" onrelease="ui" enable="bool"  visible="bool">
 	<view visibility_filter=visible />
 	<default enable=1 visible=1 />
-	<row	text="Previous year" onrelease='MODEL.lua.DATE_ofset = -1; MODEL.lua.LastDATE = DATETYPE.new(0); sc_back(); obs_DateValid:trigger(); WNDL_ListHolidays()  MODEL.lua.DATE_ofset = 0' />	
-	<row	text="Current year" onrelease='MODEL.lua.DATE_ofset = 0; MODEL.lua.LastDATE = DATETYPE.new(0); sc_back(); obs_DateValid:trigger(); WNDL_ListHolidays()' />	
-	<row	text="Next year" onrelease='MODEL.lua.DATE_ofset = 1; MODEL.lua.LastDATE = DATETYPE.new(0); sc_back(); obs_DateValid:trigger(); WNDL_ListHolidays()  MODEL.lua.DATE_ofset = 0' />	
+	<row	text="Previous year" onrelease='MODEL.lua.DATE_ofset = -1; MODEL.lua.LastDATE = DATETYPE.new(0); obs_DateValid:trigger()' />	
+	<row	text="Current year" onrelease='MODEL.lua.DATE_ofset = 0; MODEL.lua.LastDATE = DATETYPE.new(0); obs_DateValid:trigger()' />	
+	<row	text="Next year" onrelease='MODEL.lua.DATE_ofset = 1; MODEL.lua.LastDATE = DATETYPE.new(0); obs_DateValid:trigger()' />	
 </userlist>
 ;----------------------------------------------------------------------------------
 <modify ui_Cockpit> 
 	<insert first_child after="BUTTON" into="#CockpitBTNTable">
-		<BUTTON CLASS="btn_map" 
-			ONRELEASE='obs_DateValid:TRIGGER(); doDelayed(8, function() sc_PlaySoundTool("alarmeffect", "no sound") end)'
+		<BUTTON BTN_Hollydays CLASS="btn_map" 
+			ONRELEASE='doDelayed(8, function() sc_PlaySoundTool("alarmeffect", "no sound") end)'
 			ONLONGCLICK='sc_SetPopoverListAndOpen("ui.lm_Selebrations_Popover", MODEL.lua.selebrations_type())'
 			VISIBLE=(sc_MySelebration(%gps.current_date, %lua.birthday) && %lua.selebrations_type == "Holidays") >
 			
@@ -351,6 +355,7 @@
 	<view visibility_filter=visible />
 	<default enable=1 visible=1 />
       	<row	text="Birthday Data" onrelease=WNDL_DataSetting />	
+		<row	text="Any Data Biorhythm" onrelease=WNDL_AnyDataSetting />	
 		<row	text="Zodiac signs" onrelease='ui_Zodiac_signs:SHOW()' />	
 </userlist>
 
@@ -360,18 +365,66 @@
 	</DIV>
 </layer>
 
-<element_template et_ListChkOnOff_IconHD>
-	<CHECKBOX CHECKBOX_param class="listitem chkonoff" iconspr="da_na.svg" text=%*.text checked=%*.checked changevalue=%*.changevalue />
-	;<SPRITE class="btn_map svg" img=%*.bmp phasename=%*.phasename onrelease=%*.onrelease onlongclick=%*.onlongclick align="left" left=2% right=85% />
-	<BUTTON_ICON icon=%*.bmp t_text=%*.from b_text=%*.to zoom=70% align="center" left=0 right=91% top=0 bottom=0 valign="center" />
+<element_template et_ListChkOnOff_IconHD details=(%*.from + " - " + %*.to) >
+	<CHECKBOX class="listitem chkonoff" iconspr=(%*.bmp // "") onrelease=%*.onrelease boolmodel=(%*.isselected // undef) checked=(%*.checked // 0) changevalue=(%*.changevalue // undef)  enable=( %*.enable // 1 ) animate=( %*.animate // 0 ) >		
+		<TEXT text=(%*.text + "\n" + DETAILS) fontsize=25 />
+	</CHECKBOX>
+
+	<BUTTON class="btn_main extra" onrelease=%*.onrelease_extra visible=((%*.onrelease_extra // 0) ? 1 : 0) >
+		<SPRITE class="btn_map svg" img="ico_lips.svg" />
+	</BUTTON>
 </element_template>
 
-<userlist lm_HolidaysList bmp="str" text="wstr" from="str" to="str" onrelease="ui" onlongclick="ui" enable="bool" visible="bool" type="str" checked="bool" changevalue="ui" >
+<userlist lm_HolidaysList bmp="str" text="wstr" from="str" to="str" onrelease_extra="ui" onrelease="ui" onlongclick="ui" enable="bool" visible="bool" type="str" checked="bool" changevalue="ui" >
 	<default enable=1 visible=1 
-		onlongclick=undef
-		onrelease=undef
+		onrelease_extra='
+						if melody ~= L"melody/" .. towstring(string.gmatch(MODEL["*"].bmp(), "(.+)%.")()) then
+							melody = L"melody/" .. towstring(string.gmatch(MODEL["*"].bmp(), "(.+)%.")())
+						else
+							melody =  L"no sound"
+						end
+						sc_PlaySoundTool("alarmeffect", melody)'
 		type="ChkOnOff_IconHD" 
 		changevalue='MODEL["*"].checked = not MODEL["*"].checked()'
 		/>
 	<view sort_by="from" />
 </userlist>
+
+;---------------------------------left buttons inclusion-------------------------------------------------
+<!if condition=(Plugin.isLoaded("left_big_button"))>
+	<var ShowLeftSideHollydays  = 1 />
+	<!DISABLE COMPAT_UPCASE_ATTR_SELECTOR/>
+	<modify lm_LeftButtonsSettings>
+			<modify element="row[prio=13]" bmp="today.svg" text="Show Left Side Hollydays" isselected="ui.ShowLeftSideHollydays" visible=1 />
+	</modify>
+
+	<modify lm_N_buttons>
+		<modify element="row[prio=13]" name="ShowLeftSideHollydays_VISIBLE" visible=(ShowLeftSideHollydays && (sc_MySelebration(%gps.current_date, %lua.birthday) && %lua.selebrations_type == "Holidays")) />
+	</modify>
+
+	<modify ui_LeftSide_Free_Button>
+		<insert last_child into="#table_left_big_buttons"> 
+			<BUTTON CLASS="left_big"
+				VISIBLE=((%ui.lm_N_buttons.size && %ui.lm_N_buttons.list[0].name == "ShowLeftSideHollydays_VISIBLE") ||
+					(%ui.lm_N_buttons.size > 1 && %ui.lm_N_buttons.list[1].name == "ShowLeftSideHollydays_VISIBLE" && %lua.current_buttons == 2))
+
+				ONLONGCLICK='sc_NextStateAnim(st_LeftButtonsSettings, "fade", 1, "" )'
+				ONRELEASE='ui.BTN_Hollydays.ONRELEASE() ui.ShowLeftSideHollydays = 0' >
+
+				<SPRITE CLASS="button map fill" />
+
+				<SPRITE CLASS="btn_map svg" VISIBLE=(VW_isSVGorBMP(Holiday_iconProp.img))
+					IMG=(VW_isSVGorBMP(Holiday_iconProp.img) ? Holiday_iconProp.img : "MyLogo.svg") IMAGE_H=(PARENT.H) IMAGE_W=(PARENT.W) ZOOM=65% />
+				<SPRITE LEFT=25% RIGHT=25% TOP=25% BOTTOM=25% VISIBLE=(!VW_isSVGorBMP(Holiday_iconProp.img))
+					ZOOM="ZOOMVISIBLE" ALIGN="CENTER" VALIGN="CENTER"
+					IMG=(VW_isSVGorBMP(Holiday_iconProp.img) ? "MyLogoBMP.spr" : Holiday_iconProp.img) ;to avoid crash
+					ANIMATE=(%lua.selebrations_type == "Holidays" && Holiday_iconProp.Holyday_type ? "anime" : undef) />
+
+				<TEXT CLASS="BTN_top_text" TEXT=(VW_Return_button_text(translate(sc_MySelebration(%gps.current_date, %lua.birthday) // ""), L"%s", 1))
+					VISIBLE=( %lua.text_on_buttons ) />
+				<TEXT CLASS="BTN_bottom_text" TEXT=(VW_Return_button_text(translate(sc_MySelebration(%gps.current_date, %lua.birthday) // ""), L"%s", 99))
+					VISIBLE=( %lua.text_on_buttons ) />
+			</BUTTON>
+		</insert>
+	</modify>
+<!end/>
