@@ -1,4 +1,4 @@
-﻿module("VOICE")
+module("VOICE")
 
 ASSERT(type(voice_debug_log) == "function", "Missing voice_debug_log function.")
 ASSERT(type(voice_debug_log_table) == "function", "Missing voice_debug_log_table function.")
@@ -59,11 +59,11 @@ guidance = function(mapinfo, events)
 	return guidance_orig(mapinfo, events)
 end
 
-local preposition_tbl = {L"След",L"в Направление На"}
+local preposition_tbl = {L"След",L"в Направление Към"}
 
 local preposition_insert_tbl = {
 	{L"в ",{L"Странична Улица ",L"Кръстовище ",L"Път без изход "}},
-	{L"на ",{L""}},
+	{L"по ",{L""}},
 }
 
 local preposition_insert_tbl_direction = {
@@ -72,7 +72,7 @@ local preposition_insert_tbl_direction = {
 
 local main_streetnames = {L"Булевард",L"Улица",L"Базар",L"Странична Улица",L"Площад",L"Авеню"}
 
-local settlement_preposition = L"в направление на"
+local settlement_preposition = L"в направление към"
 
 local exit_preposition = L"на изхода"
 
