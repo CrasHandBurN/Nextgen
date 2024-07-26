@@ -199,9 +199,9 @@ parameters = {
 	--[id.continue_uturn_right] = {then_cnt = 1, CID = 90725399, },
 	[id.continue_uturn_right] = {then_cnt = 1, CID = 90725399, L"плавно", L"вдясно", L"вдясно,", L"вдясно."},
 	[id.deformed_roundabout_exit] = {then_cnt = 1, CID = 108792838, },
-	--[id.exit_left] = {then_cnt = 1, CID = 111940098, },  ---на изхода в ляво
+	--[id.exit_left] = {then_cnt = 1, CID = 111940098, },
 	[id.exit_left] = {then_cnt = 1, CID = 111940098, L"на изхода в ляво", L"на изхода в ляво,", L"на изхода в ляво."},
-	--[id.exit_right] = {then_cnt = 1, CID = 114823682, },  ---на изхода вдясно
+	--[id.exit_right] = {then_cnt = 1, CID = 114823682, },
 	[id.exit_right] = {then_cnt = 1, CID = 114823682, L"на изхода вдясно", L"на изхода вдясно,", L"на изхода вдясно."},
 	[id.ferry] = {then_cnt = 1, CID = 117706242, },
 	[id.ferry_exit] = {then_cnt = 1, CID = 120062976, },
@@ -216,7 +216,7 @@ parameters = {
 	[id.keep_left] = {then_cnt = 1, CID = 134488579, L"в ляво", L"в ляво,", L"в ляво."},
 	--[id.keep_left_b] = {then_cnt = 1, CID = 139731459, },
 	[id.keep_left_b] = {then_cnt = 1, CID = 139731459, L"в ляво", L"в ляво,", L"в ляво."},
-	--[id.keep_left_hwy] = {then_cnt = 1, CID = 144972290, },  ---по магистралата в ляво
+	--[id.keep_left_hwy] = {then_cnt = 1, CID = 144972290, },
 	[id.keep_left_hwy] = {then_cnt = 1, CID = 144972290, L"по магистралата в ляво", L"по магистралата в ляво,", L"по магистралата в ляво."},
 	--[id.keep_left_shwy] = {then_cnt = 1, CID = 148904450, },
 	[id.keep_left_shwy] = {then_cnt = 1, CID = 148904450, L"в ляво", L"в ляво,", L"в ляво."},
@@ -224,7 +224,7 @@ parameters = {
 	[id.keep_right] = {then_cnt = 1, CID = 152838659, L"вдясно", L"вдясно,", L"вдясно."},
 	[id.keep_right_b] = {then_cnt = 1, CID = 158081539, },
 	[id.keep_right_b] = {then_cnt = 1, CID = 158081539, L"вдясно", L"вдясно,", L"вдясно."},
-	--[id.keep_right_hwy] = {then_cnt = 1, CID = 163322370, },  ---по магистралата вдясно
+	--[id.keep_right_hwy] = {then_cnt = 1, CID = 163322370, },
 	[id.keep_right_hwy] = {then_cnt = 1, CID = 163322370, L"по магистралата вдясно", L"по магистралата вдясно,", L"по магистралата вдясно."},
 	--[id.keep_right_shwy] = {then_cnt = 1, CID = 167254530, },
 	[id.keep_right_shwy] = {then_cnt = 1, CID = 167254530, L"вдясно", L"вдясно,", L"вдясно."},
@@ -237,9 +237,9 @@ parameters = {
 	[id.priority_left] = {then_cnt = 1, CID = 197661186, L"наляво", L"наляво,", L"наляво."},
 	--[id.priority_right] = {then_cnt = 1, CID = 200544770, },
 	[id.priority_right] = {then_cnt = 1, CID = 200544770, L"надясно", L"надясно,", L"надясно."},
-	--[id.ramp_left] = {then_cnt = 1, CID = 203447319, },  ---след островчето в ляво
+	--[id.ramp_left] = {then_cnt = 1, CID = 203447319, },
 	[id.ramp_left] = {then_cnt = 1, CID = 203447319, L"след островчето в ляво", L"след островчето в ляво,", L"след островчето в ляво."},
-	--[id.ramp_right] = {then_cnt = 1, CID = 221535255, },  ---преди островчето вдясно
+	--[id.ramp_right] = {then_cnt = 1, CID = 221535255, },
 	[id.ramp_right] = {then_cnt = 1, CID = 221535255, L"преди островчето вдясно", L"преди островчето вдясно,", L"преди островчето вдясно."},
 	[id.right] = {then_cnt = 1, CID = 239623191, },
 	[id.right_end] = {then_cnt = 1, CID = 257696260, },
