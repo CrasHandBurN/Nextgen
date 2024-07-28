@@ -21,9 +21,9 @@ local announce_avg_traffic_speed = SysConfig:get("tts", "announce_avg_traffic_sp
 local announce_traffic_delay = SysConfig:get("tts", "announce_traffic_delay", 0)
 local announce_speed_unit = SysConfig:get("tts", "announce_speed_unit", 1)
 
-wtollgatesentencetable = {L"След tollgate_distance пункт за плащане на пътни такси", L"tollgate_distance до пункта за плащане на пътни такси", L"След пункта за плащане на пътни такси "}
-wtunnelsentencetable = {L"След tunnel_distance тунел", L"tunnel_distance до тунела", L"tunnel_distance до края на тунела", L"След влизане в тунела"}
-wmergesentencetable = {L"След merge_distance сливане на пътищата отдясно", L"merge_distance до сливането на пътищата отдясно", L"След merge_distance сливане на пътищата", L"merge_distance до сливането на пътищата", L"След merge_distance", L"merge_distance до сливането на пътищата", L"След сливането на пътищата"}
+wtollgatesentencetable = {L"След tollgate_distance предстои пункт за плащане на пътни такси", L"tollgate_distance остават до пункта за плащане на пътни такси", L"След пункта за плащане на пътни такси "}
+wtunnelsentencetable = {L"След tunnel_distance предстои тунел", L"tunnel_distance остават до тунела", L"tunnel_distance остават до края на тунела", L"След влизане в тунела"}
+wmergesentencetable = {L"След merge_distance се сливат пътищата отдясно", L"merge_distance остават до сливането на пътищата отдясно", L"След merge_distance оставт до сливането на пътищата", L"merge_distance остават до сливането на пътищата", L"След merge_distance", L"merge_distance остават до сливането на пътищата", L"След сливането на пътищата"}
 wtunnelmaneuver_enter = false
 wtunnelmaneuver_leave = false
 wtollgatemaneuver = false
@@ -81,7 +81,7 @@ local oh_formatters = {
     {L" 0 ",L" o "},
 }
 
------------- ново ---------
+------------ new/old ---------
 
 local function format_number(str)
     if type(str) ~= "wstring" then
