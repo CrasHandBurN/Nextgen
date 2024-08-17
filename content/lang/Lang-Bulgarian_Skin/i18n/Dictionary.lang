@@ -2917,6 +2917,11 @@ Delete Exit="Изтрий и излез"
 Delete Favourite="Изтрий фаворита"
 Delete Filtered Items="Изтрий филтрираните елементи"
 Delete Profile="Изтрий профила"
+<<<<<<< HEAD
+=======
+Delete profile="Изтрий профила"
+delete route & turn off="Изтрий маршрута и изключи"
+>>>>>>> 1c381d28e8bbedca3810108c4ab1437b41d1d4f5
 Delete Route and Exit="Изтрий маршрута и изключи"
 Delete Route and Turn Off="Изтрий маршрута и изключи"
 Delete Route="Изтрий маршрута"
@@ -7695,6 +7700,10 @@ Short Ton="Американски тон"
 Short address="Кратък адрес"
 Short="Къс"
 Show & Use="Покажи и използвай"
+<<<<<<< HEAD
+=======
+Show 'boolean'="Покажи 'логическо значение'"
+>>>>>>> 1c381d28e8bbedca3810108c4ab1437b41d1d4f5
 Show 'Day/Night' Button in Cockpit="Промяна на схемите Ден/Нощ"
 Show 'Day/Night' Button in QuickMenu="Промяна на схемите Ден/Нощ"
 Show 'Delete Route and Exit' Button in Cockpit="Изтрий маршрута и изключи"
@@ -7703,8 +7712,11 @@ Show 'Delete Route' Button in Cockpit="Изтрий маршрута"
 Show 'Delete Route' Button in QuickMenu="Изтрий маршрута"
 Show 'Height and the way up down' Button in Cockpit="Надморска височина"
 Show 'Height and the way up down' Button in QuickMenu="Надморска височина"
+<<<<<<< HEAD
 Show 'Zoom' Button in Cockpit="Мащаб"
 Show 'boolean'="Покажи 'логическо значение'"
+=======
+>>>>>>> 1c381d28e8bbedca3810108c4ab1437b41d1d4f5
 Show 'number'="Покажи 'номер'"
 Show 'string'="Покажи 'ред'"
 Show 'table'="Покажи 'таблица'"
@@ -7830,9 +7842,15 @@ Show Linear Compass TOP="Линеен компас в горната част"
 Show Linear Compass="Линеен компас"
 Show List="Покажи списъка"
 Show Map="Покажи картата"
+<<<<<<< HEAD
 Show Mega Srbija in Cockpit="Mega Srbija в кокпита"
 Show Mega Srbija in QuickMenu="Mega Srbija в бързото меню"
 Show Mini Maneuver="Покажи мини маневра"
+=======
+Show Mega Srbija in Cockpit="Mega Srbija" в кокпита"
+Show Mega Srbija in QuickMenu="Mega Srbija" в бързото меню"
+Show Mini Maneuver="Покажи миниманевра"
+>>>>>>> 1c381d28e8bbedca3810108c4ab1437b41d1d4f5
 Show Motorways Button in Cockpit="Достъп до магистрали"
 Show Motorways Button in QuickMenu="Достъп до магистрали"
 Show Multiplan Route in Cockpit="Многопланов маршрут"
@@ -7866,6 +7884,17 @@ Show Phone in Cockpit="Телефон"
 Show Phone in QuickMenu="Телефон"
 Show Picture="Покажи изображение"
 Show Place Info="Покажи информацията за мястото"
+<<<<<<< HEAD
+=======
+Show place="Покажи"
+Show POI around in Cockpit="Интересни места наоколо"
+Show POI around in QuickMenu="Интересни места наоколо"
+Show POI around setting="Интересни места наоколо"
+Show POI around settings="Настройка на интересни места наоколо"
+Show POI around="Интересни места наоколо"
+Show POI Search in Cockpit="ПОИ търсене"
+Show POI Search in QuickMenu="ПОИ търсене"
+>>>>>>> 1c381d28e8bbedca3810108c4ab1437b41d1d4f5
 Show PoiVis in Cockpit="Интересни места по маршрута"
 Show PoiVis in QuickMenu="Интересни места по маршрута"
 Show Quick Menu Button="Бутон за бързо меню"
@@ -7928,7 +7957,10 @@ Show Street labels in 3D="Имена на улици в 3D режим"
 Show Test Layer="Покажи тестов слой"
 Show Time In Cockpit="Часовник"
 Show Time In Title="Часовник в трея"
+<<<<<<< HEAD
 Show Time and GPS when hidden the Side List="Час и GPS при скрити странични бутони"
+=======
+>>>>>>> 1c381d28e8bbedca3810108c4ab1437b41d1d4f5
 Show Time when hidden the Side List="Покажи часа при скрити странични бутони"
 Show Tips="Покажи съвети"
 Show Toll Button in Cockpit="Винетка"
@@ -7940,6 +7972,12 @@ Show Town and Postal Code="Град и пощенски код"
 Show Traffic Info="Покажи информация за трафик събитията"
 Show Traffic bans for trucks in Cockpit="Забрани за камиони в ЕС"
 Show Traffic bans for trucks in QuickMenu="Забрани за камиони в ЕС"
+<<<<<<< HEAD
+=======
+Show traffic button in Cockpit="Пътни условия"
+Show traffic button in QuickMenu="Пътни условия"
+Show Traffic Info="Покажи информация за трафик събитията"
+>>>>>>> 1c381d28e8bbedca3810108c4ab1437b41d1d4f5
 Show Trip Log in Cockpit="Дневник за пътуването"
 Show Trip Log in QuickMenu="Дневник за пътуването"
 Show Truck Parking Button="Паркинг за камиони"
@@ -8166,6 +8204,11 @@ Speed Limit saturation="Насищане на ограничението на с
 Speed Limit transparency="Прозрачност на ограничението на скоростта "
 Speed Limit="Ограничение на скоростта"
 Speed Profile="Профил на скорост"
+<<<<<<< HEAD
+=======
+Speed to hide button="Скрии бутоните при скорост над"
+Speed tolerance when hide="Скрии при скорост"
+>>>>>>> 1c381d28e8bbedca3810108c4ab1437b41d1d4f5
 Speed Tolerance:="Толеранс на скоростта: "
 Speed Tolerance="Толеранс на скоростта"
 Speed Units in Cockpit="Единици за скорост в кокпита"
@@ -11637,6 +11680,7 @@ plugin~affordable_plugins="affordable_plugins: изключване на доб�
 plugin~aloading_page="aloading_page: зареждане на маркови скрийнсейвъри"
 plugin~and_no_speedcam="and_no_speedcam: няма камери за скорост"
 plugin~android_contacts="android_contacts: Андроид контакти"
+<<<<<<< HEAD
 plugin~appsandtools="appsandtools: полезна информация"
 plugin~bapp_colors_arimi="bapp_colors_arimi: цветни икони"
 plugin~battery_in_menu="battery_in_menu: батерия в менюто"
@@ -11965,3 +12009,16 @@ yield="Пропусни движещите се по пътя с предимс�
 ~SEA="Южна Азия"
 ~WAS="Западна Азия"
 ~WEU="Западна Европа"
+=======
+Please long click to Edit="Празно. Дълго докосване за редактиране"
+Reload if need="Презареди контакта... ако е необходимо"
+Queue="К-во"
+Android contacts="Андроид контакти"
+Please select the coordinate or postal address to be used as waypoint or destination="Изберете координатите или пощенския адрес, които ще се използват като спирка или дестинация"
+Group %s is selected="Групата '%s' е избрана"
+Share an online search on Google="Сподели онлайн търсенето в Google"
+Find your object here and share it through Map2Geo="Потърсете вашия обект тук и го споделете чрез приложението мап то гео"
+Level="Ниво"
+The next transit settlement %s through %s.= "Следващият транзитен град %s е след %s."
+Plugins selector="Селектор на добавки"
+>>>>>>> 1c381d28e8bbedca3810108c4ab1437b41d1d4f5
