@@ -1,4 +1,4 @@
-﻿module("VOICE")
+module("VOICE")
 
 ASSERT(type(voice_debug_log) == "function", "Missing voice_debug_log function.")
 ASSERT(type(voice_debug_log_table) == "function", "Missing voice_debug_log_table function.")
@@ -21,9 +21,9 @@ local announce_avg_traffic_speed = SysConfig:get("tts", "announce_avg_traffic_sp
 local announce_traffic_delay = SysConfig:get("tts", "announce_traffic_delay", 0)
 local announce_speed_unit = SysConfig:get("tts", "announce_speed_unit", 1)
 
-wtollgatesentencetable = {L"След tollgate_distance пункт за плащане на пътни такси", L"tollgate_distance до пункта за плащане на пътни такси", L"След пункта за плащане на пътни такси "}
-wtunnelsentencetable = {L"След tunnel_distance тунел", L"tunnel_distance до тунела", L"tunnel_distance до края на тунела", L"След влизане в тунела"}
-wmergesentencetable = {L"След merge_distance сливане на пътищата отдясно", L"merge_distance до сливането на пътищата отдясно", L"След merge_distance сливане на пътищата", L"merge_distance до сливането на пътищата", L"След merge_distance", L"merge_distance до сливането на пътищата", L"След сливането на пътищата"}
+wtollgatesentencetable = {L"След tollgate_distance предстои пункт за плащане на пътни такси", L"tollgate_distance остават до пункта за плащане на пътни такси", L"След пункта за плащане на пътни такси "}
+wtunnelsentencetable = {L"След tunnel_distance предстои тунел", L"tunnel_distance остават до тунела", L"tunnel_distance остават до края на тунела", L"След влизане в тунела"}
+wmergesentencetable = {L"След merge_distance се сливат пътищата отдясно", L"merge_distance остават до сливането на пътищата отдясно", L"След merge_distance оставт до сливането на пътищата", L"merge_distance остават до сливането на пътищата", L"След merge_distance", L"merge_distance остават до сливането на пътищата", L"След сливането на пътищата"}
 wtunnelmaneuver_enter = false
 wtunnelmaneuver_leave = false
 wtollgatemaneuver = false
@@ -32,6 +32,90 @@ wmergemaneuver_left = false
 wmergemaneuver_both = false
 wnew_manouver = false
 waypointname = L""
+
+local destname = {
+    EXITNAME    = L"изход към %s",
+    EXITNUMBER  = L"изход %s",
+    ROADNAME    = L"по %s",
+    DESTINATION = L"към %s",
+    SETTLEMENT  = L"в посока към %s",
+}
+
+local number_formatter_2 = {
+    -- 0x => o x
+    { L"0(%d)", L"o %1" },
+}
+
+local number_formatter_3 = {
+    -- 100-900 => x hundred
+    { L"([1-9])00", L"%1 сто и" },
+    -- 110,120...980,990
+    { L"([1-9])(%d)0", L"%1 %20" },
+    -- xyz => x y z
+    { L"(%d)(%d)(%d)", L"%1 %2 %3" },
+}
+
+local number_formatter_4 = {
+    -- 1-9000
+    { L"([1-9])000", L"%1 хиляди и" },
+    -- xx00
+    { L"([1-9][1-9])00", L"%1 сто и" },
+    -- xxx0
+    { L"([1-9])([1-9])(%d)0", L"%1 %2 %30"},
+    -- xyzw => x y z w
+    { L"(%d)(%d)(%d)(%d)", L"%1 %2 %3 %4"},
+}
+
+-- Attol fugg hany szamjegyu a szam
+local number_formatters = {
+    [2] = number_formatter_2,
+    [3] = number_formatter_3,
+    [4] = number_formatter_4,
+}
+
+-- '0' => 'oh'
+local oh_formatters = {
+    {L"^0$",L"o"},
+    {L"^0 ",L"o "},
+    {L" 0$",L" o"},
+    {L" 0 ",L" o "},
+}
+
+------------ new/old ---------
+
+local function format_number(str)
+    if type(str) ~= "wstring" then
+        ASSERT(FALSE, "The input of format_number must be wstring. Type: "..type(str))
+        return L""
+    end
+    local formatter = number_formatters[#str]
+    if formatter then
+        local rep
+        for _,v in ipairs(formatter) do
+            str, rep = wstring.gsub(str, v[1], v[2])
+            if rep > 0 then break end
+        end
+        for _,v in ipairs(oh_formatters) do
+	    rep = 1
+            while rep > 0 do
+                str, rep = wstring.gsub(str, v[1], v[2])
+            end
+        end
+    end
+    return str
+end
+
+-- 55, A55, ST45
+local roadnumber_typ_patterns = {
+    L"^%d+ ",
+    L"^%a%d+ ",
+    L"^%a%a%d+ ",
+}
+
+-- Ugy nez ki mint ha utszam lenne?
+local function is_road_number(str)
+    return transform_pattern_match(str, roadnumber_typ_patterns)
+end
 
 local function check_waypoint_maneuvers(mapinfo)
 	local t_used_manouvers = {L"^goal", L"^via"}
@@ -59,11 +143,11 @@ guidance = function(mapinfo, events)
 	return guidance_orig(mapinfo, events)
 end
 
-local preposition_tbl = {L"След",L"в Направление На"}
+local preposition_tbl = {L"След",L"в направение към, "}
 
 local preposition_insert_tbl = {
 	{L"в ",{L"Странична Улица ",L"Кръстовище ",L"Път без изход "}},
-	{L"на ",{L""}},
+	{L" към, ",{L""}},
 }
 
 local preposition_insert_tbl_direction = {
@@ -72,7 +156,7 @@ local preposition_insert_tbl_direction = {
 
 local main_streetnames = {L"Булевард",L"Улица",L"Базар",L"Странична Улица",L"Площад",L"Авеню"}
 
-local settlement_preposition = L"в направление на"
+local settlement_preposition = L"в Посока Към, "
 
 local exit_preposition = L"на изхода"
 
@@ -80,6 +164,25 @@ local replace_roadnumber = {
 	{L"^ +",L""},
 	{L"(.*)",L"%1/"},
 	{wstring.char(160),L""},
+	{L"/",L""},
+	--------- ако не е в списъка -------------------------------------
+	{L"^А *([1-9][0-9][0-9][^0-9])",L"Път А %1"},
+	{L"^М *([1-9][0-9]?[^0-9])",L"Трасе М %1"},
+	{L"^Р *([1-9][0-9]?[0-9]?[^0-9])",L"Път Р %1"},
+	--------- Европейски маршрути ----------------------------------
+	{L"^Е *([1-9][0-9]?[0-9]?[^0-9])",L"Трасе Е %1"},
+	--------- Азиатски маршрути --------------------------------------
+	{L"^АН *([1-9][0-9]?[^0-9])",L"Трасе А Н %1"},
+	--------- регионални пътища -------------------------------------
+	{L"^[0-9][0-9][А-Я]?%-.+",L"Път Без Име"},
+	{L"/",L""},
+}
+
+local replace_roadnumber_BUL = {
+	{L"^ +",L""},
+	{L"(.*)",L"%1/"},
+	{wstring.char(160),L""},
+	{L"^[еЕeE]%-? *38([^0-9])",L"Трасе Глухов Курск%1"},
 	{L"/",L""},
 	--------- ако не е в списъка -------------------------------------
 	{L"^А *([1-9][0-9][0-9][^0-9])",L"Път А %1"},
@@ -94,10 +197,11 @@ local replace_roadnumber = {
 	{L"/",L""},
 }
 
-local replace_roadname = replace_roadnumber
+--local replace_roadname = replace_roadnumber --used replace_roadnumber
 
 local replace_address = {
 	{L"([0-9])([А-Я])",L"%1 %2"},
+	{L" корп[^а-я]",L" корпус "},
 }
 
 local replace_mapinfo = {
@@ -119,7 +223,7 @@ local replace_mapinfo = {
 	{L"Микр%.",L"Микрорайон "},
 	{L"Наб%.",L"Кей "},
 	{L"Пл%.",L"Площад "},
-	{L"Пров%.",L"Странична Улица "},
+	{L"Стр%.",L"Странична Улица "},
 	{L"Авен%.",L"Авеню "},
 	{L"Филтриращи Полета",L"Филтриращи_ Полета"},
 	{L"Хх%-",L"20-"},
@@ -127,7 +231,6 @@ local replace_mapinfo = {
 	{L"Ave[%. ]",L"Авеню "},
 	{L"Blvd[%. ]",L"Булевард "},
 	{L"Boul[%. ]",L"Булевард "},
-	{L"Hotel Ibis Kiev Shevchenko Bd",L"Хотел Ибис"},
 	{L"Hotel Paradisson Sas",L"Хотел Radisson Sas"},
 	{L"Prov[%. ]",L"Странична Улица "},
 	{L"Railway Station",L"Железопътна гара"},
@@ -137,8 +240,8 @@ local replace_mapinfo = {
 	{L"Улц[%. ]",L"Улица "},
 	{L"Str[%. ]",L"Улица "},
 	{L"Vul[%. ]",L"Улица "},
+	{L"Ctr",L"Улица"},
 	{L"|",L""},
-
 }
 
 local mapinfo_numbers = {
@@ -199,21 +302,21 @@ local replace_sentence={
 
 local replace_cities_for_turns = {
 	{L"%.", L""},
-	{L"^(%S+)а$", L"%1у"},
-	{L"^(%S+)я$", L"%1ю"},
-	{L"^Біла Церква$", L"Білу Церкву"},
-	{L"^Гола Пристань$", L"Голу Пристань"},
+	{L"^(%S+)а$", L"%1аА"},  ------
+	{L"^(%S+)я$", L"%1яЯ"},  ------
+	{L"^Біла Церква$", L"Бяла Черква"},
+	{L"^Гола Пристань$", L"Голу Пристан"},
 	{L"^Мала Виска$", L"Малу Виску"},
-	{L"^Нова Каховка$", L"Нову Каховку"},
-	{L"^Нова Одеса$", L"Нову Одесу"},
-	{L"^Стара Вижівка$", L"Стару Вижівку"},
-	{L"^Судова Вишня$", L"Судову Вишню"},
-	{L"^Запоріжжю$", L"Запоріжжя"},
-	{L"^Зимогір'ю$", L"Зимогір'я"},
-	{L"^Білопіллю$", L"Білопілля"},
-	{L"^Добропіллю$", L"Добропілля"},
-	{L"^Привіллю$", L"Привілля"},
-	{L"^Щастю$", L"Щастя"},
+	{L"^Нова Каховка$", L"Нова Каховка"},
+	{L"^Нова Одеса$", L"Нова Одеса"},
+	{L"^Стара Вижівка$", L"Стара Виживка"},
+	{L"^Судова Вишня$", L"Съдебна Вишна"},
+	{L"^Запоріжжю$", L"Запорожие"},
+	{L"^Зимогір'ю$", L"Зимохиря"},
+	{L"^Білопіллю$", L"Билопиля"},
+	{L"^Добропіллю$", L"Добропила"},
+	{L"^Привіллю$", L"Привилегия"},
+	{L"^Щастю$", L"Щастие"},
 }
 
 local replace_for_turns_inner = {
@@ -427,7 +530,8 @@ end
 
 local function format_mapinfo(str)
 	str = smart_lower_case(str)
-	str = format_tbl(str, replace_roadname)
+	--str = format_tbl(str, replace_roadname)
+	str = format_tbl(str, (MODEL.navigation.car.current_country() == "_BUL" and replace_roadnumber_BUL or replace_roadnumber))
 	str = format_tbl(str, replace_mapinfo)
 	local replace_mapinfo_numbers_need = wstring.find(str,L"[0-9]")
 	if replace_mapinfo_numbers_need then
@@ -438,7 +542,7 @@ end
 
 local function format_roadnumber(number)
 	voice_debug_log(L"TTS: roadnumber in: '"..number..L"'", 3)
-	local str = format_tbl(number, replace_roadnumber)
+	local str = format_tbl(number, (MODEL.navigation.car.current_country() == "_BUL" and replace_roadnumber_BUL or replace_roadnumber)) --
 	voice_debug_log(L"TTS: roadnumber out: '"..str..L"'", 3)
 	return format_all_numbers2text(str)
 end
@@ -519,7 +623,6 @@ local function signpost_destination(data, idx)
 		str = format_cases(format_tbl(format_mapinfo(str), replace_cities_for_turns), "for_turns", true)
 		voice_debug_log(L"TTS: signpost_destination out: '"..str..L"'", 3)
 		if str ~= L"" then return str end
-
 	end
 end
 
@@ -605,7 +708,6 @@ local function format_replace_shield(str)
 	str = wstring.gsub(str, L"[%(](.+)[%)]",L"")
 	return wstring.gsub(str, L"[%/](.+)",L"")
 end
-
 local function format_replace_shield2(str)
 	for i=4190, 4200 do
 		str = wstring.gsub(str, wstring.char(i),L"")
@@ -656,50 +758,104 @@ function smart_lower_case(str)
 	return out .. L" "
 end
 
-function format_street_name(streetname)
-	voice_debug_log(L"TTS: streetname from skin in: '"..streetname..L"'", 3)
-	streetname = format_replace_shield(streetname)
-	if wstring.sub(streetname, 1, 9) == L"for_turns" then
-		local no_settlement = true
-		local sett_preposition = L""
-		streetname = wstring.sub(streetname, 10)
-		if wstring.find(streetname, wstring.char(187)) then
-			no_settlement = nil
-			sett_preposition = settlement_preposition .. L" "
-			streetname = wstring.gsub(streetname, wstring.char(187),L"")
-		end
-		streetname = wstring.gsub(streetname, L",", L"/")
-		local t = {}
-		if wstring.find(streetname, L"/") then
-			wstring.gsub(streetname, L"([^/]+)/?", function(s) if s ~= L"" then table.insert(t, s) end end)
-			if #t then streetname = t[1] end
-		end
-		streetname = format_mapinfo(streetname)
-		local matched = 0
-		for _,v in ipairs(main_streetnames) do
-			streetname = wstring.gsub(streetname, v, function()
-				matched = matched + 1
-				if matched > 1 then return L"/"..v
-				else return v end
-			end)
-		end
-		t = {}
-		if wstring.find(streetname, L"/") then
-			wstring.gsub(streetname, L"([^/]+)/?", function(s) if s ~= L"" then table.insert(t, s) end end)
-			if #t then streetname = t[1] end
-		end
-		streetname = sett_preposition .. format_cases(streetname, "for_turns", no_settlement)
-	else
-		streetname = format_cases(format_mapinfo(streetname), "for_summary")
-	end
-	voice_debug_log(L"TTS: streetname from skin out: '"..streetname..L"'", 3)
-	return streetname
+------ ново -------
+
+local function format_road_number(roadnum)
+    local res
+    if is_road_number(roadnum) then
+        roads = transform_roadnumber_explode_eu(roadnum)
+        for k, str in ipairs(roads) do
+            -- Главна буква
+            str = wstring.upper(str)
+            -- Пространство Котоджелбол
+            str = wstring.gsub(str, L"(%a)-(%a)", L"%1 %2")
+            _,_,head,num,tail = wstring.find(str, L"^(.-)(%d+)(.-)$")
+            --
+            if head == L"A" then head = L"α" end
+            -- Szam formazas
+            num = format_number(num)
+            -- Tail formazas
+            tail = transform.direction_abbrev:transform(tail)
+            -- Osszerakjuk
+            str = table_concat({head,num,tail}, L" ")
+            -- Dupla space ki
+            str = wstring.gsub(str, L"%s%s+", L" ")
+            -- Eltesszuk
+            roads[k] = str
+        end
+        res = table_concat(roads, L"; ")
+    else
+        res = transform.roadname_abbrev_table:transform(roadnum)
+    end
+    return res
 end
+
+local function format_road_name(str)
+    if is_road_number(str) then
+    -- Ако изглежда грозно, тогава го оформяме
+        str = format_road_number(str)
+    else
+    -- В Кулон го наричат ​​гладко
+        str = transform.roadname_abbrev_table:transform(str)
+    end
+    return str
+end
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------|  РЪКОВОДСТВО  |---------------------------------------
+----------------------------------------------------------------------------------------------------
+
+local function format_signpost_exitnumber(str)
+	local _, _, prefix, num, postfix = wstring.find(str, L"^(.-)(%d+)(.-)$")
+	ASSERT(num, L"No number in format_signpost_exitnumber: "..str)
+	if num then num = format_number(num) end
+	-- Prefixbol kivesszuk az EXIT-et
+	if prefix then prefix = wstring.gsub(wstring.upper(prefix), L"EXIT%s*", L"") end
+	-- Ha van postfix (pl "140A-B" esetben)
+	if postfix then postfix = wstring.gsub(postfix, L"[/-]+", L", ") end
+        -- Osszefuzzuk es kesz
+	return table_concat({prefix, num, postfix}, L" ")
+end
+
+local function signpost_exitnumber(data, idx)
+    return transform_and_format(data[idx].signpost.exitnumber, format_signpost_exitnumber, destname.EXITNUMBER)
+end
+
+local function signpost_exitname(data, idx)
+    return transform_and_format(data[idx].signpost.exitname, nil, destname.EXITNAME)
+end
+
+-- local function signpost_destination(data, idx)
+    -- return transform_and_format(data[idx].signpost.destination, transform.roadname_abbrev_table,destname.DESTINATION)
+-- end
+
+-- local function signpost_settlement(data, idx)
+        -- return transform_and_format(data[idx].signpost.settlement, transform.direction_abbrev, destname.SETTLEMENT)
+-- end
+
+-- local function signpost_roadnumber(data, idx)
+    -- local format
+    -- if data[idx].signpost.sign_road_branch then format = destname.ROADNAME
+    -- else format = destname.SETTLEMENT end
+
+    -- return transform_and_format(data[idx].signpost.roadnumber, format_road_number, format)
+-- end
+
+local function road_name(data, idx)
+    return transform_and_format(data[idx].road.name, format_road_name)
+end
+
+local function road_number(data, idx)
+    return transform_and_format(data[idx].road.number, format_road_number)
+end
+
+------------------------------------------|  И З Х О Д  |-----------------------------------------
 
 function format_destname(data, idx)
 	local destname_str = L""
 	if data[idx].signpost then
 		local signpost_exit_str = signpost_exit(data, idx)
+		local signpost_exitnumber_str = signpost_exitnumber(data, idx)
 		local roadnumber_str = signpost_roadnumber(data, idx)
 		local destination_str = signpost_destination(data, idx)
 		local settlement_str = signpost_settlement(data, idx)
@@ -719,11 +875,36 @@ function format_destname(data, idx)
 	return destname_str
 end
 
+-- function format_destname(data, idx)
+    -- local t = {}
+    -- local out = L""
+    -- if data[idx].signpost then
+        -- t = transform_chain({}, signpost_exitname, 	data, idx)
+	-- t = transform_chain(t,  signpost_exitnumber, 	data, idx)
+	-- t = transform_chain(t,  signpost_roadnumber, 	data, idx)
+	-- t = transform_chain(t,  signpost_destination,	data, idx)
+	-- t = transform_chain(t,  signpost_settlement, 	data, idx)
+        -- out = table_concat(t, L", ")
+    -- elseif data[idx].road then
+	-- t = transform_chain({}, road_number, data, idx)
+	-- t = transform_chain(t,  road_name,   data, idx)
+        -- out = wstring.format(destname.ROADNAME, table_concat(t, L", "))
+    -- end
+    -- return out
+-- end
+
 function format_streetname(data, idx)
 	local streetname_str = L""
 	if data[idx].road then streetname_str = road_number_name(data, idx) end
 	return streetname_str
 end
+
+-- function format_streetname(data, idx)
+    -- local t = {}
+    -- t = transform_chain({}, road_number, 	data, idx)
+    -- t = transform_chain(t,  road_name, 	data, idx)
+    -- return table_concat(t, L", ")
+-- end
 
 function format_sentence(str)
 	voice_debug_log(L"TTS: format_sentence in: '"..str..L"'", 3)
@@ -738,7 +919,7 @@ function format_sentence(str)
 end
 
 ----------------------------------------------------------------------------------------------------
------------------------------------|  R O U T E   S U M M A R Y  |----------------------------------
+-----------------------------------|  РЕЗЮМЕ НА МАРШРУТА  |----------------------------------
 ----------------------------------------------------------------------------------------------------
 
 function route_summary_format_road_name(data)
@@ -775,12 +956,16 @@ end
 
 function format_address(str,postcode)
 	str = wstring.gsub(str, L"\n", L", ")
-	str = wstring.gsub(str, L"/", L", Фракция ")
+	str = wstring.gsub(str, L"/", L", Дроби ")
 	if postcode then str = wstring.gsub(str, L"([0-9][0-9][0-9])([0-9][0-9][0-9])", L"%1%-%2")
 	else str = wstring.gsub(str, L"[0-9][0-9][0-9][0-9][0-9][0-9]", L"") end
 	str = format_tbl(str, replace_address)
 	return str
 end
+
+----------------------------------------------------------------------------------------------------
+-----------------------------------------|  ТРАФИК  |----------------------------------------
+----------------------------------------------------------------------------------------------------
 
 local function traffic_fromto_format_func(str)
 	return wstring.gsub(str,L"^ ?(%S) ?[0-9]+$",
@@ -896,7 +1081,7 @@ function traffic_event(DescKey, data)
 				if data.distance and data.distance > 200 then traffic_distance = L"След " .. getDistanceFromVoice(data.distance,1) .. L" "
 				elseif current.description() ~= L"" then traffic_description = L"Предстои " .. traffic_description end
 				local event_delay = current.delay()
-				if event_delay and announce_traffic_delay then traffic_delay = L", Забавяне " .. format_timeto(event_delay) end
+				if event_delay and announce_traffic_delay then traffic_delay = L", Закъснение " .. format_timeto(event_delay) end
 				break
 			end
 			if i>30 then break end
@@ -904,6 +1089,60 @@ function traffic_event(DescKey, data)
 	end
 	return format_tbl(traffic_distance .. traffic_description .. traffic_on .. traffic_from .. traffic_to .. traffic_delay, replace_for_traffic_end)
 end
+
+----------------------------------------------------------------------------------------------------
+------------------------------------------|  D E T O U R  |-----------------------------------------
+----------------------------------------------------------------------------------------------------
+
+function format_street_name(streetname)
+	voice_debug_log(L"TTS: streetname from skin in: '"..streetname..L"'", 3)
+	streetname = format_replace_shield(streetname)
+	if wstring.sub(streetname, 1, 9) == L"for_turns" then
+		local no_settlement = true
+		local sett_preposition = L""
+		streetname = wstring.sub(streetname, 10)
+		if wstring.find(streetname, wstring.char(187)) then
+			no_settlement = nil
+			sett_preposition = settlement_preposition .. L" "
+			streetname = wstring.gsub(streetname, wstring.char(187),L"")
+		end
+		streetname = wstring.gsub(streetname, L",", L"/")
+		local t = {}
+		if wstring.find(streetname, L"/") then
+			wstring.gsub(streetname, L"([^/]+)/?", function(s) if s ~= L"" then table.insert(t, s) end end)
+			if #t then streetname = t[1] end
+		end
+		streetname = format_mapinfo(streetname)
+		local matched = 0
+		for _,v in ipairs(main_streetnames) do
+			streetname = wstring.gsub(streetname, v, function()
+				matched = matched + 1
+				if matched > 1 then return L"/"..v
+				else return v end
+			end)
+		end
+		t = {}
+		if wstring.find(streetname, L"/") then
+			wstring.gsub(streetname, L"([^/]+)/?", function(s) if s ~= L"" then table.insert(t, s) end end)
+			if #t then streetname = t[1] end
+		end
+		streetname = sett_preposition .. format_cases(streetname, "for_turns", no_settlement)
+	else
+		streetname = format_cases(format_mapinfo(streetname), "for_summary")
+	end
+	voice_debug_log(L"TTS: streetname from skin out: '"..streetname..L"'", 3)
+	return streetname
+end
+
+-- function format_street_name (streetname)
+    -- if wstring.sub (streetname, 1, 9) == L "for_turns" then
+        -- return transform_and_format (wstring.sub (streetname, 10), transform.roadname_abbrev_table, destname.ROADNAME)
+    -- else
+        -- return transform_and_format (streetname, transform.roadname_abbrev_table)
+    -- end
+-- end
+
+--------------------------
 
 local all_numbers_patternts = {
 	{L"сто",L"двеста",L"триста",L"четиристотин",L"петстотин",L"шестстотин",L"седемстотин",L"осемстотин",L"деветстотин"},
