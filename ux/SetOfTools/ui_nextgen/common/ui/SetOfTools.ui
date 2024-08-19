@@ -1,4 +1,4 @@
-<define_element INFORMATION_PLATE onrelease='' onlongclick='' onclick='' text='' bg_index=0 fontsize=( %lua.IsShortLayout ? 19 : 31 )>
+<define_element INFORMATION_PLATE onrelease='' onlongclick='' onclick='' text='' wordwrap=3 bg_index=0 fontsize=( %lua.IsShortLayout ? 19 : 31 ) >
 	<implementation>
 		;							blue, 		green, 		red, 	orange, 	gold, 		
 		<property bg_colors value=#ff1762AD, #ff008000, #ffff0000, #ffffa500, #ffffd700, #ff008B8B />
@@ -18,7 +18,7 @@
 			font="defaultbd" 
 			fontsize=( OWNER.FONTSIZE )
 			color=#ffffff color2=#000000 ;glowsize=2 
-			align="center" valign="center" wordwrap=3 
+			align="center" valign="center" wordwrap=( OWNER.WORDWRAP )
 			line_break_method="AUTO" ;"full" "hard"
 			;leading=0.85 
 			;leading=100%
@@ -71,21 +71,21 @@
 
 </define_element>
 
-<define_element GRAPH img="graph.svg" full current invert=0 invert_r=1 orientation="vertical">
+<define_element GRAPH img="graph.svg" full current rotate=0.0 invert=0 invert_r=1 orientation="vertical">
 	<implementation>
 		<property delta value=( OWNER.FULL / 10 ) />
 	</implementation>
 	<BOX orientation=(OWNER.ORIENTATION)> 
-		<SPRITE class="graph" img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 9 : 0) < OWNER.CURRENT ? (OWNER.INVERT ? 9 : 0) : 10) />
-		<SPRITE class="graph" img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 8 : 1) < OWNER.CURRENT ? (OWNER.INVERT ? 8 : 1) : 10) />
-		<SPRITE class="graph" img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 7 : 2) < OWNER.CURRENT ? (OWNER.INVERT ? 7 : 2) : 10) />
-		<SPRITE class="graph" img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 6 : 3) < OWNER.CURRENT ? (OWNER.INVERT ? 6 : 3) : 10) />
-		<SPRITE class="graph" img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 5 : 4) < OWNER.CURRENT ? (OWNER.INVERT ? 5 : 4) : 10) />
-		<SPRITE class="graph" img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 4 : 5) < OWNER.CURRENT ? (OWNER.INVERT ? 4 : 5) : 10) />
-		<SPRITE class="graph" img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 3 : 6) < OWNER.CURRENT ? (OWNER.INVERT ? 3 : 6) : 10) />
-		<SPRITE class="graph" img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 2 : 7) < OWNER.CURRENT ? (OWNER.INVERT ? 2 : 7) : 10) />
-		<SPRITE class="graph" img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 1 : 8) < OWNER.CURRENT ? (OWNER.INVERT ? 1 : 8) : 10) />
-		<SPRITE class="graph" img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 0 : 9) < OWNER.CURRENT ? (OWNER.INVERT ? 0 : 9) : 10) />
+		<SPRITE class="graph" rotate=(OWNER.ROTATE) img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 9 : 0) < OWNER.CURRENT ? (OWNER.INVERT ? 9 : 0) : 10) />
+		<SPRITE class="graph" rotate=(OWNER.ROTATE) img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 8 : 1) < OWNER.CURRENT ? (OWNER.INVERT ? 8 : 1) : 10) />
+		<SPRITE class="graph" rotate=(OWNER.ROTATE) img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 7 : 2) < OWNER.CURRENT ? (OWNER.INVERT ? 7 : 2) : 10) />
+		<SPRITE class="graph" rotate=(OWNER.ROTATE) img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 6 : 3) < OWNER.CURRENT ? (OWNER.INVERT ? 6 : 3) : 10) />
+		<SPRITE class="graph" rotate=(OWNER.ROTATE) img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 5 : 4) < OWNER.CURRENT ? (OWNER.INVERT ? 5 : 4) : 10) />
+		<SPRITE class="graph" rotate=(OWNER.ROTATE) img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 4 : 5) < OWNER.CURRENT ? (OWNER.INVERT ? 4 : 5) : 10) />
+		<SPRITE class="graph" rotate=(OWNER.ROTATE) img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 3 : 6) < OWNER.CURRENT ? (OWNER.INVERT ? 3 : 6) : 10) />
+		<SPRITE class="graph" rotate=(OWNER.ROTATE) img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 2 : 7) < OWNER.CURRENT ? (OWNER.INVERT ? 2 : 7) : 10) />
+		<SPRITE class="graph" rotate=(OWNER.ROTATE) img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 1 : 8) < OWNER.CURRENT ? (OWNER.INVERT ? 1 : 8) : 10) />
+		<SPRITE class="graph" rotate=(OWNER.ROTATE) img=(OWNER.IMG) phase=(delta*(OWNER.INVERT_R ? 0 : 9) < OWNER.CURRENT ? (OWNER.INVERT ? 0 : 9) : 10) />
 	</BOX>
 </define_element>
 

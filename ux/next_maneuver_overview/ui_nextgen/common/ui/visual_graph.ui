@@ -26,4 +26,16 @@
 	<insert into="DIV.cockpit>DIV.fill>DIV.fill>DIV.diricon_hwy">
 		<GRAPH Z=100 FULL=(%ui.Graph_dist_limit_temp) LEFT=0 RIGHT=0 TOP=0 BOTTOM=5% CURRENT=(%navigation.distance_to_maneuver) VISIBLE=(GraphEnable && %navigation.distance_to_maneuver.valid && %navigation.distance_to_maneuver <= Graph_dist_limit_temp) />
 	</insert>
+
+	<insert into="#div_cockpit_top">
+		<DIV CLASS="notification_area_cockpit" Z=100 
+			VISIBLE=(GraphEnable && %navigation.direction_icon.valid && %route.list.navigated.has_navigable_path && %navigation.distance_to_maneuver.valid && %navigation.distance_to_maneuver <= Graph_dist_limit_temp && (VW_Direction(%navigation.direction_icon) || %navigation.exit_icon.valid)) >
+			<GRAPH CLASS="graph_btn" LEFT=0 RIGHT=0 TOP=0 BOTTOM=0 IMG="graph_t.svg" 
+				ROTATE=(%navigation.exit_icon.valid ? -90.0 : (VW_Direction(%navigation.direction_icon) == 1 ? -90.0 : 90.0))
+				FULL=(100) CURRENT=(Gif_Direction.Delta) INVERT=1 ORIENTATION="horizontal" 
+				INVERT_R=(%navigation.exit_icon.valid ? 0 : (VW_Direction(%navigation.direction_icon) == 1 ? 0 : 1)) >
+				<LAYER ONSHOW='gGRAPH_Pos = 0' />
+			</GRAPH>
+		</DIV>
+	</insert>
 </modify>

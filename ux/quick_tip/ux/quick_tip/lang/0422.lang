@@ -5,6 +5,7 @@ Next street crossing="Перетин наступної вулиці"
 Quick Tip Button="Кнопка Quick Tip"
 QuickTip Settings="QuickTip налаштування"
 "Click to On or Off. Longclick - to default"="Все включити чи виключити. Довгий клік - дефолт"
+Primary Default="Первинний дефолт"
 
 addStopover="Додати проміжний пункт"
 detour="Об'їзд"

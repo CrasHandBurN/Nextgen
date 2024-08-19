@@ -64,7 +64,8 @@
 <modify ui_Cockpit>   
 	<insert first_child after="BUTTON" into="#CockpitBTNTable">
 		<BUTTON_ICON ShowDestinationBtn ONRELEASE='
-			gDestination_City = VW_AddressByGCOOR(MODEL.route.list.navigated.waypoints.list[MODEL.route.list.navigated.waypoints.list.lastindex()].strapped_position(), "city")
+			local a, b = VW_AddressByGCOOR(MODEL.route.list.navigated.waypoints.list[MODEL.route.list.navigated.waypoints.list.lastindex()].strapped_position(), "city"), MODEL.navigation.destination_name_short()
+			gDestination_City = #a > # b and b or a
 			sc_DiscoverySidePanelChange(
 				{
 					MODEL.sound.voice.format_street_name(MODEL.route.list.navigated.waypoints.list[MODEL.route.list.navigated.waypoints.list.lastindex()].longname()),
@@ -207,7 +208,7 @@
 					<SPRITE class="button map fill" />
 				</DIALOGBUTTON>
 				<DIALOGBUTTON class="dialog 2_2_1 mapmsgbox" text="Google Map" 
-					onrelease='VW_GoogleMaps("https://www.google.com/maps/search/?api=1&map_action=map&query=" .. string.gsub(tostring(MODEL.route.list.navigated.waypoints.list[MODEL.route.list.navigated.waypoints.list.lastindex()].strapped_position()), "longitude = (-?%d+.%d+), latitude = (-?%d+.%d+)", "%2,%1"))' >
+					onrelease='VW_ShowGoogleMapsObject("Destination point", "streetview", "roadmap")' >
 					<SPRITE class="button map fill" />
 				</DIALOGBUTTON>
 				<DIALOGBUTTON class="dialog 2_2_2 mapmsgbox" text=(lua.gDestination_City) 

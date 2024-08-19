@@ -42,7 +42,7 @@
 				</DIV>
 
 				<SPRITE	CLASS="btn_map icon svg" ZOOM=40% IMAGE_H=(PARENT.H) IMAGE_W=(PARENT.W)
-					IMG=(ui_Cockpit.height_direction == "ico_arrow_up.svg" ? "ico_car_up.svg" : ui_Cockpit.height_direction == "ico_arrow_down.svg" ? "ico_car_down.svg" : "") 
+					IMG=(ui_Cockpit.height_direction == "ico_arrow_up.svg" ? "ico_car_up.svg" : "ico_car_down.svg") 
 					VISIBLE=( ui_Cockpit.height_direction != "" ) />
 			</DIV>				
 				

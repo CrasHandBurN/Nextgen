@@ -88,7 +88,7 @@
 	<insert after="SPACER">
 		<BUTTON CLASS="btn_map travel_planner" ONRELEASE='sc_back_to_cockpit(); sc_SetPopoverListAndOpen("ui.lm_MakeRouten_Popover")'
 			VISIBLE=(%lua.screen4x3 || %lua.IsPortrait)
-			ONLONGCLICK='VW_DefaultWebBrowser(L"http://4pna.com/showpost.php?p=533877&postcount=886")' >
+			ONLONGCLICK='VW_GoogleMaps(L"http://4pna.com/showpost.php?p=533877&postcount=886")' >
 	 		<SPRITE CLASS="button map fill" />
 			<SPRITE CLASS="btn_map icon svg" IMG="ico_route_from_list.svg" />
 		</BUTTON>

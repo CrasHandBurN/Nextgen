@@ -450,7 +450,7 @@
 			<DIV class="notify_list">
 				<TABLE visible=(%lua.arQuickMenu && !%lua.DragMode && !ui_PropLayer.SignpostVisible && !%lua.MenuIsOpened)>
 					<BUTTON class="btn_map" 
-						onrelease='VW_DefaultWebBrowser(L"https://4pna.com/showthread.php?p=517224#post517224")' >
+						onrelease='VW_GoogleMaps(L"https://4pna.com/showthread.php?p=517224#post517224")' >
 						<SPRITE class="button map fill" />
 						<SPRITE class="btn_map icon svg" img="owl.svg" zoom=80% /> 
 						<TEXT class="BTN_top_text" text=(VW_Return_button_text(translate("Help"), L"%s", 1)) />
