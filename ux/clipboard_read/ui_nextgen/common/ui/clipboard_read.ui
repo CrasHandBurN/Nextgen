@@ -1,7 +1,7 @@
 <modify ui_Cockpit>           
 	<insert first_child after="BUTTON" into="#CockpitBTNTable">
 		<BUTTON_ICON ClipboardRead ONRELEASE=W_ReadClipboard
-			ONLONGCLICK='VW_DefaultWebBrowser(L"http://4pna.com/showpost.php?p=535663&postcount=1036")'
+			ONLONGCLICK='VW_GoogleMaps(L"http://4pna.com/showpost.php?p=535663&postcount=1036")'
 			VISIBLE=(LuaJava.LuaJavaActive && %lua.ClipboardReadCockpit)
 			ICON="ico_voiceout.svg" 
 			ZOOM=80%

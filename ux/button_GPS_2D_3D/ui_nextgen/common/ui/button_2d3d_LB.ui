@@ -32,9 +32,8 @@
 						</DIV>
 
 						<SPRITE	CLASS="btn_map icon svg" ZOOM=40% IMAGE_H=(PARENT.H) IMAGE_W=(PARENT.W)
-							IMG=(ui_Cockpit.height_direction == "ico_arrow_up.svg" ? "ico_car_up.svg" : ui_Cockpit.height_direction == "ico_arrow_down.svg" ? "ico_car_down.svg" : "") 
+							IMG=(ui_Cockpit.height_direction == "ico_arrow_up.svg" ? "ico_car_up.svg" : "ico_car_down.svg") 
 							VISIBLE=(ui_Cockpit.height_direction != "") />
-						;<SPRITE	CLASS="gps_2d3d_height_ico svg" TOP=0 BOTTOM=0 LEFT=4 RIGHT=undef IMAGE_W=100 IMAGE_H=(PARENT.H) IMG=(ui_Cockpit.height_direction) />
 						
 						<SPRITE	CLASS="gps_2d3d_status_ico svg" LEFT=10 VISIBLE=( !%lua.Button2d3dInCockpit ) /> 
 						<TEXT	CLASS="gps_2d3d_status" VISIBLE=( !%lua.Button2d3dInCockpit ) FONTSIZE=30 />
