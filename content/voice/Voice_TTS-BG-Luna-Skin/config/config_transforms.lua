@@ -1278,29 +1278,29 @@ function format_lane_info(DescKey)
 	local lane_info_str = L""
 	if DescKey ~= L"" then
 		if wstring.find(DescKey,L"far_left") then
-			lane_info_str = L"Придържайте се в крайната лява лента."
-		elseif wstring.find(DescKey,L"far_right") then
-			lane_info_str = L"Придържайте се в крайната дясна лента."
+			lane_info_str = L"Дръжте крайната лява лента."
+		elseif wstring.find(DescKey,L"far_right") then 
+			lane_info_str = L"Дръжте крайната дясна лента."
 		elseif wstring.find(DescKey,L"centre") then
-			lane_info_str = L"Придържайте се в централната лента."
+			lane_info_str = L"Дръжте средната лента."
 		elseif wstring.find(DescKey,L"any") then
 			lane_info_str = L"Карайте във всяка лента."
 		else
 			local numb = tonumber(wstring.sub(DescKey, 1, 1))
-			local t = {{L"", L"двете", L"трите", L"четирите", L"петте", L"шестте", L"седемте", L"осемте", L"деветте"}, {L"", L"втори", L"трети", L"четвърти", L"пети", L"шети", L"седми", L"осми", L"девети"}}
+			local t = {{L"", L"двете", L"трите", L"четирите", L"петте", L"шестте", L"седемте", L"осемте", L"деветте"}, {L"", L"втората", L"третата", L"четвъртата", L"петата", L"шестата", L"седмата", L"осмата", L"деветата"}}
 			if wstring.find(DescKey,L"side_c") then
-				lane_info_str = L"Дръжте се " .. t[1][numb] .. L" лентата в средата на пътя."
+				lane_info_str = L"Дръжте " .. t[1][numb] .. L" ленти по средата."
 			elseif wstring.find(DescKey,L"side_r") or wstring.find(DescKey,L"side_l") then
-				lane_info_str = wstring.find(DescKey,L"side_r") and L"Придържайте се вдясно, без да заемате " or L"Придържайте се вляво, без да вземате "
+				lane_info_str = wstring.find(DescKey,L"side_r") and L"Дръжте вдясно, без да заемате " or L"Дръжте вляво, без да заемате "
 				lane_info_str = numb == 1 and (lane_info_str .. L"крайната лента.") or (lane_info_str .. t[1][numb] .. L" крайните ленти.")
 			elseif wstring.find(DescKey,L"left") then
 				lane_info_str = L"Дръжте " .. t[1][numb] .. L" леви ленти."
 			elseif wstring.find(DescKey,L"right") then
 				lane_info_str = L"Дръжте " .. t[1][numb] .. L" десни ленти."
 			elseif wstring.find(DescKey,L"middle_l") then
-				lane_info_str = L"Дръжте " .. t[2][numb] .. L" ленти отляво."
+				lane_info_str = L"Дръжте " .. t[2][numb] .. L" лявата лента."
 			elseif wstring.find(DescKey,L"middle_r") then
-				lane_info_str = L"Дръжте " .. t[2][numb] .. L" ленти отдясно."
+				lane_info_str = L"Дръжте " .. t[2][numb] .. L" дясната лента."
 			end
 		end
 	end
