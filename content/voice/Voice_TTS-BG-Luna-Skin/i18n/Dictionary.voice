@@ -2154,10 +2154,12 @@ Information Board.="Информационно табло."
 Zone Overtaking ahead.="Предстои зона за изпреварване."
 Zone Overtaking.="Зона за изпреварване."
 Dangerous Road ahead.="Предстои опасен пътен участък."
+
 // за редактиране
 Congestion charge zone.=""
 Children ahead.=""
 Dangerous Road.=""
+
 // за превод
 Radar Lourd.=""
 Athen's Ring ahead.=""
