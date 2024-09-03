@@ -3,7 +3,7 @@ brand="iGO_NextGen"
 timestamp="1723210235"
 //Сглобено от CrasHandBurN за поддържане на скиновете на iGO Primo NextGen
 //Поправено и допълнено от .....
-//Скин от автора WANDEL™ - 03.07.2024
+//Скин от автора WANDEL™ - 01.09.2024
 //Скин от автора pongo® - 21-10-2023
 
 [words]
@@ -5348,7 +5348,7 @@ Left %s="Пред вас отляво %s"
 Left back %s="Зад вас отляво %s"
 Left back="Зад вас отляво след"
 Left bend="Опасен ляв завой."
-Left DA Button="Отляво до бутона за пътните знаци"
+Left DA Button="Отляво на мястото на пътните знаци"
 Left Side Buttons="Бутони отляво"
 left="ляво"
 Left="Отляво"
@@ -8354,7 +8354,7 @@ Right %s="Пред вас отдясно %s"
 Right back %s="Зад вас отдясно %s"
 Right back="Зад вас отдясно след"
 Right bend="Опасен десен завой"
-Right Info Button="Отдясно на дългия бутон"
+Right Info Button="Отдясно до прогнозата за времето"
 right="дясно"
 Right="Отдясно"
 RIGHT~R="Д"
