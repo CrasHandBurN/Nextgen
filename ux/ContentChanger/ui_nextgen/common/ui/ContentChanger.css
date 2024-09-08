@@ -1,0 +1,6 @@
+/* overwrite of current_content_provider */
+SPRITE.map_provider{
+	left:0;right:0;top:0;bottom:0;align:"CENTER";valign:"CENTER";z:65;
+	iconid:(%lua.SelectedMapContent_img == "" ? %other.contents.list[current].prov_icon_id : undef);
+	img:(%lua.SelectedMapContent_img);
+}

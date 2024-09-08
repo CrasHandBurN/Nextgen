@@ -1,2 +1,3 @@
 import "~/common/ui/ContentChanger.ui"
 import "~/common/ui/ContentChanger.lua"
+import "~/common/ui/ContentChanger.css"

@@ -3,6 +3,7 @@
 	<insert first_child after="BUTTON" into="DIV.notify_list_ext TABLE.ari_ext">
 		<INFORMATION_PLATE CityName_Plate LEFT=0 RIGHT=0 TOP=0 BOTTOM=0 TEXT=(%lua.IN_City) 
 			FONTSIZE=(VW_Return_button_text(%lua.IN_City, L"%s", 99) == L"" ? 31 : 20)
+			WORDWRAP=2
 			ONRELEASE='java:call("android.open_webpage", L"https://" .. towstring(string.sub(MODEL.navigation.car.current_country(), 2, 3)) .. L".wikipedia.org/wiki/Special:Search?search=" .. MODEL.lua.IN_City())'
 			ONLONGCLICK='sc_NextStateAnim(st_ShowInCitySettings, "fade", 1, "" )' 
 			VISIBLE=( %navigation.car.is_incity && %lua.CarInCity && (%lua.CarInCity_inCockpit == 2 || %lua.CarInCity_inCockpit == 3) && %lua.IN_City != L"" ) />

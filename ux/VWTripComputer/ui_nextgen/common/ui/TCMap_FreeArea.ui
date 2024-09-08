@@ -31,7 +31,9 @@
 				icon=(TCMap_heading.heading_img[%lua.Show_NorthUp_HeadUp]) zoom=70% />
 				
 			<BUTTON_ICON right=undef w=50 left=2% top=undef h=50 bottom=1%
-				onrelease='VW_show_pois("tcmap")' icon="ico_POIonMAP.svg" zoom=70% visible=(%lua.wSplitScreenPOIReady) />
+				icon=(%poi[%lua.PoiSearchList].ready ? (poi_around_ready.icon) : "ico_POIonMAP.svg")
+				onrelease=(%poi[%lua.PoiSearchList].ready ? 'VW_show_pois("tcmap")' : 'VW_SmartPOISearch() doDelayed(100, [[VW_show_pois("tcmap", 1)]])')
+				onlongclick='MODEL.poi[MODEL.lua.PoiSearchList()].ready = 0 ui.ShowSmartPOIBtn.ONLONGCLICK()()' />
 				
 			<DIV left=undef w=60 right=0 top=0 h=60 bottom=undef > 
 				<DIV TOP=0 BOTTOM=0 LEFT=0 RIGHT=0 VISIBLE=(ui_Cockpit.height_direction == "") >
