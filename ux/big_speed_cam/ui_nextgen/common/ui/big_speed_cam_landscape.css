@@ -1,0 +1,6 @@
+SPRITE.big_speed {
+	left: %lua.BigSpeed_HorizontalLand ;
+	top: %lua.BigSpeed_VerticalLand ;
+}
+
+

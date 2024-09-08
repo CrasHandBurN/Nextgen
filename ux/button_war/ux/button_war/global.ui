@@ -1,0 +1,2 @@
+import "~/common/ui/button_war.ui"
+import "~/common/ui/button_war.lua"

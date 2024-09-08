@@ -1,0 +1,82 @@
+TEXT.big_speed {
+	left: 10; right: 10; z: 20; 
+	top: ( %lua.BigSpeed_Button == 0 ? 20 : 0 ); 
+	bottom: ( %lua.BigSpeed_Button == 0 ? 35 : 0 ); 
+	align: "CENTER"; 
+	fontsize: (%lua.BigSpeed_Button == 1 ? bigspeed_fontsize + (%lua.BigSpeed_Zoom < 20 ? 40 : 20) : ( bigspeed_fontsize + (%lua.BigSpeed_Zoom < 20 ? 40 : %lua.BigSpeed_Zoom > 20 && %lua.BigSpeed_Zoom < 50 && (%navigation.car.current_speed // 1) < 100 ? 30 : %lua.BigSpeed_Zoom > 20 && %lua.BigSpeed_Zoom < 50 && %navigation.car.current_speed >= 100 ? 20 : %lua.BigSpeed_Zoom > 85 && (%navigation.car.current_speed // 1) >= 100 ? (-30) : (-5)  ) ) ) ; 
+	font: (ui_SetBigSpeed.font_name[%lua.ShowBigSpeed]);
+	color: ( big_speed_overspeed ? #f71109 : ui_SetBigSpeed.font_color[%lua.BigSpeed_ButtColor] );
+}
+
+TEXT.big_speedcam, SPEEDTEXT.big_speedcam, DISTTEXT.big_speedcam{
+	left: 10; right: 10; z: 20; 
+	top: 80%; 
+	bottom: 5%; 
+	w: undef;
+	h: undef;
+	align: "CENTER"; 
+	valign: "CENTER";
+	fontsize:(20 + bigspeed_fontsize/4);
+	font: (ui_SetBigSpeed.font_name[%lua.ShowBigSpeed]);
+	color: (big_speed_overspeed ? (%lua.aCockpitTransparency > 8 ? (ui_Cockpit.AdvancedSpeedLimitPhase == 2 ? color_overspeed : (ui_Cockpit.AdvancedSpeedLimitPhase == 1 ? color_overspeedtol : speed_color)) : (ui_Cockpit.AdvancedSpeedLimitPhase == 2 ? overspeed_color : (ui_Cockpit.AdvancedSpeedLimitPhase == 1 ? overspeedtol_color : speed_color))) : ui_SetBigSpeed.font_color[%lua.BigSpeed_ButtColor]);
+	glowtype: 1;
+	glowsize: (%lua.aCockpitTransparency > 8 ? 0 : 3);
+}
+
+SPRITE.big_speed {
+	w: ( bigspeed_image_w + %lua.BigSpeed_Zoom ); 
+	h:  (%lua.BigSpeed_Button == 1 ? ( bigspeed_image_h + %lua.BigSpeed_Zoom ) : ( bigspeed_image_speed_h + %lua.BigSpeed_Zoom ) ); 
+	img: (ui_SetBigSpeed.BigSpeed_Img[%lua.BigSpeed_Button]);
+	zoom: (ui_SetBigSpeed.BigSpeed_Img[%lua.BigSpeed_Button] == "ico_speedcams.svg" ? %lua.BigSpeed_Img_Zoom : 1000); 
+	z:19; resize_bmp: 1; alpha: %lua.BigSpeed_Transp; box_align:"stretch";
+	onrelease: 'MODEL.lua.BigSpeed_Button = (MODEL.lua.BigSpeed_Button() + 1) % 5';
+	onlongclick: sc_BigSpeedSettings;  
+	align: "CENTER"; valign:"CENTER";
+}
+
+HSMARTSCROLL.scroll.big_speedH { 
+	max: ( screen_w - (bigspeed_image_w + %lua.BigSpeed_Zoom) ) ;
+}
+
+VSMARTSCROLL.scroll.big_speedV { 
+	r2l_invert:1; img:"scrollprogress_bg_spr.bmp"; sprind:"hscrollcar_spr.bmp#3";
+	set:1; z:100; dragable:1; min:1; 
+	max: ( screen_h - (bigspeed_image_h + %lua.BigSpeed_Zoom) ) ;
+	SLIDER_ABOVE_FRAME:; sprprbar:"scrollprogress_spr.bmp#2";
+	valign:"center"; align:"center"; resize_bmp: "cardinal_only"; 
+}
+
+SPRITE.listitem.bigspeed.zoom {
+	bmp: "btn_map.bmp#3"; resize_bmp: 1; alpha: 10;
+	bottom:0; h: ( footer_h + 10 ); right: 0; left:(%lua.IsLandscape ? 10% : 15%);
+	visible: (%lua.ShowBigSpeed);
+}
+
+SPRITE.listitem.bigspeed.zoom_img {
+	bmp: "btn_map.bmp#3"; resize_bmp: 1;  alpha: 10;
+	bottom: ( 2*footer_h + 2*10 ); h: ( footer_h + 10 ); right: 0; left:(%lua.IsLandscape ? 10% : 15%);
+	visible: (%lua.ShowBigSpeed && BigSpeed_Img[%lua.BigSpeed_Button] == "ico_speedcams.svg");
+}
+
+SPRITE.listitem.bigspeed.transp {
+	bmp: "btn_map.bmp#3"; resize_bmp: 1;  alpha: 10;
+	bottom: ( footer_h + 10 ); h: ( footer_h + 10 ); right: 30%; left:(%lua.IsLandscape ? 10% : 15%);
+	visible: (%lua.ShowBigSpeed);
+}
+
+SPRITE.listitem.bigspeed.color {
+	bmp: "btn_map.bmp#3"; resize_bmp: 1;  alpha: 10;
+	bottom: ( footer_h + 10 );  
+	h: ( footer_h + 10 );
+	visible: ( %lua.ShowBigSpeed );	left: 70% ;
+	right: 0%; 
+}
+
+BUTTON.btn_map.footer.icon.svg {
+	img:""; 
+	w: (%lua.IsLandscape ? 10% : 15%); 
+	h: ( footer_h + 10 ); bottom: 0; 
+}
+
+@import "~/common/ui/big_speed_cam_landscape.css" landscape;
+@import "~/common/ui/big_speed_cam_portrait.css" portrait;

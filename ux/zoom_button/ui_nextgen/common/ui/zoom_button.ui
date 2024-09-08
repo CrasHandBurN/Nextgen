@@ -1,0 +1,100 @@
+;---Mod by WANDEL™---
+<modify ui_Cockpit>           
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON ZoomTilt_button ONRELEASE=(%lua.ZoomMode ? sc_ZoomMode_off : sc_ZoomMode_on)
+			;ONLONGCLICK='sc_NextStateAnim(st_TankDigitsValue, "fade", 1, "")'
+			VISIBLE=( %lua.ShowZoomModeCockpit && !(ui_PropLayer.SignpostVisible || ui_PropLayer.JunctionViewVisible) )
+			ICON="ico_zoom.svg" ZOOM=88%
+			T_TEXT=(VW_Return_button_text(translate("Zoom Tilt"), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate("Zoom Tilt"), L"%s", 99)) />
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=( %lua.ShowZoomModeCockpit && !(ui_PropLayer.SignpostVisible || ui_PropLayer.JunctionViewVisible) ) />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'Zoom'&'Tilt' Button" bmp=(ZoomTilt_button.ICON) isselected="lua.ShowZoomModeCockpit" />
+	</insert>
+</modify>
+;---- Quick Menu -----
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE='ui.ZoomTilt_button.ONRELEASE()()' ONLONGCLICK='ui.ZoomTilt_button.ONLONGCLICK()()' 
+			VISIBLE=( %lua.ShowZoomModeQuick && !(ui_PropLayer.SignpostVisible || ui_PropLayer.JunctionViewVisible) )
+			ICON=(ZoomTilt_button.ICON) ZOOM=88%
+			T_TEXT=(ZoomTilt_button.T_TEXT)
+			B_TEXT=(ZoomTilt_button.B_TEXT) />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=( %lua.ShowZoomModeQuick && !(ui_PropLayer.SignpostVisible || ui_PropLayer.JunctionViewVisible) ) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'Zoom'&'Tilt' Button" bmp=(ZoomTilt_button.ICON) isselected="lua.ShowZoomModeQuick" />
+	</insert>
+</modify>
+
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=(ZoomTilt_button.ICON) text=(translate("'Zoom'&'Tilt' Button")) onrelease='ui.ZoomTilt_button.ONRELEASE()()' />
+		</insert>
+	</modify>
+<!end/>
+
+<modify ui_Cockpit>
+	<insert into="DIV.cockpit">
+		<DIV CLASS="zoom_button" Z=99999999 VISIBLE=(%lua.ZoomMode && st_Cockpit.isActive) >
+			<VBOX CLASS="zoom_button">
+				<SPACER FLEX=1 />
+				<BUTTON CLASS="btn_map drag zoomin"
+					ONCLICK='MODEL.map.primary.zoom_start(1) killDelayed(gZoomModeTimeOutID) killDelayed(gQuickZoomOutTimeOutID)'  
+					ONRELEASE='MODEL.map.primary.zoom_stop() sc_SetZoomMode_TimeOut()' 
+					ONMOUSELEAVE='MODEL.map.primary.zoom_stop() sc_SetZoomMode_TimeOut()' ENABLE=(%lua.map.ZoomInEnabled) >
+					<SPRITE CLASS="btn_map icon svg" IMG="ico_zoomin.svg" />
+					<SPRITE CLASS="button map fill" />
+				</BUTTON>
+				
+				<BUTTON CLASS="btn_map drag fit" ONRELEASE='sc_SetGlobalZoomFollow(1) sc_SetZoomMode_TimeOut()' ENABLE=(!%map.primary.zoom_follow) >
+					<SPRITE CLASS="btn_map icon svg" IMG=(%map.primary.zoom_follow ? "ico_zoomlock_off.svg" : "ico_zoomlock_on.svg") />
+					<SPRITE CLASS="button map fill"/>
+				</BUTTON>
+					
+				<BUTTON CLASS="btn_map drag zoomout" 
+					ONCLICK='MODEL.map.primary.zoom_start(-1) killDelayed(gZoomModeTimeOutID) killDelayed(gQuickZoomOutTimeOutID)' 
+					ONRELEASE='MODEL.map.primary.zoom_stop() sc_SetZoomMode_TimeOut()' 
+					ONMOUSELEAVE='MODEL.map.primary.zoom_stop() sc_SetZoomMode_TimeOut()' ENABLE=(%lua.map.ZoomOutEnabled) >
+					<SPRITE CLASS="btn_map icon svg" IMG="ico_zoomout.svg" />
+					<SPRITE CLASS="button map fill" />
+				</BUTTON>
+				<SPACER FLEX=1 />
+			</VBOX>
+			
+			<HBOX CLASS="zoom_button">
+				<SPACER FLEX=1 />
+				<BUTTON CLASS="btn_map zoom_button" ONRELEASE='sc_ChangedCockpitMapMode() sc_SetZoomMode_TimeOut()'>
+					<SPRITE CLASS="btn_map icon svg" IMG=( %lua.CockpitMapMode == lua.eCockpitMapMode.Mode_2D ? "ico_Viewmode2D.svg" : %lua.CockpitMapMode == lua.eCockpitMapMode.Mode_2DN ? "ico_Viewmode2DN.svg" : "ico_Viewmode3D.svg" ) />
+					<SPRITE CLASS="button map fill" />
+				</BUTTON>
+				<SPACER CLASS="zoom_button" />
+				<BUTTON CLASS="btn_map zoom_button" ONRELEASE=sc_TiltTheMap ONLONGCLICK={{if (%lua.vEasyViewMode < MapSettingsViewModes.max) {%lua.vEasyViewMode+=1} else {%lua.vEasyViewMode = 0}}; sc_Set_Presets()}>
+					<SPRITE CLASS="btn_map icon svg" IMG="ico_tilt.svg" />
+					<SPRITE	CLASS="current_level svg" /> 
+					<SPRITE CLASS="button map fill" />
+				</BUTTON>
+				<SPACER FLEX=1 />
+			</HBOX>
+		</DIV>
+	</insert>
+</modify>

@@ -1,0 +1,13 @@
+BUTTON.curr_count_flag  {
+	left: 0; top: 0;  img:""; /* bottom: 0; right: 0; */
+	visible: (%lua.ari_CountryFlagInCockpit);
+	onrelease: sc_CountryInfo_SelectCurrentCountry ;					
+	onlongclick: sc_ar_CountryFlagInCockpit_OnRelease;
+	h: svg_country_flag_image_h; w: svg_country_flag_image_w; 
+}
+
+HSMARTSCROLL.scroll.ariH { max: (screen_w - svg_country_flag_image_w) ;}	
+VSMARTSCROLL.scroll.ariV { r2l_invert:1; img:"scrollprogress_bg_spr.bmp"; sprind:"hscrollcar_spr.bmp#3"; SLIDER_ABOVE_FRAME:; sprprbar:"scrollprogress_spr.bmp#2"; valign:"center"; align:"center"; resize_bmp: "cardinal_only"; min:1; max: (screen_h - svg_country_flag_image_h) ; set:1; z:100; dragable:1; }
+
+@import "~/common/ui/country_flag_landscape.css" landscape;
+@import "~/common/ui/country_flag_portrait.css" portrait;

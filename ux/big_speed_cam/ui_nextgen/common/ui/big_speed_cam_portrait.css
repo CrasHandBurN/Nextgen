@@ -1,0 +1,4 @@
+SPRITE.big_speed {
+	top: %lua.BigSpeed_VerticalPort;
+	left: %lua.BigSpeed_HorizontalPort;
+}

@@ -1,0 +1,122 @@
+/*  updated by WANDEL™  28.04.2020 */
+<var ui_speedcam_phase=0 />
+<layer ui_SetBigSpeed z=30>
+	<implementation>
+		<property font_name value="Off", "Droid Sans", "Roboto, Black", "arial, Narrow Bold", "digital", "tilt" />
+		<property font_color value=#f7fcf7, #0c0c0c, #00FF00, #091df4, #c109f4, #FFD700 />
+		<property BigSpeed_Button value=L"Andron66", L"Normal", L"Speedlimit", L"WANDEL™", L"Speedcam" />
+		<property BigSpeed_Img value="speedometer-md-1.svg", "btn_map.bmp#3", "speedometer-md-4.svg", "speedometer.svg", "ico_speedcams.svg" />
+	</implementation>
+	<DIV class="full">
+		<BUTTON top=0 left=0 right=0 h=10% resize_bmp=1 onrelease='MODEL.lua.ShowBigSpeed = (MODEL.lua.ShowBigSpeed() + 1) % 6' onlongclick='MODEL.lua.ShowBigSpeed = 0'>
+			<SPRITE top=0 left=0 right=0 bottom=0  img="btn_map.bmp#3" resize_bmp=1  alpha=10 />
+			<TEXT  class="listitem bd" top=5% bottom=5%  left=5% right=60% text="Big Speed" visible=(!%lua.ShowBigSpeed)/> 
+			<TEXT  class="listitem bd" top=5% bottom=5%  left=5% right=60% text="Big Speed Font" visible=(%lua.ShowBigSpeed)/> 
+			<TEXT  class="listitem bd" top=5% bottom=5%  left=60% right=5% text=(font_name[%lua.ShowBigSpeed]) />
+		</BUTTON>
+
+		<SPRITE class="listitem" left=0 top=10% h=(%lua.IsLandscape ? 15% : 10%)  right=0 alpha=10 bmp="btn_map.bmp#3" resize_bmp=1 visible=(%lua.ShowBigSpeed)> 
+			<TEXT class="listitem bd" z=45 left=7% right=7% top=0   align="CENTER" text=(%lua.IsLandscape ? "Horizontal position (landscape)" : "Horizontal position (portrait)")/>
+   			<HSMARTSCROLL class="scroll big_speedH" min=0  left=5% right=5% top=28% z=50 dragable=1 
+				valuemodel=(%lua.IsLandscape ? "lua.BigSpeed_HorizontalLand" : "lua.BigSpeed_HorizontalPort")/>
+		</SPRITE>
+
+		<SPRITE class="listitem" left=0 top=(%lua.IsLandscape ? 25% : 20%) w=(%lua.IsLandscape ? 10% : 15%) bottom=(%lua.IsLandscape ? 15% : 9%) visible=(%lua.ShowBigSpeed) bmp="btn_map.bmp#3" resize_bmp=1 alpha=10> 
+  			<VSMARTSCROLL class="scroll big_speedV" min=0 left=0 right=0 align="CENTER"  top=5% bottom=5% z=50 dragable=1 valuemodel=(%lua.IsLandscape ? "lua.BigSpeed_VerticalLand" : "lua.BigSpeed_VerticalPort") />
+		</SPRITE>
+		;------ BACKGROUND -----
+		<SPRITE class="listitem" top=(%lua.IsLandscape ? 25% : 20%) left=(%lua.IsLandscape ? 10% : 15%) right=0 h=10% onrelease='MODEL.lua.BigSpeed_Button = (MODEL.lua.BigSpeed_Button() + 1) % 5'
+				visible=(%lua.ShowBigSpeed) bmp="btn_map.bmp#3" resize_bmp=1  alpha=10 > 
+			<TEXT class="listitem bd" top=5% bottom=5% left=7% right=7% align="CENTER" text=(BigSpeed_Button[%lua.BigSpeed_Button]) />
+		</SPRITE>
+		;------------ ZOOM -------------
+		<SPRITE class="listitem bigspeed zoom"> 
+			<TEXT class="listitem bd" z=45 left=7% right=7% top=0 align="CENTER" text="Big Speed Zoom"/>
+   			<HSMARTSCROLL class="scroll" min=0 max=120  left=5% right=5% top=25% z=50 dragable=1 valuemodel="lua.BigSpeed_Zoom"/>
+		</SPRITE>
+		;------------ IMAGE ZOOM -------------
+		<SPRITE class="listitem bigspeed zoom_img" > 
+			<TEXT class="listitem bd" z=45 left=7% right=7% top=0 align="CENTER" text="Big Speed Image Zoom"/>
+   			<HSMARTSCROLL class="scroll" min=0 max=1000  left=5% right=5% top=25% z=50 dragable=1 valuemodel="lua.BigSpeed_Img_Zoom"/>
+		</SPRITE>
+		;----- TRANSPARENCY -----
+		<SPRITE class="listitem bigspeed transp"> 
+			<TEXT class="listitem bd" z=45 left=7% right=7% top=0 align="CENTER" text="Transparency"/>
+   			<HSMARTSCROLL class="scroll" min=0 max=32  left=5% right=5% top=25% z=50 dragable=1 valuemodel="lua.BigSpeed_Transp"/>
+		</SPRITE>
+		;------------ COLOR ------------
+		<SPRITE class="listitem bigspeed color" onrelease='MODEL.lua.BigSpeed_ButtColor = (MODEL.lua.BigSpeed_ButtColor() + 1) % 6' >
+			<TEXT class="listitem bd"  text="Color" z=45 top=5% bottom=5%  left=7% right=7% align="CENTER" color=(font_color[%lua.BigSpeed_ButtColor]) />
+		</SPRITE>
+	</DIV>
+	;------------ SPEED or CAM in SETTINGS ------------
+	<DIV class="cockpit" visible=(%lua.ShowBigSpeed)>
+		<SPRITE class="big_speed" visible=(%lua.BigSpeed_Button < 3)>
+			<TEXT class="big_speed" text=(format(L"%{speed[%D]:*}", %navigation.car.current_speed, 1)) /> 
+		</SPRITE>
+		
+		<DIV left=0 right=0 top=0 bottom=0 visible=(%lua.BigSpeed_Button == 3)>
+			<SPRITE class="big_speed" phasename="limbo" />   
+			<SPRITE class="big_speed" phasename="limit" rotate=(-ui_Cockpit.limit) visible=(%gps.blink) />
+			<SPRITE class="big_speed" phase=(ui_Cockpit.AdvancedSpeedLimitPhase) rotate=(-ui_Cockpit.speed) />
+		</DIV>
+		
+		<SPRITE class="big_speed" img="" visible=(%lua.BigSpeed_Button == 4) > 
+			<SPRITE class="button map fill" />
+			<TEXT class="big_speedcam" text=(builtin.format("%{distance:3}", 55)) />
+			;<GRAPH class="graph_btn" full=(%ui.Graph_speedcam_category_start) current=50 />
+		</SPRITE>
+		<SPRITE class="big_speed" img="ico_speedcams.svg" phase=(ui_speedcam_phase) onrelease='ui.ui_speedcam_phase = (ui_speedcam_phase() + 1) % 31' visible=(%lua.BigSpeed_Button == 4) />
+	</DIV>
+	
+	;----- FOOTER -----
+	<BUTTON class="btn_map footer icon svg"  onrelease='sc_Cockpit_Back_From_Dragmode() sc_back()' onlongclick='sc_Cockpit_Back_From_Dragmode() sc_longBack()' rawkey=(%lua.LocalMenuOpen ? undef : 27)>
+		<SPRITE top=0 left=0 right=0 bottom=0 img="btn_map.bmp#3" resize_bmp=1 alpha=10 />
+		<SPRITE  class="btn_map icon svg" img="ico_footer_back.svg"/>
+	</BUTTON>
+</layer>
+
+<modify lm_SpeedWarnings>
+	<insert last_child >
+		<row text="Big Speed and Cam in Cockpit" icon="ico_speedometer.svg" haspopover=1 onrelease=sc_BigSpeedSettings details=(ui_SetBigSpeed.BigSpeed_Button[%lua.BigSpeed_Button]) />
+	</insert>	
+</modify>
+
+<modify lm_alertpointsettings icon="str">
+	<insert last_child >
+		<row text="Big Speed and Cam in Cockpit" icon="ico_speedometer.svg" haspopover=1 onrelease=sc_BigSpeedSettings details=(ui_SetBigSpeed.BigSpeed_Button[%lua.BigSpeed_Button]) />
+	</insert>	
+</modify>
+
+<modify ui_Cockpit>
+	<insert into="IMPLEMENTATION">
+		<PROPERTY big_speed_overspeed VALUE=( ui_Cockpit.AdvancedSpeedLimitPhase == 2 ) />
+		<PROPERTY speed	VALUE=( observe(%navigation.car.current_speed); VW_ArrowAngle((%navigation.car.current_speed // 1), "300.0") ) />
+		<PROPERTY limit	VALUE=( observe(%lua.SpeedLimitValue); VW_ArrowAngle(%lua.SpeedLimitValue, "300.0") ) />
+	</insert>
+	;------------ SPEED or CAM in COCKPIT ------------
+	<insert into="DIV.cockpit">
+		<DIV CLASS="cockpit" VISIBLE=( %lua.ShowBigSpeed && !%lua.DragMode && !ui_PropLayer.JunctionViewVisible && !ui_PropLayer.TunnelOverviewVisible && !%lua.MenuIsOpened && !ui_Cockpit.MapPopupOnscreen )>
+			<SPRITE CLASS="big_speed" VISIBLE=(%lua.BigSpeed_Button < 3)>   
+	     		<TEXT CLASS="big_speed" TEXT=(format(L"%{speed[%D]:*}", %navigation.car.current_speed, 1)) />
+			</SPRITE>
+			
+			<DIV LEFT=0 RIGHT=0 TOP=0 BOTTOM=0 VISIBLE=(%lua.BigSpeed_Button == 3)>
+				<SPRITE CLASS="big_speed" PHASENAME="limbo" />   
+				<SPRITE CLASS="big_speed" PHASENAME="limit" ROTATE=(-limit) VISIBLE=(%gps.blink) />
+				<SPRITE CLASS="big_speed" PHASE=(ui_Cockpit.AdvancedSpeedLimitPhase) ROTATE=(-speed) />
+			</DIV>
+			
+			<SPRITE CLASS="big_speed" IMG="" VISIBLE=(%lua.BigSpeed_Button == 4 && %navigation.curr_speedcam.category.valid) >   
+				<SPRITE CLASS="speedcam_bg" OPAQUE=1 />
+				<SPEEDTEXT CLASS="big_speedcam" TOP=70% FONTSIZE=60 UNITVISIBLE=1 SPEED=(%navigation.curr_speedcam.avg_speed) VISIBLE=(%navigation.curr_speedcam.avg_speed.valid) />
+				<DISTTEXT CLASS="big_speedcam" TOP=70% FONTSIZE=60 DISTANCE=(%navigation.curr_speedcam.distance) VISIBLE=(%navigation.curr_speedcam.distance.valid) />
+				;<GRAPH CLASS="graph_btn" FULL=(%ui.Graph_speedcam_category_start) CURRENT=(%navigation.curr_speedcam.distance) />
+			</SPRITE>
+			<SPRITE CLASS="big_speed" VALIGN="TOP" IMG="ico_speedcams.svg" PHASE=%navigation.curr_speedcam.category 
+				ONRELEASE='MODEL.sound.playchanneltest("ding", L"!button"); sc_ToggleSpeedcamSound()' 
+				ONLONGCLICK='MODEL.sound.playchanneltest("ding", L"!button"); VW_HideCountrySpeedCams()'
+				VISIBLE=(LuaJava.LuaJavaActive && %lua.BigSpeed_Button == 4 && %navigation.curr_speedcam.category.valid) />   
+		</DIV>  
+	</insert>
+</modify>

@@ -1,0 +1,163 @@
+;----------------------WANDEL™-- 09.07.2021 ----------------
+<observer obs_msg_send_tracking value=(%gps.valid && %gps.blink) onselect=sc_SendByEventListSettings_observer start="NO_TRIGGER" />
+<observer obs_Stopover_msg_send_tracking value=(%route.list.navigated.waypoints.list.size) 
+	onchange='if MODEL.route.list.navigated.has_navigable_path() and MODEL.route.list.navigated.waypoints.list.size() > 1 then MODEL.lua.Stopover_msg_send_tracking = true end' 
+	start="NO_TRIGGER" />
+
+<observer value=(%lua.msg_send_tracking_ON_OFF && %navigation.car.current_speed.valid && %navigation.car.current_speed > sc_GetToleranceSpeed(%lua.SpeedLimitValue)) onselect='MODEL.lua.By_Overspeed = true' start="NO_TRIGGER" />
+
+<observer obs_unscheduled_parking value=(%lua.msg_send_tracking_ON_OFF && %navigation.car.current_speed < 5 ) 
+	onselect=sc_unscheduled_parking_SpeedCheck_Start 
+	ondeselect=sc_unscheduled_parking_SpeedCheck_Stop 
+	start="NO_TRIGGER" />
+
+<observer obs_unscheduled_parking_speedcheck value=(%ui._up_time) onchange=sc_unscheduled_parking_Speedcheck />
+
+;------Event Settings--------
+<userlist lm_SendMSGByEventList text="str" img="str" enable="bool" visible="bool" active="bool" >
+	<view visibility_filter=visible/>
+	<default FILENAME="lm_SendMSGByEventList.txt">
+	<default visible=1 enable=1 active=0>
+
+	<row text="By Distance" img="ico_itinerary_currentpoint_distance.svg" />
+	<row text="By Time" img="ico_itinerary_currentpoint_time.svg" />
+	<row text="By Stopover" img="ico_stopover.svg" />
+	<row text="By Bordercrossing" img="ico_route_bordercrossing.svg" />
+	<row text="By City Enter" img="ico_countryinfo_incity.svg" />
+	<row text="By Route Changed" img="ico_RouteAlternatives.svg" />
+	<row text="By Unscheduled Parking" img="ico_robbery.svg" />
+	<row text="By Overspeed" img=( %lua.speedlimit_USACAN ? "spr_speedlimit_usa.svg" : "ico_speed_limit.svg" ) /> ;" "spr_speedlimit_eu.svg" ) />
+
+</userlist>
+
+<userlist lm_msg_send_tracking text="wstr" details="str" onrelease="ui" onlongclick="ui" enable="bool" visible="bool" >
+	<default visible=1 enable=1 onlongclick='MODEL.ui.lm_msg_send_tracking.list.remove(index)' onrelease='W_DefaultWebBrowser(MODEL["*"].text())' />
+	<view visibility_filter=visible />
+</userlist>
+
+<userlist lm_SendRepeateverytime_popover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowTimeTool(60)) max_text=(sc_ShowTimeTool(3600))/>
+	   <row name="Repeat Time" text=(sc_ShowTimeTool(%lua.Send_TimeToRepeate)) type="Scroll" min=60 max=3600 step=60 valuemodel="lua.Send_TimeToRepeate" />
+</userlist>
+
+<userlist lm_SendRepeateverydist_popover name="str" text="wstr" enable="bool" type="str" min="int" max="int" step="int" valuemodel="str" min_text="ui" max_text="ui">
+	<default enable=1 type="" name="" min_text=(sc_ShowDistanceTool(1000)) max_text=(sc_ShowDistanceTool(100000))/>
+	   <row name="Repeat Distance" text=(sc_ShowDistanceTool(%lua.Send_DistanceToRepeate)) type="Scroll" min=1000 max=100000 step=1000 valuemodel="lua.Send_DistanceToRepeate" />
+</userlist>
+
+<element_template et_EventList>
+	<RADIO class="listitem" img=(%*.active ? "btn_100_100.svg" : "btn_100_100_off.svg") 
+		onrelease='MODEL["*"].active = not MODEL["*"].active(); MODEL.ui.lm_SendMSGByEventList.save()' 
+		onlongclick={sc_msg_send_tracking_onlongclick(%*.text)} enable=%lua.msg_send_tracking_ON_OFF >
+		<TEXT class="listitem name bd" left=0 right=0 top=5% bottom=65% text=(VW_Return_button_text(translate(%*.text), L"%s", 1)) valign="CENTER" align="CENTER" />
+		<SPRITE class="listitem icon svg" img=%*.img z=20 />
+		<TEXT class="listitem name bd" left=0 right=0 top=65% bottom=5% text=(VW_Return_button_text(translate(%*.text), L"%s", 99)) valign="CENTER" align="CENTER" />
+	</RADIO>
+</element_template>
+
+<layer ui_SendByEventListSettings z=41>
+	<DIV class="list">
+		<SPRITE class=list_panel>
+		<LIST2 class="list_control_event" SMOOTHSCROLLING>
+			<LISTMODEL listmodel="ui.lm_SendMSGByEventList" element_template="et_EventList" />
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<userlist lm_SendByEventList_footer text="str" onrelease="ui" enable="bool" visible="bool" isactionbutton="bool">
+	<default enable=1 visible=1 />
+	<view visibility_filter=visible />
+	<row   text="Phone Setting" isactionbutton=1 onrelease='sc_NextStateAnim(st_msg_send_trackingContact, "fade", 1, "" )' visible=(%lua.msg_send_tracking_Phone == L"") />
+</userlist>
+
+<userlist lm_LocalMenuSendByEventList text="str" onrelease="ui" visible="bool" enable="bool">
+	<default enable=1 visible=1 />
+	<row text="Settings" onrelease='sc_SetPopoverListAndOpen("ui.lm_SendByEventList_Popover", ui.lm_SendByEventList_Popover[MODEL.lua.msg_send_tracking_ON_OFF()].text())' />
+	<row text="Phone Setting" onrelease='sc_NextStateAnim(st_msg_send_trackingContact, "fade", 1, "" )' />
+	<row text="View route by Events" onrelease=VW_all_at_onceDB enable=(%lua.msg_send_tracking_ON_OFF > 1 && %ui.lm_msg_send_tracking.list.size > 0 && !%route.list.navigated.has_navigable_path) />
+	<row text="View Events List" onrelease=VW_View_Events_List enable=(%lua.msg_send_tracking_ON_OFF > 1 && %ui.lm_msg_send_tracking.list.size > 0) />
+	;<row text="Save Events List" onrelease=VW_Save_Events_List enable=(%lua.msg_send_tracking_ON_OFF > 1 && %ui.lm_msg_send_tracking.list.size > 0) />
+	<row text="All Event Off" onrelease='sc_msg_send_tracking_event_OffOn(0)' />
+	<row text="All Event On" onrelease='sc_msg_send_tracking_event_OffOn(1)' />
+</userlist>
+
+<userlist lm_SendByEventList_Popover text="str" type="str" img="str" onrelease="ui" enable="bool">
+	<default enable=1 onrelease='MODEL.lua.msg_send_tracking_ON_OFF = index; sc_ClosePopover()' type="" />
+		<row text="Off" />
+		<row text="Send" type="Icon" img="ico_hot.svg" />
+		<row text="Save" />
+		<row text="Both" type="Icon" img="ico_hot.svg" />
+</userlist>
+
+<!if condition=(Plugin.isLoaded("labs"))>
+	<modify lm_ExtraSettingsList>
+		<insert>
+			<row text="'MSG send tracking' settings" icon="ico_sms_tracking.svg" haspopover=1 onrelease=sc_SendByEventListSettings_OnRelease />
+		</insert>
+	</modify>
+<!end>
+
+;----BUTTON----
+<var msg_send_trackingCockpit = 0 permanent />
+<var msg_send_trackingQuick = 0 permanent />
+<modify ui_Cockpit>           
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON MSG_send_tracking_Button ONRELEASE='sc_SetPopoverListAndOpen("ui.lm_SendByEventList_Popover", ui.lm_SendByEventList_Popover[MODEL.lua.msg_send_tracking_ON_OFF()].text())' ONLONGCLICK=sc_SendByEventListSettings_OnRelease 
+			VISIBLE=(msg_send_trackingCockpit)
+			ICON=(%lua.msg_send_tracking_ON_OFF ? "" : "ico_no.svg") ZOOM=90%
+			T_TEXT=(VW_Return_button_text(translate("MSG Tracking"), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate("MSG Tracking"), L"%s", 99)) >
+			<SPRITE CLASS="btn_map svg" IMG="ico_sms_tracking.svg" ZOOM=90% /> 
+		</BUTTON_ICON>
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=(msg_send_trackingCockpit) />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'MSG send tracking' Button" bmp="ico_sms_tracking.svg" isselected="ui.msg_send_trackingCockpit" />
+	</insert>
+</modify>
+
+;---- Quick Menu -----
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE='ui.MSG_send_tracking_Button.ONRELEASE()()' ONLONGCLICK='ui.MSG_send_tracking_Button.ONLONGCLICK()()' 
+			VISIBLE=(msg_send_trackingQuick)
+			ICON=(MSG_send_tracking_Button.ICON) ZOOM=80%
+			T_TEXT=(MSG_send_tracking_Button.T_TEXT)
+			B_TEXT=(MSG_send_tracking_Button.B_TEXT) >
+			<SPRITE CLASS="btn_map svg" IMG="ico_sms_tracking.svg" ZOOM=90% /> 
+		</BUTTON_ICON>
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=(msg_send_trackingQuick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'MSG send tracking' Button" bmp="ico_sms_tracking.svg" isselected="ui.msg_send_trackingQuick" />
+	</insert>
+</modify>
+
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp="ico_sms_tracking.svg" text=(translate("MSG Tracking")) 
+				onrelease='ui.MSG_send_tracking_Button.ONRELEASE()()' onlongclick='ui.MSG_send_tracking_Button.ONLONGCLICK()()' />
+		</insert>
+	</modify>
+<!end/>

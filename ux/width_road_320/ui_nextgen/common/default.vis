@@ -1,0 +1,1347 @@
+
+
+
+
+
+
+
+[global]    
+
+
+maxzoom = 5300000
+
+
+
+
+
+
+
+
+
+
+
+[RPOLYTYPE]
+
+
+0 = 200
+1 = 300
+2 = 400
+3 = 450
+4 = 500
+5 = 700
+9 = 200
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[ROADCOLORS]
+
+
+
+color = 0,    "aaaaaaaaaaaaaaaaaaaaaaaabbaaaaaa"
+color = 1,    "ccccccccccccccccccccccccbbcccccc"
+color = 4,    "eeeeeeeeeeeeeeeeeeeeeeeeffeeeeee"
+color = 5,    "ggggggggggggggggggggggggffgggggg"
+color = 6,    "hhhhhhhhhhhhhhhhhhhhhhhhffhhhhhh"
+color = 7,    "hhhhhhhhhhhhhhhhhhhhhhhhffhhhhhh"
+color = 8,    "iiiiiiiiiiiiiiiiiiiiiiiijjiiiuii"
+color = 9,    "kkkkkkkkkkkkkkkkkkkkkkkkjjkkkukk"
+color = 10,   "llllllllllllxzlllllllllljjlllxll"
+color = 12,   "uuuuuuuuuuuuxzuuuuuuuuuuvvuuuxuu"
+color = 13,   "uuuuuuuuuuuuxzuuuuuuuuuuvvuuuxuu"
+color = 14,   "uuuuuuuuuuuuxzuuuuuuuuuuvvuuuxuu"
+color = 15,   "uuuuuuuuuuuuxzuuuuuuuuuuvvuuuxuu"
+
+[SPECIAL_ROADSTYLES]
+planned=27 
+guidance=28 
+railroad=26 
+importantrailroad=0 
+
+
+
+
+[ROADSTYLES]
+
+
+
+
+style = 0,    "0000022002000000000000000f000000"
+style = 1,    "0011122112111111111111101f111111"
+style = 4,    "4444433443444444444444444f444444"
+style = 5,    "5555533553555555555555555f555555"
+style = 6,    "66666886686666666666666666666666"
+style = 8,    "88888998898888888888888888888888"
+style = 9,    "99999999999999999999999999999999"
+style = 10,   "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+style = 12,   "cccccccccccccccccccccccccccccccc"
+style = 13,   "dddddddddddddddddddddddddddddddd"
+style = 14,   "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+style = 15,   "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+
+
+
+
+
+
+
+[ROADSTYLEPARAMS]
+
+
+distances   = 0,	150,	528,	807,	1501,	2497,	4294,	6007,	14995,	29998,	60003,	132007,	132008,	300004,	600002,	1200004, 3300007, 3300008
+width       = 0,	_19.2,	_16.0,	_12.8,	_11.2,	_8.8,	_6.4,	_6.4,	_4.8,	_3.2,	_3.2,	_2.4,	_2.4,	_2.4,	_2.4,	_0.0,    _0.0,    _0.0
+contour     = 0,	_22.4,	_19.2,	_16.0,	_14.4,	_11.2,	_8.0,	_8.0,	_7.2,	_5.6,	_5.6,	_4.8,	_4.8,	_4.8,	_4.8,	_1.0,    _0.75,   _0.0
+tmc_width   = 0,	_32.0,	_28.8,	_25.6,	_24.0,	_17.6,	_14.4,	_14.4,	_11.2,	_8.8,	_8.8,	_8.0,	_0.0,	_0.0,	_0.0,	_0.0,    _0.0,    _0.0
+
+distances   = 1,	150,	528,	807,	1501,	2497,	4294,	6007,	14995,	29998,	60003,	132007,	132008,	300004,	600002,	1200004, 3300007, 3300008
+width       = 1,	_19.2,	_16.0,	_12.8,	_11.2,	_8.8,	_6.4,	_6.4,	_4.8,	_3.2,	_3.2,	_2.4,	_2.4,	_2.4,	_2.4,	_0.0,    _0.0,    _0.0
+contour     = 1,	_22.4,	_19.2,	_16.0,	_14.4,	_11.2,	_8.8,	_8.8,	_7.2,	_5.6,	_5.6,	_4.8,	_4.8,	_4.8,	_4.8,	_1.0,    _0.75,   _0.0
+tmc_width   = 1,	_32.0,	_28.8,	_25.6,	_24.0,	_17.6,	_14.4,	_14.4,	_11.2,	_8.8,	_8.8,	_8.0,	_0.0,	_0.0,	_0.0,	_0.0,    _0.0,    _0.0
+
+distances   = 2,	150,	528,	807,	1501,	2497,	4294,	6007,	14995,	29998,	60003,	132007,	132008,	300004,	600002,	1200004, 1200005
+width       = 2,	_16.0,	_12.8,	_11.2,	_8.8,	_6.4,	_4.8,	_3.2,	_2.4,	_2.4,	_2.4,	_1.6,	_1.6,	_0.0,	_0.0,	_0.0,    _0.0
+contour     = 2,	_19.2,	_16.0,	_14.4,	_11.2,	_8.8,	_7.2,	_5.6,	_4.8,	_4.8,	_4.8,	_3.2,	_3.2,	_1.0,	_1.0,	_0.75,   _0.0
+tmc_width   = 2,	_28.8,	_25.6,	_24.0,	_17.6,	_11.2,	_11.2,	_11.2,	_8.0,	_8.0,	_6.4,	_4.8,	_0.0,	_0.0,	_0.0,	_0.0,    _0.0
+
+distances   = 3,	150,	528,	807,	1501,	2497,	4294,	6007,	14995,	29998,	29999,	60003,	60004
+width       = 3,	_14.4,	_10.4,	_8.0,	_5.6,	_4.0,	_3.2,	_3.2,	_2.4,	_2.4,	_0.0,	_0.0,	_0.0
+contour     = 3,	_17.6,	_12.8,	_10.4,	_8.0,	_6.4,	_5.6,	_5.6,	_4.8,	_4.8,	_1.2,	_1.2,	_0.0
+tmc_width   = 3,	_27.2,	_24.0,	_17.6,	_14.4,	_11.2,	_8.0,	_8.0,	_8.0,	_8.0,	_0.0,	_0.0,	_0.0
+fade        = 3,	18500,	20000
+
+distances   = 4,	150,	528,	807,	1501,	2497,	4294,	6007,	14995,	29998,	29999,	60003,	132006,	132007
+width       = 4,	_16.0,	_12.8,	_10.4,	_8.0,	_5.6,	_4.0,	_3.2,	_3.2,	_2.4,	_0.0,	_0.0,	_0.0,   _0.0
+contour     = 4,	_19.2,	_16.0,	_13.6,	_11.2,	_8.0,	_6.4,	_5.6,	_5.6,	_4.8,	_1.2,	_1.2,	_0.8,   _0.0
+tmc_width   = 4,	_30.4,	_26.4,	_22.4,	_17.6,	_14.4,	_11.2,	_8.0,	_8.0,	_8.0,	_0.0,	_0.0,	_0.0,   _0.0
+fade        = 4,	18500,	20000
+
+distances   = 5,	150,	528,	807,	1501,	2497,	4294,	6007,	14995,	29998,	29999,	60003,	132006,	132007
+width       = 5,	_16.0,	_12.8,	_10.4,	_8.0,	_5.6,	_4.0,	_3.2,	_3.2,	_2.4,	_0.0,	_0.0,	_0.0,   _0.0
+contour     = 5,	_19.2,	_16.0,	_13.6,	_11.2,	_8.0,	_6.4,	_5.6,	_5.6,	_4.8,	_1.2,	_1.2,	_0.8,   _0.0
+tmc_width   = 5,	_30.4,	_26.4,	_22.4,	_17.6,	_14.4,	_11.2,	_8.0,	_8.0,	_8.0,	_0.0,	_0.0,	_0.0,   _0.0
+fade        = 5,	18500,	20000
+
+distances   = 6,	150,	528,	807,	1501,	2497,	4294,	6007,	14995,	29998,	29999
+width       = 6,	_12.0,	_8.8,	_7.2,	_6.4,	_4.8,	_4.0,	_2.4,	_2.4,	_1.2,	_0.0
+contour     = 6,	_14.4,	_11.2,	_9.6,	_8.8,	_7.2,	_5.6,	_4.0,	_4.0,	_0.0,	_0.0
+tmc_width   = 6,	_25.6,	_19.2,	_17.6,	_14.4,	_12.8,	_8.0,	_7.2,	_7.2,	_4.0,	_0.0
+fade        = 6,	18500,	20000
+
+distances   = 8,	150,	528,	807,	1501,	2497,	4294,	6006,	6007,	14995,	14996
+width       = 8,	_12.0,	_8.8,	_7.2,	_5.6,	_4.0,	_3.2,	_2.4,	_0.0,	_0.0,	_0.0
+contour     = 8,	_14.4,	_11.2,	_9.6,	_8.0,	_6.4,	_4.8,	_4.0,	_1.2,	_0.8,	_0.0
+tmc_width   = 8,	_25.6,	_19.2,	_17.6,	_14.4,	_11.2,	_8.8,	_7.2,	_4.0,	_2.4,	_0.0
+fade        = 8,	13000,	18500
+
+distances   = 9,	150,	528,	807,	1501,	2497,	4294,	6006,	6007,	14995,	14996
+width       = 9,	_12.0,	_8.8,	_7.2,	_5.6,	_4.0,	_3.2,	_2.4,	_0.0,	_0.0,	_0.0
+contour     = 9,	_14.4,	_11.2,	_9.6,	_8.0,	_6.4,	_4.8,	_4.0,	_1.2,	_0.8,	_0.0
+tmc_width   = 9,	_25.6,	_19.2,	_17.6,	_14.4,	_11.2,	_8.8,	_7.2,	_4.0,	_2.4,	_0.0
+fade        = 9,	13000,	18500
+
+distances   = 10,	150,	528,	807,	1501,	2497,	4294,	4295 	
+width       = 10,	_9.6,	_7.2,	_6.4,	_4.0,	_2.4,	_1.2,  _0.0
+contour     = 10,	_12.0,	_9.6,	_8.8,	_6.4,	_4.0,	_0.0,   _0.0
+tmc_width   = 10,	_24.0,	_17.6,	_16.0,	_9.6,	_7.2,	_2.4,   _0.0
+fade        = 10,	3000,	4000
+
+distances   = 12,	150,	528,	807,	1501,	2497,	4294,	4295
+width       = 12,	_4.8,	_3.2,	_2.4,	_1.6,	_1.2,	_0.8,   _0.0
+contour     = 12,	_6.4,	_4.4,	_3.2,	_2.4,	_0.0,	_0.0,   _0.0
+fade        = 12,	1500,	2000
+
+distances   = 13,	150,	528,	807,	1494,	1495
+width       = 13,	_4.8,	_3.2,	_2.4,	_1.6,	_0.0
+contour     = 13,	_6.4,	_4.4,	_3.2,	_2.4,	_0.0
+fade        = 13,	1500,	2000
+
+distances   = 14,	150,	528,	807,	1494,	1495
+width       = 14,	_3.2,	_2.4,	_2.4,	_1.6,	_0.0
+contour     = 14,	_4.8,	_3.2,	_3.2,	_2.4,	_0.0
+fade        = 14,	1500,	2000
+
+distances   = 15,	150,	528,	807,	1501,	2505,	4301,	6007,	15002,	30005,	60003,	132007,	132008
+width       = 15,	_9.6,	_8.0,	_6.4,	_4.8,	_4.8,	_4.8,	_4.8,	_3.2,	_3.2,	_3.2,	_1.6,	_0.0
+contour     = 15,	_11.2,	_9.6,	_8.0,	_6.4,	_6.4,	_6.4,	_6.4,	_4.8,	_4.8,	_4.8,	_3.2,	_0.0
+fade        = 15,	20000,	30000
+
+distances   = 26,	150,	528,	807,	1501,	2505,	4301,	6007,	15002,	39588,	39589
+width       = 26,	_2.0,	_2.0,	_2.0,	_2.0,	_2.0,	_2.0,	_1.5,	_1.5,	_1.0,	_0.0
+contour     = 26,	_0.0,	_0.0,	_0.0,	_0.0,	_0.0,	_0.0,	_0.0,	_0.0,	_0.0,	_0.0
+fade        = 26,	25000,	35000
+
+distances   = 27,	150,	528,	807,	1501,	2505,	4301,	6007,	15002,	30005,	60003,	132007,	300004,	600002,	1200004, 3300007, 5999998, 5999999
+width       = 27,	_12.8,	_11.2,	_9.6,	_9.6,	_8.0,	_8.0,	_6.4,	_6.4,	_6.4,	_6.4,	_4.8,	_4.8,	_4.8,	_4.8,    _3.2,    _3.2,	   _0.0
+contour     = 27,	_16.0,	_14.4,	_12.8,	_12.8,	_11.2,	_11.2,	_8.0,	_8.0,	_8.0,	_8.0,	_6.4,	_6.4,	_6.4,	_6.4,    _4.8,    _4.8,    _0.0
+tmc_width   = 27,	_19.2,	_17.6,	_17.6,	_16.0,	_14.4,	_12.8,	_11.2,	_10.6,	_9.9,	_8.8,	_8.3,	_8.0,	_0.2,	_0.2,	 _0.2,    _0.2,    _0.0
+
+
+distances   = 28,	150,	528,	807,	1501,	2505,	2506
+width       = 28,	_13.5,	_12.0,	_9.0,	_7.5,	_7.5,	_0.0
+contour     = 28,	_18.0,	_16.5,	_13.5,	_10.5,	_10.5,	_0.0
+
+
+
+
+[ROADDECORS]
+planned = "itiner_highlight", "logbook_selected", "logbook", "normal", "future", "offroad", "prohibited"
+center = "avoided", "blocked", "truck_restriction_hard", "truck_restriction_soft", "preferred"
+side = "avoided", "blocked", "hva", "tmc", "histspeed"
+
+
+
+
+
+
+
+
+
+[Z159010m-437277m]
+show  = 24,   "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+width = 24,   "11111111111111111111111111111111"
+color = 24,   "aaaaaaaaaaaaaaaaaaaaaaaaqbaaaaaa"
+
+[Z79505m-159010m]
+show  = 24,   "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 24,   "33333223323333333333333333333333"
+color = 24,   "aaaaaaaaaaaaaaaaaaaaaaaaqbaaaaaa"
+
+[Z39753m-79505m]
+show  = 24,   "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 24,   "44444334434444444444444444444444"
+color = 24,   "aaaaaaaaaaaaaaaaaaaaaaaaqbaaaaaa"
+
+[Z17492m-39753m]
+show  = 16,   "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 16,   "44444334434444444444444444444444"
+color = 16,   "aaaaaaaaaaaaaaaaaaaaaaaaqbaaaaaa"
+
+[Z7951m-17492m]
+show  = 16,   "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 16,   "44444334434444444444444444444444"
+color = 16,   "aaaaaaaaaaaaaaaaaaaaaaaaqbaaaaaa"
+
+[Z3976m-7951m]
+show  = 16,   "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 16,   "55555445545555555555555555555555"
+color = 16,   "aaaaaaaaaaaaaaaaaaaaaaaaqbaaaaaa"
+
+[Z1988m-3976m]
+show  = 0,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 0,    "66666556656666666666666666666666"
+color = 0,    "aaaaaaaaaaaaaaaaaaaaaaaaqbaaaaaa"
+
+[Z796m-1988m]
+show  = 0,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 0,    "77777557757777777777777777777777"
+color = 0,    "aaaaaaaaaaaaaaaaaaaaaaaaqbaaaaaa"
+
+[Z570m-796m]
+show  = 0,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 0,    "88888668868888888888888888888888"
+color = 0,    "aaaaaaaaaaaaaaaaaaaaaaaaqbaaaaaa"
+
+[Z332m-570m]
+show  = 0,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 0,    "88888668868888888888888888888888"
+color = 0,    "aaaaaaaaaaaaaaaaaaaaaaaaqbaaaaaa"
+
+[Z199m-332m]
+show  = 0,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 0,    "77777557757777777777777777777777"
+color = 0,    "aaaaaaaaaaaaaaaaaaaaaaaaqbaaaaaa"
+
+[Z107m-199m]
+show  = 0,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 0,    "55555445545555555555555555555555"
+color = 0,    "aaaaaaaaaaaaaaaaaaaaaaaaqbaaaaaa"
+
+[Z50m-107m]
+show  = 0,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 0,    "44444334434444444444444444444444"
+color = 0,    "aaaaaaaaaaaaaaaaaaaaaaaaqbaaaaaa"
+
+
+
+
+
+
+
+[Z159010m-437277m]
+show  = 25,   "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+width = 25,   "11111111111111111111111111111111"
+color = 25,   "aacccccccccccccccccccccrqbcccccc"
+
+[Z79505m-159010m]
+show  = 25,   "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+width = 25,   "11111111111111111111111111111111"
+color = 25,   "aacccccccccccccccccccccrqbcccccc"
+
+[Z39753m-79505m]
+show  = 25,   "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 25,   "22211112212222222222222222222222"
+color = 25,   "aacccccccccccccccccccccrqbcccccc"
+
+[Z17492m-39753m]
+show  = 25,   "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 25,   "33322222222222222222222322222222"
+color = 25,   "aacccccccccccccccccccccrqbcccccc"
+
+[Z7951m-17492m]
+show  = 17,   "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 17,   "33322222222222222222222322222222"
+color = 17,   "aacccccccccccccccccccccrqbcccccc"
+
+[Z3976m-7951m]
+show  = 17,   "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 17,   "3332222222222222222222322222222"
+color = 17,   "aacccccccccccccccccccccrqbcccccc"
+
+[Z1988m-3976m]
+show  = 1,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 1,    "44433333333333333333333433333333"
+color = 1,    "aacccccccccccccccccccccrqbcccccc"
+
+[Z796m-1988m]
+show  = 1,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 1,    "55544444444444444444444544444444"
+color = 1,    "aacccccccccccccccccccccrqbcccccc"
+
+[Z570m-796m]
+show  = 1,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 1,    "77766666666666666666666766666666"
+color = 1,    "aacccccccccccccccccccccrqbcccccc"
+
+[Z332m-570m]
+show  = 1,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 1,    "88877777777777777777777877777777"
+color = 1,    "aacccccccccccccccccccccrqbcccccc"
+
+[Z199m-332m]
+show  = 1,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 1,    "77766666666666666666666766666666"
+color = 1,    "aacccccccccccccccccccccrqbcccccc"
+
+[Z107m-199m]
+show  = 1,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 1,    "5554444444444444444444544444444"
+color = 1,    "aacccccccccccccccccccccrqbcccccc"
+
+[Z50m-107m]
+show  = 1,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 1,    "44433333333333333333333433333333"
+color = 1,    "aacccccccccccccccccccccrqbcccccc"
+
+
+
+
+
+
+
+[Z7951m-17492m]
+show  = 28,   "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+width = 28,   "11111111111111111111111111111111"
+color = 28,   "ddeeeeeeeeeeeeeeeeeeeeerqbeeeeee"
+
+[Z3976m-7951m]
+show  = 20,   "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+width = 20,   "11111111111111111111111111111111"
+color = 20,   "ddeeeeeeeeeeeeeeeeeeeeerqbeeeeee"
+
+[Z1988m-3976m]
+show  = 4,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 4,    "4444333333333333333333433333333"
+color = 4,    "ddeeeeeeeeeeeeeeeeeeeeerqbeeeeee"
+
+[Z796m-1988m]
+show  = 4,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 4,    "5555444444444444444444544444444"
+color = 4,    "ddeeeeeeeeeeeeeeeeeeeeerqbeeeeee"
+
+[Z570m-796m]
+show  = 4,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 4,    "55554444444444444444444544444444"
+color = 4,    "ddeeeeeeeeeeeeeeeeeeeeerqbeeeeee"
+
+[Z332m-570m]
+show  = 4,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 4,    "66665555555555555555555655555555"
+color = 4,    "ddeeeeeeeeeeeeeeeeeeeeerqbeeeeee"
+
+[Z199m-332m]
+show  = 4,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 4,    "77776666666666666666666766666666"
+color = 4,    "ddeeeeeeeeeeeeeeeeeeeeerqbeeeeee"
+
+[Z107m-199m]
+show  = 4,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 4,    "55554444444444444444444544444444"
+color = 4,    "ddeeeeeeeeeeeeeeeeeeeeerqbeeeeee"
+
+[Z50m-107m]
+show  = 4,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 4,    "44443333333333333333333433333333"
+color = 4,    "ddeeeeeeeeeeeeeeeeeeeeerqbeeeeee"
+
+
+
+
+
+
+
+[Z7951m-17492m]
+show  = 29,   "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+width = 29,   "11111111111111111111111111111111"
+color = 29,   "ddgggggggggggggggggggggrqbgggggg"
+
+[Z3976m-7951m]
+show  = 21,   "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+width = 21,   "11111111111111111111111111111111"
+color = 21,   "ddgggggggggggggggggggggrqbgggggg"
+
+[Z1988m-3976m]
+show  = 5,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 5,    "33322222222222222222222322222222"
+color = 5,    "ddgggggggggggggggggggggrqbgggggg"
+
+[Z796m-1988m]
+show  = 5,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 5,    "33332222222222222222222322222222"
+color = 5,    "ddgggggggggggggggggggggrqbgggggg"
+
+[Z570m-796m]
+show  = 5,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 5,    "44443333333333333333333433333333"
+color = 5,    "ddgggggggggggggggggggggrqbgggggg"
+
+[Z332m-570m]
+show  = 5,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 5,    "55554444444444444444444544444444"
+color = 5,    "ddgggggggggggggggggggggrqbgggggg"
+
+[Z199m-332m]
+show  = 5,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 5,    "66665555555555555555555655555555"
+color = 5,    "ddgggggggggggggggggggggrqbgggggg"
+
+[Z107m-199m]
+show  = 5,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 5,    "55554444434444444444444544444444"
+color = 5,    "ddgggggggggggggggggggggrqbgggggg"
+
+[Z50m-107m]
+show  = 5,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 5,    "44443333323333333333333433333333"
+color = 5,    "ddgggggggggggggggggggggrqbgggggg"
+
+
+
+
+
+
+
+[Z1988m-3976m]
+show  = 22,23,"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+width = 22,23,"11111111111111111111111111111111"
+color = 22,23,"yyyyyyyyyyyyyyyyyyyyyyyrqbyyyyyy"
+
+[Z796m-1988m]
+show  = 22,23,"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 22,23,"44443333333333333333333433333333"
+color = 22,23,"ddhhhhhhhhhhhhhhhhhhhhhrqbhhhhhh"
+
+[Z570m-796m]
+show  = 6,7,  "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 6,7,  "55554444444444444444444544444444"
+color = 6,7,  "ddhhhhhhhhhhhhhhhhhhhhhrqbhhhhhh"
+
+[Z332m-570m]
+show  = 6,7,  "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 6,7,  "55554444444444444444444544444444"
+color = 6,7,  "ddhhhhhhhhhhhhhhhhhhhhhrqbhhhhhh"
+
+[Z199m-332m]
+show  = 6,7,  "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 6,7,  "66665555555555555555555655555555"
+color = 6,7,  "ddhhhhhhhhhhhhhhhhhhhhhrqbhhhhhh"
+
+[Z107m-199m]
+show  = 6,7,  "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 6,7,  "44443333333333333333333433333333"
+color = 6,7,  "ddhhhhhhhhhhhhhhhhhhhhhrqbhhhhhh"
+
+[Z50m-107m]
+show  = 6,7,  "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 6,7,  "33332222222222222222222322222222"
+color = 6,7,  "ddhhhhhhhhhhhhhhhhhhhhhrqbhhhhhh"
+
+
+
+
+
+
+
+[Z796m-1988m]
+show  = 8,    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+width = 8,    "11111111111111111111111111111111"
+color = 8,    "iiiiiiiiiiiiiiiiiiiiiiirqbiiiuii"
+
+[Z570m-796m]
+show  = 8,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 8,    "44433333333333333333333433333333"
+color = 8,    "iiiiiiiiiiiiiiiiiiiiiiirqbiiiuii"
+
+[Z332m-570m]
+show  = 8,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 8,    "55544444444444444444444544444444"
+color = 8,    "iiiiiiiiiiiiiiiiiiiiiiirqbiiiuii"
+
+[Z199m-332m]
+show  = 8,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 8,    "55544444444444444444444544444444"
+color = 8,    "iiiiiiiiiiiiiiiiiiiiiiirqbiiiuii"
+
+[Z107m-199m]
+show  = 8,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 8,    "44433333333333333333333433333333"
+color = 8,    "iiiiiiiiiiiiiiiiiiiiiiirqbiiiuii"
+
+[Z50m-107m]
+show  = 8,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 8,    "33322222222222222222222322222222"
+color = 8,    "iiiiiiiiiiiiiiiiiiiiiiirqbiiiuii"
+
+
+
+
+
+
+
+[Z570m-796m]
+show  = 9,    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+width = 9,    "11111111111111111111111111111111"
+color = 9,    "kkkkkkkkkkkkkkkkkkkkkkkkqbkkkukk"
+
+[Z332m-570m]
+show  = 9,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 9,    "44433333323333333333333433333333"
+color = 9,    "kkkkkkkkkkkkkkkkkkkkkkkkqbkkkukk"
+
+[Z199m-332m]
+show  = 9,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 9,    "44433333323333333333333433333333"
+color = 9,    "kkkkkkkkkkkkkkkkkkkkkkkkqbkkkukk"
+
+[Z107m-199m]
+show  = 9,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 9,    "33322222222222222222222322222222"
+color = 9,    "kkkkkkkkkkkkkkkkkkkkkkkkqbkkkukk"
+
+[Z50m-107m]
+show  = 9,    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 9,    "22222222222222222222222222222222"
+color = 9,    "kkkkkkkkkkkkkkkkkkkkkkkkqbkkkukk"
+
+
+
+
+
+
+
+[Z332m-570m]									 
+show  = 10,   "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+width = 10,   "11111111111111111111111111111111"
+color = 10,   "uuuuuuuuuuusxzuuuuuuuuuuqbuuuxuu"
+
+[Z199m-332m]
+show  = 10,   "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 10,   "44444444444444444444444444444444"
+color = 10,   "lllllllllllsxzllllllllllqblllxll"
+
+[Z107m-199m]
+show  = 10,   "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 10,   "33333333333333333333333333333333"
+color = 10,   "lllllllllllsxzllllllllllqblllxll"
+
+[Z50m-107m]
+show  = 10,   "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 10,   "22222222222222222222222222222222"
+color = 10,   "lllllllllllsxzllllllllllqblllxll"
+
+
+
+
+
+
+
+[Z332m-570m]
+show  = 12,   "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+width = 12,   "11111111111111111111111111111111"
+color = 12,   "uuuuuuuuuuusxzuuuuuuuuuuqbuuuxuu"
+
+[Z199m-332m]
+show  = 12,   "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 12,   "11111111111111111111111111111111"
+color = 12,   "uuuuuuuuuuusxzuuuuuuuuuuqbuuuxuu"
+
+[Z107m-199m]
+show  = 12,   "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 12,   "11111111111111111111111111111111"
+color = 12,   "uuuuuuuuuuusxzuuuuuuuuuuqbuuuxuu"
+
+[Z50m-107m]
+show  = 12,   "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 12,   "11111111111111111111111111111111"
+color = 12,   "uuuuuuuuuuusxzuuuuuuuuuuqbuuuxuu"
+
+
+
+
+
+
+
+
+
+[Z107m-199m]
+show  = 13,   "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 13,   "11111111111111111111111111111111"
+color = 13,   "uuuuuuuuuuusxzuuuuuuuuuuqbuuuxuu"
+
+[Z50m-107m]
+show  = 13,   "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 13,   "11111111111111111111111111111111"
+color = 13,   "uuuuuuuuuuusxzuuuuuuuuuuqbuuuxuu"
+
+
+
+
+
+
+
+[Z199m-332m]
+show  = 14,   "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+width = 14,   "11111111111111111111111111111111"
+color = 14,   "uuuuuuuuuuusxzuuuuuuuuuuqbuuuxuu"
+
+[Z107m-199m]
+show  = 14,   "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 14,   "11111111111111111111111111111111"
+color = 14,   "uuuuuuuuuuusxzuuuuuuuuuuqbuuuxuu"
+
+[Z50m-107m]
+show  = 14,   "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 14,   "11111111111111111111111111111111"
+color = 14,   "uuuuuuuuuuusxzuuuuuuuuuuqbuuuxuu"
+
+
+
+
+
+
+[Z50m-107m]
+show  = 15,   "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
+width = 15,   "00000000000000000000000000000000"
+color = 15,   "uuuuuuuuuuusxzuuuuuuuuuuqbuuuxuu"
+
+
+
+
+
+
+[Z0m-50m] 
+
+
+show  = 0,    "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP"
+width = 0,    "55555225515555555555555555555555"
+color = 0,    "aaaaaaaaaaaaaaaaaaaaaaaabbaaaaaa"
+
+show  = 1,    "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP"
+width = 1,    "55444224414444444444444444444444"
+color = 1,    "aaccccccccccccccccccccccbbcccccc"
+
+show  = 4,    "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP"
+width = 4,    "44444224414444444444444444444444"
+color = 4,    "ddeeeeeeeeeeeeeeeeeeeeeeffeeeeee"
+
+show  = 5,    "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP"
+width = 5,    "44444224414444444444444444444444"
+color = 5,    "ddggggggggggggggggggggggffgggggg"
+
+show  = 6,    "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP"
+width = 6,    "44444224414444444444444444444444"
+color = 6,    "ddhhhhhhhhhhhhhhhhhhhhhhffhhhhhh"
+
+show  = 7,    "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP"
+width = 7,    "44444224414444444444444444444444"
+color = 7,    "ddhhhhhhhhhhhhhhhhhhhhhhffhhhhhh"
+
+show  = 8,    "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP"
+width = 8,    "333332233113333333333333333333333"
+color = 8,    "iiiiiiiiiiiiiiiiiiiiiiiijjiiiuii"
+
+show  = 9,    "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP"
+width = 9,    "33333223313333333333333333333333"
+color = 9,    "kkkkkkkkkkkkkkkkkkkkkkkkjjkkkukk"
+
+show  = 10,   "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP"
+width = 10,   "22222112212222222222222222222222"
+color = 10,   "llllllllllllxzlllllllllljjlllxll"
+
+show  = 12,   "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP"
+width = 12,   "11111111111111111111111111111111"
+color = 12,   "uuuuuuuuuuuuxzuuuuuuuuuuvvuuuxuu"
+
+show  = 13,   "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP"
+width = 13,   "00000000000000000000000000000000"
+color = 13,   "uuuuuuuuuuuuxzuuuuuuuuuuvvuuuxuu"
+
+show  = 14,   "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP"
+width = 14,   "00000000000000000000000000000000"
+color = 14,   "uuuuuuuuuuuuxzuuuuuuuuuuvvuuuxuu"
+
+show  = 15,   "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP"
+width = 15,   "00000000000000000000000000000000"
+color = 15,   "uuuuuuuuuuuuxzuuuuuuuuuuvvuuuxuu"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[Label600m-4300m]
+area=0,1,2
+poi="Settlement.class1", "defaultbd", "label_settlements", 14,"settlements",1
+poi="Settlement.class2", "defaultbd", "label_settlements", 13,"settlements",2
+poi="Settlement.class3", "defaultbd", "label_settlements", 12,"settlements",2
+poi="Settlement.class4", "defaultbd", "label_settlements", 11,"settlements",3
+poi="Settlement.class5", "defaultbd", "label_settlements", 10,"settlements",3
+poi="Settlement.class6", "defaultbd", "label_settlements", 10,"settlements",3
+poi="Settlement.class7", "defaultbd", "label_settlements", 10,"settlements",3
+poi="Settlement.class8", "defaultbd", "label_settlements", 10,"settlements",3
+poi="Settlement.class9", "defaultbd", "label_settlements", 10,"settlements",3
+poi="Settlement.class10", "defaultbd", "label_settlements", 10,"settlements",3
+poi="Settlement.class11", "default", "label_settlements", 10,"settlements",3
+
+[Label4300m-13km]
+area=6,7,2
+poi="Settlement.class1", "defaultbd", "label_settlements", 14,"settlements",1
+poi="Settlement.class2", "defaultbd", "label_settlements", 13,"settlements",2
+poi="Settlement.class3", "defaultbd", "label_settlements", 12,"settlements",2
+poi="Settlement.class4", "defaultbd", "label_settlements", 11,"settlements",3
+poi="Settlement.class5", "defaultbd", "label_settlements", 10,"settlements",3
+poi="Settlement.class6", "defaultbd", "label_settlements", 10,"settlements",3
+poi="Settlement.class7", "defaultbd", "label_settlements", 10,"settlements",3
+poi="Settlement.class8", "defaultbd", "label_settlements", 10,"settlements",3
+poi="Settlement.class9", "defaultbd", "label_settlements", 10,"settlements",3
+poi="Settlement.class10", "defaultbd", "label_settlements", 10,"settlements",3
+
+[Label13km-25km]
+area=6,7
+poi="Settlement.class0", "defaultbd", "label_settlements", 16,"settlements",1
+poi="Settlement.class1", "defaultbd", "label_settlements", 14,"settlements",1
+poi="Settlement.class2", "defaultbd", "label_settlements", 13,"settlements",2
+poi="Settlement.class3", "defaultbd", "label_settlements", 12,"settlements",2
+poi="Settlement.class4", "defaultbd", "label_settlements", 11,"settlements",3
+poi="Settlement.class5", "defaultbd", "label_settlements", 10,"settlements",3
+poi="Settlement.class6", "defaultbd", "label_settlements", 10,"settlements",3
+poi="Settlement.class7", "defaultbd", "label_settlements", 10,"settlements",3
+poi="Settlement.class8", "defaultbd", "label_settlements", 10,"settlements",3
+poi="Settlement.class9", "defaultbd", "label_settlements", 10,"settlements",3
+
+[Label25km-45km]
+area=6,7
+poi="Settlement.class0", "defaultbd", "label_settlements", 16,"settlements",1
+poi="Settlement.class1", "defaultbd", "label_settlements", 14,"settlements",1
+poi="Settlement.class2", "defaultbd", "label_settlements", 13,"settlements",2
+poi="Settlement.class3", "defaultbd", "label_settlements", 12,"settlements",2
+poi="Settlement.class4", "defaultbd", "label_settlements", 11,"settlements",3
+poi="Settlement.class5", "defaultbd", "label_settlements", 10,"settlements",3
+poi="Settlement.class6", "defaultbd", "label_settlements", 10,"settlements",3
+poi="Settlement.class7", "defaultbd", "label_settlements", 10,"settlements",3
+poi="Settlement.class8", "defaultbd", "label_settlements", 10,"settlements",3
+
+[Label45km-120km]
+area=6,7
+poi="Settlement.class0", "defaultbd", "label_settlements", 16,"settlements",1
+poi="Settlement.class1", "defaultbd", "label_settlements", 14,"settlements",1
+poi="Settlement.class2", "defaultbd", "label_settlements", 13,"settlements",2
+poi="Settlement.class3", "defaultbd", "label_settlements", 12,"settlements",2
+poi="Settlement.class4", "defaultbd", "label_settlements", 11,"settlements",3
+poi="Settlement.class5", "defaultbd", "label_settlements", 10,"settlements",3
+poi="Settlement.class6", "defaultbd", "label_settlements", 10,"settlements",3
+poi="Settlement.class7", "defaultbd", "label_settlements", 10,"settlements",3
+
+[Label120km-170km]
+area=6,7
+poi="Settlement.class0", "defaultbd", "label_settlements", 16,"settlements",1
+poi="Settlement.class1", "defaultbd", "label_settlements", 14,"settlements",1
+poi="Settlement.class2", "defaultbd", "label_settlements", 13,"settlements",2
+poi="Settlement.class3", "defaultbd", "label_settlements", 12,"settlements",2
+poi="Settlement.class4", "defaultbd", "label_settlements", 11,"settlements",3
+poi="Settlement.class5", "defaultbd", "label_settlements", 10,"settlements",3
+poi="Settlement.class6", "defaultbd", "label_settlements", 10,"settlements",3
+
+[Label170km-300km]
+area=6,7
+poi="Settlement.class0", "defaultbd", "label_settlements", 16,"settlements",1
+poi="Settlement.class1", "defaultbd", "label_settlements", 14,"settlements",1
+poi="Settlement.class2", "defaultbd", "label_settlements", 13,"settlements",2
+poi="Settlement.class3", "defaultbd", "label_settlements", 12,"settlements",2
+poi="Settlement.class4", "defaultbd", "label_settlements", 11,"settlements",3
+
+[Label300km-410km]
+area=6,7
+poi="Settlement.class0", "defaultbd", "label_settlements", 16,"settlements",1
+poi="Settlement.class1", "defaultbd", "label_settlements", 14,"settlements",1
+poi="Settlement.class2", "defaultbd", "label_settlements", 13,"settlements",2
+poi="Settlement.class3", "defaultbd", "label_settlements", 12,"settlements",2
+
+[Label410km-800km]
+area=6
+poi="Settlement.class0", "defaultbd", "label_settlements", 16,"settlements",1
+poi="Settlement.class1", "defaultbd", "label_settlements", 14,"settlements",1
+poi="Settlement.class2", "defaultbd", "label_settlements", 13,"settlements",2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[Label0m-6km]   
+
+road= 0,1,      "xxxx___________________x________", "defaultbd:12:road_shield", "shield=1;roadname"
+road= 0,1,      "xxxx___________________x________", "defaultbd:12:road_box",    "shield=2;altname"
+road= 4,        "_______________________x________", "default:12:road_shield", "shield=3;roadname"
+road= 4,        "_______________________x________", "default:12:road_box",    "shield=2;altname"
+road= 4,        "xxxx____________________________", "default:11:road_shield", "shield=4;roadname"
+road= 4,        "xxxx____________________________", "default:11:road_box",    "shield=2;altname"
+road= 5,6,7,8,  "xxxx___________________x________", "default:10:road_shield", "shield=4;roadname"
+road= 5,6,7,8,  "xxxx___________________x________", "default:10:road_box",    "shield=2;altname"
+
+[Label0m-100m]
+
+road= 0,1,2,3,   "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", "default:14:label_road", "streetname"
+road= 4,5,6,7,   "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", "default:14:label_road", "streetname"
+road= 8,9,10,11, "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", "default:14:label_road", "streetname"
+road= 12,13,14,15,  "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", "default:14:label_road", "streetname"
+
+
+[Label100m-600m]
+area=0,1,2,3
+
+road= 0,1,2,3,   "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", "default:14:label_road", "streetname"
+road= 4,5,6,7,   "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", "default:13:label_road", "streetname"
+road= 8,9,10,11, "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", "default:12:label_road", "streetname"
+road= 12,13,14,15,  "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", "default:11:label_road", "streetname"
+
+[Label600m-800m]
+
+road= 0,1,2,3,   "xxxxxx__________________________", "default:13:label_road", "streetname"
+road= 4,5,6,7,   "xxxxxx__________________________", "default:12:label_road", "streetname"
+road= 8,9,10,    "xxxxxx__________________________", "default:11:label_road", "streetname"
+road= 11,12,     "xxxxxx__________________________", "default:11:label_roadlt", "streetname"
+
+[Label600m-1300m]
+
+road= 0,1,2,3,   "xxxxxx__________________________", "default:13:label_road", "streetname"
+road= 4,5,6,7,   "xxxxxx__________________________", "default:12:label_road", "streetname"
+road= 8,9,       "xxxxxx__________________________", "default:11:label_road", "streetname"
+road= 10,        "xxxxxx__________________________", "default:10:label_roadlt", "streetname"
+
+[Label1300m-3000m]
+
+road= 0,1,2,3,   "xxxxxx__________________________", "default:12:label_road", "streetname"
+road= 4,5,6,7,   "xxxxxx__________________________", "default:11:label_road", "streetname"
+road= 8,9,       "xxxxxx__________________________", "default:10:label_roadlt", "streetname"
+
+
+[Label6km-60km]
+
+road= 16,17, "xxxx___________________x________", "defaultbd:11:road_shield","shield=1;roadname"
+road= 16,17, "xxxx___________________x________", "defaultbd:11:road_box",    "shield=2;altname"
+road= 20,21, "_______________________x________", "default:10:road_shield","shield=3;roadname"
+road= 20,21, "_______________________x________", "default:10:road_box",    "shield=2;altname"
+
+
+road= 20,    "xxxx____________________________", "default:9:road_shield", "shield=4;roadname"
+road= 20,    "xxxx____________________________", "default:9:road_box",    "shield=2;altname"
+road= 21,    "xxxx____________________________", "default:9:road_shield", "shield=4;roadname"
+road= 21,    "xxxx____________________________", "default:9:road_box",    "shield=2;altname"
+road= 22,    "xxxx____________________________", "default:8:road_shield", "shield=4;roadname"
+road= 22,    "xxxx____________________________", "default:8:road_box",    "shield=2;altname"
+
+[Label60km-132km]
+
+road= 24,25, "xxxx___________________x________", "defaultbd:10:road_shield","shield=1;roadname"
+road= 24,25, "xxxx___________________x________", "defaultbd:10:road_box",    "shield=2;altname"
+
+
+
+
+
+
+
+
+
+
+
+[Label132km-300km]
+
+road= 24,25, "xxxx____________________________", "defaultbd:8:road_shield","shield=1;roadname"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[Label0m-110m]
+junction="default","label_junction",13
+trafficlight="traffic_light",0
+
+[Label110m-500m]
+junction="default","label_junction",12
+trafficlight="traffic_light",0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[Label1km-100km]
+district = 2, "defaultbd", "label_district_1", 12
+
+[Label400m-10km]
+district = 3, "defaultbd", "label_district_2", 11
+
+[Label100m-600m]
+district = 4, "defaultbd", "label_district_3", 10
+
+[Label0m-300m]
+district = 5, "default", "label_district_4", 9
+
+[Label0m-150m]
+district = 6, "default", "label_district_5", 8
+
+[Label0m-75m]
+district = 7, "default", "label_district_6", 7
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[Label0m-100m]
+shapestyle = 1, "defaultbd", 0, 12, "-12", "+28"
+shapestyle = 2, "defaultbd", 1, 12, "-8", "+28"
+shapestyle = 3, "default", 1, 10, "-8", "+28"
+shapestyle = 4, "default", 0, 8, "-8", "+28"
+
+[Label100m-600m]
+shapestyle = 1, "defaultbd", 0, 11, "-12", "+28"
+shapestyle = 2, "defaultbd", 1, 11, "-8", "+28"
+shapestyle = 3, "default", 1, 9, "-8", "+28"
+shapestyle = 4, "default", 0, 7, "-8", "+28"
+
+[Label600m-60km]
+shapestyle = 1, "defaultbd", 0, 10, "-12", "+28"
+shapestyle = 2, "defaultbd", 1, 10, "-8", "+28"
+shapestyle = 4, "default", 0, 6, "-8", "+28"
+
+
+
+
+
+
+
+
+
+
+
+
+[SignLayer]
+sign = "custom",	"CUSTOM",	"",		100, 0
+sign = "tmc",		"TMC",		"",		100, 0
+sign = "district",	"DISTRICT",	"0-31",	 50, 0
+sign = "poi",		"POI",		"",		100, 0
+sign = "cos",		"COS",		"0-31",	 12, 0
+sign = "junction",	"JUNCTION", "",		  8, 0
+sign = "shape",		"SHAPE",	"",		 12, 0
+sign = "road",		"ROAD", 	"",		 16, 0
+sign = "housenumber","HOUSENUMBER", "", 100, 0
+sign = "speedcam",	"SPEEDCAM",	"",		100, 0
+group = "district", "tmc", "poi", "junction", "shape", "road", "cos", "planned"
+transparent = "speedcam", "guidance", "car"
+transparent = "poi", "car"
+transparent = "tmc", "car"
+
+
+
+
+
+
+[speedcams]
+speedcam_default_visibility=140
+
+
+
+
+
+
+
+
+
+[SHAPES]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+partition_area=0,1,"partition_area",0
+
+
+
+
+
+Country_Capital=3,1,"built_up",0
+County_Capital=3,1,"built_up",0
+Major_City=3,1,"built_up",0
+City=3,1,"built_up",0
+Small_Settlement=3,1,"built_up",0
+Community=3,1,"built_up",0
+Outskirts=3,1,"built_up",0
+Other_Built_Up_Area=3,1,"built_up",0
+
+
+
+
+Ocean_or_Sea=6,1,"salt_water",2
+Major_Lake=6,1,"sweet_water",2
+Large_Lake=6,1,"sweet_water",2
+Lake=6,1,"sweet_water",2
+Small_Lake=6,1,"sweet_water",3
+Other_Lake=6,1,"sweet_water",3
+Major_River=6,1,"sweet_water",2
+River=6,1,"sweet_water",2
+Small_River=6,1,"sweet_water",3
+Other_River=6,1,"sweet_water",3
+Stream=6,1,"sweet_water",3
+Intermittent_River_or_Stream=6,1,"sweet_water",3
+
+
+
+
+Beach_or_Dune=6,1,"wetland",1
+Wetland=6,1,"wetland",1
+City_Park=4,1,"city_park",1
+Small_City_Park=4,1,"city_park",1
+State_or_Province_Park=4,1,"state_forest",1
+National_Park=1,1,"national_park",1
+City_Forest=4,1,"city_forest",1
+Airport_Ground=4,1,"airport_ground",1
+Airport_Runway=5,1,"airport_runway",1
+Amusement_Park_Ground=4,1,"building",1
+Building=5,1,"building",1
+Cemetery_Ground=4,1,"cemetery_ground",1
+Company_Ground=4,1,"industrial_area",1
+Golf_Course_Ground=4,1,"city_forest",1
+Hospital_Ground=4,1,"building",1
+Industrial_Area=4,1,"industrial_area",1
+Industrial_Harbour_Area=4,1,"industrial_area",1
+Institution=4,1,"building",1
+Military_Territory=2,1,"industrial_area",1
+Parking_Area_Ground=4,1,"industrial_area",1
+Recreational_Area_Ground=4,1,"industrial_area",1
+Shopping_Center_Ground=4,1,"industrial_area",1
+Stadium_Ground=4,1,"building",1
+University_or_College_Ground=4,1,"building",1
+
+Minor_Railway=7,1,"railway",0
+Minor_Railway_Tunnel=7,1,"railway",0
+Major_Railway=7,1,"railway",0
+Major_Railway_Tunnel=7,1,"railway",0
+Highspeed_Railway=7,1,"railway",0
+Highspeed_Railway_Tunnel=7,1,"railway",0
+Other_Railway=7,1,"railway",0
+
+
+
+
+
+
+
+Country_Forest=4,1,"country_forest",1
+Glacier=0,2,"",0
+Intermittent_Lake=6,1,"sweet_water",1
+International_Border=7,0,"international_border",0
+Sensitive_Border=7,0,"international_border",4
+Sensitive_Line=7,0,"region_border",4
+Marina_Area=0,2,"",0
+National_Forest=4,1,"country_forest",1
+Open_Parking_Area=0,2,"",0
+Orchard=0,2,"",0
+Other_Land_Use=0,2,"",0
+Parking_Garage_Ground=0,2,"",0
+Pipeline=0,2,"",0
+Political_Border=0,2,"",0
+Powerline=0,2,"",0
+Railway_area=4,1,"Railway_area",1
+Region_Border=6,2,"region_border",0
+Regional_Forest=0,2,"",0
+Regional_Park=0,2,"",0
+Sand_Area=0,2,"",0
+Scrub=0,2,"",0
+Shoreline=0,2,"",0
+State_or_Provincial_Forest=4,1,"state_forest",1
+Subway=0,2,"",0
+Tundra=0,2,"",0
+
+
+
+
+
+
+
+
+
+
+Area_a =  3, 1, "area_a",0
+Area_b =  2, 1, "area_b",0
+Area_c =  1, 1, "area_c",0
+
+
+
+
+
+
+
+
+
+
+
+
+
+CM_Background =                6, 1, "white",0
+
+CM_full_line =                 9, 0, "red",0
+CM_dashed_line =               9, 0, "puple",0
+CM_tollgate =                  9, 0, "green",0
+CM_lock_gate =                 9, 0, "cyan",0
+CM_ship_course =               9, 0, "lightblue",0
+
+CM_city_block_yellow =         7, 1, "built_up" 
+CM_city_block_blue =           7, 1, "CM_city_block_blue",0
+CM_city_block_green =          7, 1, "CM_city_block_green",0
+CM_city_block_peach =          7, 1, "CM_city_block_peach",0
+CM_city_block_orange =         7, 1, "CM_city_block_orange",0
+CM_city_block_puple =          7, 1, "CM_city_block_puple",0
+CM_sand_area =                 7, 1, "sand_area",0
+CM_marsh =                     7, 1, "marsh",0
+CM_forest =                    7, 1, "forest",0
+CM_grass =                     7, 1, "city_park",0
+CM_planted_area =              7, 1, "CM_planted_area",0
+CM_water_system =              7, 1, "sweet_water",0
+CM_bank_area =                 7, 1, "CM_bank_area",0
+CM_swimming_pool =             7, 1, "lightblue",0
+CM_high_way =                  7, 1, "orange",0
+CM_national_route =            7, 1, "red",0
+CM_principal_prefectural_road =7, 1, "yellow",0
+CM_other_principal_road =      7, 1, "orange",0
+CM_walkway =                   7, 1, "CM_medium_strip",0
+CM_garden_path =               7, 1, "CM_garden_path",0
+CM_tunnel =                    7, 1, "white",0
+CM_medium_strip =              7, 1, "CM_medium_strip",0
+CM_hospital_ground =           7, 1, "CM_Hospital_ground",0
+CM_school_ground =             7, 1, "CM_School_ground",0
+CM_factory_ground =            7, 1, "industrial_area",0
+CM_dam =                       7, 1, "black",0
+CM_railway_ground =            7, 1, "Railway_area",0
+CM_paved_area =                7, 1, "CM_paved_area",0
+CM_incomplete_area =           7, 1, "cyan",0
+                                                                   
+CM_railway_onground =          9, 0, "blue",0
+CM_railway_underground =       9, 0, "white",0
+CM_subway_ground =             9, 0, "blue",0
+CM_subway_underground =        9, 0, "white",0
+CM_Tram =                      9, 0, "yellow",0
+CM_railway_station_underground=8, 1, "purple",0
+CM_subway_station_underground =8, 1, "cyan",0
+                                                                   
+                     
+CM_House =                     8, 1, "CM_House",0
+
+
+CM_Subway_station_ground =     8, 1, "cyan",0
+CM_Subway_platform_ground =    8, 1, "cyan",0
+CM_public_office =             8, 1, "orange",0
+CM_Hospital =                  8, 1, "CM_Hospital",0
+CM_School =                    8, 1, "CM_School",0
+CM_Commercial_establishment =  8, 1, "CM_Commercial_establishment",0
+CM_Factory =                   9, 1, "industrial_area",0
+CM_place_of_worship =          9, 1, "CM_place_of_worship",0
+CM_Hotel =                     9, 1, "CM_Hotel",0
+CM_Cultural_facility =         9, 1, "lightred",0 
+CM_other_building =            9, 1, "purple",0
+CM_Multistory_car_park =       9, 1, "purple",0
+CM_Pedestrian_deck =           9, 1, "purple",0
+CM_decorative_line =           9, 0, "black",0
+CM_ridge_line =                9, 0, "black",0
+
+[address_point]
+label="defaultbd",9,"label_address_point"
+
+[Poi]
+label="defaultbd",10,"label_poi_icon"
+
+[customicon]
+label="defaultbd",9,"label_address_point"

@@ -1,0 +1,3 @@
+import "~/common/ui/big_speed_cam.css"
+import "~/common/ui/big_speed_cam.ui"
+import "~/common/ui/big_speed_cam.lua"

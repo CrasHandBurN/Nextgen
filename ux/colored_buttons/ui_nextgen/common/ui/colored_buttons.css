@@ -1,0 +1,18 @@
+SPRITE.substrate,
+SPRITE.panel.map.fill,
+SPRITE.button.map.fill {
+	img:(btn_mapColorN ? btn_mapColor[btn_mapColorN - 1] : "btn_map.bmp#3"); 
+	resize_bmp:1; 
+	z:1;
+	left:(btn_mapColorN ? 1% : 0); 
+	top:(btn_mapColorN ? 1% : 0); 
+	right:(btn_mapColorN ? 1% : 0); 
+	bottom:(btn_mapColorN ? 1% : 0); 
+	alpha:(btn_mapColorN ? 32 : %lua.aCockpitTransparency);
+}
+TABLE.colored_buttons {
+	right:50%; bottom:0; top:0; left:0;
+	r2l: 0; compact: 1; fill_vertical: 0; 
+	col: 3;
+	row: 3;
+}

@@ -1,0 +1,9 @@
+/* ----- arimi  ----- Animated PoliceMan  ----  updated  17.12.2016  -----  */
+/* --------------------- Please, don't modify this plugin ---------------------------  */
+
+SPRITE.btn_map.anim_police {
+	left: %lua.PoliceMan_HorizontalLand ;
+	top: %lua.PoliceMan_VerticalLand ;
+}
+
+

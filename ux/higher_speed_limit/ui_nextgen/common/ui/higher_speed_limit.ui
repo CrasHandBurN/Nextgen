@@ -1,0 +1,96 @@
+;-------------WANDEL™---01.04.2023------------
+<userlist lm_higher_speed_limit_StreetList from="wstr" from_gcoor="gcoor" street="wstr" to="wstr" to_gcoor="gcoor" speed_limit="int" enable="bool" visible="bool">	
+	<view visibility_filter=visible sort_by="street" /> ;sort_by - does not work properly with for item, index in ModelList_iter
+	<default visible=1 enable=1 speed_limit=80 from_gcoor=(VW_ReturnPosition("N0", "E0")) to_gcoor=(VW_ReturnPosition("N0", "E0")) />
+	;<row    from=(L"Повітрофлотський шляхопровід") street=(L"Перемоги проспект") to=(L"Чорнобильська вулиця") from_gcoor=(VW_ReturnPosition("N50.448507", "E30.482388")) to_gcoor=(VW_ReturnPosition("N50.454738", "E30.346747")) />
+	;<row    from=(L"Міська вулиця") street=(L"Кільцева дорога") to=(L"Газопроводна вулиця") from_gcoor=(VW_ReturnPosition("N50.342389", "E30.553560")) to_gcoor=(VW_ReturnPosition("N50.528211", "E30.468647")) />
+	;<row    from=(L"Міська вулиця") street=(L"Композитора Стеценка вулиця") to=(L"Гостомильське шосе") from_gcoor=(VW_ReturnPosition("N50.476578", "E30.427560")) to_gcoor=(VW_ReturnPosition("N50.496913", "E30.369650")) />
+	<row    from=(L"Оболонський проспект") street=(L"Степана Бандери проспект") to=(L"Північний міст") from_gcoor=(VW_ReturnPosition("N50.488921", "E30.530107")) to_gcoor=(VW_ReturnPosition("N50.488050", "E30.479103")) />
+	<row    from=(L"Озерна вулиця") street=(L"Р69") to=(L"Р69") from_gcoor=(VW_ReturnPosition("N50.524907", "E30.484016")) to_gcoor=(VW_ReturnPosition("N50.571869", "E30.472601")) />
+	<row	from=(L"Північний міст") street=(L"Романа Шухевича проспект") to=(L"Керченська площа") from_gcoor=(VW_ReturnPosition("N50.495174", "E30.558600")) to_gcoor=(VW_ReturnPosition("N50.495185", "E30.607910")) />
+	<row	from=(L"Гаванський міст") street=(L"Набережно-Рибальська вулиця") to=(L"Електриків вулиця") from_gcoor=(VW_ReturnPosition("N50.486231", "E30.528663")) to_gcoor=(VW_ReturnPosition("N50.470775", "E30.529333")) />
+	<row	from=(L"Наддніпрянське шосе") street=(L"Наддніпрянське шосе") to=(L"Набережне шосе") from_gcoor=(VW_ReturnPosition("N50.423634", "E30.568471")) to_gcoor=(VW_ReturnPosition("N50.402758", "E30.563586")) />
+	<row	from=(L"Набережне шосе") street=(L"Набережне шосе") to=(L"Поштова площа") from_gcoor=(VW_ReturnPosition("N50.460127", "E30.526281")) to_gcoor=(VW_ReturnPosition("N50.423647", "E30.568723")) />
+	<row	from=(L"Столичне шосе") street=(L"Столичне шосе") to=(L"Столичне шосе") from_gcoor=(VW_ReturnPosition("N50.290401", "E30.591888")) to_gcoor=(VW_ReturnPosition("N50.402520", "E30.563406")) />
+	<row	from=(L"Миколи Грінченка вулиця") street=(L"Саперно-Слобідська вулиця") to=(L"Південний міст") from_gcoor=(VW_ReturnPosition("N50.404860", "E30.529771")) to_gcoor=(VW_ReturnPosition("N50.400058", "E30.562754")) />
+	<row	from=(L"Харківська площа") street=(L"Миколи Бажана проспект") to=(L"Південний міст") from_gcoor=(VW_ReturnPosition("N50.402576", "E30.681375")) to_gcoor=(VW_ReturnPosition("N50.394549", "E30.596865")) />
+	;<row    from=(L"Визволителів вулиця") street=(L"Броварський проспект") to=(L"Братіславська вулиця") from_gcoor=(VW_ReturnPosition("N50.490482", "E30.738115")) to_gcoor=(VW_ReturnPosition("N50.450993", "E30.594113")) />
+	<row    from=(L"Воскресенська вулиця") street=(L"Василя Перова бульвар") to=(L"Навої вулиця") from_gcoor=(VW_ReturnPosition("N50.495262", "E30.589593")) to_gcoor=(VW_ReturnPosition("N50.465598", "E30.599580")) />
+	;<row    from=(L"Ольжича вулиця") street=(L"Олени Теліги вулиця") to=(L"Кирилівська вулиця") from_gcoor=(VW_ReturnPosition("N50.486990", "E30.474083")) to_gcoor=(VW_ReturnPosition("N50.462921", "E30.447212")) />
+	;<row    from=(L"Патона міст") street=(L"Соборності проспект") to=(L"Харківське шосе") from_gcoor=(VW_ReturnPosition("N50.441807", "E30.623995")) to_gcoor=(VW_ReturnPosition("N50.430771", "E30.593575")) />
+	;<row    from=(L"Велика Кільцева дорога") street=(L"Леся Курбаса проспект") to=(L"Любомира Гузара проспект") from_gcoor=(VW_ReturnPosition("N50.425198", "E30.369087")) to_gcoor=(VW_ReturnPosition("N50.434378", "E30.404718")) />
+	;<row    from=(L"Леся Курбаса проспект") street=(L"Космонавта Комарова проспект") to=(L"Гната Юри вулиця") from_gcoor=(VW_ReturnPosition("N50.434123", "E30.403831")) to_gcoor=(VW_ReturnPosition("N50.441500", "E30.432298")) />
+	;<row    from=(L"Леся Курбаса проспект") street=(L"Любомира Гузара проспект") to=(L"Гната Юри вулиця") from_gcoor=(VW_ReturnPosition("N50.434123", "E30.403831")) to_gcoor=(VW_ReturnPosition("N50.441500", "E30.432298")) />
+	;<row    from=(L"Дніпровське шосе") street=(L"Дніпровське шосе") to=(L"Дніпровське шосе") from_gcoor=(VW_ReturnPosition("N50.342049", "E30.545792")) to_gcoor=(VW_ReturnPosition("N50.296969", "E30.533675")) />
+</userlist>
+
+<modify ui_Cockpit>
+	<insert last_child into="DIV.notify_list_ext TABLE.ari_ext">
+		<BUTTON CLASS="btn_map" ONRELEASE=VW_ShowStreetOnMap ONLONGCLICK=VW_higher_speed_limit_Off VISIBLE=( %lua.higher_speed_limitActive ) >
+			<SPRITE CLASS="button map fill" />
+			<BOX BOX_ALIGN="CENTER">
+				<SPRITE CLASS="speedlimit" IMG=( %lua.speedlimit_USACAN ? "spr_speedlimit_usa.svg" : "spr_speedlimit_eu.svg" ) >
+					<TEXT CLASS="speedlimit" TEXT=(format(L"%{speed[%D]:*}", %lua.SpeedLimitValue, 1)) /> 
+				</SPRITE>
+				<SPRITE CLASS="listitem" IMG=(sc_GetSysEntry("city_summer_speed", "city_icon", "owl.svg")) />
+			</BOX>
+		</BUTTON>
+	</insert>
+	
+	<modify  AdvancedSpeedLimitPhase VALUE=(%lua.higher_speed_limitActive ? sc_GetAdvancedSpeedLimit_Phase((%navigation.car.current_speed // 1), %lua.SpeedLimitValue, %warning.driveralert.speed_limit, %warning.driveralert.near_speed_limit, %warning.driveralert.over_speed_limit, %warning.driveralert.speed_limit.valid) : sc_GetAdvancedSpeedLimitPhase((%navigation.car.current_speed // 1), %lua.SpeedLimitValue, %warning.driveralert.speed_limit, %warning.driveralert.near_speed_limit, %warning.driveralert.over_speed_limit, %warning.driveralert.speed_limit.valid)) />
+</modify>
+
+<modify lm_SpeedWarnings icon="str" >
+	<insert last_child >
+		<row text="Higher speed limit" icon=(sc_GetSysEntry("city_summer_speed", "city_icon", "owl.svg")) haspopover=1 onrelease=VW_ShowStreets details=(sc_GetSysEntry("city_summer_speed", "city")) 
+			visible=(%regional.current_language.lcid == %regional.current_voice.lcid && %regional.current_language.lcid == tonumber(sc_GetSysEntry("city_summer_speed", "lcid"))) />
+	</insert>	
+</modify>
+
+<element_template et_List_higher_speed_limit>
+	<implementation>
+		<property enable value=( %*.enable // 1 )>
+		<property selectable value=( %*.selectable // 0 )>
+		<property dtooltip value=( %*.dtooltip // "" )>
+		
+		<property icon value=( %*.icon // "" )/>
+		<property iconid value=( %*.iconid // -1 )>
+		
+		<property text value=( %*.street // "" )>
+		<property details value=( sc_ShowSpeedTool(%*.speed_limit) // "" )>
+		<property value value=( %*.value // "" )>
+		
+		<property haspopover value=( %*.haspopover // 0 )>
+	</implementation>
+	
+	<BUTTON class="listitem" onrelease=VW_ShowStreetOnMap enable=enable  dtooltip=dtooltip nostress=( %*.nostress // 0 )>
+		<HBOX class="listitem">
+			<SPRITE class="listitem icon_list svg" img=icon iconid=iconid />
+			<VBOX class="listitem">
+				<TEXT class="listitem top" text=text visible=text />
+				<TEXT class="listitem bottom" text=details visible=details />
+			</VBOX>
+			<TEXT class="listitem value" text=value visible=value />
+			
+			<SPACER class="listitem popover" visible=haspopover />
+			<SPRITE class="listitem icon popover" visible=haspopover />
+		</HBOX>
+	</BUTTON>
+</element_template>
+
+<layer ui_higher_speed_limit z=30>
+	<DIV class="list">
+		<SPRITE class=list_panel />
+		<LIST2 class="list_control" listmodel="ui.lm_higher_speed_limit_StreetList" element_template="et_List_higher_speed_limit" SMOOTHSCROLLING > ;listmodel="ui.lm_higher_speed_limit_StreetList.unfiltered_list"
+			<VSMARTSCROLL>
+			<WHEEL>
+			<LISTCONTROL>
+		</LIST2>
+	</DIV>
+</layer>
+
+<layer ui_MapOverviewOnStreet z=30>
+	<DIV class="mapmain">
+		<SPRITE fitbox_MapOverviewOnStreet class="fitbox">
+	</DIV>	
+</layer>

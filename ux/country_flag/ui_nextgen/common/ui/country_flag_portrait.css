@@ -1,0 +1,6 @@
+/*------- arimi --------- Current Country Flag ---------- moded  07.01.2017 ----------*/
+
+BUTTON.curr_count_flag {
+            top: %lua.ar_CountryFlagVerticalPort;
+            left: %lua.ar_CountryFlagHorizontalPort;
+}

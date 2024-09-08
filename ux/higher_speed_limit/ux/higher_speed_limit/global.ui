@@ -1,0 +1,2 @@
+import "~/common/ui/higher_speed_limit.ui"
+import "~/common/ui/higher_speed_limit.lua"

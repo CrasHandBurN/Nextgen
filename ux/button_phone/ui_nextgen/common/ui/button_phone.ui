@@ -1,0 +1,50 @@
+; ----WANDEL™ --- 28.11.2018 ------
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE='java:call("android.call", wsplit(sc_GetSysEntry("sos", "phone_number", L"112"), L",%s?")[1])'  VISIBLE=( %lua.ShowButtonPhoneQuick )
+			ICON="ico_call.svg" ZOOM=90%
+			T_TEXT=(VW_Return_button_text(translate("Phone"), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate("Phone"), L"%s", 99)) />
+	</insert>
+</modify>
+
+<modify ui_Cockpit>
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON ONRELEASE='java:call("android.call", wsplit(sc_GetSysEntry("sos", "phone_number", L"112"), L",%s?")[1])'  VISIBLE=( %lua.ShowButtonPhoneCockpit )
+			ICON="ico_call.svg" ZOOM=90%
+			T_TEXT=(VW_Return_button_text(translate("Phone"), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate("Phone"), L"%s", 99)) />	
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=( %lua.ShowButtonPhoneCockpit ) />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=( %lua.ShowButtonPhoneQuick ) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert after="default">
+		<row text="'Phone' Button" bmp="ico_call.svg" isselected="lua.ShowButtonPhoneQuick" />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert after="default">
+		<row text="'Phone' Button" bmp="ico_call.svg" isselected="lua.ShowButtonPhoneCockpit" />
+	</insert>
+</modify>
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp="ico_call.svg" text=(translate("Phone")) onrelease='java:call("android.call", wsplit(sc_GetSysEntry("sos", "phone_number", L"112"), L",%s?")[1])' />	
+		</insert>
+	</modify>
+<!end/>

@@ -1,0 +1,100 @@
+/* ----- arimi  ----- Animated PoliceMan  ----  WANDEL™ updated  07.03.2020  -----   */
+<observer value=( %lua.PoliceManOverSpeedValid ) onselect=PoliceSound start>
+
+<modify lm_SpeedWarnings>
+	<insert last_child >
+		<row text="Animated Policeman" icon="police_man.svg" haspopover=1 onrelease=sc_PoliceManSettings details=(sc_SetPoliceMan(%lua.ShowPoliceMan)) />
+	</insert>	
+</modify>
+
+<layer ui_SetPoliceMan z=30>
+	<DIV class="full">
+		<BUTTON top=0 left=0 right=0   h=10%  resize_bmp=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_PoliceMan_popover", MODEL.ui.lm_PoliceMan_popover.list[MODEL.lua.ShowPoliceMan()].text())'>
+			<SPRITE top=0 left=0 right=0 bottom=0  img="btn_map.bmp#3" resize_bmp=1  alpha=10 />
+			<TEXT  class="listitem" top=5% bottom=5%  left=5% right=60% text="Animated Policeman" /> 
+			<TEXT  class="listitem" top=5% bottom=5%  left=60% right=5% TEXT=(sc_SetPoliceMan(%lua.ShowPoliceMan))/>
+		</BUTTON>
+		<SPRITE class="listitem" left=0 top=10% h=(%lua.IsLandscape ? 15% : 10%)  right=0 alpha=10 bmp="btn_map.bmp#3" resize_bmp=1 visible=(%lua.ShowPoliceMan)> 
+			<TEXT class="listitem" z=45 left=7% right=7% top=0   align="CENTER" 
+				text=(%lua.IsLandscape ? "Horizontal position (landscape)" : "Horizontal position (portrait)")/>
+   			<HSMARTSCROLL class="scroll policeH" min=0  left=5% right=5% top=28% z=50 dragable=1 valuemodel=(%lua.IsLandscape ? "lua.PoliceMan_HorizontalLand" : "lua.PoliceMan_HorizontalPort")/>
+		</SPRITE>
+
+		<SPRITE class="listitem" left=0  top=(%lua.IsLandscape ? 25% : 20%)  w=(%lua.IsLandscape ? 10% : 15%) 
+			bottom=(%lua.IsLandscape ? 15% : 9%) visible=(%lua.ShowPoliceMan) bmp="btn_map.bmp#3" resize_bmp=1 alpha=10> 
+  			<VSMARTSCROLL class="scroll policeV" min=0  left=0 right=0 align="CENTER"  top=5% bottom=5%  z=50 dragable=1 valuemodel=(%lua.IsLandscape ? "lua.PoliceMan_VerticalLand" : "lua.PoliceMan_VerticalPort") />
+		</SPRITE>
+		<SPRITE class="listitem" top=(%lua.IsLandscape ? 25% : 20%) left=(%lua.IsLandscape ? 10% : 15%) right=0  h=(%lua.IsLandscape ? 15% : 10%)   
+				visible=(%lua.ShowPoliceMan) bmp="btn_map.bmp#3" resize_bmp=1  alpha=10
+				onrelease='sc_NextStateAnim(st_PoliceManSoundSettings, "fade", 1, "" )'> 
+			<TEXT class="listitem" z=45 left=7% right=50% top=10%  bottom=10% align="CENTER" text="Over Speed Sound"/>
+
+			<TEXT class="listitem" z=45 left=50% right=7% top=10%  bottom=10% align="CENTER" 
+				text=( %lua.AudioPoliceOn ? (%lua.OwnWarningPolice == L"" ? tostring(%lua.AudioPolice) : %lua.OwnWarningPolice) : "Off")/>
+		</SPRITE>
+
+		;----- ZOOM -----
+		<SPRITE class="listitem police zoom"> 
+			<TEXT class="listitem" z=45 left=7% right=7% top=0 align="CENTER" text="Policeman Zoom"/>
+   			<HSMARTSCROLL class="scroll" min=(-50) max=80  left=5% right=5% top=25% z=50 dragable=1 valuemodel="lua.PoliceMan_Zoom"/>
+		</SPRITE>
+		;----- BLINK -----
+		<SPRITE class="listitem police blinking"> 
+			<CHECKBOX  class="listitem chkonoff" text="Policeman blinking" boolmodel="lua.PolicemanBlinking" />
+		</SPRITE>
+	</DIV>
+
+	<DIV class="cockpit" visible=(%lua.ShowPoliceMan && ( %lua.PolicemanBlinking ? %gps.blink : true ))>
+		<SPRITE class="btn_map anim_police">
+			<SPRITE   class="anim_polic" bmp="animalt_police_man1.spr"  ANIMATE="animpolice" visible=( %lua.ShowPoliceMan == 1 ) />
+			<SPRITE   class="anim_polic" bmp="animalt_police_man2.spr"  ANIMATE="animpolice" visible=( %lua.ShowPoliceMan == 2 ) />
+			<SPRITE   class="anim_polic" bmp="animalt_police_man3.spr"  ANIMATE="animpolice"  visible=( %lua.ShowPoliceMan == 3 ) />
+			<SPRITE   class="anim_polic" bmp="animalt_police_man.bmp#2"	phase=(%gps.blink) visible=( %lua.ShowPoliceMan == 4 ) />
+			<SPRITE   class="anim_polic" bmp="animalt_police_man4.spr"  ANIMATE="animpolice" visible=( %lua.ShowPoliceMan == 5 ) />
+		</SPRITE>
+	</DIV>
+   
+	<BUTTON class="btn_map footer icon svg"
+			rawkey=(%lua.LocalMenuOpen ? undef : 27)
+			onrelease='sc_Cockpit_Back_From_Dragmode() sc_back()' 
+			onlongclick='sc_Cockpit_Back_From_Dragmode() sc_longBack()'>
+		<SPRITE top=0 left=0 right=0 bottom=0  img="btn_map.bmp#3" resize_bmp=1  alpha=10 />
+      	<SPRITE  class="btn_map svg"  img="ico_footer_back.svg"/>
+	</BUTTON>
+	
+</layer>
+
+<userlist lm_PoliceMan_popover text="str" onrelease="ui" enable="bool">
+    <default enable=1/>
+		<row text="Off"						onrelease='MODEL.lua.ShowPoliceMan = 0   sc_ClosePopover()'/>
+		<row text="with speed ticket"   	onrelease='MODEL.lua.ShowPoliceMan = 1   sc_ClosePopover()'/>
+		<row text="with whistle"            onrelease='MODEL.lua.ShowPoliceMan = 2   sc_ClosePopover()'/>
+		<row text="with baton"              onrelease='MODEL.lua.ShowPoliceMan = 3   sc_ClosePopover()'/>
+     	<row text="police car"              onrelease='MODEL.lua.ShowPoliceMan = 4   sc_ClosePopover()'/>
+     	<row text="police car two"			onrelease='MODEL.lua.ShowPoliceMan = 5   sc_ClosePopover()'/>
+</userlist>
+
+<layer ui_PoliceMan z=170 visible=( %lua.ShowPoliceMan && !%lua.DragMode && !ui_PropLayer.JunctionViewVisible && !ui_PropLayer.TunnelOverviewVisible && !%lua.MenuIsOpened && !ui_Cockpit.MapPopupOnscreen )>
+
+	<DIV class="cockpit" visible=( %lua.PoliceManOverSpeedValid && (%lua.PolicemanBlinking ? %gps.blink : true) )>
+		<SPRITE class="btn_map anim_police" >
+			<SPRITE class="anim_polic"    bmp="animalt_police_man1.spr"  ANIMATE="animpolice" visible=( %lua.ShowPoliceMan == 1 ) />
+			<SPRITE  class="anim_polic"   bmp="animalt_police_man2.spr" ANIMATE="animpolice" visible=( %lua.ShowPoliceMan == 2 ) />
+			<SPRITE  class="anim_polic"   bmp="animalt_police_man3.spr" ANIMATE="animpolice" visible=( %lua.ShowPoliceMan == 3 ) />
+			<SPRITE  class="anim_polic"   bmp="animalt_police_man.bmp#2"  phase=( %gps.blink ) visible=( %lua.ShowPoliceMan == 4 ) />
+			<SPRITE  class="anim_polic"   bmp="animalt_police_man4.spr" ANIMATE="animpolice" visible=( %lua.ShowPoliceMan == 5 ) />
+		</SPRITE>
+	</DIV>
+   
+</layer>
+
+<userlist lm_PoliceManSoundSettings haspopover="bool" text="str" isselected="str" visible="bool" enable="bool" onrelease="ui" details="ui" type="str" dtooltip="str">
+	<view visibility_filter=visible/>
+		<default onrelease=undef visible=1 enable=1/>
+			<row text="Over Speed Sound" isselected="lua.AudioPoliceOn" type="ChkOnOff">
+			<row text="Choose Over Speed Sound" haspopover=1 
+			details=(%lua.OwnWarningPolice == L"" ? tostring(%lua.AudioPolice) : %lua.OwnWarningPolice) 
+			onrelease={%lua.SelectedAudioFile = %lua.AudioPolice; %lua.SelectedOwnWarning = %lua.OwnWarningPolice; sc_ScanAudioFiles()} 
+			enable=(%lua.AudioPoliceOn && !(%lua.MuteSoundWithTTS && %regional.current_voice.is_tts)) dtooltip="You have to Turn ON 'Over Speed Sound'.">
+</userlist>
+

@@ -1,0 +1,91 @@
+<var Russo_Ukrainian_WarCockpit = 0 permanent />
+<var Russo_Ukrainian_WarQuick = 0 permanent />
+<modify ui_Cockpit>
+	<insert into="IMPLEMENTATION"> 
+		<PROPERTY War_days VALUE=( TEXT_days_between_dates(%gps.current_date) ) /> 
+	</insert>
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON Russo_Ukrainian_War 
+			ONRELEASE='
+				ui.Notification_saved_text = War()
+				ui.Notification_bg_index=2
+				VW_LongTextToSay(Notification_saved_text())
+				sc_InfoNotification(Notification_saved_text())
+			'
+			;ONLONGCLICK='java:call("android.open_webpage", "https://invite.viber.com/?g2=AQBD3wxTrZ6XUU7IdXeHUfjVCydekezQCCGuwYnT6qPd1r7n1aVbFIewa6ng6Lis&lang=uk"); sc_back_to_cockpit()'
+			ONLONGCLICK='java:call("android.open_webpage", "https://uk.wikipedia.org/wiki/%D0%A0%D0%B0%D1%88%D0%B8%D0%B7%D0%BC"); sc_back_to_cockpit()'
+			VISIBLE=(Russo_Ukrainian_WarCockpit)
+			ICON=(%regional.current_voice.lcid == 1049 ? "rashiZm.svg" : "Russo_Ukrainian_War_Flag.svg")
+			ZOOM=80%
+			T_TEXT="War"
+			B_TEXT=(War_days) />
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=(Russo_Ukrainian_WarCockpit) />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'War' Button" bmp=(Russo_Ukrainian_War.ICON) isselected="ui.Russo_Ukrainian_WarCockpit" />
+	</insert>
+</modify>
+;---- Quick Menu -----
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE='ui.Russo_Ukrainian_War.ONRELEASE()()' ONLONGCLICK='ui.Russo_Ukrainian_War.ONLONGCLICK()()' 
+			VISIBLE=(Russo_Ukrainian_WarQuick)
+			ICON=(Russo_Ukrainian_War.ICON) ZOOM=80%
+			T_TEXT=(Russo_Ukrainian_War.T_TEXT)
+			B_TEXT=(Russo_Ukrainian_War.B_TEXT) />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=(Russo_Ukrainian_WarQuick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'War' Button" bmp=(Russo_Ukrainian_War.ICON) isselected="ui.Russo_Ukrainian_WarQuick" />
+	</insert>
+</modify>
+
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=(Russo_Ukrainian_War.ICON) text=(translate("War")) onrelease='ui.Russo_Ukrainian_War.ONRELEASE()()' />
+		</insert>
+	</modify>
+<!end/>
+
+<var War="Thank you" >
+<layer ui_RUSSIA z=500000 onshow='
+	--VW_LongTextToSay("Gaslo");
+	MODEL.lua.SkinVersionShowTime = 400; 
+	doDelayed(MODEL.lua.SkinVersionShowTime(), "ui_RUSSIA:HIDE(); MODEL.lua.SkinVersionShowTime = 0")
+	' >
+	<DIV class="full" >
+		<SPRITE left=(-10) top=(-10) bottom=(-10) right=(-10) resize_bmp=1 img="btn_map.bmp#3" alpha=25 
+			onrelease='ui_RUSSIA:tween("Y", 0, -ui.ui_RUSSIA.H, 300, { on_complete = function() ui_RUSSIA:HIDE(); MODEL.lua.SkinVersionShowTime = 0 end}); 
+			java:call("android.open_webpage", "https://invite.viber.com/?g2=AQBD3wxTrZ6XUU7IdXeHUfjVCydekezQCCGuwYnT6qPd1r7n1aVbFIewa6ng6Lis&lang=uk"); sc_back_to_cockpit()' /> 
+	</DIV>
+
+	<DIV class="main">
+		<VBOX class="fill about_vesion">
+			<SPRITE class="logo svg" img="Ukrainian_Armed_Forces.svg" />
+			<TEXT class="about_vesion font_info bd color_inf_main" text=(%lua.aSkinVersionTXT) />
+			<TEXT class="about_vesion font_info bd color_inf_main" text=(L"version " + %lua.aSkiVersionNo + L" | " + %lua.aSkinVersionDate) />
+			<TEXT class="about_vesion font_info bd color_inf_main" text=(%lua.ApplicationLabel) visible=( %lua.ApplicationLabel != "WAIT" ) />
+			<TEXT class="about_vesion font_info bd color_inf_main" text=(sc_translate_VoiceOrLang("Total plugins loaded: %s", %lua.Loaded_Plugins)) />
+			<TEXT class="about_vesion font_info bd color_inf_main" text=("@ " + lua.ColorCockpitInterface_Table[%lua.aColorCockpitInterface_Set][2]) />
+			<TEXT class="about_vesion font_info bd color_inf_main" text=(tostring(L"version " + %lua.aSkinVersionNo + L" | " + %lua.aSkinVersionDate)) />
+		</VBOX>
+	</DIV>
+</layer>

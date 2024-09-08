@@ -1,0 +1,17 @@
+﻿[words]
+plugin~msg_send_tracking="msg_send_tracking: трекинг событий"
+MSG Tracking="Трекинг событий"
+'MSG send tracking' settings="'MSG send tracking' настройки"
+Phone Setting="Установить телефон"
+All Event Off="Все выключить"
+All Event On="Все включить"
+View Events List="Смотреть список событий"
+
+By Distance="По дистанции"
+By Time="По времени"
+By Stopover="По промежуточным"
+By Bordercrossing="По границам"
+By City Enter="Въезд в Н.П."
+By Route Changed="Изменение маршрута"
+By Unscheduled Parking="Внезапная остановка"
+By Overspeed="При превышении"

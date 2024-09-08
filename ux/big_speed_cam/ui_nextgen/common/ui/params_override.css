@@ -1,0 +1,6 @@
+@params {
+	bigspeed_image_w: 120;
+	bigspeed_image_h: 60;
+	bigspeed_image_speed_h: 120;
+	bigspeed_fontsize: %lua.BigSpeed_Zoom;
+}

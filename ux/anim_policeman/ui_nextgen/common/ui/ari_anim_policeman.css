@@ -1,0 +1,46 @@
+/* ----- arimi  ----- Animated PoliceMan  ----  WANDEL updated  15.04.2020  -----  */
+/* --------------------- Please, don't modify this plugin ---------------------------  */
+
+SPRITE.anim_polic {
+	left: 0; right: 0; top: 0; bottom: 0;
+	zoom: "ZOOMVISIBLE";  z: 20;
+}
+
+SPRITE.btn_map.anim_police {
+	w: ( policeman_image_w + %lua.PoliceMan_Zoom + ( %lua.ShowPoliceMan == 2 ? 70 : 0 ) ); 
+	h:  ( policeman_image_h + %lua.PoliceMan_Zoom + ( %lua.ShowPoliceMan == 2 ? 70 : 0 ) ); 
+	z:19; resize_bmp: 1; alpha: 0;
+	onlongclick: sc_PoliceManSettings;  
+	onrelease: 'MODEL.lua.ShowPoliceMan = ( (MODEL.lua.ShowPoliceMan() + 1) % 6 ) or 1';
+}
+
+HSMARTSCROLL.scroll.policeH { 
+	max: ( screen_w - policeman_image_w ) ;
+}
+
+VSMARTSCROLL.scroll.policeV { 
+	r2l_invert:1; img:"scrollprogress_bg_spr.bmp"; sprind:"hscrollcar_spr.bmp#3";
+	set:1; z:100; dragable:1; min:1; max: ( screen_h - policeman_image_h ) ;
+	SLIDER_ABOVE_FRAME:; sprprbar:"scrollprogress_spr.bmp#2";
+	valign:"center"; align:"center"; resize_bmp: "cardinal_only"; 
+}
+
+SPRITE.listitem.police.zoom {
+	bmp: "btn_map.bmp#3"; resize_bmp: 1;  alpha: 10;
+	bottom:0;  right: 0;   h: ( footer_h + 10 ); left:(%lua.IsLandscape ? 10% : 15%);
+	visible: (%lua.ShowPoliceMan);
+}
+
+SPRITE.listitem.police.blinking {
+	bmp: "btn_map.bmp#3"; resize_bmp: 1;  alpha: 10;
+	bottom: ( footer_h + 10 );  right: 0;  h: ( footer_h + 10 ); left:(%lua.IsLandscape ? 10% : 15%);
+	visible: (%lua.ShowPoliceMan);
+}
+
+BUTTON.btn_map.footer.icon.svg {
+	img:""; w: (%lua.IsLandscape ? 10% : 15%); 
+	h: ( footer_h + 10 ); bottom: 0; 
+}
+
+@import "~/common/ui/ari_anim_policeman_landscape.css" landscape;
+@import "~/common/ui/ari_anim_policeman_portrait.css" portrait;

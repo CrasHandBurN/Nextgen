@@ -1,0 +1,25 @@
+;---------------------- WANDEL™ 15.05.2023 ----------------
+<observer value=(%navigation.car.current_speed < lua.gMinSpeedToShow) 
+	onselect='
+		local c_table = {"_FRA", "_GER", "_SUI"}
+		if in_set(MODEL.navigation.car.current_country(), c_table) then
+			sc_SpeedcamWarningDisabled()
+			MODEL.lua.speedcam_yes_no = false
+		end'
+	ondeselect='
+		if not MODEL.lua.speedcam_yes_no() then
+			sc_SpeedcamWarningEnabled() 
+			MODEL.lua.speedcam_yes_no = true
+		end'
+	start="NO_TRIGGER" />
+/*
+<modify lm_WarningsSettings>
+	<insert after="default">
+		<row prio=200 text="Alert Points" icon="ico_speedcams_menu.svg" onrelease=sc_AlertPointSettings />
+	</insert>
+</modify>
+*/
+<!DISABLE COMPAT_UPCASE_ATTR_SELECTOR/>
+<modify lm_WarningsSettings>
+	<modify element="row[prio=200]" visible=(%lua.speedcam_yes_no) />
+</modify>

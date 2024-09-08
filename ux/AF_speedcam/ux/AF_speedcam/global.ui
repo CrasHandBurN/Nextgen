@@ -1,0 +1,2 @@
+import "~/common/ui/AF_speedcam.ui"
+import "~/common/ui/AF_speedcam.lua"

@@ -1,0 +1,10 @@
+;------------- WANDEL™ 21.11.2018 ------------
+<modify lm_WizardSteps>
+	<insert after=RouteSettings>
+		<row Display onrelease=sc_DisplaySettings />
+		<row Skin_Settings onrelease=sc_MapVisualSettingsExtended />
+		<row Sound onrelease=sc_SettingSound />
+		<row NavigationView onrelease=sc_NavigationMap />
+		<row Warnings onrelease=sc_WarningSetting />
+	</insert>
+</modify>

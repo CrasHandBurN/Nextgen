@@ -1,0 +1,97 @@
+;******************WANDEL™ 19.01.2023**************
+;----------------
+<var btn_mapColorN = 0 permanent />
+<var btn_mapColor = #ff208000, #ff200080, #ff208080, #ff802000, #ffff8800, #ff428df5, #ff07f01b, #ffd19c08 />
+;----------------
+
+<modify lm_SetCockpitColorIcons_Popover text="ui">
+	<insert>
+		<row text=(translate("Colored background") + L": " + btn_mapColorN) onrelease=VW_ColoredBackground />
+	</insert>
+</modify>
+
+<layer ui_Colored_Buttons z=999>
+	<DIV class="cockpit">
+		<TABLE class="colored_buttons" >
+			<BUTTON left=0 right=0 top=0 bottom=0 img=(btn_mapColor[0]) onrelease={btn_mapColorN = 1} onlongclick='ui_Colored_Buttons:HIDE()' >
+				<SPRITE TOP=-1 BOTTOM=-1 LEFT=-1 RIGHT=-1 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 z=102 />
+			</BUTTON>
+			<BUTTON left=0 right=0 top=0 bottom=0 img=(btn_mapColor[1]) onrelease={btn_mapColorN = 2} onlongclick='ui_Colored_Buttons:HIDE()' >
+				<SPRITE TOP=-1 BOTTOM=-1 LEFT=-1 RIGHT=-1 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 z=102 />
+			</BUTTON>
+			<BUTTON left=0 right=0 top=0 bottom=0 img=(btn_mapColor[2]) onrelease={btn_mapColorN = 3} onlongclick='ui_Colored_Buttons:HIDE()' >
+				<SPRITE TOP=-1 BOTTOM=-1 LEFT=-1 RIGHT=-1 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 z=102 />
+			</BUTTON>
+			<BUTTON left=0 right=0 top=0 bottom=0 img=(btn_mapColor[3]) onrelease={btn_mapColorN = 4} onlongclick='ui_Colored_Buttons:HIDE()' >
+				<SPRITE TOP=-1 BOTTOM=-1 LEFT=-1 RIGHT=-1 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 z=102 />
+			</BUTTON>
+			<BUTTON left=0 right=0 top=0 bottom=0 img=(btn_mapColor[4]) onrelease={btn_mapColorN = 5} onlongclick='ui_Colored_Buttons:HIDE()' >
+				<SPRITE TOP=-1 BOTTOM=-1 LEFT=-1 RIGHT=-1 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 z=102 />
+			</BUTTON>
+			<BUTTON left=0 right=0 top=0 bottom=0 img=(btn_mapColor[5]) onrelease={btn_mapColorN = 6} onlongclick='ui_Colored_Buttons:HIDE()' >
+				<SPRITE TOP=-1 BOTTOM=-1 LEFT=-1 RIGHT=-1 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 z=102 />
+			</BUTTON>
+			<BUTTON left=0 right=0 top=0 bottom=0 img=(btn_mapColor[6]) onrelease={btn_mapColorN = 7} onlongclick='ui_Colored_Buttons:HIDE()' >
+				<SPRITE TOP=-1 BOTTOM=-1 LEFT=-1 RIGHT=-1 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 z=102 />
+			</BUTTON>
+			<BUTTON left=0 right=0 top=0 bottom=0 img=(btn_mapColor[7]) onrelease={btn_mapColorN = 8} onlongclick='ui_Colored_Buttons:HIDE()' >
+				<SPRITE TOP=-1 BOTTOM=-1 LEFT=-1 RIGHT=-1 img="signpost_template_border.bmp" resize_bmp=1 alpha=32 z=102 />
+			</BUTTON>
+			<BUTTON left=0 right=0 top=0 bottom=0 img="ico_off.svg" onrelease={btn_mapColorN = 0} onlongclick='ui_Colored_Buttons:HIDE()' />
+		</TABLE>
+	</DIV>
+</layer>
+
+<modify ui_Cockpit>           
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON_ICON ColoredButtons ONRELEASE=VW_ColoredBackground
+			ONLONGCLICK='ui_Colored_Buttons:SHOW()'
+			VISIBLE=(%lua.ColoredButtonsCockpit)
+			ICON="ico_colored_background.svg" ZOOM=80%
+			T_TEXT=(VW_Return_button_text(translate("Colored background"), L"%s", 1))
+			B_TEXT=(VW_Return_button_text(translate("Colored background"), L"%s", 99)) />
+	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row 	visible=(%lua.ColoredButtonsCockpit) />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert>
+		<row text="'Colored background' Button" bmp=(ColoredButtons.ICON) isselected="lua.ColoredButtonsCockpit" />
+	</insert>
+</modify>
+;---- Quick Menu -----
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON_ICON ONRELEASE='ui.ColoredButtons.ONRELEASE()()' ONLONGCLICK='ui.ColoredButtons.ONLONGCLICK()()' 
+			VISIBLE=(%lua.ColoredButtonsQuick)
+			ICON=(ColoredButtons.ICON) ZOOM=80%
+			T_TEXT=(ColoredButtons.T_TEXT)
+			B_TEXT=(ColoredButtons.B_TEXT) />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row 	visible=(%lua.ColoredButtonsQuick) />
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row text="'Colored background' Button" bmp=(ColoredButtons.ICON) isselected="lua.ColoredButtonsQuick" />
+	</insert>
+</modify>
+
+;---insert into QuickTip---
+<!if condition=(Plugin.isLoaded("quick_tip"))>
+	<modify lm_QuickBattonList>
+		<insert>
+			<row  bmp=(ColoredButtons.ICON) text=(translate("Colored background")) onrelease='ui.ColoredButtons.ONRELEASE()()' />
+		</insert>
+	</modify>
+<!end/>

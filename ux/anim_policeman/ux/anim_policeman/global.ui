@@ -1,0 +1,5 @@
+import "~/common/ui/ari_anim_policeman.lua"
+import "~/common/ui/ari_anim_policeman.css"
+import "~/common/ui/ari_anim_policeman.ui"
+
+

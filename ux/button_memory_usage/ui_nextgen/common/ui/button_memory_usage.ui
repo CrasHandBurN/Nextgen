@@ -1,0 +1,52 @@
+;--------------------------------WANDEL™-------------MEMORY USAGE--------------------------------
+<observer value=( %lua.memory_usage_in_cockpit && %gps.blink ) onselect=sc_Garbage_Collector START="NO_TRIGGER" />
+<modify ui_Cockpit>
+	<insert first_child after="#first_BUTTON" into="DIV.notify_list_ext TABLE.ari_ext">
+		<BUTTON CLASS="btn_map" ONRELEASE='sc_Garbage_Collector(true)' ONLONGCLICK='ui_MemoryDebug:SHOW()'
+			VISIBLE=( %lua.memory_usage_in_cockpit ) >
+			<SPRITE CLASS="button map fill" />
+			<TEXT CLASS="listitem" TEXT=(tostring(%other.free_memory / 1048576) + " MB") LEFT=10 RIGHT=10 TOP=0 BOTTOM=0 FONT="defaultbd" FONTSIZE=30 Z=60 ALIGN="CENTER" VALIGN="CENTER" CAN_SHRINK=1 WORDWRAP=1
+				VISIBLE=(%other.free_memory / 1048576 < lua.gFree_Memory_Limit_GC ? %gps.blink : 1) 
+				COLOR=(%other.free_memory / 1048576 < lua.gFree_Memory_Limit_GC ? #CD5C5C : CSS.Param.map_main_color) />
+			<GRAPH LEFT=0 RIGHT=0 H=20% BOTTOM=4% FULL=(%other.total_memory / 1024) CURRENT=(%other.free_memory / 1024) ORIENTATION="horizontal" />
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify lm_MapVisualSettingsExtended>
+	<insert>
+		<row  prio=2012 bmp="Garbage_Collector.svg" text="Memory Usage" type="ChkOnOff_Icon" isselected="lua.memory_usage_in_cockpit" />
+	</insert>	
+</modify>
+
+<layer ui_MemoryDebug z=999>
+	<DIV class="cockpit">
+		<BUTTON left=0 right=0 top=0 bottom=0 onrelease='ui_MemoryDebug:HIDE()' onlongclick='sc_Garbage_Collector(true)' >
+			<TABLE class="memory_statistics" >
+				<INFORMATION_PLATE left=0 right=0 top=0 bottom=0 
+					text=("Cache: total memory (MB):" + tostring(%other.cache_total_memory / 1048576)) />
+				
+				<INFORMATION_PLATE left=0 right=0 top=0 bottom=0 
+					text=("Cache: used memory (MB):" + tostring(%other.cache_used_memory / 1048576)) />
+				
+				<INFORMATION_PLATE left=0 right=0 top=0 bottom=0 
+					text=("Cache: garbage memory (MB):" + tostring(%other.cache_garbage_memory / 1048576)) />
+				
+				<INFORMATION_PLATE left=0 right=0 top=0 bottom=0 
+					text=("Total Memory (MB):" + tostring(%other.total_memory / 1048576)) />
+
+				<INFORMATION_PLATE left=0 right=0 top=0 bottom=0 
+					text=("Reserved Memory (kB):" + tostring(%other.reserved_memory / 1024)) />		
+				
+				<INFORMATION_PLATE left=0 right=0 top=0 bottom=0 
+					text=("Max Memory (MB):" + tostring(%other.max_memory / 1048576)) />	
+				
+				<INFORMATION_PLATE left=0 right=0 top=0 bottom=0 
+					text=("Used Memory (MB):" + tostring(%other.used_memory / 1048576)) />		
+		
+				<INFORMATION_PLATE left=0 right=0 top=0 bottom=0 
+					text=("Free Memory (kB):" + tostring(%other.free_memory / 1024)) />
+			</TABLE>
+		</BUTTON>
+	</DIV>
+</layer>

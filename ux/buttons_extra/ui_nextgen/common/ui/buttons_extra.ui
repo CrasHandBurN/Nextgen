@@ -1,0 +1,384 @@
+<userlist lm_buttons_extra text="str" icon="str" onrelease="ui" onlongclick="ui" details="ui" dtooltip="str" visible="bool" enable="bool">	
+	<default visible=1 enable=1 onrelease=undef onlongclick=undef />
+	<view visibility_filter=visible />
+	<row text="New Route"		icon="ico_route.svg"			onrelease='sc_OpenNewRoute()' />
+	<row text="Route OverView"	icon="ico_routeinformation.svg"	onrelease='sc_ShowRouteOverView()' />
+</userlist>
+
+<!if condition=(%ui.lm_buttons_extra.list.size > 0)>
+	<var buttons_extra0Cockpit = 0 permanent />
+	<modify ui_Cockpit>           
+		<insert first_child after="BUTTON" into="#CockpitBTNTable">
+			<BUTTON_ICON buttons_extra0
+				ONRELEASE=(%ui.lm_buttons_extra.list[0].onrelease)
+				ONLONGCLICK=(%ui.lm_buttons_extra.list[0].onlongclick)
+				VISIBLE=(buttons_extra0Cockpit)
+				ICON=(%ui.lm_buttons_extra.list[0].icon)
+				ZOOM=80%
+				T_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra.list[0].text), L"%s", 1))
+				B_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra.list[0].text), L"%s", 99)) />
+		</insert>
+	</modify>
+
+	<modify lm_CockpitSideList>
+		<insert>
+			<row 	visible=(buttons_extra0Cockpit) />
+		</insert>
+	</modify>
+
+	<modify lm_VCockpitMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra.list[0].text) bmp=(buttons_extra0.ICON) isselected="ui.buttons_extra0Cockpit" />
+		</insert>
+	</modify>
+
+	<var buttons_extra0Quick = 0 permanent />
+	;---- Quick Menu -----
+	<modify ui_SideList>           
+		<insert first_child after="BUTTON" into="TABLE">
+			<BUTTON_ICON ONRELEASE='ui.buttons_extra0.ONRELEASE()()' ONLONGCLICK='ui.buttons_extra0.ONLONGCLICK()()' 
+				VISIBLE=(buttons_extra0Quick)
+				ICON=(buttons_extra0.ICON) 
+				ZOOM=80%
+				T_TEXT=(buttons_extra0.T_TEXT)
+				B_TEXT=(buttons_extra0.B_TEXT) />
+		</insert>
+	</modify>
+
+	<modify lm_QuickSideList>
+		<insert>
+			<row 	visible=(buttons_extra0Quick) />
+		</insert>
+	</modify>
+
+	<modify lm_VQuickMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra.list[0].text) bmp=(buttons_extra0.ICON) isselected="ui.buttons_extra0Quick" />
+		</insert>
+	</modify>
+	/*
+	;---insert into QuickTip---
+	<!if condition=(Plugin.isLoaded("quick_tip"))>
+		<modify lm_QuickBattonList>
+			<insert>
+				<row  text=(translate(%ui.lm_buttons_extra.list[0].text)) bmp=(buttons_extra0.ICON) onrelease='ui.buttons_extra0.ONRELEASE()()' />
+			</insert>
+		</modify>
+	<!end/>
+	*/
+<!end/>
+
+<!if condition=(%ui.lm_buttons_extra.list.size > 1)>
+	<var buttons_extra1Cockpit = 0 permanent />
+	<modify ui_Cockpit>           
+		<insert first_child after="BUTTON" into="#CockpitBTNTable">
+			<BUTTON_ICON buttons_extra1
+				ONRELEASE=(%ui.lm_buttons_extra.list[1].onrelease)
+				ONLONGCLICK=(%ui.lm_buttons_extra.list[1].onlongclick)
+				VISIBLE=(buttons_extra1Cockpit)
+				ICON=(%ui.lm_buttons_extra.list[1].icon)
+				ZOOM=80%
+				T_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra.list[1].text), L"%s", 1))
+				B_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra.list[1].text), L"%s", 99)) />
+		</insert>
+	</modify>
+
+	<modify lm_CockpitSideList>
+		<insert>
+			<row 	visible=(buttons_extra1Cockpit) />
+		</insert>
+	</modify>
+
+	<modify lm_VCockpitMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra.list[1].text) bmp=(buttons_extra1.ICON) isselected="ui.buttons_extra1Cockpit" />
+		</insert>
+	</modify>
+
+	<var buttons_extra1Quick = 0 permanent />
+	;---- Quick Menu -----
+	<modify ui_SideList>           
+		<insert first_child after="BUTTON" into="TABLE">
+			<BUTTON_ICON ONRELEASE='ui.buttons_extra1.ONRELEASE()()' ONLONGCLICK='ui.buttons_extra1.ONLONGCLICK()()' 
+				VISIBLE=(buttons_extra1Quick)
+				ICON=(buttons_extra1.ICON) 
+				ZOOM=80%
+				T_TEXT=(buttons_extra1.T_TEXT)
+				B_TEXT=(buttons_extra1.B_TEXT) />
+		</insert>
+	</modify>
+
+	<modify lm_QuickSideList>
+		<insert>
+			<row 	visible=(buttons_extra1Quick) />
+		</insert>
+	</modify>
+
+	<modify lm_VQuickMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra.list[1].text) bmp=(buttons_extra1.ICON) isselected="ui.buttons_extra1Quick" />
+		</insert>
+	</modify>
+	/*
+	;---insert into QuickTip---
+	<!if condition=(Plugin.isLoaded("quick_tip"))>
+		<modify lm_QuickBattonList>
+			<insert>
+				<row  text=(translate(%ui.lm_buttons_extra.list[1].text)) bmp=(buttons_extra1.ICON) onrelease='ui.buttons_extra1.ONRELEASE()()' />
+			</insert>
+		</modify>
+	<!end/>
+	*/
+<!end/>
+
+<!if condition=(%ui.lm_buttons_extra.list.size > 2)>
+	<var buttons_extra2Cockpit = 0 permanent />
+	<modify ui_Cockpit>           
+		<insert first_child after="BUTTON" into="#CockpitBTNTable">
+			<BUTTON_ICON buttons_extra2
+				ONRELEASE=(%ui.lm_buttons_extra.list[2].onrelease)
+				ONLONGCLICK=(%ui.lm_buttons_extra.list[2].onlongclick)
+				VISIBLE=(buttons_extra2Cockpit)
+				ICON=(%ui.lm_buttons_extra.list[2].icon)
+				ZOOM=80%
+				T_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra.list[2].text), L"%s", 1))
+				B_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra.list[2].text), L"%s", 99)) />
+		</insert>
+	</modify>
+
+	<modify lm_CockpitSideList>
+		<insert>
+			<row 	visible=(buttons_extra2Cockpit) />
+		</insert>
+	</modify>
+
+	<modify lm_VCockpitMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra.list[2].text) bmp=(buttons_extra2.ICON) isselected="ui.buttons_extra2Cockpit" />
+		</insert>
+	</modify>
+
+	<var buttons_extra2Quick = 0 permanent />
+	;---- Quick Menu -----
+	<modify ui_SideList>           
+		<insert first_child after="BUTTON" into="TABLE">
+			<BUTTON_ICON ONRELEASE='ui.buttons_extra2.ONRELEASE()()' ONLONGCLICK='ui.buttons_extra2.ONLONGCLICK()()' 
+				VISIBLE=(buttons_extra2Quick)
+				ICON=(buttons_extra2.ICON) 
+				ZOOM=80%
+				T_TEXT=(buttons_extra2.T_TEXT)
+				B_TEXT=(buttons_extra2.B_TEXT) />
+		</insert>
+	</modify>
+
+	<modify lm_QuickSideList>
+		<insert>
+			<row 	visible=(buttons_extra2Quick) />
+		</insert>
+	</modify>
+
+	<modify lm_VQuickMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra.list[2].text) bmp=(buttons_extra2.ICON) isselected="ui.buttons_extra2Quick" />
+		</insert>
+	</modify>
+	/*
+	;---insert into QuickTip---
+	<!if condition=(Plugin.isLoaded("quick_tip"))>
+		<modify lm_QuickBattonList>
+			<insert>
+				<row  text=(translate(%ui.lm_buttons_extra.list[2].text)) bmp=(buttons_extra2.ICON) onrelease='ui.buttons_extra2.ONRELEASE()()' />
+			</insert>
+		</modify>
+	<!end/>
+	*/
+<!end/>
+
+<!if condition=(%ui.lm_buttons_extra.list.size > 3)>
+	<var buttons_extra3Cockpit = 0 permanent />
+	<modify ui_Cockpit>           
+		<insert first_child after="BUTTON" into="#CockpitBTNTable">
+			<BUTTON_ICON buttons_extra3
+				ONRELEASE=(%ui.lm_buttons_extra.list[3].onrelease)
+				ONLONGCLICK=(%ui.lm_buttons_extra.list[3].onlongclick)
+				VISIBLE=(buttons_extra3Cockpit)
+				ICON=(%ui.lm_buttons_extra.list[3].icon)
+				ZOOM=80%
+				T_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra.list[3].text), L"%s", 1))
+				B_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra.list[3].text), L"%s", 99)) />
+		</insert>
+	</modify>
+
+	<modify lm_CockpitSideList>
+		<insert>
+			<row 	visible=(buttons_extra3Cockpit) />
+		</insert>
+	</modify>
+
+	<modify lm_VCockpitMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra.list[3].text) bmp=(buttons_extra3.ICON) isselected="ui.buttons_extra3Cockpit" />
+		</insert>
+	</modify>
+
+	<var buttons_extra3Quick = 0 permanent />
+	;---- Quick Menu -----
+	<modify ui_SideList>           
+		<insert first_child after="BUTTON" into="TABLE">
+			<BUTTON_ICON ONRELEASE='ui.buttons_extra3.ONRELEASE()()' ONLONGCLICK='ui.buttons_extra3.ONLONGCLICK()()' 
+				VISIBLE=(buttons_extra3Quick)
+				ICON=(buttons_extra3.ICON) 
+				ZOOM=80%
+				T_TEXT=(buttons_extra3.T_TEXT)
+				B_TEXT=(buttons_extra3.B_TEXT) />
+		</insert>
+	</modify>
+
+	<modify lm_QuickSideList>
+		<insert>
+			<row 	visible=(buttons_extra3Quick) />
+		</insert>
+	</modify>
+
+	<modify lm_VQuickMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra.list[3].text) bmp=(buttons_extra3.ICON) isselected="ui.buttons_extra3Quick" />
+		</insert>
+	</modify>
+	/*
+	;---insert into QuickTip---
+	<!if condition=(Plugin.isLoaded("quick_tip"))>
+		<modify lm_QuickBattonList>
+			<insert>
+				<row  text=(translate(%ui.lm_buttons_extra.list[3].text)) bmp=(buttons_extra3.ICON) onrelease='ui.buttons_extra3.ONRELEASE()()' />
+			</insert>
+		</modify>
+	<!end/>
+	*/
+<!end/>
+
+<!if condition=(%ui.lm_buttons_extra.list.size > 4)>
+	<var buttons_extra4Cockpit = 0 permanent />
+	<modify ui_Cockpit>           
+		<insert first_child after="BUTTON" into="#CockpitBTNTable">
+			<BUTTON_ICON buttons_extra4
+				ONRELEASE=(%ui.lm_buttons_extra.list[4].onrelease)
+				ONLONGCLICK=(%ui.lm_buttons_extra.list[4].onlongclick)
+				VISIBLE=(buttons_extra4Cockpit)
+				ICON=(%ui.lm_buttons_extra.list[4].icon)
+				ZOOM=80%
+				T_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra.list[4].text), L"%s", 1))
+				B_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra.list[4].text), L"%s", 99)) />
+		</insert>
+	</modify>
+
+	<modify lm_CockpitSideList>
+		<insert>
+			<row 	visible=(buttons_extra4Cockpit) />
+		</insert>
+	</modify>
+
+	<modify lm_VCockpitMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra.list[4].text) bmp=(buttons_extra4.ICON) isselected="ui.buttons_extra4Cockpit" />
+		</insert>
+	</modify>
+
+	<var buttons_extra4Quick = 0 permanent />
+	;---- Quick Menu -----
+	<modify ui_SideList>           
+		<insert first_child after="BUTTON" into="TABLE">
+			<BUTTON_ICON ONRELEASE='ui.buttons_extra4.ONRELEASE()()' ONLONGCLICK='ui.buttons_extra4.ONLONGCLICK()()' 
+				VISIBLE=(buttons_extra4Quick)
+				ICON=(buttons_extra4.ICON) 
+				ZOOM=80%
+				T_TEXT=(buttons_extra4.T_TEXT)
+				B_TEXT=(buttons_extra4.B_TEXT) />
+		</insert>
+	</modify>
+
+	<modify lm_QuickSideList>
+		<insert>
+			<row 	visible=(buttons_extra4Quick) />
+		</insert>
+	</modify>
+
+	<modify lm_VQuickMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra.list[4].text) bmp=(buttons_extra4.ICON) isselected="ui.buttons_extra4Quick" />
+		</insert>
+	</modify>
+	/*
+	;---insert into QuickTip---
+	<!if condition=(Plugin.isLoaded("quick_tip"))>
+		<modify lm_QuickBattonList>
+			<insert>
+				<row  text=(translate(%ui.lm_buttons_extra.list[4].text)) bmp=(buttons_extra4.ICON) onrelease='ui.buttons_extra4.ONRELEASE()()' />
+			</insert>
+		</modify>
+	<!end/>
+	*/
+<!end/>
+
+<!if condition=(%ui.lm_buttons_extra.list.size > 5)>
+	<var buttons_extra5Cockpit = 0 permanent />
+	<modify ui_Cockpit>           
+		<insert first_child after="BUTTON" into="#CockpitBTNTable">
+			<BUTTON_ICON buttons_extra5
+				ONRELEASE=(%ui.lm_buttons_extra.list[5].onrelease)
+				ONLONGCLICK=(%ui.lm_buttons_extra.list[5].onlongclick)
+				VISIBLE=(buttons_extra5Cockpit)
+				ICON=(%ui.lm_buttons_extra.list[5].icon)
+				ZOOM=80%
+				T_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra.list[5].text), L"%s", 1))
+				B_TEXT=(VW_Return_button_text(translate(%ui.lm_buttons_extra.list[5].text), L"%s", 99)) />
+		</insert>
+	</modify>
+
+	<modify lm_CockpitSideList>
+		<insert>
+			<row 	visible=(buttons_extra5Cockpit) />
+		</insert>
+	</modify>
+
+	<modify lm_VCockpitMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra.list[5].text) bmp=(buttons_extra5.ICON) isselected="ui.buttons_extra5Cockpit" />
+		</insert>
+	</modify>
+
+	<var buttons_extra5Quick = 0 permanent />
+	;---- Quick Menu -----
+	<modify ui_SideList>           
+		<insert first_child after="BUTTON" into="TABLE">
+			<BUTTON_ICON ONRELEASE='ui.buttons_extra5.ONRELEASE()()' ONLONGCLICK='ui.buttons_extra5.ONLONGCLICK()()' 
+				VISIBLE=(buttons_extra5Quick)
+				ICON=(buttons_extra5.ICON) 
+				ZOOM=80%
+				T_TEXT=(buttons_extra5.T_TEXT)
+				B_TEXT=(buttons_extra5.B_TEXT) />
+		</insert>
+	</modify>
+
+	<modify lm_QuickSideList>
+		<insert>
+			<row 	visible=(buttons_extra5Quick) />
+		</insert>
+	</modify>
+
+	<modify lm_VQuickMenuButtons>
+		<insert>
+			<row text=(%ui.lm_buttons_extra.list[5].text) bmp=(buttons_extra5.ICON) isselected="ui.buttons_extra5Quick" />
+		</insert>
+	</modify>
+	/*
+	;---insert into QuickTip---
+	<!if condition=(Plugin.isLoaded("quick_tip"))>
+		<modify lm_QuickBattonList>
+			<insert>
+				<row  text=(translate(%ui.lm_buttons_extra.list[5].text)) bmp=(buttons_extra5.ICON) onrelease='ui.buttons_extra5.ONRELEASE()()' />
+			</insert>
+		</modify>
+	<!end/>
+	*/
+<!end/>

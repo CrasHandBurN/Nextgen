@@ -1,0 +1,91 @@
+<modify ui_Cockpit>  
+	<insert first_child after="BUTTON" into="#CockpitBTNTable">
+		<BUTTON CLASS="btn_map" VISIBLE=( %lua.ari_CountryFlagInQuickButton ) 
+				ONRELEASE=sc_CountryInfo_SelectCurrentCountry ONLONGCLICK=sc_ar_CountryFlagInCockpit_OnRelease>
+			<SPRITE CLASS="button map fill" />
+			<SPRITE CLASS="listitem flag" Z=41 IMG=(country_flag) />
+		</BUTTON>
+	</insert>
+	
+	<insert into="DIV.cockpit" >
+		<BUTTON CLASS="curr_count_flag">
+			<SPRITE CLASS="listitem flag" Z=41 IMG=(country_flag) />
+		</BUTTON>
+   	</insert>
+</modify>
+
+<modify lm_CockpitSideList>
+	<insert>
+		<row visible=( %lua.ari_CountryFlagInQuickButton ) />
+	</insert>
+</modify>
+
+<modify lm_VCockpitMenuButtons>
+	<insert after="default">
+		<row text="Country Flag Button" bmp=( ui_Cockpit.country_flag ) isselected="lua.ari_CountryFlagInQuickButton" />
+	</insert>
+</modify>
+
+<modify lm_MapVisualSettingsExtended>
+	<insert>
+		<row prio=1700 text="Country Flag" icon="ico_flag_waving.svg" onrelease=sc_ar_CountryFlagInCockpit_OnRelease />
+	</insert>
+</modify>
+
+<modify ui_SideList>           
+	<insert first_child after="BUTTON" into="TABLE">
+		<BUTTON CLASS="btn_map" VISIBLE=( %lua.ari_CountryFlagInQuickButtonQuick ) 
+				ONRELEASE=sc_CountryInfo_SelectCurrentCountry ONLONGCLICK=sc_ar_CountryFlagInCockpit_OnRelease>
+			<SPRITE CLASS="button map fill" />
+			<SPRITE CLASS="listitem flag" Z=41 IMG=( ui_Cockpit.country_flag ) />
+		</BUTTON>
+	</insert>
+</modify>
+
+<modify lm_VQuickMenuButtons>
+	<insert>
+		<row prio=5 text="Country Flag Button" bmp=( ui_Cockpit.country_flag ) isselected="lua.ari_CountryFlagInQuickButtonQuick" />
+	</insert>
+</modify>
+
+<modify lm_QuickSideList>
+	<insert>
+		<row visible=( %lua.ari_CountryFlagInQuickButtonQuick ) />
+	</insert>
+</modify>
+
+<layer ui_ar_CountryFlagInCockpit z=180 >
+	<DIV class="full">
+		<SPRITE class="listitem" top=0 left=0 right=0 h=10% bmp="btn_map.bmp#3" resize_bmp=1  alpha=10> 
+			<CHECKBOX  class="listitem chkonoff" text="Draggable Country Flag" boolmodel="lua.ari_CountryFlagInCockpit"  />
+		</SPRITE>
+
+		<SPRITE class="listitem" left=0 top=10% right=0 alpha=10 bmp="btn_map.bmp#3" resize_bmp=1 
+				h=(%lua.IsLandscape ? 15% : 10%) visible=( %lua.ari_CountryFlagInCockpit )> 
+			<TEXT class="listitem" z=45 left=7% right=7% top=12% align="CENTER" 
+				text=(%lua.IsLandscape ? "Horizontal Flag position (landscape)" : "Horizontal Flag position (portrait)") />
+   			<HSMARTSCROLL class="scroll ariH" min=0 left=5% right=5% top=28% z=50 dragable=1 
+				valuemodel=(%lua.IsLandscape ? "lua.ar_CountryFlagHorizontalLand" : "lua.ar_CountryFlagHorizontalPort") />
+		</SPRITE>
+		<SPRITE class="listitem" left=0 resize_bmp=1 alpha=10 bmp="btn_map.bmp#3"
+				top=(%lua.IsLandscape ? 25% : 20%)  w=(%lua.IsLandscape ? 10% : 15%)
+				bottom=(%lua.IsLandscape ? 12% : 8%) visible=( %lua.ari_CountryFlagInCockpit )> 
+  			<VSMARTSCROLL class="scroll ariV" min=0  left=0 right=0 align="CENTER"  top=5% bottom=5% z=50 dragable=1 
+				valuemodel=(%lua.IsLandscape ? "lua.ar_CountryFlagVerticalLand" : "lua.ar_CountryFlagVerticalPort") />
+		</SPRITE>
+		<SPRITE class="listitem"  resize_bmp=1  alpha=10 right=0  h=10% bmp="btn_map.bmp#3"
+				top=(%lua.IsLandscape ? 25% : 20%) left=(%lua.IsLandscape ? 10% : 15%) 
+					visible=( %lua.ari_CountryFlagInCockpit )> 
+			<TEXT class="listitem" z=45 left=7% right=7% top=10%  bottom=10% align="CENTER" 
+				text=(%lua.IsLandscape ? "<<--  Vertical Flag position (landscape)" : "<<--  Vertical Flag position (portrait)") />
+		</SPRITE>
+		<BUTTON class="curr_count_flag" >
+	 	  	<SPRITE class="listitem flag" z=41 IMG=(ui_Cockpit.country_flag) />
+		</BUTTON>
+	</DIV>
+	<DIV class="footer">
+		<FOOTERBUTTON class="btn_footer left back icon svg" onrelease='sc_Cockpit_Back_From_Dragmode() sc_back()'
+			onlongclick=sc_longBack rawkey=(%lua.LocalMenuOpen ? undef : 27) />
+	</DIV>
+
+</layer> 
