@@ -94,7 +94,7 @@
 			</HBOX>
 			<HBOX class="route_overview_destination">
 				<SPRITE class="route_summary fuelprice svg" img="ico_travel.svg" />
-				<UNITTEXT class="route_summary_text" color=(CSS.Param.map_main_color) value=(sc_FormatConsumptionValue( VW_fuel_per_100km_pm() )) unit=(sc_FormatConsumptionUnit()) />
+				<UNITTEXT class="route_summary_text" color=(CSS.Param.map_main_color) value=(sc_FormatConsumptionValue( VW_fuel_per_100km_pm(), %gps.blink )) unit=(sc_FormatConsumptionUnit()) />
 			</HBOX>
 			<HBOX class="route_overview_destination">
 				<SPRITE class="route_summary fuelprice svg" />
@@ -202,7 +202,7 @@
 									</HBOX>
 									<HBOX CLASS="route_overview_destination" ALIGN="LEFT">
 										<SPRITE CLASS="route_summary fuel_per_100 svg" />
-										<UNITTEXT CLASS="route_summary_text" VALUE=(sc_FormatConsumptionValue( VW_fuel_per_100km_pm(%gps.blink) )) UNIT=(sc_FormatConsumptionUnit()) />
+										<UNITTEXT CLASS="route_summary_text" VALUE=(sc_FormatConsumptionValue( VW_fuel_per_100km_pm(), %gps.blink )) UNIT=(sc_FormatConsumptionUnit()) />
 									</HBOX>
 									<HBOX CLASS="route_overview_destination" ALIGN="LEFT">
 										<SPRITE CLASS="route_summary fuelusage svg" />
