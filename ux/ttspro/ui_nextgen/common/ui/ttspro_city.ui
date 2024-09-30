@@ -1,5 +1,8 @@
 ;------car in city------
 <modify ui_Cockpit>
+	<insert into="IMPLEMENTATION"> 
+		<PROPERTY Next_CityName_VISIBLE VALUE=(observe(%ui.city_onway_list_filtered.filter[0].position // 0L); %route.list.navigated.has_navigable_path && %ui.city_onway_list_filtered.filter.size && !%navigation.car.is_incity && %lua.CarInCity && (%lua.CarInCity_inCockpit == 2 || %lua.CarInCity_inCockpit == 3) ) /> 
+	</insert>
 	<insert first_child after="BUTTON" into="DIV.notify_list_ext TABLE.ari_ext">
 		<INFORMATION_PLATE CityName_Plate LEFT=0 RIGHT=0 TOP=0 BOTTOM=0 TEXT=(%lua.IN_City) 
 			FONTSIZE=(VW_Return_button_text(%lua.IN_City, L"%s", 99) == L"" ? 31 : 20)
@@ -14,7 +17,8 @@
 			FONTSIZE=(VW_Return_button_text(VW_City(%ui.city_onway_list_filtered.filter[0].position // 0L), L"%s", 99) == L"" ? 31 : (%gps.blink ? 20 : 31))
 			ONRELEASE='java:call("android.open_webpage", L"https://" .. towstring(string.sub(MODEL.navigation.car.current_country(), 2, 3)) .. L".wikipedia.org/wiki/Special:Search?search=" .. VW_City(MODEL.ui.city_onway_list_filtered.filter[0].position()))'
 			ONLONGCLICK='sc_NextStateAnim(st_ShowInCitySettings, "fade", 1, "" )' 
-			VISIBLE=( %route.list.navigated.has_navigable_path && !%navigation.car.is_incity && %ui.city_onway_list_filtered.filter.size && %lua.CarInCity && (%lua.CarInCity_inCockpit == 2 || %lua.CarInCity_inCockpit == 3) ) >
+			VISIBLE=(ui_Cockpit.Next_CityName_VISIBLE) >
+			;VISIBLE=( %route.list.navigated.has_navigable_path && %ui.city_onway_list_filtered.filter.size && !%navigation.car.is_incity && %lua.CarInCity && (%lua.CarInCity_inCockpit == 2 || %lua.CarInCity_inCockpit == 3) ) >
 			;<GRAPH LEFT=0 RIGHT=0 BOTTOM=1 TOP=75% Z=100 IMG="graph_w.svg" FULL=(100) CURRENT=(%gps.blink ? 0 : 100) ORIENTATION="HORIZONTAL" INVERT=1 />
 			;<GRAPH CLASS="graph_btn" Z=100 LEFT=2 RIGHT=85% IMG="graph_t.svg" FULL=(100) CURRENT=(Gif_Direction.Delta) INVERT=1 />
 			;<GRAPH CLASS="graph_btn" Z=100 LEFT=95% RIGHT=2 IMG="graph_t.svg" FULL=(100) CURRENT=(Gif_Direction.Delta) INVERT=1 />	

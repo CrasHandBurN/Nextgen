@@ -49,6 +49,8 @@ SplitScreen POI on map="SplitScreen POI на карте"
 My Car="Автомобиль"
 You did not save the position of your car="Вы не сохранили положение своего автомобиля"
 Remember where you left it="Вспоминайте, где вы его оставили"
+Car position saved="Позицию автомобиля сохранено"
+Auto save on Exit=="Авто сохранение \nпри выходе"
 
 Google Route="Google маршрут"
 From current position="С текущего места"

@@ -200,7 +200,8 @@
 	<row    text="Read Out \"In City\" Message" type="ChkOnOff" isselected="lua.ReadOutInCityMessage" />
 
 	<row    text="Permanent \"City Info\" in Cockpit" haspopover=1 onrelease='sc_SetPopoverListAndOpen("ui.lm_City_inCockpit_Popover")' 
-			details=(%ui.lm_City_inCockpit_Popover.list[%lua.CarInCity_inCockpit].text) />
+				details=(%ui.lm_City_inCockpit_Popover.list[%lua.CarInCity_inCockpit].text) />
+	<row 	text="City on way" haspopover=1 onrelease='sc_NextStateAnim(st_CityOnWay, "fade", 1, "")' />
 </userlist>
 
 <userlist lm_ShowOutofCitySettingsList text="str" onrelease="ui" onlongclick="ui" enable="bool" type="str" visible="bool" boolmodel="str" details="ui" dtooltip="str" haspopover="bool" isselected="str">	

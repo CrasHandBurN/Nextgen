@@ -68,7 +68,7 @@
 		onrelease='MSG_Table.line[1]="Trip info"; MSG_Table.layer = ui_TripInfoVW; VW_TripComputerSwitch(); VW_TripComputerSwitch()' />
 	<row  icon="set_icon.svg" text="Settings"
 		onrelease='MSG_Table.line[1]="Settings"; ui.lm_VW_TripCompSettings_filtered.filter:refresh(); MSG_Table.layer = ui_TripCompSettingsVW; VW_TripComputerSwitch(); VW_TripComputerSwitch()' />
-	<row  icon="ico_supportcenter.svg" text="Help"
+	<row  icon="ico_supportcenter.svg" text="Help" onlongclick=sc_ShowTripComputerSidePanel
 		onrelease='MSG_Table.line[1]="Help"; MSG_Table.layer = ui_TripCompHelpVW; VW_TripComputerSwitch(); VW_TripComputerSwitch()' />
 	;<row  icon="ico_cancel.svg" text="Turn Off" onrelease=sc_ShowTripComputerSidePanel />
 
@@ -373,7 +373,7 @@
 							visible=(lua.MSG_Table.line[1] == "Settings" || lua.MSG_Table.line[1] == "GPS info") />
 						<SEPARATOR insert_at=(lua.MSG_Table.line[1] == "Settings" ? 5 : 0) element_template=et_Separator text="Back to car" 
 							visible=(lua.MSG_Table.line[1] == "Settings" || lua.MSG_Table.line[1] == "Back to car") />
-						<SEPARATOR insert_at=(lua.MSG_Table.line[1] == "Settings" ? 10 : 0) element_template=et_Separator text="Point on map" 
+						<SEPARATOR insert_at=(lua.MSG_Table.line[1] == "Settings" ? 11 : 0) element_template=et_Separator text="Point on map" 
 							visible=(lua.MSG_Table.line[1] == "Settings" || lua.MSG_Table.line[1] == "Point on map") />
 					</LISTMODEL>
 					<VSMARTSCROLL>
@@ -416,6 +416,7 @@
 	<row	type="ChkOnOff" text="Home" owner="Back to car" checked=(%lua.Back_to_carPointIndex == 0)  changevalue='MODEL.lua.Back_to_carPointIndex = 0' />
 	<row	type="ChkOnOff" text="Work" owner="Back to car" checked=(%lua.Back_to_carPointIndex == 1) changevalue='MODEL.lua.Back_to_carPointIndex = 1' />
 	<row	type="ChkOnOff" text="Car" owner="Back to car" checked=(%lua.Back_to_carPointIndex == 2) changevalue='MODEL.lua.Back_to_carPointIndex = 2' />
+	<row	type="ChkOnOff" text="Auto save on Exit" owner="Back to car" checked=(%lua.Save_car_position_on_Exit) changevalue='MODEL.lua.Save_car_position_on_Exit = not MODEL.lua.Save_car_position_on_Exit()' />
 	<row	text="Define point now" owner="Back to car" onrelease=sc_ShowSavedLocationQuick />
 	;;<row	text="Select Vehicle" owner="Back to car" onrelease='uieffect:GRAB() NEXTSTATE( st_SettingVehicle, "fade", 1, "" )' details=(sc_GetVehicleTypeFiel(%mydata.vehicle_profile.selected_profile, "name")) visible=(%mydata.vehicle_profile.list.size > 1) />
 	<row	text="Select Vehicle" owner="Back to car" icon=(lua.EVehicleIcon[sc_GetVehicleTypeFiel(%mydata.vehicle_profile.selected_profile, "vehicle_type")])
