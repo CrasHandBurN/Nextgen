@@ -157,7 +157,7 @@ local mapinfo_numbers = {
 	{L"", L"втори", L"трети", L"четвърти", L"пети", L"шести", L"седми", L"осми", L"девети"},
 	{L"едно", L"две", L"три", L"четири", L"пет", L"шест", L"седем", L"осем", L"девет"},
 	{L"", L"двадесет", L"тридесет", L"четиридесет", L"петдесет", L"шестдесет", L"седемдесет", L"осемдесет", L"деветдесет"},
-	{L"сто", L"двестаі", L"триста", L"четиристотин", L"петстотин", L"шестстотин", L"седемстотин", L"осемстотин", L"деветстотин"},
+	{L"сто", L"двеста", L"триста", L"четиристотин", L"петстотин", L"шестстотин", L"седемстотин", L"осемстотин", L"деветстотин"},
 	{L"хиляда", L"две хиляди", L"три хиляди", L"четири хиляди", L"пет хиляди", L"шест хиляди", L"седем хиляди", L"осем хиляди", L"девет хиляди"},
 }
 
@@ -824,7 +824,7 @@ local function transform_traffic_fromto(fromto, str, roadname)
 					if t[k+1] and wstring.gsub(t[k], L" ", L"") == wstring.gsub(t[k+1], L" ", L"") then table.remove(t, k+1) end
 				end
 			end
-			return fromto .. (#t > 1 and L" кръстовището " or L" ") .. table_concat(t, L" і ")
+			return fromto .. (#t > 1 and L" кръстовището " or L" ") .. table_concat(t, L" и ")
 		else
 			return fromto .. L" " .. format_cases(traffic_fromto_format_func(str)(str), "for_traffic_fromto")
 		end
