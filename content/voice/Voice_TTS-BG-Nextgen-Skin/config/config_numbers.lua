@@ -25,7 +25,7 @@ distances.patterns = {
 	L"километра ",
 	L"метра ",
 	L"мили ",
-	L"мили ",
+	L"миля ",
 	L"миля ",
 	L"един",
 	L"единадесет",
@@ -46,7 +46,7 @@ distances.patterns = {
 	L"тринадесет",
 	L"тридесет",
 	L"триста",
-	L"хиляда",
+	L"хиляди",
 	L"фута",
 	L"четвърт",
 	L"четири",
@@ -57,6 +57,7 @@ distances.patterns = {
 	L"шестдесет",
 	L"шестстотин",
 	L"ярда",
+---	L"десети",	--- Излишно - garigor 09.06.19
 	L"една десета",
 	L"две десети",
 	L"3 десети",
@@ -826,7 +827,6 @@ distances.yards = {
 	804672, "\33\23\0",
 	820765, "\33\14\23\0",
 }
-
 function set_distances_ttspro_meters()
 	distances.ttspro_meters = {
 	10, "\14\21\0",
@@ -958,7 +958,6 @@ function set_distances_ttspro_meters()
 	9900, (numbers_mode and "\10\16\63\18\0" or "\10\19\13\21\0"),
 	}
 end
-
 ordinals = {
 	{L"първи", nil, nil},
 	{L"втори", nil, nil},
